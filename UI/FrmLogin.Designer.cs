@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             pictureBox1 = new PictureBox();
             roundedPanel1 = new UI.Controls.RoundedPanel();
+            rainbowTitle1 = new UI.Controls.RainbowTitle();
+            label4 = new Label();
             roundedButton1 = new UI.Controls.RoundedButton();
             checkBox1 = new CheckBox();
             label3 = new Label();
@@ -39,7 +41,6 @@
             cbbChiNhanh = new ComboBox();
             textBox1 = new TextBox();
             label1 = new Label();
-            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             roundedPanel1.SuspendLayout();
             SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             roundedPanel1.BackColor = Color.White;
             roundedPanel1.BorderThickness = 5;
+            roundedPanel1.Controls.Add(rainbowTitle1);
             roundedPanel1.Controls.Add(label4);
             roundedPanel1.Controls.Add(roundedButton1);
             roundedPanel1.Controls.Add(checkBox1);
@@ -74,10 +76,31 @@
             roundedPanel1.Size = new Size(758, 840);
             roundedPanel1.TabIndex = 1;
             // 
+            // rainbowTitle1
+            // 
+            rainbowTitle1.Font = new Font("Calibri", 40.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            rainbowTitle1.ForeColor = Color.White;
+            rainbowTitle1.Location = new Point(73, 38);
+            rainbowTitle1.Name = "rainbowTitle1";
+            rainbowTitle1.Size = new Size(636, 254);
+            rainbowTitle1.TabIndex = 10;
+            rainbowTitle1.Text = "Hệ thống Quản lý Nhà hàng Tiệc cưới";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.Location = new Point(535, 803);
+            label4.Name = "label4";
+            label4.Size = new Size(208, 25);
+            label4.TabIndex = 9;
+            label4.Text = "V0.2 - 2025 By Nhóm 11";
+            // 
             // roundedButton1
             // 
             roundedButton1.BackColor = Color.FromArgb(31, 111, 235);
-            roundedButton1.CornerRadius = 30;
+            roundedButton1.BorderThickness = 2;
+            roundedButton1.CornerRadius = 27;
             roundedButton1.FlatAppearance.BorderSize = 0;
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Calibri", 22.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -135,10 +158,10 @@
             // 
             cbbChiNhanh.Font = new Font("Calibri", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbbChiNhanh.FormattingEnabled = true;
-            cbbChiNhanh.Items.AddRange(new object[] { "HCM-Q1 — Grand Palace Quận 1 — 74 Nguyễn Du, Q.1, TP.HCM", "HCM-Q7 — Grand Palace Phú Mỹ Hưng — 801 Nguyễn Văn Linh, Q.7, TP.HCM", "HCM-TB — Grand Palace Tân Bình — 18 Cộng Hòa, Tân Bình, TP.HCM", "HN-HK — Grand Palace Hoàn Kiếm — 12 Tràng Thi, Hoàn Kiếm, Hà Nội" });
-            cbbChiNhanh.Location = new Point(156, 307);
+            cbbChiNhanh.Items.AddRange(new object[] { "HCM-Q1 - Grand Palace Quận 1 - 74 Nguyễn Du, Q.1, TP.HCM", "HCM-Q7 - Grand Palace Phú Mỹ Hưng - 801 Nguyễn Văn Linh, Q.7, TP.HCM", "HCM-TB - Grand Palace Tân Bình - 18 Cộng Hòa, Tân Bình, TP.HCM", "HN-HK - Grand Palace Hoàn Kiếm - 12 Tràng Thi, Hoàn Kiếm, Hà Nội" });
+            cbbChiNhanh.Location = new Point(143, 307);
             cbbChiNhanh.Name = "cbbChiNhanh";
-            cbbChiNhanh.Size = new Size(587, 36);
+            cbbChiNhanh.Size = new Size(600, 36);
             cbbChiNhanh.TabIndex = 3;
             // 
             // textBox1
@@ -155,20 +178,12 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.DeepSkyBlue;
             label1.Location = new Point(15, 308);
             label1.Name = "label1";
             label1.Size = new Size(135, 35);
             label1.TabIndex = 1;
             label1.Text = "Chi Nhánh";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(575, 808);
-            label4.Name = "label4";
-            label4.Size = new Size(168, 20);
-            label4.TabIndex = 9;
-            label4.Text = "V1.0 - 2025 By Nhóm 11";
             // 
             // FrmLogin
             // 
@@ -200,5 +215,6 @@
         private CheckBox checkBox1;
         private Controls.RoundedButton roundedButton1;
         private Label label4;
+        private Controls.RainbowTitle rainbowTitle1;
     }
 }
