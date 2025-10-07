@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="UI/Resources/Blue%20Gradient%20Linktree%20Background.png" alt="Banner" width="100%"/>
+  <img src="UI/Resources/Anh_Login.png" alt="Banner" width="100%"/>
 </p>
 
 <p align="center">
