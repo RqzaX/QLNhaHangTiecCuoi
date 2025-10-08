@@ -90,6 +90,11 @@ namespace UI
             ShowChild<FrmDashboard>();
         }
 
+        private void btnDatBan_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmDatBan>();
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

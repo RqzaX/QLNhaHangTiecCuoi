@@ -383,6 +383,7 @@
             btnDatBan.TextColor = Color.FromArgb(31, 41, 55);
             btnDatBan.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnDatBan.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnDatBan.Click += btnDatBan_Click;
             // 
             // btnBanHang
             // 
