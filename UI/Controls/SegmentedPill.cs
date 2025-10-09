@@ -18,10 +18,7 @@ namespace VanThuan.UI
     public class SegmentedPill : Control
     {
         // ========= Data =========
-        private readonly BindingList<string> _items = new BindingList<string>
-        {
-            "Tất cả", "Chờ xác nhận", "Đã xác nhận", "Đã phục vụ"
-        };
+        private readonly BindingList<PillItem> _items = new();
 
         private int _selectedIndex = 0;
         private int _hoverIndex = -1;
@@ -92,8 +89,8 @@ namespace VanThuan.UI
 
         [Category("Data")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
-        public BindingList<string> Items => _items;
+        [Editor(typeof(System.ComponentModel.Design.CollectionEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public BindingList<PillItem> Items => _items;
 
         [Category("Behavior")]
         [DefaultValue(0)]
@@ -111,8 +108,7 @@ namespace VanThuan.UI
         }
 
         [Browsable(false)]
-        public string? SelectedText =>
-            (_selectedIndex >= 0 && _selectedIndex < _items.Count) ? _items[_selectedIndex] : null;
+        public string SelectedText => (SelectedIndex >= 0 && SelectedIndex < _items.Count) ? _items[SelectedIndex].Text : null;
 
         [Category("Appearance")]
         [DefaultValue(18)]
@@ -198,7 +194,7 @@ namespace VanThuan.UI
             int innerH = textH + _itemPadding.Vertical;
             for (int i = 0; i < _items.Count; i++)
             {
-                int w = TextRenderer.MeasureText(g, _items[i], Font, new Size(int.MaxValue, int.MaxValue),
+                int w = TextRenderer.MeasureText(g, _items[i].Text, Font, new Size(int.MaxValue, int.MaxValue),
                             TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width + _itemPadding.Horizontal;
                 if (i > 0) totalW += _spacing;
                 totalW += w;
@@ -230,7 +226,7 @@ namespace VanThuan.UI
             using var g = CreateGraphics();
             for (int i = 0; i < _items.Count; i++)
             {
-                int w = TextRenderer.MeasureText(g, _items[i], Font, new Size(int.MaxValue, int.MaxValue),
+                int w = TextRenderer.MeasureText(g, _items[i].Text, Font, new Size(int.MaxValue, int.MaxValue),
                             TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width + _itemPadding.Horizontal;
 
                 var rr = new Rectangle(x, r.Top, w, h);
@@ -301,7 +297,7 @@ namespace VanThuan.UI
             for (int i = 0; i < _items.Count; i++)
             {
                 var rr = _itemRects[i];
-                TextRenderer.DrawText(g, _items[i], Font, rr, _textColor,
+                TextRenderer.DrawText(g, _items[i].Text, Font, rr, _textColor,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter |
                     TextFormatFlags.NoPrefix | TextFormatFlags.EndEllipsis);
             }
@@ -397,5 +393,15 @@ namespace VanThuan.UI
             path.CloseFigure();
             return path;
         }
+    }
+    public class PillItem
+    {
+        [DefaultValue("Nút")]
+        public string Text { get; set; } = "Nút";
+
+        [DefaultValue(true)]
+        public bool Enabled { get; set; } = true;
+
+        public override string ToString() => Text; // để hiển thị đẹp trong Collection Editor
     }
 }

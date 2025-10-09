@@ -132,20 +132,6 @@
             label4.TabIndex = 16;
             label4.Text = "Danh sách đặt bàn";
             // 
-            // segmentedPill1
-            // 
-            segmentedPill1.BackColor = Color.Transparent;
-            segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            segmentedPill1.Items.Add("Tất cả");
-            segmentedPill1.Items.Add("Chờ xác nhận");
-            segmentedPill1.Items.Add("Đã xác nhận");
-            segmentedPill1.Items.Add("Đã phục vụ");
-            segmentedPill1.Location = new Point(71, 109);
-            segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(575, 55);
-            segmentedPill1.TabIndex = 18;
-            segmentedPill1.Text = "segmentedPill1";
-            // 
             // FrmDatBan
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);

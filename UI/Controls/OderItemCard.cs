@@ -1,314 +1,329 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Runtime.Versioning;
-using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
-namespace UI
+namespace UI.Controls
 {
-    [DefaultEvent("SelectedIndexChanged")]
+    [ToolboxItem(true)]
+    [DefaultProperty("ItemName")]
+    [DefaultEvent("QuantityChanged")]
     [SupportedOSPlatform("windows")]
-    public class OderItemCard : Control
+    public class OrderItemCard : Control
     {
         // ====== Data ======
-        private readonly List<string> _items = new()
-        {
-            "Tất cả", "Chờ xác nhận", "Đã xác nhận", "Đã phục vụ"
-        };
-        private int _selectedIndex = 0;
-        private int _hoverIndex = -1;
-        private readonly List<Rectangle> _itemRects = new();
+        private string _itemName = "Tôm hùm nướng phô mai";
+        private decimal _unitPrice = 850000m;
+        private int _quantity = 1;
+        private string _note = "";
 
-        // ====== Appearance ======
-        private int _cornerRadius = 18;
-        private Padding _containerPadding = new Padding(8, 6, 8, 6);
-        private Padding _itemPadding = new Padding(14, 6, 14, 6);
-        private int _spacing = 8;
-
-        private Color _containerBack = Color.FromArgb(245, 247, 250);   // nền xám nhạt
-        private Color _containerBorder = Color.FromArgb(228, 232, 238);
-        private Color _selectedBack = Color.White;
-        private Color _selectedBorder = Color.FromArgb(228, 232, 238);
-        private Color _textColor = Color.FromArgb(20, 20, 20);
-
-        public event EventHandler? SelectedIndexChanged;
-
-        public OderItemCard()
-        {
-            SetStyle(ControlStyles.AllPaintingInWmPaint |
-                     ControlStyles.OptimizedDoubleBuffer |
-                     ControlStyles.ResizeRedraw |
-                     ControlStyles.UserPaint, true);
-
-            Font = new Font("Segoe UI", 10f, FontStyle.Bold);
-            Size = new Size(460, 44);
-            BackColor = Color.Transparent;
-            TabStop = true;
-        }
-
-        // ====== Public API ======
-        [Category("Data")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<string> Items => _items;
-
-        [Category("Behavior")]
-        [DefaultValue(0)]
-        public int SelectedIndex
-        {
-            get => _selectedIndex;
-            set
-            {
-                int v = Math.Max(-1, Math.Min(value, _items.Count - 1));
-                if (_selectedIndex == v) return;
-                _selectedIndex = v;
-                Invalidate();
-                SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(18)]
+        // ====== Style (có DefaultValue + ShouldSerialize/Reset) ======
+        private int _cornerRadius = 16;
+        [Category("Appearance"), DefaultValue(16), Description("Bán kính bo góc của thẻ.")]
         public int CornerRadius
         {
             get => _cornerRadius;
-            set { _cornerRadius = Math.Max(8, value); Invalidate(); }
+            set { _cornerRadius = Math.Max(4, value); Invalidate(); }
+        }
+        public bool ShouldSerializeCornerRadius() => _cornerRadius != 16;
+        public void ResetCornerRadius() => CornerRadius = 16;
+
+        private Color _cardBackColor = Color.White;
+        [Category("Appearance"), DefaultValue(typeof(Color), "White")]
+        public Color CardBackColor
+        {
+            get => _cardBackColor;
+            set { _cardBackColor = value; Invalidate(); }
+        }
+        public bool ShouldSerializeCardBackColor() => _cardBackColor != Color.White;
+        public void ResetCardBackColor() => CardBackColor = Color.White;
+
+        private Color _borderColor = Color.FromArgb(230, 232, 236);
+        [Category("Appearance"), DefaultValue(typeof(Color), "230,232,236")]
+        public Color BorderColor
+        {
+            get => _borderColor;
+            set { _borderColor = value; Invalidate(); }
         }
 
-        [Category("Layout")]
-        [DefaultValue(typeof(Padding), "8,6,8,6")]
-        public Padding ContainerPadding
+        private Color _shadowColor = Color.FromArgb(40, 0, 0, 0);
+        [Category("Appearance"), DefaultValue(typeof(Color), "40,0,0,0")]
+        public Color ShadowColor
         {
-            get => _containerPadding;
-            set { _containerPadding = value; Invalidate(); }
+            get => _shadowColor;
+            set { _shadowColor = value; Invalidate(); }
         }
 
-        [Category("Layout")]
-        [DefaultValue(typeof(Padding), "14,6,14,6")]
-        public Padding ItemPadding
+        private Color _titleColor = Color.Black;
+        [Category("Appearance"), DefaultValue(typeof(Color), "Black")]
+        public Color TitleColor { get => _titleColor; set { _titleColor = value; Invalidate(); } }
+
+        private Color _subTextColor = Color.FromArgb(120, 120, 120);
+        [Category("Appearance"), DefaultValue(typeof(Color), "120,120,120")]
+        public Color SubTextColor { get => _subTextColor; set { _subTextColor = value; Invalidate(); } }
+
+        private Color _accentColor = Color.FromArgb(31, 111, 235);
+        [Category("Appearance"), DefaultValue(typeof(Color), "31,111,235")]
+        public Color AccentColor { get => _accentColor; set { _accentColor = value; Invalidate(); } }
+
+        private Color _dangerColor = Color.FromArgb(214, 45, 32);
+        [Category("Appearance"), DefaultValue(typeof(Color), "214,45,32")]
+        public Color DangerColor { get => _dangerColor; set { _dangerColor = value; Invalidate(); } }
+
+        private bool _showShadow = true;
+        [Category("Appearance"), DefaultValue(true)]
+        public bool ShowShadow { get => _showShadow; set { _showShadow = value; Invalidate(); } }
+
+        // ====== API (để Designer lưu, KHÔNG Hidden) ======
+        [Category("Data"), DefaultValue("Tôm hùm nướng phô mai")]
+        public string ItemName { get => _itemName; set { _itemName = value ?? ""; Invalidate(); } }
+
+        [Category("Data"), DefaultValue(typeof(decimal), "850000")]
+        public decimal UnitPrice { get => _unitPrice; set { _unitPrice = Math.Max(0, value); Invalidate(); } }
+
+        [Category("Data"), DefaultValue(1)]
+        public int Quantity
         {
-            get => _itemPadding;
-            set { _itemPadding = value; Invalidate(); }
-        }
-
-        [Category("Layout")]
-        [DefaultValue(8)]
-        public int Spacing
-        {
-            get => _spacing;
-            set { _spacing = Math.Max(0, value); Invalidate(); }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(typeof(Color), "245,247,250")]
-        public Color ContainerBackColor
-        {
-            get => _containerBack;
-            set { _containerBack = value; Invalidate(); }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(typeof(Color), "228,232,238")]
-        public Color ContainerBorderColor
-        {
-            get => _containerBorder;
-            set { _containerBorder = value; Invalidate(); }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(typeof(Color), "White")]
-        public Color SelectedBackColor
-        {
-            get => _selectedBack;
-            set { _selectedBack = value; Invalidate(); }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(typeof(Color), "228,232,238")]
-        public Color SelectedBorderColor
-        {
-            get => _selectedBorder;
-            set { _selectedBorder = value; Invalidate(); }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(typeof(Color), "20,20,20")]
-        public Color TextColor
-        {
-            get => _textColor;
-            set { _textColor = value; Invalidate(); }
-        }
-
-        [Browsable(false)]
-        public string? SelectedText => (_selectedIndex >= 0 && _selectedIndex < _items.Count) ? _items[_selectedIndex] : null;
-
-        // ====== Layout helpers ======
-        public override Size GetPreferredSize(Size proposedSize)
-        {
-            using var g = CreateGraphics();
-            var totalW = _containerPadding.Horizontal;
-            var h = TextRenderer.MeasureText(g, "A", Font, new Size(int.MaxValue, int.MaxValue),
-                    TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Height + _itemPadding.Vertical;
-
-            for (int i = 0; i < _items.Count; i++)
+            get => _quantity;
+            set
             {
-                var w = TextRenderer.MeasureText(g, _items[i], Font, new Size(int.MaxValue, int.MaxValue),
-                        TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width + _itemPadding.Horizontal;
-                if (i > 0) totalW += _spacing;
-                totalW += w;
-            }
-            return new Size(totalW + 2, Math.Max(h + _containerPadding.Vertical, 36));
-        }
-
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            BuildItemRects();
-        }
-
-        private void BuildItemRects()
-        {
-            _itemRects.Clear();
-            var r = ClientRectInner();
-            int x = r.Left;
-            int h = r.Height;
-
-            using var g = CreateGraphics();
-            for (int i = 0; i < _items.Count; i++)
-            {
-                int w = TextRenderer.MeasureText(g, _items[i], Font, new Size(int.MaxValue, int.MaxValue),
-                            TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix).Width + _itemPadding.Horizontal;
-
-                var rr = new Rectangle(x, r.Top + (h - (h - 0)) / 2, w, Math.Min(h, 9999));
-                rr.Height = h; // mọi item cùng chiều cao
-                _itemRects.Add(rr);
-                x += w + _spacing;
-            }
-        }
-
-        private Rectangle ClientRectOuter()
-        {
-            var rect = ClientRectangle;
-            rect.Inflate(-1, -1);
-            return rect;
-        }
-
-        private Rectangle ClientRectInner()
-        {
-            var r = ClientRectOuter();
-            return new Rectangle(
-                r.Left + _containerPadding.Left,
-                r.Top + _containerPadding.Top,
-                Math.Max(4, r.Width - _containerPadding.Horizontal),
-                Math.Max(4, r.Height - _containerPadding.Vertical)
-            );
-        }
-
-        // ====== Painting ======
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            var outer = ClientRectOuter();
-            using (var path = RoundRect(outer, _cornerRadius))
-            using (var br = new SolidBrush(_containerBack))
-            using (var pen = new Pen(_containerBorder))
-            {
-                g.FillPath(br, path);
-                g.DrawPath(pen, path);
-            }
-
-            if (_itemRects.Count != _items.Count) BuildItemRects();
-
-            // Selected background first (để viền ngoài không bị đè)
-            for (int i = 0; i < _items.Count; i++)
-            {
-                if (i == _selectedIndex)
+                int v = Math.Max(0, value);
+                if (_quantity != v)
                 {
-                    var rr = _itemRects[i];
-                    int rad = Math.Min(_cornerRadius - 4, rr.Height / 2);
-                    using var path = RoundRect(rr, Math.Max(10, rad));
-                    using var br = new SolidBrush(_selectedBack);
-                    using var pen = new Pen(_selectedBorder);
-                    g.FillPath(br, path);
-                    g.DrawPath(pen, path);
+                    _quantity = v; Invalidate();
+                    QuantityChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
 
-            // Hover effect (nhẹ)
-            if (_hoverIndex >= 0 && _hoverIndex < _items.Count && _hoverIndex != _selectedIndex)
+        [Category("Data"), DefaultValue(""), Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+        public string Note { get => _note; set { _note = value ?? ""; Invalidate(); } }
+
+        [Browsable(false)]
+        public decimal LineTotal => UnitPrice * Quantity;
+
+        // ====== Events ======
+        public event EventHandler QuantityChanged;
+        public event EventHandler NoteClicked;
+        public event EventHandler DeleteClicked;
+
+        // hit-boxes
+        Rectangle _rcMinus, _rcPlus, _rcNote, _rcDelete;
+
+        bool _hoverMinus, _hoverPlus, _hoverNote, _hoverDelete;
+
+        public OrderItemCard()
+        {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer |
+                     ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+            Font = new Font("Segoe UI", 10f);
+            Size = new Size(400, 120);
+            Cursor = Cursors.Arrow;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            var rect = ClientRectangle;
+
+            // shadow
+            if (ShowShadow)
             {
-                var rr = _itemRects[_hoverIndex];
-                int rad = Math.Min(_cornerRadius - 4, rr.Height / 2);
-                using var path = RoundRect(rr, Math.Max(10, rad));
-                using var br = new SolidBrush(Color.FromArgb(25, Color.White));
-                g.FillPath(br, path);
+                var shadow = rect; shadow.Inflate(-2, -2); shadow.Offset(0, 2);
+                using var sb = new SolidBrush(ShadowColor);
+                using var gpS = Round(shadow, CornerRadius + 4);
+                g.FillPath(sb, gpS);
             }
 
-            // Draw texts
-            for (int i = 0; i < _items.Count; i++)
+            // card
+            var card = rect; card.Inflate(-2, -4);
+            using (var bg = new SolidBrush(CardBackColor))
+            using (var border = new Pen(BorderColor))
+            using (var gp = Round(card, CornerRadius))
             {
-                var rr = _itemRects[i];
-                var color = _textColor;
-                TextRenderer.DrawText(g, _items[i], Font, rr, color,
-                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter |
-                    TextFormatFlags.NoPrefix | TextFormatFlags.EndEllipsis);
+                g.FillPath(bg, gp);
+                g.DrawPath(border, gp);
             }
+
+            // layout
+            var pad = 14;
+            var y = card.Y + pad;
+            var x = card.X + pad;
+
+            // Header: name + delete icon
+            var titleRect = new Rectangle(x, y, card.Width - 2 * pad - 24, 24);
+            TextRenderer.DrawText(g, ItemName, new Font(Font, FontStyle.Bold),
+                titleRect, TitleColor, TextFormatFlags.EndEllipsis);
+
+            // Delete icon (trash) – nhỏ màu đỏ
+            _rcDelete = new Rectangle(card.Right - pad - 18, y + 2, 18, 18);
+            DrawTrash(g, _rcDelete, _hoverDelete ? ControlPaint.Light(DangerColor) : DangerColor);
+
+            // Unit price (sub text)
+            y += 24;
+            var priceStr = ToVnCurrency(UnitPrice);
+            TextRenderer.DrawText(g, priceStr, new Font(Font, FontStyle.Regular),
+                new Rectangle(x, y, 160, 20), SubTextColor);
+
+            // Right: line total
+            var totalStr = ToVnCurrency(LineTotal);
+            TextRenderer.DrawText(g, totalStr, new Font(Font, FontStyle.Bold),
+                new Rectangle(card.Right - pad - 160, y, 160, 22),
+                TitleColor, TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+
+            // Quantity group ( -  qty  + )
+            y += 26;
+            int btnSize = 32;
+            int spacing = 10;
+            _rcMinus = new Rectangle(x, y, btnSize, btnSize);
+            var rcQtyText = new Rectangle(_rcMinus.Right + spacing, y, 40, btnSize);
+            _rcPlus = new Rectangle(rcQtyText.Right + spacing, y, btnSize, btnSize);
+
+            DrawCircleButton(g, _rcMinus, "–", _hoverMinus);
+            DrawQtyText(g, rcQtyText);
+            DrawCircleButton(g, _rcPlus, "+", _hoverPlus);
+
+            // Note pill button
+            y += btnSize + 12;
+            _rcNote = new Rectangle(x, y, 120, 34);
+            DrawNotePill(g, _rcNote, _hoverNote, Note);
+
+            // bottom total (right) again for bố cục giống mẫu
+            // (đã vẽ phía trên; nếu muốn rõ hơn, uncomment khối dưới)
+            // TextRenderer.DrawText(g, totalStr, new Font(Font, FontStyle.SemiBold),
+            //     new Rectangle(card.Right - pad - 160, y - (btnSize + 12), 160, 22),
+            //     TitleColor, TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+        }
+
+        // ====== Drawing helpers ======
+        private void DrawCircleButton(Graphics g, Rectangle r, string text, bool hover)
+        {
+            using var b = new SolidBrush(hover ? Color.FromArgb(245, 247, 252) : Color.White);
+            using var p = new Pen(hover ? AccentColor : BorderColor);
+            using var gp = new GraphicsPath();
+            gp.AddEllipse(r);
+            g.FillPath(b, gp);
+            g.DrawPath(p, gp);
+            TextRenderer.DrawText(g, text, new Font(Font.FontFamily, 12f, FontStyle.Bold),
+                r, Color.Black, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+
+        private void DrawQtyText(Graphics g, Rectangle r)
+        {
+            TextRenderer.DrawText(g, Quantity.ToString(), new Font(Font, FontStyle.Regular),
+                r, TitleColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+
+        private void DrawNotePill(Graphics g, Rectangle r, bool hover, string note)
+        {
+            using var b = new SolidBrush(hover ? Color.FromArgb(245, 247, 252) : Color.White);
+            using var p = new Pen(hover ? AccentColor : BorderColor);
+            using var gp = Round(r, 16);
+            g.FillPath(b, gp);
+            g.DrawPath(p, gp);
+
+            // icon giấy
+            var ic = new Rectangle(r.X + 10, r.Y + 8, 18, 18);
+            DrawNoteIcon(g, ic, SubTextColor);
+
+            var text = string.IsNullOrWhiteSpace(note) ? "Ghi chú" : note;
+            TextRenderer.DrawText(g, text, Font,
+                new Rectangle(ic.Right + 6, r.Y, r.Width - (ic.Right + 10 - r.X), r.Height),
+                SubTextColor, TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+        }
+
+        private static void DrawNoteIcon(Graphics g, Rectangle r, Color color)
+        {
+            using var pen = new Pen(color, 1.8f) { LineJoin = LineJoin.Round };
+            var gp = new GraphicsPath();
+            gp.AddRectangle(new Rectangle(r.X + 3, r.Y + 3, r.Width - 6, r.Height - 6));
+            g.DrawPath(pen, gp);
+            // gáy sổ
+            g.DrawLine(pen, r.X + 7, r.Y + 3, r.X + 7, r.Bottom - 3);
+        }
+
+        private static void DrawTrash(Graphics g, Rectangle r, Color color)
+        {
+            using var pen = new Pen(color, 1.8f) { LineJoin = LineJoin.Round, StartCap = LineCap.Round, EndCap = LineCap.Round };
+            // nắp
+            g.DrawLine(pen, r.X + 3, r.Y + 6, r.Right - 3, r.Y + 6);
+            g.DrawLine(pen, r.X + 7, r.Y + 4, r.Right - 7, r.Y + 4);
+            // thân
+            var body = new Rectangle(r.X + 4, r.Y + 7, r.Width - 8, r.Height - 8);
+            g.DrawRectangle(pen, body);
+            // 2 gạch
+            g.DrawLine(pen, body.X + 5, body.Y + 3, body.X + 5, body.Bottom - 3);
+            g.DrawLine(pen, body.Right - 5, body.Y + 3, body.Right - 5, body.Bottom - 3);
+        }
+
+        private static GraphicsPath Round(Rectangle r, int radius)
+        {
+            var gp = new GraphicsPath();
+            int d = radius * 2;
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
+            gp.CloseFigure();
+            return gp;
+        }
+
+        private static string ToVnCurrency(decimal money)
+        {
+            var ci = new CultureInfo("vi-VN");
+            return string.Format(ci, "{0:#,0} đ", money);
         }
 
         // ====== Interaction ======
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            base.OnMouseMove(e);
-            int idx = HitTest(e.Location);
-            if (idx != _hoverIndex)
+            bool hvMinus = _rcMinus.Contains(e.Location);
+            bool hvPlus = _rcPlus.Contains(e.Location);
+            bool hvNote = _rcNote.Contains(e.Location);
+            bool hvDelete = _rcDelete.Contains(e.Location);
+
+            if (hvMinus != _hoverMinus || hvPlus != _hoverPlus ||
+                hvNote != _hoverNote || hvDelete != _hoverDelete)
             {
-                _hoverIndex = idx;
+                _hoverMinus = hvMinus; _hoverPlus = hvPlus; _hoverNote = hvNote; _hoverDelete = hvDelete;
+                Cursor = (hvMinus || hvPlus || hvNote || hvDelete) ? Cursors.Hand : Cursors.Arrow;
                 Invalidate();
             }
+            base.OnMouseMove(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            base.OnMouseLeave(e);
-            _hoverIndex = -1;
+            _hoverMinus = _hoverPlus = _hoverNote = _hoverDelete = false;
+            Cursor = Cursors.Arrow;
             Invalidate();
+            base.OnMouseLeave(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Button != MouseButtons.Left) return;
-            int idx = HitTest(e.Location);
-            if (idx >= 0)
-                SelectedIndex = idx;
-        }
-
-        private int HitTest(Point p)
-        {
-            for (int i = 0; i < _itemRects.Count; i++)
-                if (_itemRects[i].Contains(p)) return i;
-            return -1;
-        }
-
-        // ====== Utils ======
-        private static GraphicsPath RoundRect(Rectangle r, int radius)
-        {
-            int d = radius * 2;
-            var path = new GraphicsPath();
-            if (radius <= 0)
+            if (_rcMinus.Contains(e.Location))
             {
-                path.AddRectangle(r);
-                return path;
+                if (Quantity > 0) Quantity -= 1;
             }
-            path.AddArc(r.X, r.Y, d, d, 180, 90);
-            path.AddArc(r.Right - d, r.Y, d, d, 270, 90);
-            path.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
-            path.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
-            path.CloseFigure();
-            return path;
+            else if (_rcPlus.Contains(e.Location))
+            {
+                Quantity += 1;
+            }
+            else if (_rcNote.Contains(e.Location))
+            {
+                NoteClicked?.Invoke(this, EventArgs.Empty);
+            }
+            else if (_rcDelete.Contains(e.Location))
+            {
+                DeleteClicked?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }
