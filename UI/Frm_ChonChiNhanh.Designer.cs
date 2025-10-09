@@ -83,8 +83,6 @@
             // btnTiepTuc
             // 
             btnTiepTuc.BackColor = Color.FromArgb(31, 111, 235);
-            btnTiepTuc.FlatAppearance.BorderSize = 0;
-            btnTiepTuc.FlatStyle = FlatStyle.Flat;
             btnTiepTuc.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTiepTuc.ForeColor = Color.White;
             btnTiepTuc.Location = new Point(445, 220);
@@ -94,7 +92,6 @@
             btnTiepTuc.Size = new Size(106, 32);
             btnTiepTuc.TabIndex = 5;
             btnTiepTuc.Text = "Tiếp Tục";
-            btnTiepTuc.UseVisualStyleBackColor = false;
             btnTiepTuc.Click += btnTiepTuc_Click;
             // 
             // borderComboBox1

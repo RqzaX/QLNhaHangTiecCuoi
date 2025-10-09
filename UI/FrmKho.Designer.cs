@@ -142,74 +142,54 @@
             // roundedButton1
             // 
             roundedButton1.BackColor = Color.WhiteSmoke;
-            roundedButton1.BorderColor = Color.Black;
-            roundedButton1.FlatAppearance.BorderSize = 0;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.Black;
             roundedButton1.Location = new Point(571, 45);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.PressedBackColor = Color.FromArgb(0, 192, 192);
             roundedButton1.Size = new Size(142, 37);
             roundedButton1.TabIndex = 13;
             roundedButton1.Text = "Nhập Kho ";
-            roundedButton1.UseVisualStyleBackColor = false;
             roundedButton1.Click += roundedButton1_Click;
             // 
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.WhiteSmoke;
-            roundedButton2.BorderColor = Color.Black;
-            roundedButton2.FlatAppearance.BorderSize = 0;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.Black;
             roundedButton2.Location = new Point(719, 45);
             roundedButton2.Name = "roundedButton2";
             roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.PressedBackColor = Color.FromArgb(0, 192, 192);
             roundedButton2.Size = new Size(142, 37);
             roundedButton2.TabIndex = 13;
             roundedButton2.Text = "Xuất Kho";
-            roundedButton2.UseVisualStyleBackColor = false;
             roundedButton2.Click += roundedButton1_Click;
             // 
             // roundedButton3
             // 
             roundedButton3.BackColor = Color.WhiteSmoke;
-            roundedButton3.BorderColor = Color.Black;
-            roundedButton3.FlatAppearance.BorderSize = 0;
-            roundedButton3.FlatStyle = FlatStyle.Flat;
             roundedButton3.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton3.ForeColor = Color.Black;
             roundedButton3.Location = new Point(867, 45);
             roundedButton3.Name = "roundedButton3";
             roundedButton3.Padding = new Padding(10, 6, 10, 6);
-            roundedButton3.PressedBackColor = Color.FromArgb(0, 192, 192);
             roundedButton3.Size = new Size(142, 37);
             roundedButton3.TabIndex = 13;
             roundedButton3.Text = "Chuyển Kho ";
-            roundedButton3.UseVisualStyleBackColor = false;
             roundedButton3.Click += roundedButton1_Click;
             // 
             // roundedButton4
             // 
             roundedButton4.BackColor = Color.Black;
-            roundedButton4.BorderColor = Color.Black;
-            roundedButton4.FlatAppearance.BorderSize = 0;
-            roundedButton4.FlatStyle = FlatStyle.Flat;
             roundedButton4.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton4.ForeColor = Color.White;
             roundedButton4.HoverBackColor = Color.Gray;
             roundedButton4.Location = new Point(1018, 45);
             roundedButton4.Name = "roundedButton4";
             roundedButton4.Padding = new Padding(10, 6, 10, 6);
-            roundedButton4.PressedBackColor = Color.White;
             roundedButton4.Size = new Size(142, 37);
             roundedButton4.TabIndex = 13;
             roundedButton4.Text = "Kiểm Kê";
-            roundedButton4.UseVisualStyleBackColor = false;
             roundedButton4.Click += roundedButton1_Click;
             // 
             // roundedPanel2

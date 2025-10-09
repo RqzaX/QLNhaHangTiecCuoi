@@ -5,12 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace UI
 {
+    [SupportedOSPlatform("windows")]
     public partial class Frm_ChonBan : Form
     {
         private Color _borderColor = Color.Black;
@@ -75,5 +77,14 @@ namespace UI
             }
         }
 
+        private void Frm_ChonBan_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnThoat_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

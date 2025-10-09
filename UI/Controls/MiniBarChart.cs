@@ -3,10 +3,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace UiControls
 {
+    [SupportedOSPlatform("windows")]
     public class MiniBarChart : UserControl
     {
         // Data

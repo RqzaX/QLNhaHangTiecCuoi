@@ -31,13 +31,12 @@
             label2 = new Label();
             label1 = new Label();
             roundedButton1 = new UI.Controls.RoundedButton();
-            roundedPanel1 = new UI.Controls.RoundedPanel();
-            label3 = new Label();
-            roundedPanel2 = new UI.Controls.RoundedPanel();
-            roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            label4 = new Label();
-            roundedPanel1.SuspendLayout();
-            roundedPanel2.SuspendLayout();
+            panel1 = new Panel();
+            panel2 = new Panel();
+            panel3 = new Panel();
+            panel4 = new Panel();
+            cbbTrangThaiBan = new UI.Controls.ComboBox_Border();
+            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // label2
@@ -64,7 +63,6 @@
             // 
             roundedButton1.BackColor = Color.FromArgb(31, 111, 235);
             roundedButton1.CornerRadius = 17;
-            roundedButton1.FlatAppearance.BorderSize = 0;
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
@@ -77,62 +75,55 @@
             roundedButton1.Text = "+ Tạo đặt bàn mới";
             roundedButton1.UseVisualStyleBackColor = false;
             // 
-            // roundedPanel1
+            // panel1
             // 
-            roundedPanel1.BackColor = Color.White;
-            roundedPanel1.BorderThickness = 5;
-            roundedPanel1.Controls.Add(label3);
-            roundedPanel1.Location = new Point(10, 67);
-            roundedPanel1.Margin = new Padding(3, 2, 3, 2);
-            roundedPanel1.Name = "roundedPanel1";
-            roundedPanel1.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel1.Size = new Size(339, 469);
-            roundedPanel1.TabIndex = 13;
+            panel1.BackColor = Color.White;
+            panel1.Location = new Point(-1, 66);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(371, 855);
+            panel1.TabIndex = 13;
             // 
-            // label3
+            // panel2
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(21, 16);
-            label3.Name = "label3";
-            label3.Size = new Size(89, 19);
-            label3.TabIndex = 15;
-            label3.Text = "Lịch đặt bàn";
+            panel2.BackColor = Color.White;
+            panel2.Location = new Point(369, 66);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(653, 141);
+            panel2.TabIndex = 14;
             // 
-            // roundedPanel2
+            // panel3
             // 
-            roundedPanel2.BackColor = Color.White;
-            roundedPanel2.BorderThickness = 5;
-            roundedPanel2.Controls.Add(roundedTextBox1);
-            roundedPanel2.Controls.Add(label4);
-            roundedPanel2.Location = new Point(354, 67);
-            roundedPanel2.Margin = new Padding(3, 2, 3, 2);
-            roundedPanel2.Name = "roundedPanel2";
-            roundedPanel2.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel2.Size = new Size(676, 469);
-            roundedPanel2.TabIndex = 14;
+            panel3.BackColor = Color.White;
+            panel3.Controls.Add(cbbTrangThaiBan);
+            panel3.Location = new Point(369, 208);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(653, 52);
+            panel3.TabIndex = 15;
             // 
-            // roundedTextBox1
+            // panel4
             // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.Font = new Font("Segoe UI", 10F);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(249, 9);
-            roundedTextBox1.Margin = new Padding(3, 2, 3, 2);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(9, 6, 9, 6);
-            roundedTextBox1.Size = new Size(414, 32);
-            roundedTextBox1.TabIndex = 17;
+            panel4.Location = new Point(369, 266);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(653, 643);
+            panel4.TabIndex = 16;
             // 
-            // label4
+            // cbbTrangThaiBan
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(34, 16);
-            label4.Name = "label4";
-            label4.Size = new Size(131, 19);
-            label4.TabIndex = 16;
-            label4.Text = "Danh sách đặt bàn";
+            cbbTrangThaiBan.BackColor = Color.Transparent;
+            cbbTrangThaiBan.BorderColor = Color.FromArgb(226, 232, 240);
+            cbbTrangThaiBan.BorderFocusColor = Color.FromArgb(99, 102, 241);
+            cbbTrangThaiBan.BorderHoverColor = Color.FromArgb(203, 213, 225);
+            cbbTrangThaiBan.CardBackColor = Color.White;
+            cbbTrangThaiBan.CornerRadius = 12;
+            cbbTrangThaiBan.Location = new Point(420, 7);
+            cbbTrangThaiBan.MinimumSize = new Size(80, 36);
+            cbbTrangThaiBan.Name = "cbbTrangThaiBan";
+            cbbTrangThaiBan.Padding = new Padding(10, 6, 30, 6);
+            cbbTrangThaiBan.Placeholder = "";
+            cbbTrangThaiBan.SelectedIndex = -1;
+            cbbTrangThaiBan.SelectedItem = null;
+            cbbTrangThaiBan.Size = new Size(230, 36);
+            cbbTrangThaiBan.TabIndex = 0;
             // 
             // FrmDatBan
             // 
@@ -140,8 +131,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1041, 675);
-            Controls.Add(roundedPanel2);
-            Controls.Add(roundedPanel1);
+            Controls.Add(panel4);
+            Controls.Add(panel3);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
             Controls.Add(roundedButton1);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -150,10 +143,8 @@
             Name = "FrmDatBan";
             StartPosition = FormStartPosition.CenterParent;
             Text = "FrmDatBan";
-            roundedPanel1.ResumeLayout(false);
-            roundedPanel1.PerformLayout();
-            roundedPanel2.ResumeLayout(false);
-            roundedPanel2.PerformLayout();
+            Load += FrmDatBan_Load;
+            panel3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -163,10 +154,10 @@
         private Label label2;
         private Label label1;
         private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedPanel roundedPanel1;
-        private Label label3;
-        private Controls.RoundedPanel roundedPanel2;
-        private Controls.RoundedTextBox roundedTextBox1;
-        private Label label4;
+        private Panel panel1;
+        private Panel panel2;
+        private Panel panel3;
+        private Panel panel4;
+        private Controls.ComboBox_Border cbbTrangThaiBan;
     }
 }

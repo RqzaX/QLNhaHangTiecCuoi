@@ -5,12 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace UI
 {
+    [SupportedOSPlatform("windows")]
     public partial class FrmKhachHang : Form
     {
         private const string KH_TEN = "TenKH";
