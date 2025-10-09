@@ -19,7 +19,34 @@ namespace UI.Controls
             public string Name { get; set; } = "";
             public override string ToString() => $"{Qty}x {Name}";
         }
+        private bool _mergeSameNames = true;
 
+        [Category("Behavior")]
+        [Description("Gộp các item trùng tên (không phân biệt hoa thường) và cộng Qty")]
+        public bool MergeSameNames
+        {
+            get => _mergeSameNames;
+            set { _mergeSameNames = value; NormalizeItems(); Invalidate(); }
+        }
+
+        // Chuẩn hoá danh sách items (gộp trùng)
+        private void NormalizeItems()
+        {
+            if (!_mergeSameNames) return;
+
+            var merged = _items
+                .GroupBy(i => (i.Name ?? "").Trim(), StringComparer.CurrentCultureIgnoreCase)
+                .Select(g => new KotItem
+                {
+                    Name = g.Key,
+                    Qty = g.Sum(x => Math.Max(0, x.Qty))
+                })
+                .Where(i => i.Qty > 0 && !string.IsNullOrWhiteSpace(i.Name))
+                .ToList();
+
+            _items.Clear();
+            _items.AddRange(merged);
+        }
         private string _tableName = "Bàn A03";
         private string _ticketCode = "KOT003";
         private DateTime _time = DateTime.Now;
@@ -257,12 +284,15 @@ namespace UI.Controls
         {
             _items.Clear();
             if (items != null) _items.AddRange(items);
+            NormalizeItems();
             Invalidate();
         }
 
         public void AddItem(int qty, string name)
         {
-            _items.Add(new KotItem { Qty = qty, Name = name ?? "" });
+            if (string.IsNullOrWhiteSpace(name) || qty <= 0) return;
+            _items.Add(new KotItem { Qty = qty, Name = name });
+            NormalizeItems();
             Invalidate();
         }
     }

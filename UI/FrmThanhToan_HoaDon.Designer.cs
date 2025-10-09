@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             roundedPanel1 = new UI.Controls.RoundedPanel();
             label5 = new Label();
             label4 = new Label();
@@ -49,11 +49,16 @@
             label13 = new Label();
             label14 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
-            btnHoaDon = new UI.Controls.HoaDon_Button();
+            panelThanhToan = new Panel();
+            thanhToan_Panel1 = new UI.Controls.ThanhToan_Panel();
+            hoaDon_Button1 = new UI.Controls.HoaDon_Button();
+            hoaDon_Button2 = new UI.Controls.HoaDon_Button();
+            hoaDon_Button3 = new UI.Controls.HoaDon_Button();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
             roundedPanel4.SuspendLayout();
+            panelThanhToan.SuspendLayout();
             SuspendLayout();
             // 
             // roundedPanel1
@@ -256,34 +261,127 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem3.Text = "Chờ thanh toán";
-            pillItem4.Text = "Lịch sử giao dịch";
-            segmentedPill1.Items.Add(pillItem3);
-            segmentedPill1.Items.Add(pillItem4);
+            pillItem1.Text = "Chờ thanh toán";
+            pillItem2.Text = "Lịch sử giao dịch";
+            segmentedPill1.Items.Add(pillItem1);
+            segmentedPill1.Items.Add(pillItem2);
             segmentedPill1.Location = new Point(12, 212);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(312, 38);
             segmentedPill1.TabIndex = 27;
             segmentedPill1.Text = "segmentedPill1";
             // 
-            // btnHoaDon
+            // panelThanhToan
             // 
-            btnHoaDon.BackHover = Color.FromArgb(236, 240, 244);
-            btnHoaDon.BackNormal = Color.FromArgb(244, 246, 249);
-            btnHoaDon.BackPressed = Color.FromArgb(228, 233, 238);
-            btnHoaDon.BorderColor = Color.FromArgb(221, 227, 234);
-            btnHoaDon.ContentPadding = new Padding(12, 3, 12, 3);
-            btnHoaDon.CornerRadius = 12;
-            btnHoaDon.FocusRing = Color.FromArgb(64, 31, 111, 235);
-            btnHoaDon.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnHoaDon.ForeColor = Color.FromArgb(70, 75, 90);
-            btnHoaDon.Location = new Point(9, 253);
-            btnHoaDon.Margin = new Padding(0);
-            btnHoaDon.Name = "btnHoaDon";
-            btnHoaDon.Size = new Size(351, 151);
-            btnHoaDon.TabIndex = 28;
-            btnHoaDon.Text = "hoaDon_Button1";
-            btnHoaDon.TextColor = Color.FromArgb(70, 75, 90);
+            panelThanhToan.Controls.Add(thanhToan_Panel1);
+            panelThanhToan.Location = new Point(541, 220);
+            panelThanhToan.Name = "panelThanhToan";
+            panelThanhToan.Size = new Size(469, 519);
+            panelThanhToan.TabIndex = 29;
+            // 
+            // thanhToan_Panel1
+            // 
+            thanhToan_Panel1.BackColor = Color.FromArgb(250, 250, 250);
+            thanhToan_Panel1.Location = new Point(16, 18);
+            thanhToan_Panel1.Name = "thanhToan_Panel1";
+            thanhToan_Panel1.Padding = new Padding(20);
+            thanhToan_Panel1.Size = new Size(439, 488);
+            thanhToan_Panel1.SubTotal = new decimal(new int[] { 850000, 0, 0, 0 });
+            thanhToan_Panel1.TabIndex = 0;
+            thanhToan_Panel1.VATPercent = new decimal(new int[] { 10, 0, 0, 0 });
+            // 
+            // hoaDon_Button1
+            // 
+            hoaDon_Button1.BackCardColor = Color.White;
+            hoaDon_Button1.BackColor = Color.Transparent;
+            hoaDon_Button1.BadgeCode = "B001";
+            hoaDon_Button1.BorderColor = Color.FromArgb(40, 40, 60);
+            hoaDon_Button1.BorderThickness = 2;
+            hoaDon_Button1.CardPadding = new Padding(14, 12, 14, 12);
+            hoaDon_Button1.CornerRadius = 20;
+            hoaDon_Button1.Dishes = 8;
+            hoaDon_Button1.DividerColor = Color.FromArgb(230, 230, 235);
+            hoaDon_Button1.FlatAppearance.BorderSize = 0;
+            hoaDon_Button1.FlatStyle = FlatStyle.Flat;
+            hoaDon_Button1.ForeColor = Color.Transparent;
+            hoaDon_Button1.ForeMain = Color.Black;
+            hoaDon_Button1.ForeMuted = Color.FromArgb(90, 90, 110);
+            hoaDon_Button1.Guests = 4;
+            hoaDon_Button1.Location = new Point(24, 266);
+            hoaDon_Button1.MinimumSize = new Size(260, 150);
+            hoaDon_Button1.Name = "hoaDon_Button1";
+            hoaDon_Button1.ShowShadow = false;
+            hoaDon_Button1.Size = new Size(496, 150);
+            hoaDon_Button1.StartTimeText = "14:30";
+            hoaDon_Button1.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
+            hoaDon_Button1.TabIndex = 30;
+            hoaDon_Button1.TableTitle = "Bàn A01";
+            hoaDon_Button1.Text = "hoaDon_Button1";
+            hoaDon_Button1.Total = new decimal(new int[] { 935000, 0, 0, 0 });
+            hoaDon_Button1.UseVisualStyleBackColor = false;
+            hoaDon_Button1.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
+            // 
+            // hoaDon_Button2
+            // 
+            hoaDon_Button2.BackCardColor = Color.White;
+            hoaDon_Button2.BackColor = Color.Transparent;
+            hoaDon_Button2.BadgeCode = "B001";
+            hoaDon_Button2.BorderColor = Color.FromArgb(40, 40, 60);
+            hoaDon_Button2.BorderThickness = 2;
+            hoaDon_Button2.CardPadding = new Padding(14, 12, 14, 12);
+            hoaDon_Button2.CornerRadius = 20;
+            hoaDon_Button2.Dishes = 8;
+            hoaDon_Button2.DividerColor = Color.FromArgb(230, 230, 235);
+            hoaDon_Button2.FlatAppearance.BorderSize = 0;
+            hoaDon_Button2.FlatStyle = FlatStyle.Flat;
+            hoaDon_Button2.ForeColor = Color.Transparent;
+            hoaDon_Button2.ForeMain = Color.Black;
+            hoaDon_Button2.ForeMuted = Color.FromArgb(90, 90, 110);
+            hoaDon_Button2.Guests = 4;
+            hoaDon_Button2.Location = new Point(24, 432);
+            hoaDon_Button2.MinimumSize = new Size(260, 150);
+            hoaDon_Button2.Name = "hoaDon_Button2";
+            hoaDon_Button2.ShowShadow = false;
+            hoaDon_Button2.Size = new Size(496, 150);
+            hoaDon_Button2.StartTimeText = "14:30";
+            hoaDon_Button2.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
+            hoaDon_Button2.TabIndex = 31;
+            hoaDon_Button2.TableTitle = "Bàn A02";
+            hoaDon_Button2.Text = "hoaDon_Button2";
+            hoaDon_Button2.Total = new decimal(new int[] { 845845, 0, 0, 0 });
+            hoaDon_Button2.UseVisualStyleBackColor = false;
+            hoaDon_Button2.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
+            // 
+            // hoaDon_Button3
+            // 
+            hoaDon_Button3.BackCardColor = Color.White;
+            hoaDon_Button3.BackColor = Color.Transparent;
+            hoaDon_Button3.BadgeCode = "B001";
+            hoaDon_Button3.BorderColor = Color.FromArgb(40, 40, 60);
+            hoaDon_Button3.BorderThickness = 2;
+            hoaDon_Button3.CardPadding = new Padding(14, 12, 14, 12);
+            hoaDon_Button3.CornerRadius = 20;
+            hoaDon_Button3.Dishes = 8;
+            hoaDon_Button3.DividerColor = Color.FromArgb(230, 230, 235);
+            hoaDon_Button3.FlatAppearance.BorderSize = 0;
+            hoaDon_Button3.FlatStyle = FlatStyle.Flat;
+            hoaDon_Button3.ForeColor = Color.Transparent;
+            hoaDon_Button3.ForeMain = Color.Black;
+            hoaDon_Button3.ForeMuted = Color.FromArgb(90, 90, 110);
+            hoaDon_Button3.Guests = 7;
+            hoaDon_Button3.Location = new Point(24, 601);
+            hoaDon_Button3.MinimumSize = new Size(260, 150);
+            hoaDon_Button3.Name = "hoaDon_Button3";
+            hoaDon_Button3.ShowShadow = false;
+            hoaDon_Button3.Size = new Size(496, 150);
+            hoaDon_Button3.StartTimeText = "14:30";
+            hoaDon_Button3.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
+            hoaDon_Button3.TabIndex = 32;
+            hoaDon_Button3.TableTitle = "Bàn A04";
+            hoaDon_Button3.Text = "hoaDon_Button3";
+            hoaDon_Button3.Total = new decimal(new int[] { 746745, 0, 0, 0 });
+            hoaDon_Button3.UseVisualStyleBackColor = false;
+            hoaDon_Button3.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
             // 
             // FrmThanhToan_HoaDon
             // 
@@ -291,7 +389,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1041, 675);
-            Controls.Add(btnHoaDon);
+            Controls.Add(hoaDon_Button3);
+            Controls.Add(hoaDon_Button2);
+            Controls.Add(hoaDon_Button1);
+            Controls.Add(panelThanhToan);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
             Controls.Add(roundedPanel3);
@@ -302,6 +403,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmThanhToan_HoaDon";
             Text = "FrmThanhToan_HoaDon";
+            Load += FrmThanhToan_HoaDon_Load;
             roundedPanel1.ResumeLayout(false);
             roundedPanel1.PerformLayout();
             roundedPanel2.ResumeLayout(false);
@@ -310,6 +412,7 @@
             roundedPanel3.PerformLayout();
             roundedPanel4.ResumeLayout(false);
             roundedPanel4.PerformLayout();
+            panelThanhToan.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -335,6 +438,10 @@
         private Label label13;
         private Label label14;
         private VanThuan.UI.SegmentedPill segmentedPill1;
-        private Controls.HoaDon_Button btnHoaDon;
+        private Panel panelThanhToan;
+        private UI.Controls.ThanhToan_Panel thanhToan_Panel1;
+        private Controls.HoaDon_Button hoaDon_Button1;
+        private Controls.HoaDon_Button hoaDon_Button2;
+        private Controls.HoaDon_Button hoaDon_Button3;
     }
 }

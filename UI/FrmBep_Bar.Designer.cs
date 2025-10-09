@@ -31,12 +31,10 @@
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
-            Controls.KOTTicketCard.KotItem kotItem5 = new Controls.KOTTicketCard.KotItem();
-            Controls.KOTTicketCard.KotItem kotItem6 = new Controls.KOTTicketCard.KotItem();
-            Controls.KOTTicketCard.KotItem kotItem1 = new Controls.KOTTicketCard.KotItem();
-            Controls.KOTTicketCard.KotItem kotItem2 = new Controls.KOTTicketCard.KotItem();
             Controls.KOTTicketCard.KotItem kotItem3 = new Controls.KOTTicketCard.KotItem();
             Controls.KOTTicketCard.KotItem kotItem4 = new Controls.KOTTicketCard.KotItem();
+            Controls.KOTTicketCard.KotItem kotItem1 = new Controls.KOTTicketCard.KotItem();
+            Controls.KOTTicketCard.KotItem kotItem2 = new Controls.KOTTicketCard.KotItem();
             roundedPanel4 = new UI.Controls.RoundedPanel();
             label9 = new Label();
             label10 = new Label();
@@ -301,8 +299,6 @@
             // kotTicketCard1
             // 
             kotTicketCard1.ActionText = "Bắt đầu làm";
-            kotTicketCard1.AllowDrop = true;
-            kotTicketCard1.AutoSize = true;
             kotTicketCard1.BackColor = Color.Transparent;
             kotTicketCard1.BorderColor = Color.FromArgb(225, 229, 234);
             kotTicketCard1.ButtonColor = Color.FromArgb(12, 15, 28);
@@ -313,15 +309,16 @@
             kotTicketCard1.CardBackColor = Color.White;
             kotTicketCard1.CardPadding = new Padding(18, 16, 18, 16);
             kotTicketCard1.CornerRadius = 18;
-            kotItem5.Name = "Gỏi cuốn tôm thịt";
-            kotItem5.Qty = 4;
-            kotItem6.Name = "Salad hải sản";
-            kotItem6.Qty = 2;
-            kotTicketCard1.Items.Add(kotItem5);
-            kotTicketCard1.Items.Add(kotItem6);
+            kotItem3.Name = "Gỏi cuốn tôm thịt";
+            kotItem3.Qty = 4;
+            kotItem4.Name = "Salad hải sản";
+            kotItem4.Qty = 2;
+            kotTicketCard1.Items.Add(kotItem3);
+            kotTicketCard1.Items.Add(kotItem4);
             kotTicketCard1.Location = new Point(11, 13);
+            kotTicketCard1.MergeSameNames = true;
             kotTicketCard1.Name = "kotTicketCard1";
-            kotTicketCard1.OrderTime = new DateTime(2025, 10, 10, 0, 43, 2, 253);
+            kotTicketCard1.OrderTime = new DateTime(2025, 10, 10, 2, 32, 31, 902);
             kotTicketCard1.Size = new Size(400, 220);
             kotTicketCard1.TabIndex = 0;
             kotTicketCard1.TableName = "Bàn A03";
@@ -330,8 +327,6 @@
             // kotTicketCard2
             // 
             kotTicketCard2.ActionText = "Bắt đầu làm";
-            kotTicketCard2.AllowDrop = true;
-            kotTicketCard2.AutoSize = true;
             kotTicketCard2.BackColor = Color.Transparent;
             kotTicketCard2.BorderColor = Color.FromArgb(225, 229, 234);
             kotTicketCard2.ButtonColor = Color.FromArgb(12, 15, 28);
@@ -343,24 +338,19 @@
             kotTicketCard2.CardPadding = new Padding(18, 16, 18, 16);
             kotTicketCard2.CornerRadius = 18;
             kotItem1.Name = "Gỏi cuốn tôm thịt";
-            kotItem1.Qty = 4;
+            kotItem1.Qty = 8;
             kotItem2.Name = "Salad hải sản";
-            kotItem2.Qty = 2;
-            kotItem3.Name = "Gỏi cuốn tôm thịt";
-            kotItem3.Qty = 4;
-            kotItem4.Name = "Salad hải sản";
-            kotItem4.Qty = 2;
+            kotItem2.Qty = 4;
             kotTicketCard2.Items.Add(kotItem1);
             kotTicketCard2.Items.Add(kotItem2);
-            kotTicketCard2.Items.Add(kotItem3);
-            kotTicketCard2.Items.Add(kotItem4);
-            kotTicketCard2.Location = new Point(422, 13);
+            kotTicketCard2.Location = new Point(417, 13);
+            kotTicketCard2.MergeSameNames = true;
             kotTicketCard2.Name = "kotTicketCard2";
-            kotTicketCard2.OrderTime = new DateTime(2025, 10, 10, 0, 43, 2, 253);
-            kotTicketCard2.Size = new Size(400, 244);
+            kotTicketCard2.OrderTime = new DateTime(2025, 10, 10, 2, 32, 31, 902);
+            kotTicketCard2.Size = new Size(400, 220);
             kotTicketCard2.TabIndex = 1;
-            kotTicketCard2.TableName = "Bàn A04";
-            kotTicketCard2.TicketCode = "KOT004";
+            kotTicketCard2.TableName = "Bàn A03";
+            kotTicketCard2.TicketCode = "KOT003";
             // 
             // FrmBep_Bar
             // 
@@ -390,7 +380,6 @@
             roundedPanel1.ResumeLayout(false);
             roundedPanel1.PerformLayout();
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }

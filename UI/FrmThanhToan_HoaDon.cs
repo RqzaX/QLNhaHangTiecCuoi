@@ -16,5 +16,10 @@ namespace UI
         {
             InitializeComponent();
         }
+
+        private void FrmThanhToan_HoaDon_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

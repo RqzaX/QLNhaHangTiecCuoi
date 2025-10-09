@@ -21,10 +21,6 @@ namespace UI
 
         private void FrmDatBan_Load(object sender, EventArgs e)
         {
-            cbbTrangThaiBan.SetItems(new[]{
-                    "Tất cả","Chờ xác nhận","Đã xác nhận","Đã đến","Hoàn thành","Đã hủy"
-                });
-            cbbTrangThaiBan.SelectedIndex = 0;
 
         }
     }

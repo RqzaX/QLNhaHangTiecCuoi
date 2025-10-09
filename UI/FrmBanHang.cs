@@ -39,5 +39,10 @@ namespace UI
                 // TODO: xử lý sau khi chọn bàn
             }
         }
+
+        private void roundedButton2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
