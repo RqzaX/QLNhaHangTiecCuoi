@@ -165,6 +165,7 @@
             btnBaoCao.TextColor = Color.FromArgb(31, 41, 55);
             btnBaoCao.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnBaoCao.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnBaoCao.Click += btnBaoCao_Click;
             // 
             // btnNhanSu_Ca
             // 
@@ -317,6 +318,7 @@
             btnThanhToan_HoaDon.TextColor = Color.FromArgb(31, 41, 55);
             btnThanhToan_HoaDon.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnThanhToan_HoaDon.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnThanhToan_HoaDon.Click += btnThanhToan_HoaDon_Click;
             // 
             // btnKOT
             // 
@@ -335,6 +337,7 @@
             btnKOT.TextColor = Color.FromArgb(31, 41, 55);
             btnKOT.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnKOT.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnKOT.Click += btnKOT_Click;
             // 
             // btnHopDong_Coc
             // 

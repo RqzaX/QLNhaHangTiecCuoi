@@ -126,7 +126,6 @@ namespace UI
         {
             ShowChild<FrmNhanSuVaCa>();
         }
-
         private void btnDatSanh_TiecCuoi_Click(object sender, EventArgs e)
         {
             ShowChild<FrmDatSanh_TiecCuoi>();
@@ -135,6 +134,20 @@ namespace UI
         private void btnHopDong_Coc_Click(object sender, EventArgs e)
         {
             ShowChild<FrmHopDong_Coc>();
+        }
+        private void btnBaoCao_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmBaoCao>();
+        }
+
+        private void btnKOT_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmBep_Bar>();
+        }
+
+        private void btnThanhToan_HoaDon_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmThanhToan_HoaDon>();
         }
 
         private void ShowChild<T>() where T : Form, new()

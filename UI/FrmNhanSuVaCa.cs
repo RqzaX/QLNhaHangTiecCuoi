@@ -18,7 +18,13 @@ namespace UI
         {
             InitializeComponent();
         }
-
+        private const string NS_TEN = "TenNV";
+        private const string NS_CV = "ChucVu";
+        private const string NS_LH = "LienHe";
+        private const string NS_CN = "ChiNhanh";
+        private const string NS_NGAY = "NgayVao";
+        private const string NS_TT = "TrangThai";
+        private const string NS_TTAC = "ThaoTac";
         private void label12_Click(object sender, EventArgs e)
         {
 
@@ -41,31 +47,29 @@ namespace UI
         }
 
         private void AddNV(string ten, string chucVu, string phone, string email,
-                           string chiNhanh, DateTime ngayVao, string trangThai)
+                   string chiNhanh, DateTime ngayVao, string trangThai)
         {
-            // cột Liên hệ 2 dòng (phone \n email)
             string lienHe = $"{phone}\n{email}";
-            dgvNhanSu.Rows.Add(
-                ten, chucVu, lienHe, chiNhanh,
-                ngayVao.ToString("dd/M/yyyy"),
-                trangThai, "Chi tiết"
-            );
+            dgvNhanSu.Rows.Add(ten, chucVu, lienHe, chiNhanh, ngayVao.ToString("dd/M/yyyy"),
+                               trangThai, "Chi tiết");
         }
         private void dgvNhanSu_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
             var dgv = (DataGridView)sender;
+            var col = dgv.Columns[e.ColumnIndex].Name;
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // Liên hệ: 2 dòng (điện thoại đậm, email xám)
-            if (dgv.Columns[e.ColumnIndex].Name == "LienHe")
+            // Liên hệ: 2 dòng (đt đậm, email xám)
+            if (col == NS_LH)
             {
                 e.Handled = true;
                 e.PaintBackground(e.CellBounds, true);
+
                 var parts = (e.FormattedValue?.ToString() ?? "").Split('\n');
-                string phone = parts.Length > 0 ? parts[0] : "";
-                string mail = parts.Length > 1 ? parts[1] : "";
+                string phone = parts.ElementAtOrDefault(0) ?? "";
+                string mail = parts.ElementAtOrDefault(1) ?? "";
 
                 var r = Rectangle.Inflate(e.CellBounds, -8, -6);
                 using var br1 = new SolidBrush(e.CellStyle.ForeColor);
@@ -82,17 +86,17 @@ namespace UI
                 return;
             }
 
-            // Trạng thái: chip xanh/vàng
-            if (dgv.Columns[e.ColumnIndex].Name == "TrangThai")
+            // Trạng thái: chip (xanh "Đang làm" / vàng "Nghỉ phép")
+            if (col == NS_TT)
             {
                 e.Handled = true;
                 e.PaintBackground(e.CellBounds, true);
 
-                string text = e.FormattedValue?.ToString() ?? "";
+                string text = Convert.ToString(e.FormattedValue) ?? "";
                 bool active = text.Equals("Đang làm", StringComparison.OrdinalIgnoreCase);
 
-                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 26) / 2, 96, 26);
-                using var path = Rounded(chip, 13);
+                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 28) / 2, 92, 28);
+                using var path = Rounded(chip, 14);
                 using var fill = new SolidBrush(active ? Color.FromArgb(208, 247, 225) : Color.FromArgb(255, 239, 185));
                 using var br = new SolidBrush(active ? Color.FromArgb(16, 128, 67) : Color.FromArgb(159, 108, 0));
 
@@ -112,22 +116,33 @@ namespace UI
             p.AddArc(r.Right - d, r.Y, d, d, 270, 90);
             p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
             p.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
-            p.CloseFigure();
-            return p;
+            p.CloseFigure(); return p;
         }
         private void dgvNhanSu_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            if (dgvNhanSu.Columns[e.ColumnIndex].Name == "ChiTiet")
-            {
-                string ten = dgvNhanSu.Rows[e.RowIndex].Cells["TenNV"].Value?.ToString();
-                MessageBox.Show($"Xem chi tiết nhân viên: {ten}");
-            }
+            if (dgvNhanSu.Columns[e.ColumnIndex].Name != NS_TTAC) return;
+
+            string ten = dgvNhanSu.Rows[e.RowIndex].Cells[NS_TEN].Value?.ToString();
+            string chuc = dgvNhanSu.Rows[e.RowIndex].Cells[NS_CV].Value?.ToString();
+            string cn = dgvNhanSu.Rows[e.RowIndex].Cells[NS_CN].Value?.ToString();
+            string ngay = dgvNhanSu.Rows[e.RowIndex].Cells[NS_NGAY].Value?.ToString();
+
+            MessageBox.Show($"Chi tiết nhân sự:\n- Tên: {ten}\n- Chức vụ: {chuc}\n- Chi nhánh: {cn}\n- Ngày vào: {ngay}",
+                            "Nhân sự", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        
 
         private void FrmNhanSuVaCa_Load(object sender, EventArgs e)
         {
             LoadDataNhanSu();
+            
+        }
+
+
+        private void cbbNhanSu_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

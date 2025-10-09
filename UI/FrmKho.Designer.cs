@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem5 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem6 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             roundedPanel1 = new UI.Controls.RoundedPanel();
             label7 = new Label();
             label3 = new Label();
@@ -61,6 +64,12 @@
             DgvtxtGiaTri = new DataGridViewTextBoxColumn();
             dgvtxtTrangThai = new DataGridViewTextBoxColumn();
             dgvtxtThaoTac = new DataGridViewTextBoxColumn();
+            roundedButton5 = new UI.Controls.RoundedButton();
+            roundedButton6 = new UI.Controls.RoundedButton();
+            roundedButton7 = new UI.Controls.RoundedButton();
+            roundedButton8 = new UI.Controls.RoundedButton();
+            roundedButton9 = new UI.Controls.RoundedButton();
+            roundedButton10 = new UI.Controls.RoundedButton();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
@@ -70,7 +79,7 @@
             // 
             // roundedPanel1
             // 
-            roundedPanel1.BackColor = Color.White;
+            roundedPanel1.BackColor = Color.FromArgb(192, 255, 192);
             roundedPanel1.BorderThickness = 5;
             roundedPanel1.Controls.Add(label7);
             roundedPanel1.Controls.Add(label3);
@@ -174,6 +183,7 @@
             roundedButton4.BackColor = Color.Black;
             roundedButton4.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton4.ForeColor = Color.White;
+            roundedButton4.HoverBackColor = Color.Gray;
             roundedButton4.Location = new Point(1018, 45);
             roundedButton4.Name = "roundedButton4";
             roundedButton4.Padding = new Padding(10, 6, 10, 6);
@@ -184,7 +194,7 @@
             // 
             // roundedPanel2
             // 
-            roundedPanel2.BackColor = Color.White;
+            roundedPanel2.BackColor = Color.FromArgb(192, 255, 192);
             roundedPanel2.BorderThickness = 5;
             roundedPanel2.Controls.Add(label9);
             roundedPanel2.Controls.Add(label5);
@@ -216,7 +226,7 @@
             // 
             // roundedPanel3
             // 
-            roundedPanel3.BackColor = Color.White;
+            roundedPanel3.BackColor = Color.FromArgb(192, 255, 192);
             roundedPanel3.BorderThickness = 5;
             roundedPanel3.Controls.Add(label8);
             roundedPanel3.Controls.Add(label4);
@@ -248,7 +258,7 @@
             // 
             // roundedPanel4
             // 
-            roundedPanel4.BackColor = Color.White;
+            roundedPanel4.BackColor = Color.FromArgb(192, 255, 192);
             roundedPanel4.BorderThickness = 5;
             roundedPanel4.Controls.Add(label10);
             roundedPanel4.Controls.Add(label6);
@@ -282,12 +292,12 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem4.Text = "Nhập Kho";
-            pillItem5.Text = "Lịch Sử Giao Dịch";
-            pillItem6.Text = "Cảnh báo";
-            segmentedPill1.Items.Add(pillItem4);
-            segmentedPill1.Items.Add(pillItem5);
-            segmentedPill1.Items.Add(pillItem6);
+            pillItem1.Text = "Nhập Kho";
+            pillItem2.Text = "Lịch Sử Giao Dịch";
+            pillItem3.Text = "Cảnh báo";
+            segmentedPill1.Items.Add(pillItem1);
+            segmentedPill1.Items.Add(pillItem2);
+            segmentedPill1.Items.Add(pillItem3);
             segmentedPill1.Location = new Point(38, 273);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(412, 55);
@@ -300,7 +310,7 @@
             borderComboBox1.FormattingEnabled = true;
             borderComboBox1.IntegralHeight = false;
             borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Tất cả" });
+            borderComboBox1.Items.AddRange(new object[] { "Tất cả", "Đủ Hàng", "Sắp Hết", "Hết Hàng" });
             borderComboBox1.Location = new Point(611, 330);
             borderComboBox1.Name = "borderComboBox1";
             borderComboBox1.Size = new Size(180, 32);
@@ -310,14 +320,48 @@
             // 
             dgvKho.AllowUserToAddRows = false;
             dgvKho.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvKho.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvKho.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvKho.BackgroundColor = SystemColors.ControlLightLight;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvKho.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvKho.ColumnHeadersHeight = 60;
+            dgvKho.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvKho.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenNguyenLieu, dgvtxtDonVi, dgvtxtTonKho, dgvtxtTonToiThieu, dgvtxtDungTb, DgvtxtGiaTri, dgvtxtTrangThai, dgvtxtThaoTac });
-            dgvKho.Location = new Point(12, 368);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(255, 255, 192);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Olive;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvKho.DefaultCellStyle = dataGridViewCellStyle2;
+            dgvKho.Location = new Point(12, 378);
             dgvKho.Name = "dgvKho";
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(255, 255, 192);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Olive;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvKho.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvKho.RowHeadersVisible = false;
             dgvKho.RowHeadersWidth = 51;
+            dgvKho.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvKho.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvKho.Size = new Size(1148, 473);
             dgvKho.TabIndex = 19;
+            dgvKho.CellContentClick += dgvKho_CellContentClick;
+            dgvKho.CellPainting += dgvKho_CellPainting;
             // 
             // dgvtxtTenNguyenLieu
             // 
@@ -367,11 +411,131 @@
             dgvtxtThaoTac.MinimumWidth = 6;
             dgvtxtThaoTac.Name = "dgvtxtThaoTac";
             // 
+            // roundedButton5
+            // 
+            roundedButton5.BackColor = Color.White;
+            roundedButton5.BorderColor = Color.Transparent;
+            roundedButton5.BorderThickness = 0;
+            roundedButton5.FlatAppearance.BorderSize = 0;
+            roundedButton5.FlatStyle = FlatStyle.Flat;
+            roundedButton5.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton5.ForeColor = Color.Black;
+            roundedButton5.HoverBackColor = Color.Gray;
+            roundedButton5.Location = new Point(1018, 460);
+            roundedButton5.Name = "roundedButton5";
+            roundedButton5.Padding = new Padding(10, 6, 10, 6);
+            roundedButton5.PressedBackColor = Color.White;
+            roundedButton5.Size = new Size(109, 37);
+            roundedButton5.TabIndex = 20;
+            roundedButton5.Text = "Chi Tiết";
+            roundedButton5.UseVisualStyleBackColor = false;
+            // 
+            // roundedButton6
+            // 
+            roundedButton6.BackColor = Color.White;
+            roundedButton6.BorderColor = Color.Transparent;
+            roundedButton6.BorderThickness = 0;
+            roundedButton6.FlatAppearance.BorderSize = 0;
+            roundedButton6.FlatStyle = FlatStyle.Flat;
+            roundedButton6.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton6.ForeColor = Color.Black;
+            roundedButton6.HoverBackColor = Color.Gray;
+            roundedButton6.Location = new Point(1018, 514);
+            roundedButton6.Name = "roundedButton6";
+            roundedButton6.Padding = new Padding(10, 6, 10, 6);
+            roundedButton6.PressedBackColor = Color.White;
+            roundedButton6.Size = new Size(109, 37);
+            roundedButton6.TabIndex = 21;
+            roundedButton6.Text = "Chi Tiết";
+            roundedButton6.UseVisualStyleBackColor = false;
+            // 
+            // roundedButton7
+            // 
+            roundedButton7.BackColor = Color.White;
+            roundedButton7.BorderColor = Color.Transparent;
+            roundedButton7.BorderThickness = 0;
+            roundedButton7.FlatAppearance.BorderSize = 0;
+            roundedButton7.FlatStyle = FlatStyle.Flat;
+            roundedButton7.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton7.ForeColor = Color.Black;
+            roundedButton7.HoverBackColor = Color.Gray;
+            roundedButton7.Location = new Point(1018, 563);
+            roundedButton7.Name = "roundedButton7";
+            roundedButton7.Padding = new Padding(10, 6, 10, 6);
+            roundedButton7.PressedBackColor = Color.White;
+            roundedButton7.Size = new Size(109, 37);
+            roundedButton7.TabIndex = 20;
+            roundedButton7.Text = "Chi Tiết";
+            roundedButton7.UseVisualStyleBackColor = false;
+            // 
+            // roundedButton8
+            // 
+            roundedButton8.BackColor = Color.White;
+            roundedButton8.BorderColor = Color.Transparent;
+            roundedButton8.BorderThickness = 0;
+            roundedButton8.FlatAppearance.BorderSize = 0;
+            roundedButton8.FlatStyle = FlatStyle.Flat;
+            roundedButton8.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton8.ForeColor = Color.Black;
+            roundedButton8.HoverBackColor = Color.Gray;
+            roundedButton8.Location = new Point(1018, 617);
+            roundedButton8.Name = "roundedButton8";
+            roundedButton8.Padding = new Padding(10, 6, 10, 6);
+            roundedButton8.PressedBackColor = Color.White;
+            roundedButton8.Size = new Size(109, 37);
+            roundedButton8.TabIndex = 21;
+            roundedButton8.Text = "Chi Tiết";
+            roundedButton8.UseVisualStyleBackColor = false;
+            // 
+            // roundedButton9
+            // 
+            roundedButton9.BackColor = Color.White;
+            roundedButton9.BorderColor = Color.Transparent;
+            roundedButton9.BorderThickness = 0;
+            roundedButton9.FlatAppearance.BorderSize = 0;
+            roundedButton9.FlatStyle = FlatStyle.Flat;
+            roundedButton9.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton9.ForeColor = Color.Black;
+            roundedButton9.HoverBackColor = Color.Gray;
+            roundedButton9.Location = new Point(1018, 668);
+            roundedButton9.Name = "roundedButton9";
+            roundedButton9.Padding = new Padding(10, 6, 10, 6);
+            roundedButton9.PressedBackColor = Color.White;
+            roundedButton9.Size = new Size(109, 37);
+            roundedButton9.TabIndex = 20;
+            roundedButton9.Text = "Chi Tiết";
+            roundedButton9.UseVisualStyleBackColor = false;
+            // 
+            // roundedButton10
+            // 
+            roundedButton10.BackColor = Color.White;
+            roundedButton10.BorderColor = Color.Transparent;
+            roundedButton10.BorderThickness = 0;
+            roundedButton10.FlatAppearance.BorderSize = 0;
+            roundedButton10.FlatStyle = FlatStyle.Flat;
+            roundedButton10.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton10.ForeColor = Color.Black;
+            roundedButton10.HoverBackColor = Color.Gray;
+            roundedButton10.Location = new Point(1018, 722);
+            roundedButton10.Name = "roundedButton10";
+            roundedButton10.Padding = new Padding(10, 6, 10, 6);
+            roundedButton10.PressedBackColor = Color.White;
+            roundedButton10.Size = new Size(109, 37);
+            roundedButton10.TabIndex = 21;
+            roundedButton10.Text = "Chi Tiết";
+            roundedButton10.UseVisualStyleBackColor = false;
+            // 
             // FrmKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 853);
+            Controls.Add(roundedButton10);
+            Controls.Add(roundedButton9);
+            Controls.Add(roundedButton8);
+            Controls.Add(roundedButton7);
+            Controls.Add(roundedButton6);
+            Controls.Add(roundedButton5);
             Controls.Add(dgvKho);
             Controls.Add(borderComboBox1);
             Controls.Add(segmentedPill1);
@@ -435,5 +599,11 @@
         private DataGridViewTextBoxColumn DgvtxtGiaTri;
         private DataGridViewTextBoxColumn dgvtxtTrangThai;
         private DataGridViewTextBoxColumn dgvtxtThaoTac;
+        private Controls.RoundedButton roundedButton5;
+        private Controls.RoundedButton roundedButton6;
+        private Controls.RoundedButton roundedButton7;
+        private Controls.RoundedButton roundedButton8;
+        private Controls.RoundedButton roundedButton9;
+        private Controls.RoundedButton roundedButton10;
     }
 }

@@ -345,6 +345,9 @@
             dgvDatSanh.BackgroundColor = Color.White;
             dgvDatSanh.BorderStyle = BorderStyle.None;
             dgvDatSanh.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            dgvDatSanh.ColMaDonIndex = -1;
+            dgvDatSanh.ColThaoTacIndex = -1;
+            dgvDatSanh.ColTrangThaiIndex = -1;
             dgvDatSanh.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.White;
@@ -363,6 +366,7 @@
             dataGridViewCellStyle3.SelectionForeColor = Color.Black;
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             dgvDatSanh.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvDatSanh.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvDatSanh.EnableHeadersVisualStyles = false;
             dgvDatSanh.GridColor = Color.FromArgb(240, 242, 245);
             dgvDatSanh.Location = new Point(15, 79);
