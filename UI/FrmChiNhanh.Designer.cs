@@ -39,10 +39,10 @@
             label3 = new Label();
             roundedButton2 = new UI.Controls.RoundedButton();
             dgvChiNhanh = new DataGridView();
-            dgvtxtTenChiNhanh = new DataGridViewTextBoxColumn();
-            dgvtxtDiaChi = new DataGridViewTextBoxColumn();
-            dgvtxtDienThoai = new DataGridViewTextBoxColumn();
-            dgvtxtTrangThai = new DataGridViewTextBoxColumn();
+            TenCN = new DataGridViewTextBoxColumn();
+            DiaChi = new DataGridViewTextBoxColumn();
+            DienThoai = new DataGridViewTextBoxColumn();
+            TrangThai = new DataGridViewTextBoxColumn();
             ThaoTac = new DataGridViewTextBoxColumn();
             label1 = new Label();
             roundedPanel1.SuspendLayout();
@@ -100,6 +100,7 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
+            roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
             roundedButton2.Location = new Point(959, 36);
@@ -108,11 +109,11 @@
             roundedButton2.Size = new Size(180, 40);
             roundedButton2.TabIndex = 19;
             roundedButton2.Text = "+ Thêm Chi Nhánh";
+            roundedButton2.UseVisualStyleBackColor = false;
             // 
             // dgvChiNhanh
             // 
             dgvChiNhanh.AllowUserToAddRows = false;
-            dgvChiNhanh.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvChiNhanh.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvChiNhanh.BackgroundColor = SystemColors.ControlLightLight;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -125,7 +126,7 @@
             dgvChiNhanh.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvChiNhanh.ColumnHeadersHeight = 60;
             dgvChiNhanh.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvChiNhanh.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenChiNhanh, dgvtxtDiaChi, dgvtxtDienThoai, dgvtxtTrangThai, ThaoTac });
+            dgvChiNhanh.Columns.AddRange(new DataGridViewColumn[] { TenCN, DiaChi, DienThoai, TrangThai, ThaoTac });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -146,35 +147,40 @@
             dgvChiNhanh.CellPainting += dgvChiNhanh_CellPainting;
             dgvChiNhanh.MouseMove += dgvChiNhanh_MouseMove;
             // 
-            // dgvtxtTenChiNhanh
+            // TenCN
             // 
-            dgvtxtTenChiNhanh.HeaderText = "Tên Chi Nhánh";
-            dgvtxtTenChiNhanh.MinimumWidth = 6;
-            dgvtxtTenChiNhanh.Name = "dgvtxtTenChiNhanh";
+            TenCN.HeaderText = "Tên Chi Nhánh";
+            TenCN.MinimumWidth = 6;
+            TenCN.Name = "TenCN";
+            TenCN.Width = 224;
             // 
-            // dgvtxtDiaChi
+            // DiaChi
             // 
-            dgvtxtDiaChi.HeaderText = "Địa Chỉ";
-            dgvtxtDiaChi.MinimumWidth = 6;
-            dgvtxtDiaChi.Name = "dgvtxtDiaChi";
+            DiaChi.HeaderText = "Địa Chỉ";
+            DiaChi.MinimumWidth = 6;
+            DiaChi.Name = "DiaChi";
+            DiaChi.Width = 224;
             // 
-            // dgvtxtDienThoai
+            // DienThoai
             // 
-            dgvtxtDienThoai.HeaderText = "Số Điện Thoại";
-            dgvtxtDienThoai.MinimumWidth = 6;
-            dgvtxtDienThoai.Name = "dgvtxtDienThoai";
+            DienThoai.HeaderText = "Số Điện Thoại";
+            DienThoai.MinimumWidth = 6;
+            DienThoai.Name = "DienThoai";
+            DienThoai.Width = 225;
             // 
-            // dgvtxtTrangThai
+            // TrangThai
             // 
-            dgvtxtTrangThai.HeaderText = "Trạng Thái";
-            dgvtxtTrangThai.MinimumWidth = 6;
-            dgvtxtTrangThai.Name = "dgvtxtTrangThai";
+            TrangThai.HeaderText = "Trạng Thái";
+            TrangThai.MinimumWidth = 6;
+            TrangThai.Name = "TrangThai";
+            TrangThai.Width = 224;
             // 
             // ThaoTac
             // 
             ThaoTac.HeaderText = "Thao Tác";
             ThaoTac.MinimumWidth = 6;
             ThaoTac.Name = "ThaoTac";
+            ThaoTac.Width = 224;
             // 
             // label1
             // 
@@ -214,10 +220,10 @@
         private Label label3;
         private Controls.RoundedButton roundedButton2;
         private Label label1;
-        private DataGridViewTextBoxColumn dgvtxtTenChiNhanh;
-        private DataGridViewTextBoxColumn dgvtxtDiaChi;
-        private DataGridViewTextBoxColumn dgvtxtDienThoai;
-        private DataGridViewTextBoxColumn dgvtxtTrangThai;
+        private DataGridViewTextBoxColumn TenCN;
+        private DataGridViewTextBoxColumn DiaChi;
+        private DataGridViewTextBoxColumn DienThoai;
+        private DataGridViewTextBoxColumn TrangThai;
         private DataGridViewTextBoxColumn ThaoTac;
     }
 }
