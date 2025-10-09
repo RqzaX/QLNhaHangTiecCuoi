@@ -57,14 +57,14 @@
             borderComboBox1 = new UiControls.BorderComboBox();
             roundedButton2 = new UI.Controls.RoundedButton();
             dgvKhachHang = new DataGridView();
-            dgvtxtTenKH = new DataGridViewTextBoxColumn();
-            dgvtxtLienHe = new DataGridViewTextBoxColumn();
-            dgvtxtHang = new DataGridViewTextBoxColumn();
-            dgvtxtTongChiTieu = new DataGridViewTextBoxColumn();
-            dgvtxtSoLanDen = new DataGridViewTextBoxColumn();
-            dgvtxtDiemTichLuy = new DataGridViewTextBoxColumn();
-            dgvtxtLanCuoi = new DataGridViewTextBoxColumn();
-            dgvtxtThaoTac = new DataGridViewTextBoxColumn();
+            TenKH = new DataGridViewTextBoxColumn();
+            LienHe = new DataGridViewTextBoxColumn();
+            Hang = new DataGridViewTextBoxColumn();
+            TongChiTieu = new DataGridViewTextBoxColumn();
+            SoLanDen = new DataGridViewTextBoxColumn();
+            DiemTichLuy = new DataGridViewTextBoxColumn();
+            LanCuoi = new DataGridViewTextBoxColumn();
+            ThaoTac = new DataGridViewTextBoxColumn();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
@@ -303,7 +303,7 @@
             borderComboBox1.FormattingEnabled = true;
             borderComboBox1.IntegralHeight = false;
             borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Tất Cả Hạng", "Cao Thủ", "Kim Cương", "Vàng", "Bạc" });
+            borderComboBox1.Items.AddRange(new object[] { "Tất Cả Hạng", "Vàng", "Bạc", "Thành viên" });
             borderComboBox1.Location = new Point(642, 349);
             borderComboBox1.Name = "borderComboBox1";
             borderComboBox1.Size = new Size(151, 32);
@@ -328,7 +328,7 @@
             dgvKhachHang.BackgroundColor = SystemColors.ControlLightLight;
             dgvKhachHang.ColumnHeadersHeight = 60;
             dgvKhachHang.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvKhachHang.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenKH, dgvtxtLienHe, dgvtxtHang, dgvtxtTongChiTieu, dgvtxtSoLanDen, dgvtxtDiemTichLuy, dgvtxtLanCuoi, dgvtxtThaoTac });
+            dgvKhachHang.Columns.AddRange(new DataGridViewColumn[] { TenKH, LienHe, Hang, TongChiTieu, SoLanDen, DiemTichLuy, LanCuoi, ThaoTac });
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
@@ -356,64 +356,70 @@
             dgvKhachHang.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvKhachHang.Size = new Size(1157, 470);
             dgvKhachHang.TabIndex = 22;
+            dgvKhachHang.CellClick += dgvKhachHang_CellClick;
             dgvKhachHang.CellContentClick += dgvKhachHang_CellContentClick;
+            dgvKhachHang.CellMouseEnter += dgvKhachHang_CellMouseEnter;
+            dgvKhachHang.CellMouseLeave += dgvKhachHang_CellMouseLeave;
+            dgvKhachHang.CellPainting += dgvKhachHang_CellPainting;
             dgvKhachHang.DataBindingComplete += dgvKhachHang_DataBindingComplete;
+            dgvKhachHang.MouseEnter += dgvKhachHang_MouseEnter;
+            dgvKhachHang.MouseLeave += dgvKhachHang_MouseLeave;
             // 
-            // dgvtxtTenKH
+            // TenKH
             // 
-            dgvtxtTenKH.HeaderText = "Tên KH";
-            dgvtxtTenKH.MinimumWidth = 6;
-            dgvtxtTenKH.Name = "dgvtxtTenKH";
-            dgvtxtTenKH.Width = 170;
+            TenKH.HeaderText = "Tên KH";
+            TenKH.MinimumWidth = 6;
+            TenKH.Name = "TenKH";
+            TenKH.Width = 125;
             // 
-            // dgvtxtLienHe
+            // LienHe
             // 
-            dgvtxtLienHe.HeaderText = "Liên Hệ";
-            dgvtxtLienHe.MinimumWidth = 6;
-            dgvtxtLienHe.Name = "dgvtxtLienHe";
-            dgvtxtLienHe.Width = 170;
+            LienHe.HeaderText = "Liên Hệ";
+            LienHe.MinimumWidth = 6;
+            LienHe.Name = "LienHe";
+            LienHe.Width = 125;
             // 
-            // dgvtxtHang
+            // Hang
             // 
-            dgvtxtHang.HeaderText = "Hạng";
-            dgvtxtHang.MinimumWidth = 6;
-            dgvtxtHang.Name = "dgvtxtHang";
-            dgvtxtHang.Width = 144;
+            Hang.HeaderText = "Hạng";
+            Hang.MinimumWidth = 6;
+            Hang.Name = "Hang";
+            Hang.Width = 125;
             // 
-            // dgvtxtTongChiTieu
+            // TongChiTieu
             // 
-            dgvtxtTongChiTieu.HeaderText = "Tông Chi Tiêu";
-            dgvtxtTongChiTieu.MinimumWidth = 6;
-            dgvtxtTongChiTieu.Name = "dgvtxtTongChiTieu";
-            dgvtxtTongChiTieu.Width = 144;
+            TongChiTieu.HeaderText = "Tổng Chi Tiêu";
+            TongChiTieu.MinimumWidth = 6;
+            TongChiTieu.Name = "TongChiTieu";
+            TongChiTieu.Width = 125;
             // 
-            // dgvtxtSoLanDen
+            // SoLanDen
             // 
-            dgvtxtSoLanDen.HeaderText = "Số Lần Đến";
-            dgvtxtSoLanDen.MinimumWidth = 6;
-            dgvtxtSoLanDen.Name = "dgvtxtSoLanDen";
-            dgvtxtSoLanDen.Width = 144;
+            SoLanDen.HeaderText = "Số Lần Đến";
+            SoLanDen.MinimumWidth = 6;
+            SoLanDen.Name = "SoLanDen";
+            SoLanDen.Width = 125;
             // 
-            // dgvtxtDiemTichLuy
+            // DiemTichLuy
             // 
-            dgvtxtDiemTichLuy.HeaderText = "Điểm Tích Lũy";
-            dgvtxtDiemTichLuy.MinimumWidth = 6;
-            dgvtxtDiemTichLuy.Name = "dgvtxtDiemTichLuy";
-            dgvtxtDiemTichLuy.Width = 145;
+            DiemTichLuy.HeaderText = "Điểm Tích Lũy";
+            DiemTichLuy.MinimumWidth = 6;
+            DiemTichLuy.Name = "DiemTichLuy";
+            DiemTichLuy.Width = 125;
             // 
-            // dgvtxtLanCuoi
+            // LanCuoi
             // 
-            dgvtxtLanCuoi.HeaderText = "Lần Cuối";
-            dgvtxtLanCuoi.MinimumWidth = 6;
-            dgvtxtLanCuoi.Name = "dgvtxtLanCuoi";
-            dgvtxtLanCuoi.Width = 144;
+            LanCuoi.HeaderText = "Lần Cuối";
+            LanCuoi.MinimumWidth = 6;
+            LanCuoi.Name = "LanCuoi";
+            LanCuoi.Width = 125;
             // 
-            // dgvtxtThaoTac
+            // ThaoTac
             // 
-            dgvtxtThaoTac.HeaderText = "Thao Tác";
-            dgvtxtThaoTac.MinimumWidth = 6;
-            dgvtxtThaoTac.Name = "dgvtxtThaoTac";
-            dgvtxtThaoTac.Width = 144;
+            ThaoTac.HeaderText = "Thao Thác";
+            ThaoTac.MinimumWidth = 6;
+            ThaoTac.Name = "ThaoTac";
+            ThaoTac.Width = 125;
             // 
             // FrmKhachHang
             // 
@@ -473,13 +479,13 @@
         private UiControls.BorderComboBox borderComboBox1;
         private Controls.RoundedButton roundedButton2;
         private DataGridView dgvKhachHang;
-        private DataGridViewTextBoxColumn dgvtxtTenKH;
-        private DataGridViewTextBoxColumn dgvtxtLienHe;
-        private DataGridViewTextBoxColumn dgvtxtHang;
-        private DataGridViewTextBoxColumn dgvtxtTongChiTieu;
-        private DataGridViewTextBoxColumn dgvtxtSoLanDen;
-        private DataGridViewTextBoxColumn dgvtxtDiemTichLuy;
-        private DataGridViewTextBoxColumn dgvtxtLanCuoi;
-        private DataGridViewTextBoxColumn dgvtxtThaoTac;
+        private DataGridViewTextBoxColumn TenKH;
+        private DataGridViewTextBoxColumn LienHe;
+        private DataGridViewTextBoxColumn Hang;
+        private DataGridViewTextBoxColumn TongChiTieu;
+        private DataGridViewTextBoxColumn SoLanDen;
+        private DataGridViewTextBoxColumn DiemTichLuy;
+        private DataGridViewTextBoxColumn LanCuoi;
+        private DataGridViewTextBoxColumn ThaoTac;
     }
 }

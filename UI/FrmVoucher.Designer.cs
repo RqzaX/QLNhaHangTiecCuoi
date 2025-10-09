@@ -33,14 +33,14 @@
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             dgvKhuyenMai = new DataGridView();
-            dgvTenChuongTrinh = new DataGridViewTextBoxColumn();
-            dgvtxtMaKM = new DataGridViewTextBoxColumn();
-            dgvtxtLoai = new DataGridViewTextBoxColumn();
-            dgvtxtGiaTri = new DataGridViewTextBoxColumn();
-            dgvtxtDieuKien = new DataGridViewTextBoxColumn();
-            dgvtxtThoiGian = new DataGridViewTextBoxColumn();
-            dgvtxtDaDung = new DataGridViewTextBoxColumn();
-            dgvtxtTrangThai = new DataGridViewTextBoxColumn();
+            TenCT = new DataGridViewTextBoxColumn();
+            MaKM = new DataGridViewTextBoxColumn();
+            Loai = new DataGridViewTextBoxColumn();
+            GiaTri = new DataGridViewTextBoxColumn();
+            DieuKien = new DataGridViewTextBoxColumn();
+            ThoiGian = new DataGridViewTextBoxColumn();
+            DaDung = new DataGridViewTextBoxColumn();
+            TrangThai = new DataGridViewTextBoxColumn();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             label1 = new Label();
@@ -81,7 +81,7 @@
             dgvKhuyenMai.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvKhuyenMai.ColumnHeadersHeight = 60;
             dgvKhuyenMai.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvKhuyenMai.Columns.AddRange(new DataGridViewColumn[] { dgvTenChuongTrinh, dgvtxtMaKM, dgvtxtLoai, dgvtxtGiaTri, dgvtxtDieuKien, dgvtxtThoiGian, dgvtxtDaDung, dgvtxtTrangThai });
+            dgvKhuyenMai.Columns.AddRange(new DataGridViewColumn[] { TenCT, MaKM, Loai, GiaTri, DieuKien, ThoiGian, DaDung, TrangThai });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -91,71 +91,71 @@
             dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(0, 192, 192);
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             dgvKhuyenMai.DefaultCellStyle = dataGridViewCellStyle2;
-            dgvKhuyenMai.Location = new Point(3, 355);
+            dgvKhuyenMai.Location = new Point(12, 355);
             dgvKhuyenMai.Name = "dgvKhuyenMai";
             dgvKhuyenMai.RowHeadersVisible = false;
             dgvKhuyenMai.RowHeadersWidth = 51;
             dgvKhuyenMai.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvKhuyenMai.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvKhuyenMai.Size = new Size(1168, 497);
+            dgvKhuyenMai.Size = new Size(1176, 497);
             dgvKhuyenMai.TabIndex = 0;
+            dgvKhuyenMai.CellPainting += dgvKhuyenMai_CellPainting_1;
             // 
-            // dgvTenChuongTrinh
+            // TenCT
             // 
-            dgvTenChuongTrinh.HeaderText = "Tên Chương Trình";
-            dgvTenChuongTrinh.MinimumWidth = 6;
-            dgvTenChuongTrinh.Name = "dgvTenChuongTrinh";
-            dgvTenChuongTrinh.Resizable = DataGridViewTriState.True;
-            dgvTenChuongTrinh.Width = 160;
+            TenCT.HeaderText = "Tên Chương Trình";
+            TenCT.MinimumWidth = 6;
+            TenCT.Name = "TenCT";
+            TenCT.Width = 146;
             // 
-            // dgvtxtMaKM
+            // MaKM
             // 
-            dgvtxtMaKM.HeaderText = "Mã Khuyến Mãi";
-            dgvtxtMaKM.MinimumWidth = 6;
-            dgvtxtMaKM.Name = "dgvtxtMaKM";
-            dgvtxtMaKM.Width = 148;
+            MaKM.HeaderText = "Mã KM";
+            MaKM.MinimumWidth = 6;
+            MaKM.Name = "MaKM";
+            MaKM.Width = 145;
             // 
-            // dgvtxtLoai
+            // Loai
             // 
-            dgvtxtLoai.HeaderText = "Loại";
-            dgvtxtLoai.MinimumWidth = 6;
-            dgvtxtLoai.Name = "dgvtxtLoai";
-            dgvtxtLoai.Width = 146;
+            Loai.HeaderText = "Loại";
+            Loai.MinimumWidth = 6;
+            Loai.Name = "Loai";
+            Loai.Width = 146;
             // 
-            // dgvtxtGiaTri
+            // GiaTri
             // 
-            dgvtxtGiaTri.HeaderText = "Giá Trị";
-            dgvtxtGiaTri.MinimumWidth = 6;
-            dgvtxtGiaTri.Name = "dgvtxtGiaTri";
-            dgvtxtGiaTri.Width = 146;
+            GiaTri.HeaderText = "Giá Trị";
+            GiaTri.MinimumWidth = 6;
+            GiaTri.Name = "GiaTri";
+            GiaTri.Width = 146;
             // 
-            // dgvtxtDieuKien
+            // DieuKien
             // 
-            dgvtxtDieuKien.HeaderText = "Điều Kiện";
-            dgvtxtDieuKien.MinimumWidth = 6;
-            dgvtxtDieuKien.Name = "dgvtxtDieuKien";
-            dgvtxtDieuKien.Width = 230;
+            DieuKien.HeaderText = "Điều Kiện";
+            DieuKien.MinimumWidth = 6;
+            DieuKien.Name = "DieuKien";
+            DieuKien.Width = 145;
             // 
-            // dgvtxtThoiGian
+            // ThoiGian
             // 
-            dgvtxtThoiGian.HeaderText = "Thời Gian";
-            dgvtxtThoiGian.MinimumWidth = 6;
-            dgvtxtThoiGian.Name = "dgvtxtThoiGian";
-            dgvtxtThoiGian.Width = 180;
+            ThoiGian.HeaderText = "Thời Gian";
+            ThoiGian.MinimumWidth = 6;
+            ThoiGian.Name = "ThoiGian";
+            ThoiGian.Width = 146;
             // 
-            // dgvtxtDaDung
+            // DaDung
             // 
-            dgvtxtDaDung.HeaderText = "Đã dùng/Giới Hạn";
-            dgvtxtDaDung.MinimumWidth = 6;
-            dgvtxtDaDung.Name = "dgvtxtDaDung";
-            dgvtxtDaDung.Width = 145;
+            DaDung.HeaderText = "Đã Dùng";
+            DaDung.MinimumWidth = 6;
+            DaDung.Name = "DaDung";
+            DaDung.Width = 145;
             // 
-            // dgvtxtTrangThai
+            // TrangThai
             // 
-            dgvtxtTrangThai.HeaderText = "Trạng Thái";
-            dgvtxtTrangThai.MinimumWidth = 6;
-            dgvtxtTrangThai.Name = "dgvtxtTrangThai";
-            dgvtxtTrangThai.Width = 146;
+            TrangThai.HeaderText = "Trạng Thái";
+            TrangThai.MinimumWidth = 6;
+            TrangThai.Name = "TrangThai";
+            TrangThai.Width = 146;
             // 
             // segmentedPill1
             // 
@@ -325,6 +325,7 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
+            roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
             roundedButton2.Location = new Point(980, 309);
@@ -333,11 +334,13 @@
             roundedButton2.Size = new Size(180, 40);
             roundedButton2.TabIndex = 18;
             roundedButton2.Text = "+ Tạo mới CTKM";
+            roundedButton2.UseVisualStyleBackColor = false;
             // 
             // FrmVoucher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
             ClientSize = new Size(1190, 900);
             Controls.Add(roundedButton2);
             Controls.Add(roundedPanel4);
@@ -386,13 +389,13 @@
         private Label label9;
         private Label label10;
         private Controls.RoundedButton roundedButton2;
-        private DataGridViewTextBoxColumn dgvTenChuongTrinh;
-        private DataGridViewTextBoxColumn dgvtxtMaKM;
-        private DataGridViewTextBoxColumn dgvtxtLoai;
-        private DataGridViewTextBoxColumn dgvtxtGiaTri;
-        private DataGridViewTextBoxColumn dgvtxtDieuKien;
-        private DataGridViewTextBoxColumn dgvtxtThoiGian;
-        private DataGridViewTextBoxColumn dgvtxtDaDung;
-        private DataGridViewTextBoxColumn dgvtxtTrangThai;
+        private DataGridViewTextBoxColumn TenCT;
+        private DataGridViewTextBoxColumn MaKM;
+        private DataGridViewTextBoxColumn Loai;
+        private DataGridViewTextBoxColumn GiaTri;
+        private DataGridViewTextBoxColumn DieuKien;
+        private DataGridViewTextBoxColumn ThoiGian;
+        private DataGridViewTextBoxColumn DaDung;
+        private DataGridViewTextBoxColumn TrangThai;
     }
 }

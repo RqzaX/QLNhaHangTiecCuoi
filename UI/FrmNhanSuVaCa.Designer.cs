@@ -59,9 +59,9 @@
             cbbNhanSu = new UiControls.BorderComboBox();
             roundedButton2 = new UI.Controls.RoundedButton();
             dgvNhanSu = new DataGridView();
-            dgvtxtTenNV = new DataGridViewTextBoxColumn();
-            dgvtxtChucVu = new DataGridViewTextBoxColumn();
-            dgvtxtLienHe = new DataGridViewTextBoxColumn();
+            TenNV = new DataGridViewTextBoxColumn();
+            ChucVu = new DataGridViewTextBoxColumn();
+            LienHe = new DataGridViewTextBoxColumn();
             ChiNhanh = new DataGridViewTextBoxColumn();
             NgayVaoLam = new DataGridViewTextBoxColumn();
             TrangThai = new DataGridViewTextBoxColumn();
@@ -355,6 +355,7 @@
             // dgvNhanSu
             // 
             dgvNhanSu.AllowUserToAddRows = false;
+            dgvNhanSu.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvNhanSu.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvNhanSu.BackgroundColor = SystemColors.ButtonHighlight;
             dgvNhanSu.BorderStyle = BorderStyle.Fixed3D;
@@ -368,7 +369,7 @@
             dgvNhanSu.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvNhanSu.ColumnHeadersHeight = 60;
             dgvNhanSu.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvNhanSu.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenNV, dgvtxtChucVu, dgvtxtLienHe, ChiNhanh, NgayVaoLam, TrangThai, ThaoTac });
+            dgvNhanSu.Columns.AddRange(new DataGridViewColumn[] { TenNV, ChucVu, LienHe, ChiNhanh, NgayVaoLam, TrangThai, ThaoTac });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -387,55 +388,51 @@
             dgvNhanSu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvNhanSu.Size = new Size(1190, 473);
             dgvNhanSu.TabIndex = 22;
+            dgvNhanSu.CellClick += dgvNhanSu_CellClick;
+            dgvNhanSu.CellMouseEnter += dgvNhanSu_CellMouseEnter;
+            dgvNhanSu.CellMouseLeave += dgvNhanSu_CellMouseLeave;
             // 
-            // dgvtxtTenNV
+            // TenNV
             // 
-            dgvtxtTenNV.HeaderText = "Tên NV";
-            dgvtxtTenNV.MinimumWidth = 6;
-            dgvtxtTenNV.Name = "dgvtxtTenNV";
-            dgvtxtTenNV.Width = 170;
+            TenNV.HeaderText = "Tên NV";
+            TenNV.MinimumWidth = 6;
+            TenNV.Name = "TenNV";
             // 
-            // dgvtxtChucVu
+            // ChucVu
             // 
-            dgvtxtChucVu.HeaderText = "Chức Vụ";
-            dgvtxtChucVu.MinimumWidth = 6;
-            dgvtxtChucVu.Name = "dgvtxtChucVu";
-            dgvtxtChucVu.Width = 169;
+            ChucVu.HeaderText = "Chức Vụ";
+            ChucVu.MinimumWidth = 6;
+            ChucVu.Name = "ChucVu";
             // 
-            // dgvtxtLienHe
+            // LienHe
             // 
-            dgvtxtLienHe.HeaderText = "Liên Hệ";
-            dgvtxtLienHe.MinimumWidth = 6;
-            dgvtxtLienHe.Name = "dgvtxtLienHe";
-            dgvtxtLienHe.Width = 200;
+            LienHe.HeaderText = "Liên Hệ";
+            LienHe.MinimumWidth = 6;
+            LienHe.Name = "LienHe";
             // 
             // ChiNhanh
             // 
             ChiNhanh.HeaderText = "Chi Nhánh";
             ChiNhanh.MinimumWidth = 6;
             ChiNhanh.Name = "ChiNhanh";
-            ChiNhanh.Width = 169;
             // 
             // NgayVaoLam
             // 
             NgayVaoLam.HeaderText = "Ngày Vào Làm";
             NgayVaoLam.MinimumWidth = 6;
             NgayVaoLam.Name = "NgayVaoLam";
-            NgayVaoLam.Width = 170;
             // 
             // TrangThai
             // 
             TrangThai.HeaderText = "Trạng Thái";
             TrangThai.MinimumWidth = 6;
             TrangThai.Name = "TrangThai";
-            TrangThai.Width = 169;
             // 
             // ThaoTac
             // 
             ThaoTac.HeaderText = "Thao Tác";
             ThaoTac.MinimumWidth = 6;
             ThaoTac.Name = "ThaoTac";
-            ThaoTac.Width = 170;
             // 
             // FrmNhanSuVaCa
             // 
@@ -498,9 +495,9 @@
         private UiControls.BorderComboBox cbbNhanSu;
         private Controls.RoundedButton roundedButton2;
         private DataGridView dgvNhanSu;
-        private DataGridViewTextBoxColumn dgvtxtTenNV;
-        private DataGridViewTextBoxColumn dgvtxtChucVu;
-        private DataGridViewTextBoxColumn dgvtxtLienHe;
+        private DataGridViewTextBoxColumn TenNV;
+        private DataGridViewTextBoxColumn ChucVu;
+        private DataGridViewTextBoxColumn LienHe;
         private DataGridViewTextBoxColumn ChiNhanh;
         private DataGridViewTextBoxColumn NgayVaoLam;
         private DataGridViewTextBoxColumn TrangThai;

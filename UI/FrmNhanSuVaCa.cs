@@ -18,6 +18,15 @@ namespace UI
         {
             InitializeComponent();
         }
+        
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void cbbNhanSu_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
         private const string NS_TEN = "TenNV";
         private const string NS_CV = "ChucVu";
         private const string NS_LH = "LienHe";
@@ -25,9 +34,56 @@ namespace UI
         private const string NS_NGAY = "NgayVao";
         private const string NS_TT = "TrangThai";
         private const string NS_TTAC = "ThaoTac";
-        private void label12_Click(object sender, EventArgs e)
+        private void InitDgvNhanSu()
         {
+            var dgv = dgvNhanSu;
 
+            dgv.AutoGenerateColumns = false;
+            dgv.AllowUserToAddRows = false;
+            dgv.RowHeadersVisible = false;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            if (dgv.Columns.Count == 0)
+            {
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_TEN, HeaderText = "Tên NV", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 210 });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CV, HeaderText = "Chức vụ", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_LH, HeaderText = "Liên hệ", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 250 });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CN, HeaderText = "Chi nhánh", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_NGAY, HeaderText = "Ngày vào làm", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_TT, HeaderText = "Trạng thái", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+
+                // Cột Chi tiết (link) – sẽ click cả ô
+                dgv.Columns.Add(new DataGridViewLinkColumn
+                {
+                    Name = NS_TTAC,
+                    HeaderText = "Thao tác",
+                    Text = "Chi tiết",
+                    UseColumnTextForLinkValue = true,
+                    LinkBehavior = LinkBehavior.HoverUnderline,
+                    LinkColor = Color.FromArgb(23, 82, 255),
+                    ActiveLinkColor = Color.FromArgb(23, 82, 255),
+                    VisitedLinkColor = Color.FromArgb(23, 82, 255)
+                });
+            }
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10f);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10.5f);
+            dgv.DefaultCellStyle.Padding = new Padding(12, 8, 12, 8);
+            dgv.RowTemplate.Height = 56;
+
+            // Liên hệ 2 dòng
+            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgv.Columns[NS_LH].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+            // Gắn sự kiện
+            dgv.CellPainting -= dgvNhanSu_CellPainting;
+            dgv.CellPainting += dgvNhanSu_CellPainting;
+            dgv.CellClick -= dgvNhanSu_CellClick;
+            dgv.CellClick += dgvNhanSu_CellClick;
+            dgv.CellMouseEnter -= dgvNhanSu_CellMouseEnter;
+            dgv.CellMouseEnter += dgvNhanSu_CellMouseEnter;
+            dgv.CellMouseLeave -= dgvNhanSu_CellMouseLeave;
+            dgv.CellMouseLeave += dgvNhanSu_CellMouseLeave;
         }
         private void LoadDataNhanSu()
         {
@@ -61,7 +117,7 @@ namespace UI
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // Liên hệ: 2 dòng (đt đậm, email xám)
+            // Liên hệ 2 dòng
             if (col == NS_LH)
             {
                 e.Handled = true;
@@ -83,7 +139,7 @@ namespace UI
                     new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near });
 
                 e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;
+                return;                           // <— QUAN TRỌNG
             }
 
             // Trạng thái: chip (xanh "Đang làm" / vàng "Nghỉ phép")
@@ -105,8 +161,10 @@ namespace UI
                     new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
 
                 e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
+                return;                           // <— QUAN TRỌNG
             }
         }
+
 
         private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
         {
@@ -131,18 +189,34 @@ namespace UI
             MessageBox.Show($"Chi tiết nhân sự:\n- Tên: {ten}\n- Chức vụ: {chuc}\n- Chi nhánh: {cn}\n- Ngày vào: {ngay}",
                             "Nhân sự", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        
+
 
         private void FrmNhanSuVaCa_Load(object sender, EventArgs e)
         {
             LoadDataNhanSu();
-            
+            InitDgvNhanSu();
+
         }
 
-
-        private void cbbNhanSu_SelectedIndexChanged(object sender, EventArgs e)
+        private void dgvNhanSu_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
+            if (dgvNhanSu.Columns[e.ColumnIndex].Name != NS_TTAC) return;
 
+            string ten = dgvNhanSu.Rows[e.RowIndex].Cells[NS_TEN].Value?.ToString();
+            MessageBox.Show($"Chi tiết nhân sự: {ten}");
+        }
+
+        private void dgvNhanSu_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 &&
+        dgvNhanSu.Columns[e.ColumnIndex].Name == NS_TTAC)
+                dgvNhanSu.Cursor = Cursors.Hand;
+        }
+
+        private void dgvNhanSu_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            dgvNhanSu.Cursor = Cursors.Default;
         }
     }
 }

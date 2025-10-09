@@ -21,11 +21,11 @@ namespace UI
         private const string K_TEN = "TenNL";
         private const string K_DONVI = "DonVi";
         private const string K_TON = "TonKho";
-        private const string K_MIN = "TonToiThieu";
+        private const string K_TOITH = "ToiThieu";
         private const string K_TB = "DungTB";
         private const string K_GIA = "GiaTri";
         private const string K_TT = "TrangThai";
-        private const string K_TTAC = "ThaoTac";
+        private const string K_TAC = "ThaoTac";
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
@@ -39,7 +39,52 @@ namespace UI
 
         private void FrmKho_Load(object sender, EventArgs e)
         {
+            InitDgvKho();
             LoadData();
+        }
+        private void InitDgvKho()
+        {
+            var dgv = dgvKho;
+
+            dgv.DataSource = null;
+            dgv.AutoGenerateColumns = false;
+            dgv.Columns.Clear();
+            dgv.AllowUserToAddRows = false;
+            dgv.RowHeadersVisible = false;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TEN, HeaderText = "Tên nguyên liệu", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 260 });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_DONVI, HeaderText = "Đơn vị", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TON, HeaderText = "Tồn kho", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TOITH, HeaderText = "Tồn tối thiểu", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TB, HeaderText = "Dùng TB/ngày", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_GIA, HeaderText = "Giá trị", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TT, HeaderText = "Trạng thái", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+
+            dgv.Columns.Add(new DataGridViewLinkColumn
+            {
+                Name = K_TAC,
+                HeaderText = "Thao tác",
+                Text = "Chi tiết",
+                UseColumnTextForLinkValue = true,
+                LinkBehavior = LinkBehavior.HoverUnderline,
+                LinkColor = Color.FromArgb(23, 82, 255),
+                ActiveLinkColor = Color.FromArgb(23, 82, 255),
+                VisitedLinkColor = Color.FromArgb(23, 82, 255)
+            });
+
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10f);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10.5f);
+            dgv.DefaultCellStyle.Padding = new Padding(12, 8, 12, 8);
+            dgv.RowTemplate.Height = 56;
+
+
+            dgv.CellMouseEnter += (s, e) =>
+            {
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 &&
+                    dgv.Columns[e.ColumnIndex].Name == K_TAC) dgv.Cursor = Cursors.Hand;
+            };
+            dgv.CellMouseLeave += (s, e) => dgv.Cursor = Cursors.Default;
         }
         private void LoadData()
         {
@@ -64,25 +109,30 @@ namespace UI
         private void dgvKho_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            if (dgvKho.Columns[e.ColumnIndex].Name != K_TT) return;
+            var dgv = (DataGridView)sender;
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            e.Handled = true;
-            e.PaintBackground(e.CellBounds, true);
+            if (dgv.Columns[e.ColumnIndex].Name == K_TT)
+            {
+                e.Handled = true;
+                e.PaintBackground(e.CellBounds, true);
 
-            string text = Convert.ToString(e.FormattedValue) ?? "";
-            bool duHang = text.Equals("Đủ hàng", StringComparison.OrdinalIgnoreCase);
+                string text = Convert.ToString(e.FormattedValue) ?? "";
+                bool ok = text.Equals("Đủ hàng", StringComparison.OrdinalIgnoreCase);
 
-            var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 28) / 2, 90, 28);
-            using var path = Rounded(chip, 14);
-            using var fill = new SolidBrush(duHang ? Color.FromArgb(208, 247, 225) : Color.FromArgb(255, 239, 185));
-            using var br = new SolidBrush(duHang ? Color.FromArgb(16, 128, 67) : Color.FromArgb(159, 108, 0));
+                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 28) / 2, 90, 28);
+                using var path = Rounded(chip, 14);
+                using var fill = new SolidBrush(ok ? Color.FromArgb(209, 250, 229) : Color.FromArgb(254, 243, 199));
+                using var br = new SolidBrush(ok ? Color.FromArgb(16, 128, 67) : Color.FromArgb(146, 64, 14));
 
-            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            e.Graphics.FillPath(fill, path);
-            e.Graphics.DrawString(text, new Font("Segoe UI Semibold", 9f), br, chip,
-                new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                g.FillPath(fill, path);
+                g.DrawString(text, new Font("Segoe UI Semibold", 9f), br, chip,
+                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
 
-            e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
+                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
+                return;
+            }
         }
         private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
         {
@@ -97,15 +147,15 @@ namespace UI
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+        }
+
+        private void dgvKho_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex < 0) return;
-            if (dgvKho.Columns[e.ColumnIndex].Name != K_TTAC) return;
+            if (dgvKho.Columns[e.ColumnIndex].Name != K_TAC) return;
 
             string ten = dgvKho.Rows[e.RowIndex].Cells[K_TEN].Value?.ToString();
-            string ton = dgvKho.Rows[e.RowIndex].Cells[K_TON].Value?.ToString();
-            string donvi = dgvKho.Rows[e.RowIndex].Cells[K_DONVI].Value?.ToString();
-
-            MessageBox.Show($"Chi tiết nguyên liệu:\n- Tên: {ten}\n- Tồn kho: {ton} {donvi}",
-                            "Kho", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Xem chi tiết nguyên liệu: {ten}", "Kho");
         }
     }
 }
