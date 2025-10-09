@@ -31,18 +31,20 @@
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             label2 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             roundedPanel1 = new UI.Controls.RoundedPanel();
             label3 = new Label();
             roundedButton2 = new UI.Controls.RoundedButton();
             dgvChiNhanh = new DataGridView();
-            label1 = new Label();
             dgvtxtTenChiNhanh = new DataGridViewTextBoxColumn();
             dgvtxtDiaChi = new DataGridViewTextBoxColumn();
             dgvtxtDienThoai = new DataGridViewTextBoxColumn();
             dgvtxtTrangThai = new DataGridViewTextBoxColumn();
             ThaoTac = new DataGridViewTextBoxColumn();
+            label1 = new Label();
             roundedPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvChiNhanh).BeginInit();
             SuspendLayout();
@@ -82,7 +84,7 @@
             roundedPanel1.Location = new Point(24, 171);
             roundedPanel1.Name = "roundedPanel1";
             roundedPanel1.Padding = new Padding(12);
-            roundedPanel1.Size = new Size(1154, 402);
+            roundedPanel1.Size = new Size(1154, 717);
             roundedPanel1.TabIndex = 14;
             // 
             // label3
@@ -118,24 +120,38 @@
             // 
             dgvChiNhanh.AllowUserToAddRows = false;
             dgvChiNhanh.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvChiNhanh.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvChiNhanh.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvChiNhanh.BackgroundColor = SystemColors.ControlLightLight;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(192, 192, 255);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Navy;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvChiNhanh.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvChiNhanh.ColumnHeadersHeight = 60;
+            dgvChiNhanh.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvChiNhanh.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenChiNhanh, dgvtxtDiaChi, dgvtxtDienThoai, dgvtxtTrangThai, ThaoTac });
-            dgvChiNhanh.Location = new Point(0, 102);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(192, 192, 255);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Navy;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvChiNhanh.DefaultCellStyle = dataGridViewCellStyle2;
+            dgvChiNhanh.Location = new Point(15, 106);
             dgvChiNhanh.Name = "dgvChiNhanh";
             dgvChiNhanh.RowHeadersVisible = false;
             dgvChiNhanh.RowHeadersWidth = 51;
-            dgvChiNhanh.Size = new Size(1154, 300);
+            dgvChiNhanh.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvChiNhanh.Size = new Size(1124, 596);
             dgvChiNhanh.TabIndex = 0;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(261, 35);
-            label1.TabIndex = 11;
-            label1.Text = "Chi Nhánh/Bàn/Sảnh";
+            dgvChiNhanh.CellClick += dgvChiNhanh_CellClick;
+            dgvChiNhanh.CellPainting += dgvChiNhanh_CellPainting;
+            dgvChiNhanh.MouseMove += dgvChiNhanh_MouseMove;
             // 
             // dgvtxtTenChiNhanh
             // 
@@ -166,6 +182,16 @@
             ThaoTac.HeaderText = "Thao Tác";
             ThaoTac.MinimumWidth = 6;
             ThaoTac.Name = "ThaoTac";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(261, 35);
+            label1.TabIndex = 11;
+            label1.Text = "Chi Nhánh/Bàn/Sảnh";
             // 
             // FrmChiNhanh
             // 

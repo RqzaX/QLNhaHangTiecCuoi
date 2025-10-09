@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem5 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem6 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -93,7 +95,7 @@
             // 
             // roundedPanel1
             // 
-            roundedPanel1.BackColor = Color.White;
+            roundedPanel1.BackColor = Color.FromArgb(255, 192, 192);
             roundedPanel1.BorderThickness = 5;
             roundedPanel1.Controls.Add(label9);
             roundedPanel1.Controls.Add(label7);
@@ -169,7 +171,7 @@
             // 
             // roundedPanel2
             // 
-            roundedPanel2.BackColor = Color.White;
+            roundedPanel2.BackColor = Color.FromArgb(255, 192, 192);
             roundedPanel2.BorderThickness = 5;
             roundedPanel2.Controls.Add(label17);
             roundedPanel2.Controls.Add(label16);
@@ -212,7 +214,7 @@
             // 
             // roundedPanel3
             // 
-            roundedPanel3.BackColor = Color.White;
+            roundedPanel3.BackColor = Color.FromArgb(255, 192, 192);
             roundedPanel3.BorderThickness = 5;
             roundedPanel3.Controls.Add(label14);
             roundedPanel3.Controls.Add(label13);
@@ -256,7 +258,7 @@
             // 
             // roundedPanel4
             // 
-            roundedPanel4.BackColor = Color.White;
+            roundedPanel4.BackColor = Color.FromArgb(255, 192, 192);
             roundedPanel4.BorderThickness = 5;
             roundedPanel4.Controls.Add(label6);
             roundedPanel4.Controls.Add(label10);
@@ -301,12 +303,12 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem4.Text = "Nhân Viên";
-            pillItem5.Text = "Phân Ca";
-            pillItem6.Text = "Chấm Công";
-            segmentedPill1.Items.Add(pillItem4);
-            segmentedPill1.Items.Add(pillItem5);
-            segmentedPill1.Items.Add(pillItem6);
+            pillItem1.Text = "Nhân Viên";
+            pillItem2.Text = "Phân Ca";
+            pillItem3.Text = "Chấm Công";
+            segmentedPill1.Items.Add(pillItem1);
+            segmentedPill1.Items.Add(pillItem2);
+            segmentedPill1.Items.Add(pillItem3);
             segmentedPill1.Location = new Point(12, 264);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(351, 55);
@@ -331,7 +333,7 @@
             cbbNhanSu.FormattingEnabled = true;
             cbbNhanSu.IntegralHeight = false;
             cbbNhanSu.ItemHeight = 26;
-            cbbNhanSu.Items.AddRange(new object[] { "Tất cả", "Ca sáng", "Ca chiều" });
+            cbbNhanSu.Items.AddRange(new object[] { "Tất cả", "Quản Lý", "Phục Vụ ", "Đầu Bếp", "Thu Ngân" });
             cbbNhanSu.Location = new Point(530, 347);
             cbbNhanSu.Name = "cbbNhanSu";
             cbbNhanSu.Size = new Size(176, 32);
@@ -360,14 +362,36 @@
             // dgvNhanSu
             // 
             dgvNhanSu.AllowUserToAddRows = false;
-            dgvNhanSu.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvNhanSu.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvNhanSu.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvNhanSu.BackgroundColor = SystemColors.ButtonHighlight;
+            dgvNhanSu.BorderStyle = BorderStyle.Fixed3D;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 192, 255);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Purple;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvNhanSu.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvNhanSu.ColumnHeadersHeight = 60;
+            dgvNhanSu.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvNhanSu.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenNV, dgvtxtChucVu, dgvtxtLienHe, ChiNhanh, NgayVaoLam, TrangThai, ThaoTac });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(255, 192, 255);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Purple;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvNhanSu.DefaultCellStyle = dataGridViewCellStyle2;
             dgvNhanSu.Dock = DockStyle.Bottom;
             dgvNhanSu.Location = new Point(0, 427);
             dgvNhanSu.Name = "dgvNhanSu";
             dgvNhanSu.RowHeadersVisible = false;
             dgvNhanSu.RowHeadersWidth = 51;
+            dgvNhanSu.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvNhanSu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvNhanSu.Size = new Size(1190, 473);
             dgvNhanSu.TabIndex = 22;
             // 
@@ -376,42 +400,49 @@
             dgvtxtTenNV.HeaderText = "Tên NV";
             dgvtxtTenNV.MinimumWidth = 6;
             dgvtxtTenNV.Name = "dgvtxtTenNV";
+            dgvtxtTenNV.Width = 170;
             // 
             // dgvtxtChucVu
             // 
             dgvtxtChucVu.HeaderText = "Chức Vụ";
             dgvtxtChucVu.MinimumWidth = 6;
             dgvtxtChucVu.Name = "dgvtxtChucVu";
+            dgvtxtChucVu.Width = 169;
             // 
             // dgvtxtLienHe
             // 
             dgvtxtLienHe.HeaderText = "Liên Hệ";
             dgvtxtLienHe.MinimumWidth = 6;
             dgvtxtLienHe.Name = "dgvtxtLienHe";
+            dgvtxtLienHe.Width = 200;
             // 
             // ChiNhanh
             // 
             ChiNhanh.HeaderText = "Chi Nhánh";
             ChiNhanh.MinimumWidth = 6;
             ChiNhanh.Name = "ChiNhanh";
+            ChiNhanh.Width = 169;
             // 
             // NgayVaoLam
             // 
             NgayVaoLam.HeaderText = "Ngày Vào Làm";
             NgayVaoLam.MinimumWidth = 6;
             NgayVaoLam.Name = "NgayVaoLam";
+            NgayVaoLam.Width = 170;
             // 
             // TrangThai
             // 
             TrangThai.HeaderText = "Trạng Thái";
             TrangThai.MinimumWidth = 6;
             TrangThai.Name = "TrangThai";
+            TrangThai.Width = 169;
             // 
             // ThaoTac
             // 
             ThaoTac.HeaderText = "Thao Tác";
             ThaoTac.MinimumWidth = 6;
             ThaoTac.Name = "ThaoTac";
+            ThaoTac.Width = 170;
             // 
             // FrmNhanSuVaCa
             // 

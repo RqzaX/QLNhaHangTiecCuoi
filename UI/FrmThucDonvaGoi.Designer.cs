@@ -30,19 +30,21 @@
         {
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             label2 = new Label();
             label1 = new Label();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             roundedButton2 = new UI.Controls.RoundedButton();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             dgvThucDonVaGoi = new DataGridView();
-            dgvtxtTenMon = new DataGridViewTextBoxColumn();
-            dgvtxtDanhMuc = new DataGridViewTextBoxColumn();
-            dgvtxtGiaBan = new DataGridViewTextBoxColumn();
-            dgvtxtGiaVon = new DataGridViewTextBoxColumn();
-            dgvtxtLoiNhuan = new DataGridViewTextBoxColumn();
-            dgvtxtTrangThai = new DataGridViewTextBoxColumn();
-            dgvtxtThaoTac = new DataGridViewTextBoxColumn();
+            TenMon = new DataGridViewTextBoxColumn();
+            DanhMuc = new DataGridViewTextBoxColumn();
+            GiaBan = new DataGridViewTextBoxColumn();
+            GiaVon = new DataGridViewTextBoxColumn();
+            LoiNhuan = new DataGridViewTextBoxColumn();
+            TrangThai = new DataGridViewTextBoxColumn();
+            ThaoTac = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dgvThucDonVaGoi).BeginInit();
             SuspendLayout();
             // 
@@ -112,57 +114,88 @@
             // dgvThucDonVaGoi
             // 
             dgvThucDonVaGoi.AllowUserToAddRows = false;
-            dgvThucDonVaGoi.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvThucDonVaGoi.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvThucDonVaGoi.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenMon, dgvtxtDanhMuc, dgvtxtGiaBan, dgvtxtGiaVon, dgvtxtLoiNhuan, dgvtxtTrangThai, dgvtxtThaoTac });
-            dgvThucDonVaGoi.Location = new Point(12, 249);
+            dgvThucDonVaGoi.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvThucDonVaGoi.BackgroundColor = SystemColors.ControlLightLight;
+            dgvThucDonVaGoi.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(192, 255, 192);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Green;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvThucDonVaGoi.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvThucDonVaGoi.ColumnHeadersHeight = 50;
+            dgvThucDonVaGoi.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvThucDonVaGoi.Columns.AddRange(new DataGridViewColumn[] { TenMon, DanhMuc, GiaBan, GiaVon, LoiNhuan, TrangThai, ThaoTac });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 6, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(192, 255, 192);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Green;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvThucDonVaGoi.DefaultCellStyle = dataGridViewCellStyle2;
+            dgvThucDonVaGoi.Location = new Point(12, 236);
             dgvThucDonVaGoi.Name = "dgvThucDonVaGoi";
             dgvThucDonVaGoi.RowHeadersVisible = false;
-            dgvThucDonVaGoi.RowHeadersWidth = 51;
+            dgvThucDonVaGoi.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+            dgvThucDonVaGoi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvThucDonVaGoi.Size = new Size(1148, 592);
             dgvThucDonVaGoi.TabIndex = 15;
+            dgvThucDonVaGoi.CellClick += dgvThucDonVaGoi_CellClick;
+            dgvThucDonVaGoi.CellPainting += dgvThucDonVaGoi_CellPainting;
+            dgvThucDonVaGoi.MouseMove += dgvThucDonVaGoi_MouseMove;
             // 
-            // dgvtxtTenMon
+            // TenMon
             // 
-            dgvtxtTenMon.HeaderText = "Tên Món";
-            dgvtxtTenMon.MinimumWidth = 6;
-            dgvtxtTenMon.Name = "dgvtxtTenMon";
+            TenMon.HeaderText = "Tên Món";
+            TenMon.MinimumWidth = 6;
+            TenMon.Name = "TenMon";
+            TenMon.Width = 164;
             // 
-            // dgvtxtDanhMuc
+            // DanhMuc
             // 
-            dgvtxtDanhMuc.HeaderText = "Danh Mục";
-            dgvtxtDanhMuc.MinimumWidth = 6;
-            dgvtxtDanhMuc.Name = "dgvtxtDanhMuc";
+            DanhMuc.HeaderText = "Danh Mục";
+            DanhMuc.MinimumWidth = 6;
+            DanhMuc.Name = "DanhMuc";
+            DanhMuc.Width = 164;
             // 
-            // dgvtxtGiaBan
+            // GiaBan
             // 
-            dgvtxtGiaBan.HeaderText = "Giá Bán";
-            dgvtxtGiaBan.MinimumWidth = 6;
-            dgvtxtGiaBan.Name = "dgvtxtGiaBan";
+            GiaBan.HeaderText = "Giá Bán";
+            GiaBan.MinimumWidth = 6;
+            GiaBan.Name = "GiaBan";
+            GiaBan.Width = 164;
             // 
-            // dgvtxtGiaVon
+            // GiaVon
             // 
-            dgvtxtGiaVon.HeaderText = "Giá Vốn";
-            dgvtxtGiaVon.MinimumWidth = 6;
-            dgvtxtGiaVon.Name = "dgvtxtGiaVon";
+            GiaVon.HeaderText = "Giá Vốn";
+            GiaVon.MinimumWidth = 6;
+            GiaVon.Name = "GiaVon";
+            GiaVon.Width = 164;
             // 
-            // dgvtxtLoiNhuan
+            // LoiNhuan
             // 
-            dgvtxtLoiNhuan.HeaderText = "Lợi Nhuận";
-            dgvtxtLoiNhuan.MinimumWidth = 6;
-            dgvtxtLoiNhuan.Name = "dgvtxtLoiNhuan";
+            LoiNhuan.HeaderText = "Lợi Nhuận";
+            LoiNhuan.MinimumWidth = 6;
+            LoiNhuan.Name = "LoiNhuan";
+            LoiNhuan.Width = 164;
             // 
-            // dgvtxtTrangThai
+            // TrangThai
             // 
-            dgvtxtTrangThai.HeaderText = "Trạng Thái";
-            dgvtxtTrangThai.MinimumWidth = 6;
-            dgvtxtTrangThai.Name = "dgvtxtTrangThai";
+            TrangThai.HeaderText = "Trạng Thái";
+            TrangThai.MinimumWidth = 6;
+            TrangThai.Name = "TrangThai";
+            TrangThai.Width = 163;
             // 
-            // dgvtxtThaoTac
+            // ThaoTac
             // 
-            dgvtxtThaoTac.HeaderText = "Thao Tác";
-            dgvtxtThaoTac.MinimumWidth = 6;
-            dgvtxtThaoTac.Name = "dgvtxtThaoTac";
+            ThaoTac.HeaderText = "Thao Tác";
+            ThaoTac.MinimumWidth = 6;
+            ThaoTac.Name = "ThaoTac";
+            ThaoTac.Width = 164;
             // 
             // FrmThucDonvaGoi
             // 
@@ -191,12 +224,12 @@
         private Controls.RoundedButton roundedButton2;
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private DataGridView dgvThucDonVaGoi;
-        private DataGridViewTextBoxColumn dgvtxtTenMon;
-        private DataGridViewTextBoxColumn dgvtxtDanhMuc;
-        private DataGridViewTextBoxColumn dgvtxtGiaBan;
-        private DataGridViewTextBoxColumn dgvtxtGiaVon;
-        private DataGridViewTextBoxColumn dgvtxtLoiNhuan;
-        private DataGridViewTextBoxColumn dgvtxtTrangThai;
-        private DataGridViewTextBoxColumn dgvtxtThaoTac;
+        private DataGridViewTextBoxColumn TenMon;
+        private DataGridViewTextBoxColumn DanhMuc;
+        private DataGridViewTextBoxColumn GiaBan;
+        private DataGridViewTextBoxColumn GiaVon;
+        private DataGridViewTextBoxColumn LoiNhuan;
+        private DataGridViewTextBoxColumn TrangThai;
+        private DataGridViewTextBoxColumn ThaoTac;
     }
 }

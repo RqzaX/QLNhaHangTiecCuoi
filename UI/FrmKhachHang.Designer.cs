@@ -31,6 +31,9 @@
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -91,7 +94,7 @@
             // 
             // roundedPanel1
             // 
-            roundedPanel1.BackColor = Color.White;
+            roundedPanel1.BackColor = Color.FromArgb(255, 224, 192);
             roundedPanel1.BorderThickness = 5;
             roundedPanel1.Controls.Add(label5);
             roundedPanel1.Controls.Add(label4);
@@ -134,7 +137,7 @@
             // 
             // roundedPanel2
             // 
-            roundedPanel2.BackColor = Color.White;
+            roundedPanel2.BackColor = Color.FromArgb(255, 224, 192);
             roundedPanel2.BorderThickness = 5;
             roundedPanel2.Controls.Add(label8);
             roundedPanel2.Controls.Add(label7);
@@ -179,7 +182,7 @@
             // 
             // roundedPanel3
             // 
-            roundedPanel3.BackColor = Color.White;
+            roundedPanel3.BackColor = Color.FromArgb(255, 224, 192);
             roundedPanel3.BorderThickness = 5;
             roundedPanel3.Controls.Add(label13);
             roundedPanel3.Controls.Add(label14);
@@ -224,7 +227,7 @@
             // 
             // roundedPanel4
             // 
-            roundedPanel4.BackColor = Color.White;
+            roundedPanel4.BackColor = Color.FromArgb(255, 224, 192);
             roundedPanel4.BorderThickness = 5;
             roundedPanel4.Controls.Add(label11);
             roundedPanel4.Controls.Add(label10);
@@ -328,12 +331,36 @@
             // dgvKhachHang
             // 
             dgvKhachHang.AllowUserToAddRows = false;
-            dgvKhachHang.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvKhachHang.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvKhachHang.BackgroundColor = SystemColors.ControlLightLight;
+            dgvKhachHang.ColumnHeadersHeight = 60;
+            dgvKhachHang.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvKhachHang.Columns.AddRange(new DataGridViewColumn[] { dgvtxtTenKH, dgvtxtLienHe, dgvtxtHang, dgvtxtTongChiTieu, dgvtxtSoLanDen, dgvtxtDiemTichLuy, dgvtxtLanCuoi, dgvtxtThaoTac });
-            dgvKhachHang.Location = new Point(21, 418);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 192, 192);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Maroon;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvKhachHang.DefaultCellStyle = dataGridViewCellStyle1;
+            dgvKhachHang.Location = new Point(12, 418);
             dgvKhachHang.Name = "dgvKhachHang";
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvKhachHang.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvKhachHang.RowHeadersVisible = false;
-            dgvKhachHang.RowHeadersWidth = 51;
+            dgvKhachHang.RowHeadersWidth = 50;
+            dgvKhachHang.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvKhachHang.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dgvKhachHang.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvKhachHang.Size = new Size(1157, 470);
             dgvKhachHang.TabIndex = 22;
             dgvKhachHang.CellContentClick += dgvKhachHang_CellContentClick;
@@ -344,56 +371,56 @@
             dgvtxtTenKH.HeaderText = "Tên KH";
             dgvtxtTenKH.MinimumWidth = 6;
             dgvtxtTenKH.Name = "dgvtxtTenKH";
-            dgvtxtTenKH.Width = 125;
+            dgvtxtTenKH.Width = 170;
             // 
             // dgvtxtLienHe
             // 
             dgvtxtLienHe.HeaderText = "Liên Hệ";
             dgvtxtLienHe.MinimumWidth = 6;
             dgvtxtLienHe.Name = "dgvtxtLienHe";
-            dgvtxtLienHe.Width = 125;
+            dgvtxtLienHe.Width = 170;
             // 
             // dgvtxtHang
             // 
             dgvtxtHang.HeaderText = "Hạng";
             dgvtxtHang.MinimumWidth = 6;
             dgvtxtHang.Name = "dgvtxtHang";
-            dgvtxtHang.Width = 125;
+            dgvtxtHang.Width = 144;
             // 
             // dgvtxtTongChiTieu
             // 
             dgvtxtTongChiTieu.HeaderText = "Tông Chi Tiêu";
             dgvtxtTongChiTieu.MinimumWidth = 6;
             dgvtxtTongChiTieu.Name = "dgvtxtTongChiTieu";
-            dgvtxtTongChiTieu.Width = 125;
+            dgvtxtTongChiTieu.Width = 144;
             // 
             // dgvtxtSoLanDen
             // 
             dgvtxtSoLanDen.HeaderText = "Số Lần Đến";
             dgvtxtSoLanDen.MinimumWidth = 6;
             dgvtxtSoLanDen.Name = "dgvtxtSoLanDen";
-            dgvtxtSoLanDen.Width = 125;
+            dgvtxtSoLanDen.Width = 144;
             // 
             // dgvtxtDiemTichLuy
             // 
             dgvtxtDiemTichLuy.HeaderText = "Điểm Tích Lũy";
             dgvtxtDiemTichLuy.MinimumWidth = 6;
             dgvtxtDiemTichLuy.Name = "dgvtxtDiemTichLuy";
-            dgvtxtDiemTichLuy.Width = 125;
+            dgvtxtDiemTichLuy.Width = 145;
             // 
             // dgvtxtLanCuoi
             // 
             dgvtxtLanCuoi.HeaderText = "Lần Cuối";
             dgvtxtLanCuoi.MinimumWidth = 6;
             dgvtxtLanCuoi.Name = "dgvtxtLanCuoi";
-            dgvtxtLanCuoi.Width = 125;
+            dgvtxtLanCuoi.Width = 144;
             // 
             // dgvtxtThaoTac
             // 
             dgvtxtThaoTac.HeaderText = "Thao Tác";
             dgvtxtThaoTac.MinimumWidth = 6;
             dgvtxtThaoTac.Name = "dgvtxtThaoTac";
-            dgvtxtThaoTac.Width = 125;
+            dgvtxtThaoTac.Width = 144;
             // 
             // FrmKhachHang
             // 
