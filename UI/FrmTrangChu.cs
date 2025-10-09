@@ -95,6 +95,38 @@ namespace UI
             ShowChild<FrmDatBan>();
         }
 
+        private void btnThucDon_Goi_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmThucDonvaGoi>();
+        }
+
+        private void btnKho_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmKho>();
+        }
+
+        private void btnKhuyenMai_Voucher_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmVoucher>();
+
+        }
+
+        private void btnKhachHang_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmKhachHang>();
+        }
+
+        private void btnChiNhanh_Ban_Sanh_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmChiNhanh>();
+
+        }
+
+        private void btnNhanSu_Ca_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmNhanSuVaCa>();
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

@@ -183,6 +183,7 @@
             btnNhanSu_Ca.TextColor = Color.FromArgb(31, 41, 55);
             btnNhanSu_Ca.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnNhanSu_Ca.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnNhanSu_Ca.Click += btnNhanSu_Ca_Click;
             // 
             // btnKhachHang
             // 
@@ -201,6 +202,7 @@
             btnKhachHang.TextColor = Color.FromArgb(31, 41, 55);
             btnKhachHang.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnKhachHang.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnKhachHang.Click += btnKhachHang_Click;
             // 
             // label20
             // 
@@ -229,6 +231,7 @@
             btnChiNhanh_Ban_Sanh.TextColor = Color.FromArgb(31, 41, 55);
             btnChiNhanh_Ban_Sanh.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnChiNhanh_Ban_Sanh.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnChiNhanh_Ban_Sanh.Click += btnChiNhanh_Ban_Sanh_Click;
             // 
             // btnKhuyenMai_Voucher
             // 
@@ -247,6 +250,7 @@
             btnKhuyenMai_Voucher.TextColor = Color.FromArgb(31, 41, 55);
             btnKhuyenMai_Voucher.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnKhuyenMai_Voucher.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnKhuyenMai_Voucher.Click += btnKhuyenMai_Voucher_Click;
             // 
             // btnKho
             // 
@@ -265,6 +269,7 @@
             btnKho.TextColor = Color.FromArgb(31, 41, 55);
             btnKho.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnKho.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnKho.Click += btnKho_Click;
             // 
             // btnThucDon_Goi
             // 
@@ -283,6 +288,7 @@
             btnThucDon_Goi.TextColor = Color.FromArgb(31, 41, 55);
             btnThucDon_Goi.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnThucDon_Goi.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnThucDon_Goi.Click += btnThucDon_Goi_Click;
             // 
             // label19
             // 
