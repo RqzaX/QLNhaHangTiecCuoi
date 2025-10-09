@@ -16,5 +16,10 @@ namespace UI
         {
             InitializeComponent();
         }
+
+        private void label20_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
