@@ -127,6 +127,16 @@ namespace UI
             ShowChild<FrmNhanSuVaCa>();
         }
 
+        private void btnDatSanh_TiecCuoi_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmDatSanh_TiecCuoi>();
+        }
+
+        private void btnHopDong_Coc_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmHopDong_Coc>();
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

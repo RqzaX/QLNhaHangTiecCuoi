@@ -108,11 +108,8 @@
             // 
             roundedButton1.BackColor = Color.FromArgb(31, 111, 235);
             roundedButton1.CornerRadius = 10;
-            roundedButton1.FlatAppearance.BorderSize = 0;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
-            roundedButton1.Image = (Image)resources.GetObject("roundedButton1.Image");
             roundedButton1.Location = new Point(872, 17);
             roundedButton1.Margin = new Padding(3, 2, 3, 2);
             roundedButton1.Name = "roundedButton1";
@@ -120,7 +117,6 @@
             roundedButton1.Size = new Size(130, 34);
             roundedButton1.TabIndex = 20;
             roundedButton1.Text = "Mở POS";
-            roundedButton1.UseVisualStyleBackColor = false;
             // 
             // label2
             // 

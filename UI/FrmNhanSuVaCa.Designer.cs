@@ -339,21 +339,14 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
-            roundedButton2.BorderColor = Color.Black;
-            roundedButton2.BorderThickness = 2;
-            roundedButton2.FlatAppearance.BorderSize = 0;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
-            roundedButton2.HoverBackColor = Color.LightGray;
             roundedButton2.Location = new Point(998, 347);
             roundedButton2.Name = "roundedButton2";
             roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.PressedBackColor = Color.FromArgb(192, 255, 255);
             roundedButton2.Size = new Size(180, 40);
             roundedButton2.TabIndex = 21;
             roundedButton2.Text = "+ Thêm Nhân Viên";
-            roundedButton2.UseVisualStyleBackColor = false;
             // 
             // dgvNhanSu
             // 

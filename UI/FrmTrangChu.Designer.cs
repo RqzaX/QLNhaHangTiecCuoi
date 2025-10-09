@@ -144,7 +144,7 @@
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(12, 827);
             label21.Name = "label21";
-            label21.Size = new Size(86, 24);
+            label21.Size = new Size(68, 19);
             label21.TabIndex = 27;
             label21.Text = "Hệ thống";
             // 
@@ -210,7 +210,7 @@
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.Location = new Point(12, 667);
             label20.Name = "label20";
-            label20.Size = new Size(74, 24);
+            label20.Size = new Size(59, 19);
             label20.TabIndex = 23;
             label20.Text = "Quản lý";
             // 
@@ -296,7 +296,7 @@
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label19.Location = new Point(12, 476);
             label19.Name = "label19";
-            label19.Size = new Size(94, 24);
+            label19.Size = new Size(74, 19);
             label19.TabIndex = 18;
             label19.Text = "Danh mục";
             // 
@@ -353,6 +353,7 @@
             btnHopDong_Coc.TextColor = Color.FromArgb(31, 41, 55);
             btnHopDong_Coc.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnHopDong_Coc.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnHopDong_Coc.Click += btnHopDong_Coc_Click;
             // 
             // btnDatSanh_TiecCuoi
             // 
@@ -371,6 +372,7 @@
             btnDatSanh_TiecCuoi.TextColor = Color.FromArgb(31, 41, 55);
             btnDatSanh_TiecCuoi.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnDatSanh_TiecCuoi.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnDatSanh_TiecCuoi.Click += btnDatSanh_TiecCuoi_Click;
             // 
             // btnDatBan
             // 
@@ -416,7 +418,7 @@
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.Location = new Point(12, 205);
             label18.Name = "label18";
-            label18.Size = new Size(89, 24);
+            label18.Size = new Size(69, 19);
             label18.TabIndex = 11;
             label18.Text = "Vận hành";
             // 
@@ -445,7 +447,7 @@
             label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label17.Location = new Point(12, 128);
             label17.Name = "label17";
-            label17.Size = new Size(97, 24);
+            label17.Size = new Size(76, 19);
             label17.TabIndex = 9;
             label17.Text = "Tổng quan";
             // 

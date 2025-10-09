@@ -84,10 +84,7 @@
             // btnDangNhap
             // 
             btnDangNhap.BackColor = Color.FromArgb(31, 111, 235);
-            btnDangNhap.BorderThickness = 2;
             btnDangNhap.CornerRadius = 27;
-            btnDangNhap.FlatAppearance.BorderSize = 0;
-            btnDangNhap.FlatStyle = FlatStyle.Flat;
             btnDangNhap.Font = new Font("Calibri", 22.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnDangNhap.ForeColor = Color.White;
             btnDangNhap.Location = new Point(103, 621);
@@ -96,7 +93,6 @@
             btnDangNhap.Size = new Size(500, 65);
             btnDangNhap.TabIndex = 24;
             btnDangNhap.Text = "Đăng Nhập";
-            btnDangNhap.UseVisualStyleBackColor = false;
             btnDangNhap.Click += btnDangNhap_Click_1;
             // 
             // checkBox1
