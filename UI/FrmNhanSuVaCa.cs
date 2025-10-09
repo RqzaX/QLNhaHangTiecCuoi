@@ -126,6 +126,13 @@ namespace UI
         private void FrmNhanSuVaCa_Load(object sender, EventArgs e)
         {
             LoadDataNhanSu();
+            
+        }
+
+
+        private void cbbNhanSu_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -127,6 +127,11 @@ namespace UI
             ShowChild<FrmNhanSuVaCa>();
         }
 
+        private void btnBaoCao_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmBaoCao>();
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

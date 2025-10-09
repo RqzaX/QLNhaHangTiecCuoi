@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem5 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem6 = new VanThuan.UI.PillItem();
             label1 = new Label();
             label2 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -54,7 +54,7 @@
             label11 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            borderComboBox1 = new UiControls.BorderComboBox();
+            cbbNhanSu = new UiControls.BorderComboBox();
             roundedButton2 = new UI.Controls.RoundedButton();
             dgvNhanSu = new DataGridView();
             dgvtxtTenNV = new DataGridViewTextBoxColumn();
@@ -301,12 +301,12 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem1.Text = "Nhân Viên";
-            pillItem2.Text = "Phân Ca";
-            pillItem3.Text = "Chấm Công";
-            segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
-            segmentedPill1.Items.Add(pillItem3);
+            pillItem4.Text = "Nhân Viên";
+            pillItem5.Text = "Phân Ca";
+            pillItem6.Text = "Chấm Công";
+            segmentedPill1.Items.Add(pillItem4);
+            segmentedPill1.Items.Add(pillItem5);
+            segmentedPill1.Items.Add(pillItem6);
             segmentedPill1.Location = new Point(12, 264);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(351, 55);
@@ -324,17 +324,19 @@
             roundedTextBox1.Size = new Size(480, 51);
             roundedTextBox1.TabIndex = 19;
             // 
-            // borderComboBox1
+            // cbbNhanSu
             // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Tất cả", "Ca sáng", "Ca chiều" });
-            borderComboBox1.Location = new Point(530, 347);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(176, 32);
-            borderComboBox1.TabIndex = 20;
+            cbbNhanSu.AutoCompleteMode = AutoCompleteMode.Suggest;
+            cbbNhanSu.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbNhanSu.FormattingEnabled = true;
+            cbbNhanSu.IntegralHeight = false;
+            cbbNhanSu.ItemHeight = 26;
+            cbbNhanSu.Items.AddRange(new object[] { "Tất cả", "Ca sáng", "Ca chiều" });
+            cbbNhanSu.Location = new Point(530, 347);
+            cbbNhanSu.Name = "cbbNhanSu";
+            cbbNhanSu.Size = new Size(176, 32);
+            cbbNhanSu.TabIndex = 20;
+            cbbNhanSu.SelectedIndexChanged += cbbNhanSu_SelectedIndexChanged;
             // 
             // roundedButton2
             // 
@@ -418,7 +420,7 @@
             ClientSize = new Size(1190, 900);
             Controls.Add(dgvNhanSu);
             Controls.Add(roundedButton2);
-            Controls.Add(borderComboBox1);
+            Controls.Add(cbbNhanSu);
             Controls.Add(roundedTextBox1);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
@@ -469,7 +471,7 @@
         private Label label11;
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private Controls.RoundedTextBox roundedTextBox1;
-        private UiControls.BorderComboBox borderComboBox1;
+        private UiControls.BorderComboBox cbbNhanSu;
         private Controls.RoundedButton roundedButton2;
         private DataGridView dgvNhanSu;
         private DataGridViewTextBoxColumn dgvtxtTenNV;

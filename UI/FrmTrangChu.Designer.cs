@@ -165,6 +165,7 @@
             btnBaoCao.TextColor = Color.FromArgb(31, 41, 55);
             btnBaoCao.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnBaoCao.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnBaoCao.Click += btnBaoCao_Click;
             // 
             // btnNhanSu_Ca
             // 
