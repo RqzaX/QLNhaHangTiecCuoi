@@ -29,8 +29,13 @@ namespace UI
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
-
+            using (var f = new Frm_NhapKho())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
         }
+
 
         private void label3_Click(object sender, EventArgs e)
         {
@@ -156,6 +161,24 @@ namespace UI
 
             string ten = dgvKho.Rows[e.RowIndex].Cells[K_TEN].Value?.ToString();
             MessageBox.Show($"Xem chi tiết nguyên liệu: {ten}", "Kho");
+        }
+
+        private void roundedButton1_Click_1(object sender, EventArgs e)
+        {
+            using (var f = new Frm_XuatKho())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
+        }
+
+        private void btnChuyenKho_Click(object sender, EventArgs e)
+        {
+            using (var f = new Frm_ChuyenKho())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
         }
     }
 }

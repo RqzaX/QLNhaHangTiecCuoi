@@ -28,8 +28,8 @@ namespace UI
         {
             InitDgvChiNhanh();
             LoadDataChiNhanh();
-           
-            
+
+
 
         }
         private void InitDgvChiNhanh()
@@ -224,6 +224,15 @@ namespace UI
                 }
             }
             dgvChiNhanh.Cursor = Cursors.Default;
+        }
+
+        private void btnThemChiNhanh_Click(object sender, EventArgs e)
+        {
+            using (var f = new Frm_ThemChiNhanh())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
         }
     }
 }

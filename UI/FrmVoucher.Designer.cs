@@ -335,6 +335,7 @@
             roundedButton2.TabIndex = 18;
             roundedButton2.Text = "+ Tạo mới CTKM";
             roundedButton2.UseVisualStyleBackColor = false;
+            roundedButton2.Click += roundedButton2_Click;
             // 
             // FrmVoucher
             // 

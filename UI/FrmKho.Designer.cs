@@ -40,10 +40,7 @@
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             label1 = new Label();
             label2 = new Label();
-            roundedButton1 = new UI.Controls.RoundedButton();
-            roundedButton2 = new UI.Controls.RoundedButton();
-            roundedButton3 = new UI.Controls.RoundedButton();
-            roundedButton4 = new UI.Controls.RoundedButton();
+            btnNhapKho = new UI.Controls.RoundedButton();
             roundedPanel2 = new UI.Controls.RoundedPanel();
             label9 = new Label();
             label5 = new Label();
@@ -64,6 +61,9 @@
             DgvtxtGiaTri = new DataGridViewTextBoxColumn();
             dgvtxtTrangThai = new DataGridViewTextBoxColumn();
             dgvtxtThaoTac = new DataGridViewTextBoxColumn();
+            roundedButton1 = new UI.Controls.RoundedButton();
+            btnChuyenKho = new UI.Controls.RoundedButton();
+            btnKiemKe = new UI.Controls.RoundedButton();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
@@ -133,66 +133,20 @@
             label2.TabIndex = 12;
             label2.Text = "Nhập - Xuất - Kiểm Kê - Chuyển Kho";
             // 
-            // roundedButton1
+            // btnNhapKho
             // 
-            roundedButton1.BackColor = Color.WhiteSmoke;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
-            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton1.ForeColor = Color.Black;
-            roundedButton1.Location = new Point(571, 45);
-            roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(142, 37);
-            roundedButton1.TabIndex = 13;
-            roundedButton1.Text = "Nhập Kho ";
-            roundedButton1.UseVisualStyleBackColor = false;
-            roundedButton1.Click += roundedButton1_Click;
-            // 
-            // roundedButton2
-            // 
-            roundedButton2.BackColor = Color.WhiteSmoke;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.Black;
-            roundedButton2.Location = new Point(719, 45);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(142, 37);
-            roundedButton2.TabIndex = 13;
-            roundedButton2.Text = "Xuất Kho";
-            roundedButton2.UseVisualStyleBackColor = false;
-            roundedButton2.Click += roundedButton1_Click;
-            // 
-            // roundedButton3
-            // 
-            roundedButton3.BackColor = Color.WhiteSmoke;
-            roundedButton3.FlatStyle = FlatStyle.Flat;
-            roundedButton3.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton3.ForeColor = Color.Black;
-            roundedButton3.Location = new Point(867, 45);
-            roundedButton3.Name = "roundedButton3";
-            roundedButton3.Padding = new Padding(10, 6, 10, 6);
-            roundedButton3.Size = new Size(142, 37);
-            roundedButton3.TabIndex = 13;
-            roundedButton3.Text = "Chuyển Kho ";
-            roundedButton3.UseVisualStyleBackColor = false;
-            roundedButton3.Click += roundedButton1_Click;
-            // 
-            // roundedButton4
-            // 
-            roundedButton4.BackColor = Color.Black;
-            roundedButton4.FlatStyle = FlatStyle.Flat;
-            roundedButton4.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton4.ForeColor = Color.White;
-            roundedButton4.HoverBackColor = Color.Gray;
-            roundedButton4.Location = new Point(1018, 45);
-            roundedButton4.Name = "roundedButton4";
-            roundedButton4.Padding = new Padding(10, 6, 10, 6);
-            roundedButton4.Size = new Size(142, 37);
-            roundedButton4.TabIndex = 13;
-            roundedButton4.Text = "Kiểm Kê";
-            roundedButton4.UseVisualStyleBackColor = false;
-            roundedButton4.Click += roundedButton1_Click;
+            btnNhapKho.BackColor = Color.WhiteSmoke;
+            btnNhapKho.FlatStyle = FlatStyle.Flat;
+            btnNhapKho.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnNhapKho.ForeColor = Color.Black;
+            btnNhapKho.Location = new Point(571, 45);
+            btnNhapKho.Name = "btnNhapKho";
+            btnNhapKho.Padding = new Padding(10, 6, 10, 6);
+            btnNhapKho.Size = new Size(142, 37);
+            btnNhapKho.TabIndex = 13;
+            btnNhapKho.Text = "Nhập Kho ";
+            btnNhapKho.UseVisualStyleBackColor = false;
+            btnNhapKho.Click += roundedButton1_Click;
             // 
             // roundedPanel2
             // 
@@ -421,21 +375,69 @@
             dgvtxtThaoTac.Name = "dgvtxtThaoTac";
             dgvtxtThaoTac.Width = 143;
             // 
+            // roundedButton1
+            // 
+            roundedButton1.BackColor = Color.White;
+            roundedButton1.FlatAppearance.BorderSize = 0;
+            roundedButton1.FlatStyle = FlatStyle.Flat;
+            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton1.ForeColor = Color.Black;
+            roundedButton1.HoverBackColor = Color.Black;
+            roundedButton1.Location = new Point(719, 45);
+            roundedButton1.Name = "roundedButton1";
+            roundedButton1.Padding = new Padding(10, 6, 10, 6);
+            roundedButton1.Size = new Size(142, 37);
+            roundedButton1.TabIndex = 20;
+            roundedButton1.Text = "Xuất Kho";
+            roundedButton1.UseVisualStyleBackColor = false;
+            roundedButton1.Click += roundedButton1_Click_1;
+            // 
+            // btnChuyenKho
+            // 
+            btnChuyenKho.BackColor = Color.White;
+            btnChuyenKho.FlatAppearance.BorderSize = 0;
+            btnChuyenKho.FlatStyle = FlatStyle.Flat;
+            btnChuyenKho.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnChuyenKho.ForeColor = Color.Black;
+            btnChuyenKho.Location = new Point(867, 45);
+            btnChuyenKho.Name = "btnChuyenKho";
+            btnChuyenKho.Padding = new Padding(10, 6, 10, 6);
+            btnChuyenKho.Size = new Size(145, 37);
+            btnChuyenKho.TabIndex = 21;
+            btnChuyenKho.Text = "Chuyển Kho";
+            btnChuyenKho.UseVisualStyleBackColor = false;
+            btnChuyenKho.Click += btnChuyenKho_Click;
+            // 
+            // btnKiemKe
+            // 
+            btnKiemKe.BackColor = Color.Black;
+            btnKiemKe.FlatAppearance.BorderSize = 0;
+            btnKiemKe.FlatStyle = FlatStyle.Flat;
+            btnKiemKe.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnKiemKe.ForeColor = Color.White;
+            btnKiemKe.Location = new Point(1018, 45);
+            btnKiemKe.Name = "btnKiemKe";
+            btnKiemKe.Padding = new Padding(10, 6, 10, 6);
+            btnKiemKe.Size = new Size(142, 37);
+            btnKiemKe.TabIndex = 22;
+            btnKiemKe.Text = "Kiểm Kê";
+            btnKiemKe.UseVisualStyleBackColor = false;
+            // 
             // FrmKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 853);
+            Controls.Add(btnKiemKe);
+            Controls.Add(btnChuyenKho);
+            Controls.Add(roundedButton1);
             Controls.Add(dgvKho);
             Controls.Add(borderComboBox1);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
             Controls.Add(roundedPanel3);
             Controls.Add(roundedPanel2);
-            Controls.Add(roundedButton4);
-            Controls.Add(roundedButton3);
-            Controls.Add(roundedButton2);
-            Controls.Add(roundedButton1);
+            Controls.Add(btnNhapKho);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(roundedTextBox1);
@@ -463,10 +465,7 @@
         private Controls.RoundedTextBox roundedTextBox1;
         private Label label1;
         private Label label2;
-        private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedButton roundedButton2;
-        private Controls.RoundedButton roundedButton3;
-        private Controls.RoundedButton roundedButton4;
+        private Controls.RoundedButton btnNhapKho;
         private Controls.RoundedPanel roundedPanel2;
         private Controls.RoundedPanel roundedPanel3;
         private Controls.RoundedPanel roundedPanel4;
@@ -489,5 +488,8 @@
         private DataGridViewTextBoxColumn DgvtxtGiaTri;
         private DataGridViewTextBoxColumn dgvtxtTrangThai;
         private DataGridViewTextBoxColumn dgvtxtThaoTac;
+        private Controls.RoundedButton roundedButton1;
+        private Controls.RoundedButton btnChuyenKho;
+        private Controls.RoundedButton btnKiemKe;
     }
 }

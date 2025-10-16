@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             label2 = new Label();
             label1 = new Label();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
@@ -81,6 +81,7 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
+            roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
             roundedButton2.Location = new Point(980, 185);
@@ -89,20 +90,23 @@
             roundedButton2.Size = new Size(180, 40);
             roundedButton2.TabIndex = 12;
             roundedButton2.Text = "+ Thêm Món Mới";
+            roundedButton2.UseVisualStyleBackColor = false;
+            roundedButton2.Click += roundedButton2_Click;
             // 
             // segmentedPill1
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem1.Text = "Thực đơn";
-            pillItem2.Text = "Gói Tiệc Cưới";
-            segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
+            pillItem3.Text = "Thực đơn";
+            pillItem4.Text = "Gói Tiệc Cưới";
+            segmentedPill1.Items.Add(pillItem3);
+            segmentedPill1.Items.Add(pillItem4);
             segmentedPill1.Location = new Point(38, 109);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(258, 55);
             segmentedPill1.TabIndex = 14;
             segmentedPill1.Text = "segmentedPill1";
+            segmentedPill1.SelectedIndexChanged += segmentedPill1_SelectedIndexChanged;
             // 
             // dgvThucDonVaGoi
             // 
@@ -110,26 +114,26 @@
             dgvThucDonVaGoi.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvThucDonVaGoi.BackgroundColor = SystemColors.ControlLightLight;
             dgvThucDonVaGoi.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(192, 255, 192);
-            dataGridViewCellStyle1.SelectionForeColor = Color.Green;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dgvThucDonVaGoi.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(192, 255, 192);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Green;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvThucDonVaGoi.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvThucDonVaGoi.ColumnHeadersHeight = 50;
             dgvThucDonVaGoi.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvThucDonVaGoi.Columns.AddRange(new DataGridViewColumn[] { TenMon, DanhMuc, GiaBan, GiaVon, LoiNhuan, TrangThai, ThaoTac });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.Padding = new Padding(12, 6, 12, 10);
-            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(192, 255, 192);
-            dataGridViewCellStyle2.SelectionForeColor = Color.Green;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvThucDonVaGoi.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.Padding = new Padding(12, 6, 12, 10);
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(192, 255, 192);
+            dataGridViewCellStyle4.SelectionForeColor = Color.Green;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvThucDonVaGoi.DefaultCellStyle = dataGridViewCellStyle4;
             dgvThucDonVaGoi.Location = new Point(12, 236);
             dgvThucDonVaGoi.Name = "dgvThucDonVaGoi";
             dgvThucDonVaGoi.RowHeadersVisible = false;

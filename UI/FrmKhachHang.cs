@@ -26,8 +26,8 @@ namespace UI
         public FrmKhachHang()
         {
             InitializeComponent();
-            
-           
+
+
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -95,7 +95,7 @@ namespace UI
 
         }
 
-      
+
         private void dgvKhachHang_CellFormatting_ColorHang(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -292,6 +292,15 @@ namespace UI
         private void dgvKhachHang_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
         {
             dgvKhachHang.Cursor = Cursors.Default;
+        }
+
+        private void btnThemKH_Click(object sender, EventArgs e)
+        {
+            using (var f = new Frm_ThemKHMoi())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
         }
     }
 }

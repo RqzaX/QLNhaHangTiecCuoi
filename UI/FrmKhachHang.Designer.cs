@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem5 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem6 = new VanThuan.UI.PillItem();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -55,7 +55,7 @@
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             borderComboBox1 = new UiControls.BorderComboBox();
-            roundedButton2 = new UI.Controls.RoundedButton();
+            btnThemKH = new UI.Controls.RoundedButton();
             dgvKhachHang = new DataGridView();
             TenKH = new DataGridViewTextBoxColumn();
             LienHe = new DataGridViewTextBoxColumn();
@@ -274,12 +274,12 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem1.Text = "Danh Sách KH";
-            pillItem2.Text = "Hoạt Động Gần Đây";
-            pillItem3.Text = "Chương Trình Thân Thiết";
-            segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
-            segmentedPill1.Items.Add(pillItem3);
+            pillItem4.Text = "Danh Sách KH";
+            pillItem5.Text = "Hoạt Động Gần Đây";
+            pillItem6.Text = "Chương Trình Thân Thiết";
+            segmentedPill1.Items.Add(pillItem4);
+            segmentedPill1.Items.Add(pillItem5);
+            segmentedPill1.Items.Add(pillItem6);
             segmentedPill1.Location = new Point(21, 288);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(588, 55);
@@ -309,17 +309,20 @@
             borderComboBox1.Size = new Size(151, 32);
             borderComboBox1.TabIndex = 20;
             // 
-            // roundedButton2
+            // btnThemKH
             // 
-            roundedButton2.BackColor = Color.Black;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(1012, 349);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(166, 40);
-            roundedButton2.TabIndex = 21;
-            roundedButton2.Text = "+ Thêm KH Mới";
+            btnThemKH.BackColor = Color.Black;
+            btnThemKH.FlatStyle = FlatStyle.Flat;
+            btnThemKH.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnThemKH.ForeColor = Color.White;
+            btnThemKH.Location = new Point(1012, 349);
+            btnThemKH.Name = "btnThemKH";
+            btnThemKH.Padding = new Padding(10, 6, 10, 6);
+            btnThemKH.Size = new Size(166, 40);
+            btnThemKH.TabIndex = 21;
+            btnThemKH.Text = "+ Thêm KH Mới";
+            btnThemKH.UseVisualStyleBackColor = false;
+            btnThemKH.Click += btnThemKH_Click;
             // 
             // dgvKhachHang
             // 
@@ -329,30 +332,30 @@
             dgvKhachHang.ColumnHeadersHeight = 60;
             dgvKhachHang.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvKhachHang.Columns.AddRange(new DataGridViewColumn[] { TenKH, LienHe, Hang, TongChiTieu, SoLanDen, DiemTichLuy, LanCuoi, ThaoTac });
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 192, 192);
-            dataGridViewCellStyle1.SelectionForeColor = Color.Maroon;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvKhachHang.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(255, 192, 192);
+            dataGridViewCellStyle4.SelectionForeColor = Color.Maroon;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvKhachHang.DefaultCellStyle = dataGridViewCellStyle4;
             dgvKhachHang.Location = new Point(12, 418);
             dgvKhachHang.Name = "dgvKhachHang";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvKhachHang.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            dgvKhachHang.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvKhachHang.RowHeadersVisible = false;
             dgvKhachHang.RowHeadersWidth = 50;
             dgvKhachHang.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvKhachHang.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+            dgvKhachHang.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dgvKhachHang.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvKhachHang.Size = new Size(1157, 470);
             dgvKhachHang.TabIndex = 22;
@@ -427,7 +430,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1190, 900);
             Controls.Add(dgvKhachHang);
-            Controls.Add(roundedButton2);
+            Controls.Add(btnThemKH);
             Controls.Add(borderComboBox1);
             Controls.Add(roundedTextBox1);
             Controls.Add(segmentedPill1);
@@ -477,7 +480,7 @@
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private Controls.RoundedTextBox roundedTextBox1;
         private UiControls.BorderComboBox borderComboBox1;
-        private Controls.RoundedButton roundedButton2;
+        private Controls.RoundedButton btnThemKH;
         private DataGridView dgvKhachHang;
         private DataGridViewTextBoxColumn TenKH;
         private DataGridViewTextBoxColumn LienHe;

@@ -18,7 +18,7 @@ namespace UI
         {
             InitializeComponent();
         }
-        
+
         private void label12_Click(object sender, EventArgs e)
         {
 
@@ -217,6 +217,15 @@ namespace UI
         private void dgvNhanSu_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
         {
             dgvNhanSu.Cursor = Cursors.Default;
+        }
+
+        private void btnThemNV_Click(object sender, EventArgs e)
+        {
+            using (var f = new Frm_ThemNV())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
         }
     }
 }

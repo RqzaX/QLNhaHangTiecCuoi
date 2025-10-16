@@ -225,5 +225,19 @@ namespace UI
             }
             dgvThucDonVaGoi.Cursor = Cursors.Default;
         }
+
+        private void segmentedPill1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void roundedButton2_Click(object sender, EventArgs e)
+        {
+            using(var f= new Frm_ThemThucDon())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
+        }
     }
 }

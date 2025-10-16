@@ -190,5 +190,14 @@ namespace UI
             }
 
         }
+
+        private void roundedButton2_Click(object sender, EventArgs e)
+        {
+            using (var f = new Frm_TaoCTKM())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
+        }
     }
 }
