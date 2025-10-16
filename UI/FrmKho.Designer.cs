@@ -118,7 +118,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(38, 39);
+            label1.Location = new Point(13, 9);
             label1.Name = "label1";
             label1.Size = new Size(159, 35);
             label1.TabIndex = 11;
@@ -127,7 +127,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(38, 83);
+            label2.Location = new Point(16, 45);
             label2.Name = "label2";
             label2.Size = new Size(250, 20);
             label2.TabIndex = 12;

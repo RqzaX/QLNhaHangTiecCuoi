@@ -76,5 +76,14 @@ namespace UI
                 dgvDatSanh.InvalidateRow(ev.RowIndex);
             };
         }
+
+        private void btnTaoDonDatSanh_Click(object sender, EventArgs e)
+        {
+            using (var f = new FrmDatSanhWizard())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.ShowDialog(this);
+            }
+        }
     }
 }

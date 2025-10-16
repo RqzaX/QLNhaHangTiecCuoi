@@ -150,6 +150,11 @@ namespace UI
             ShowChild<FrmThanhToan_HoaDon>();
         }
 
+        private void btnPhanQuyen_Click(object sender, EventArgs e)
+        {
+            ShowChild<FrmPhanQuyen>();
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

@@ -119,6 +119,7 @@
             btnPhanQuyen.TextColor = Color.FromArgb(31, 41, 55);
             btnPhanQuyen.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnPhanQuyen.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnPhanQuyen.Click += btnPhanQuyen_Click;
             // 
             // btnCauHinh
             // 
@@ -144,7 +145,7 @@
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(12, 827);
             label21.Name = "label21";
-            label21.Size = new Size(68, 19);
+            label21.Size = new Size(86, 24);
             label21.TabIndex = 27;
             label21.Text = "Hệ thống";
             // 
@@ -211,7 +212,7 @@
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.Location = new Point(12, 667);
             label20.Name = "label20";
-            label20.Size = new Size(59, 19);
+            label20.Size = new Size(74, 24);
             label20.TabIndex = 23;
             label20.Text = "Quản lý";
             // 
@@ -297,7 +298,7 @@
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label19.Location = new Point(12, 476);
             label19.Name = "label19";
-            label19.Size = new Size(74, 19);
+            label19.Size = new Size(94, 24);
             label19.TabIndex = 18;
             label19.Text = "Danh mục";
             // 
@@ -421,7 +422,7 @@
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.Location = new Point(12, 205);
             label18.Name = "label18";
-            label18.Size = new Size(69, 19);
+            label18.Size = new Size(89, 24);
             label18.TabIndex = 11;
             label18.Text = "Vận hành";
             // 
@@ -450,7 +451,7 @@
             label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label17.Location = new Point(12, 128);
             label17.Name = "label17";
-            label17.Size = new Size(76, 19);
+            label17.Size = new Size(97, 24);
             label17.TabIndex = 9;
             label17.Text = "Tổng quan";
             // 
@@ -465,7 +466,7 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(3, 0);
+            pictureBox1.Location = new Point(49, 0);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(125, 116);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -490,7 +491,7 @@
             // button1
             // 
             button1.Image = (Image)resources.GetObject("button1.Image");
-            button1.Location = new Point(949, 9);
+            button1.Location = new Point(950, 7);
             button1.Name = "button1";
             button1.Size = new Size(68, 68);
             button1.TabIndex = 0;
@@ -510,7 +511,7 @@
             // pictureBox3
             // 
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(644, 27);
+            pictureBox3.Location = new Point(644, 26);
             pictureBox3.Name = "pictureBox3";
             pictureBox3.Size = new Size(29, 29);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
@@ -522,7 +523,7 @@
             datevnControl1.BackColor = Color.Transparent;
             datevnControl1.Font = new Font("Segoe UI", 11F);
             datevnControl1.ForeColor = Color.FromArgb(40, 40, 40);
-            datevnControl1.Location = new Point(644, 38);
+            datevnControl1.Location = new Point(643, 38);
             datevnControl1.Name = "datevnControl1";
             datevnControl1.Size = new Size(253, 24);
             datevnControl1.TabIndex = 3;

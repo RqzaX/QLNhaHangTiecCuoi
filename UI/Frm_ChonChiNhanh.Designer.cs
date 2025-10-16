@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.Load += new System.EventHandler(this.Frm_ChonChiNhanh_Load);
             label1 = new Label();
             btnExit = new Button();
             label2 = new Label();
             label3 = new Label();
             btnTiepTuc = new UI.Controls.RoundedButton();
-            borderComboBox1 = new UiControls.BorderComboBox();
+            cbbChonChiNhanh = new ComboBox();
             SuspendLayout();
             // 
             // label1
@@ -83,6 +84,7 @@
             // btnTiepTuc
             // 
             btnTiepTuc.BackColor = Color.FromArgb(31, 111, 235);
+            btnTiepTuc.FlatStyle = FlatStyle.Flat;
             btnTiepTuc.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTiepTuc.ForeColor = Color.White;
             btnTiepTuc.Location = new Point(445, 220);
@@ -92,18 +94,17 @@
             btnTiepTuc.Size = new Size(106, 32);
             btnTiepTuc.TabIndex = 5;
             btnTiepTuc.Text = "Tiếp Tục";
+            btnTiepTuc.UseVisualStyleBackColor = false;
             btnTiepTuc.Click += btnTiepTuc_Click;
             // 
-            // borderComboBox1
+            // cbbChonChiNhanh
             // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 22;
-            borderComboBox1.Location = new Point(22, 163);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(529, 28);
-            borderComboBox1.TabIndex = 6;
+            cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbChonChiNhanh.FormattingEnabled = true;
+            cbbChonChiNhanh.Location = new Point(31, 163);
+            cbbChonChiNhanh.Name = "cbbChonChiNhanh";
+            cbbChonChiNhanh.Size = new Size(423, 29);
+            cbbChonChiNhanh.TabIndex = 6;
             // 
             // Frm_ChonChiNhanh
             // 
@@ -112,7 +113,7 @@
             BackColor = Color.White;
             ClientSize = new Size(571, 268);
             ControlBox = false;
-            Controls.Add(borderComboBox1);
+            Controls.Add(cbbChonChiNhanh);
             Controls.Add(btnTiepTuc);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -134,6 +135,6 @@
         private Label label2;
         private Label label3;
         private Controls.RoundedButton btnTiepTuc;
-        private UiControls.BorderComboBox borderComboBox1;
+        private ComboBox cbbChonChiNhanh;
     }
 }

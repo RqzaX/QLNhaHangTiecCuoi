@@ -19,6 +19,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="NLog" Version="6.0.5" />
   </ItemGroup>
 
 </Project>

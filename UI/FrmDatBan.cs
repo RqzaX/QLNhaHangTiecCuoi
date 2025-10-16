@@ -23,5 +23,11 @@ namespace UI
         {
 
         }
+
+        private void btnTaoDatBanMoi_Click(object sender, EventArgs e)
+        {
+            Frm_TaoDatBan frm = new Frm_TaoDatBan();
+            frm.ShowDialog();
+        }
     }
 }

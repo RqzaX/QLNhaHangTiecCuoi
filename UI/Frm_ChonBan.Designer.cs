@@ -494,15 +494,10 @@
             segmentedPill1.Items.Add(pillItem3);
             segmentedPill1.Items.Add(pillItem4);
             segmentedPill1.Items.Add(pillItem5);
-            segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
-            segmentedPill1.Items.Add(pillItem3);
-            segmentedPill1.Items.Add(pillItem4);
-            segmentedPill1.Items.Add(pillItem5);
             segmentedPill1.Location = new Point(12, 128);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.RightToLeft = RightToLeft.Yes;
-            segmentedPill1.Size = new Size(716, 39);
+            segmentedPill1.Size = new Size(712, 39);
             segmentedPill1.TabIndex = 18;
             segmentedPill1.TabStop = false;
             segmentedPill1.Text = "segmentedPill1";
