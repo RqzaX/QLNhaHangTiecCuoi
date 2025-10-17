@@ -1,11 +1,10 @@
-﻿IF DB_ID(N'QL_NhaHangTiecCtuoi_V3') IS NULL
+IF DB_ID(N'QL_NhaHangTiecCuoi_V3') IS NULL
 BEGIN
-  EXEC('CREATE DATABASE QL_NhaHangTiecCtuoi_V3 COLLATE Vietnamese_100_CI_AS_SC;');
+  EXEC('CREATE DATABASE QL_NhaHangTiecCuoi_V3 COLLATE Vietnamese_100_CI_AS_SC;');
 END
 GO
-USE QL_NhaHangTiecCtuoi_V3;
+USE QL_NhaHangTiecCuoi_V3;
 GO
-
 /* ======================================================================
    1) DANH MỤC CỐT LÕI (Áp dụng cho cả Nhà hàng & Tiệc cưới)
    ====================================================================== */
@@ -381,6 +380,15 @@ CREATE TABLE dbo.nguoi_dung_vai_tro(
   FOREIGN KEY (vai_tro_id)    REFERENCES dbo.vai_tro(vai_tro_id)
 );
 
+IF OBJECT_ID('dbo.nguoi_dung_chi_nhanh','U') IS NULL
+CREATE TABLE dbo.nguoi_dung_chi_nhanh(
+    nguoi_dung_id INT NOT NULL,
+    chi_nhanh_id  INT NOT NULL,
+    PRIMARY KEY (nguoi_dung_id, chi_nhanh_id),
+    FOREIGN KEY (nguoi_dung_id) REFERENCES dbo.nguoi_dung(nguoi_dung_id),
+    FOREIGN KEY (chi_nhanh_id)  REFERENCES dbo.chi_nhanh(chi_nhanh_id)
+);
+
 GO
 /* ======================================================================
    5) INDEXES THIẾT THỰC
@@ -395,65 +403,3 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_hd_lap' AND object_id=O
   CREATE INDEX IX_hd_lap ON dbo.hoa_don(chi_nhanh_id, loai, ngay_lap);
 
 GO
-/* ======================================================================
-   6) DỮ LIỆU MẪU NHẸ
-   ====================================================================== */
-IF NOT EXISTS (SELECT 1 FROM dbo.chi_nhanh)
-INSERT dbo.chi_nhanh(ten, dia_chi, sdt) VALUES
- (N'CN Trung tâm', N'123 Lê Lợi, Q1, TP.HCM', N'0901 000 111'),
- (N'CN Quận 7',    N'456 Nguyễn Văn Linh, Q7, TP.HCM', N'0902 000 222');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.ca)
-INSERT dbo.ca(ten_ca, gio_bd, gio_kt) VALUES
- (N'Trưa', '10:00', '14:00'), (N'Tối', '17:00', '21:30');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.khu_vuc)
-INSERT dbo.khu_vuc(chi_nhanh_id, ten_khu_vuc) VALUES (1, N'Tầng Trệt'), (1, N'Lầu 1');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.ban)
-INSERT dbo.ban(chi_nhanh_id, khu_vuc_id, so_ban, suc_chua) VALUES
- (1, 1, N'T01', 4), (1, 1, N'T02', 4), (1, 2, N'L101', 6);
-
-IF NOT EXISTS (SELECT 1 FROM dbo.sanh)
-INSERT dbo.sanh(chi_nhanh_id, ten_sanh, suc_chua, phi_thue_cb) VALUES
- (1, N'Sảnh Ruby', 300, 15000000), (1, N'Sảnh Sapphire', 200, 10000000);
-
-IF NOT EXISTS (SELECT 1 FROM dbo.khach_hang)
-INSERT dbo.khach_hang(ho_ten, sdt, email) VALUES
- (N'Nguyễn Minh Khang', N'0903 111 222', N'khang@example.com'),
- (N'Lê Trúc Vy',        N'0904 333 444', N'vy@example.com');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.mon_an)
-INSERT dbo.mon_an(ma_mon, ten_mon, nhom, don_vi_tinh, don_gia) VALUES
- (N'M001', N'Súp cua', N'Khai vị', N'Tô', 45000),
- (N'M002', N'Gà quay ngũ vị', N'Món chính', N'Dĩa', 180000),
- (N'M003', N'Lẩu thái hải sản', N'Món chính', N'Nồi', 350000),
- (N'M004', N'Rau câu dừa', N'Tráng miệng', N'Phần', 30000);
-
-IF NOT EXISTS (SELECT 1 FROM dbo.dich_vu)
-INSERT dbo.dich_vu(ma_dv, ten_dv, don_vi_tinh, don_gia) VALUES
- (N'DV01', N'MC', N'Buổi', 1500000),
- (N'DV03', N'Trang trí tiêu chuẩn', N'Gói', 5000000);
-
-IF NOT EXISTS (SELECT 1 FROM dbo.goi_tiec)
-INSERT dbo.goi_tiec(ma_goi, ten_goi, gia_co_ban) VALUES (N'G01', N'Gói Tiêu chuẩn', 25000000);
-
-IF NOT EXISTS (SELECT 1 FROM dbo.goi_tiec_mon WHERE goi_id=1)
-INSERT dbo.goi_tiec_mon(goi_id, mon_id, so_luong)
-SELECT 1, mon_id, 10 FROM dbo.mon_an WHERE ma_mon IN (N'M002',N'M003',N'M004');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.goi_tiec_dv WHERE goi_id=1)
-INSERT dbo.goi_tiec_dv(goi_id, dv_id, so_luong)
-SELECT 1, dv_id, 1 FROM dbo.dich_vu WHERE ma_dv IN (N'DV01',N'DV03');
-
--- Seed vai trò & user
-IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro)
-INSERT dbo.vai_tro(ma, ten) VALUES
- (N'ADMIN',N'Admin tổng'),(N'LE_TAN',N'Lễ tân'),(N'THU_NGAN',N'Thu ngân');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'admin')
-BEGIN
-  INSERT dbo.nguoi_dung(tai_khoan, ho_ten) VALUES(N'admin',N'Quản trị hệ thống');
-  DECLARE @uid INT = SCOPE_IDENTITY();
-  INSERT dbo.nguoi_dung_vai_tro VALUES(@uid,(SELECT vai_tro_id FROM dbo.vai_tro WHERE ma=N'ADMIN'));
-END
