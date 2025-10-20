@@ -58,6 +58,7 @@ namespace UI.Controls
 
         // ===== Public API (proxy) =====
         [Browsable(true)]
+        [Category("Appearance")]
         public new Font Font { get => base.Font; set { base.Font = value; _combo.Font = value; Invalidate(); } }
 
         [Category("Data")]

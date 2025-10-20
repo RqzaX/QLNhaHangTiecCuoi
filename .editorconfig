@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# Default severity for analyzer diagnostics with category 'WinForms Security'
+dotnet_analyzer_diagnostic.category-WinForms Security.severity = none
+
+# WFO1000: Missing code serialization configuration for property content
+dotnet_diagnostic.WFO1000.severity = none

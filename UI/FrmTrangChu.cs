@@ -155,6 +155,11 @@ namespace UI
             ShowChild<FrmPhanQuyen>();
         }
 
+        private void FrmTrangChu_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
         private void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)

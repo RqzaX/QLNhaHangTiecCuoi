@@ -33,7 +33,8 @@
             label1 = new Label();
             label3 = new Label();
             panel1 = new Panel();
-            panel2 = new Panel();
+            panelNhomMon = new Panel();
+            roundedButton1 = new UI.Controls.RoundedButton();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             panel3 = new Panel();
             btnChonBan = new UI.Controls.RoundedButton();
@@ -53,43 +54,23 @@
             pictureBox1 = new PictureBox();
             label5 = new Label();
             label4 = new Label();
-            panel4 = new Panel();
-            foodItemButton10 = new UI.Controls.FoodItemButton();
-            foodItemButton7 = new UI.Controls.FoodItemButton();
-            foodItemButton8 = new UI.Controls.FoodItemButton();
-            foodItemButton11 = new UI.Controls.FoodItemButton();
-            foodItemButton12 = new UI.Controls.FoodItemButton();
-            foodItemButton9 = new UI.Controls.FoodItemButton();
-            foodItemButton4 = new UI.Controls.FoodItemButton();
-            foodItemButton5 = new UI.Controls.FoodItemButton();
-            foodItemButton6 = new UI.Controls.FoodItemButton();
-            foodItemButton3 = new UI.Controls.FoodItemButton();
-            foodItemButton2 = new UI.Controls.FoodItemButton();
-            btnTenMon = new UI.Controls.FoodItemButton();
+            panelDanhSachMon = new Panel();
             roundedButton8 = new UI.Controls.RoundedButton();
-            roundedButton1 = new UI.Controls.RoundedButton();
-            roundedButton2 = new UI.Controls.RoundedButton();
-            roundedButton3 = new UI.Controls.RoundedButton();
-            roundedButton4 = new UI.Controls.RoundedButton();
-            roundedButton5 = new UI.Controls.RoundedButton();
-            roundedButton6 = new UI.Controls.RoundedButton();
-            roundedButton7 = new UI.Controls.RoundedButton();
             panel1.SuspendLayout();
-            panel2.SuspendLayout();
+            panelNhomMon.SuspendLayout();
             panel3.SuspendLayout();
             panel5.SuspendLayout();
             panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(10, 33);
+            label2.Location = new Point(11, 44);
             label2.Name = "label2";
-            label2.Size = new Size(156, 19);
+            label2.Size = new Size(205, 24);
             label2.TabIndex = 9;
             label2.Text = "Gọi món và thanh toán";
             // 
@@ -97,9 +78,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(10, 7);
+            label1.Location = new Point(11, 9);
             label1.Name = "label1";
-            label1.Size = new Size(231, 27);
+            label1.Size = new Size(293, 35);
             label1.TabIndex = 8;
             label1.Text = "Bán hàng (Point of Sale)";
             // 
@@ -107,49 +88,57 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(924, 658);
+            label3.Location = new Point(1056, 877);
             label3.Name = "label3";
-            label3.Size = new Size(109, 19);
+            label3.Size = new Size(138, 24);
             label3.TabIndex = 10;
             label3.Text = "V0.2 - Nhóm 11";
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(panel2);
+            panel1.Controls.Add(panelNhomMon);
             panel1.Controls.Add(roundedTextBox1);
-            panel1.Location = new Point(-2, 68);
-            panel1.Margin = new Padding(3, 2, 3, 2);
+            panel1.Location = new Point(-2, 91);
             panel1.Name = "panel1";
-            panel1.Size = new Size(640, 106);
+            panel1.Size = new Size(762, 141);
             panel1.TabIndex = 11;
             // 
-            // panel2
+            // panelNhomMon
             // 
-            panel2.AutoScroll = true;
-            panel2.Controls.Add(roundedButton6);
-            panel2.Controls.Add(roundedButton7);
-            panel2.Controls.Add(roundedButton5);
-            panel2.Controls.Add(roundedButton4);
-            panel2.Controls.Add(roundedButton3);
-            panel2.Controls.Add(roundedButton2);
-            panel2.Controls.Add(roundedButton1);
-            panel2.Location = new Point(3, 50);
-            panel2.Margin = new Padding(3, 2, 3, 2);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(634, 55);
-            panel2.TabIndex = 1;
+            panelNhomMon.AutoScroll = true;
+            panelNhomMon.Controls.Add(roundedButton1);
+            panelNhomMon.Location = new Point(3, 67);
+            panelNhomMon.Name = "panelNhomMon";
+            panelNhomMon.Size = new Size(759, 73);
+            panelNhomMon.TabIndex = 1;
+            // 
+            // roundedButton1
+            // 
+            roundedButton1.BackColor = Color.Black;
+            roundedButton1.BorderColor = Color.Black;
+            roundedButton1.FlatStyle = FlatStyle.Flat;
+            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
+            roundedButton1.ForeColor = Color.White;
+            roundedButton1.HoverBackColor = Color.FromArgb(64, 64, 64);
+            roundedButton1.Location = new Point(7, 5);
+            roundedButton1.Name = "roundedButton1";
+            roundedButton1.Padding = new Padding(10, 5, 10, 5);
+            roundedButton1.PressedBackColor = Color.Gray;
+            roundedButton1.Size = new Size(125, 45);
+            roundedButton1.TabIndex = 26;
+            roundedButton1.Text = "Tất cả";
+            roundedButton1.UseVisualStyleBackColor = false;
             // 
             // roundedTextBox1
             // 
             roundedTextBox1.BackColor = Color.White;
             roundedTextBox1.Font = new Font("Segoe UI", 10F);
             roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(12, 15);
-            roundedTextBox1.Margin = new Padding(3, 2, 3, 2);
+            roundedTextBox1.Location = new Point(14, 20);
             roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(9, 6, 9, 6);
-            roundedTextBox1.Size = new Size(616, 30);
+            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
+            roundedTextBox1.Size = new Size(704, 40);
             roundedTextBox1.TabIndex = 0;
             // 
             // panel3
@@ -169,10 +158,9 @@
             panel3.Controls.Add(pictureBox1);
             panel3.Controls.Add(label5);
             panel3.Controls.Add(label4);
-            panel3.Location = new Point(640, 68);
-            panel3.Margin = new Padding(3, 2, 3, 2);
+            panel3.Location = new Point(759, 91);
             panel3.Name = "panel3";
-            panel3.Size = new Size(404, 587);
+            panel3.Size = new Size(434, 783);
             panel3.TabIndex = 12;
             // 
             // btnChonBan
@@ -181,11 +169,10 @@
             btnChonBan.FlatStyle = FlatStyle.Flat;
             btnChonBan.Font = new Font("Segoe UI Semibold", 10.5F);
             btnChonBan.ForeColor = Color.Black;
-            btnChonBan.Location = new Point(16, 39);
-            btnChonBan.Margin = new Padding(3, 2, 3, 2);
+            btnChonBan.Location = new Point(33, 52);
             btnChonBan.Name = "btnChonBan";
-            btnChonBan.Padding = new Padding(9, 4, 9, 4);
-            btnChonBan.Size = new Size(351, 38);
+            btnChonBan.Padding = new Padding(10, 5, 10, 5);
+            btnChonBan.Size = new Size(358, 51);
             btnChonBan.TabIndex = 8;
             btnChonBan.Text = "Chọn bàn để bắt đầu";
             btnChonBan.UseVisualStyleBackColor = false;
@@ -195,9 +182,9 @@
             // 
             label12.AutoSize = true;
             label12.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label12.Location = new Point(301, 497);
+            label12.Location = new Point(328, 663);
             label12.Name = "label12";
-            label12.Size = new Size(74, 19);
+            label12.Size = new Size(91, 24);
             label12.TabIndex = 25;
             label12.Text = "310.000 đ";
             label12.TextAlign = ContentAlignment.MiddleRight;
@@ -206,9 +193,9 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label11.Location = new Point(310, 463);
+            label11.Location = new Point(338, 617);
             label11.Name = "label11";
-            label11.Size = new Size(66, 19);
+            label11.Size = new Size(81, 24);
             label11.TabIndex = 24;
             label11.Text = "22.000 đ";
             label11.TextAlign = ContentAlignment.MiddleRight;
@@ -217,9 +204,9 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label10.Location = new Point(301, 437);
+            label10.Location = new Point(328, 583);
             label10.Name = "label10";
-            label10.Size = new Size(74, 19);
+            label10.Size = new Size(91, 24);
             label10.TabIndex = 23;
             label10.Text = "270.000 đ";
             label10.TextAlign = ContentAlignment.MiddleRight;
@@ -230,9 +217,9 @@
             label9.BackColor = Color.Transparent;
             label9.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = Color.Black;
-            label9.Location = new Point(12, 484);
+            label9.Location = new Point(14, 645);
             label9.Name = "label9";
-            label9.Size = new Size(355, 14);
+            label9.Size = new Size(414, 18);
             label9.TabIndex = 22;
             label9.Text = "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯";
             // 
@@ -240,9 +227,9 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label8.Location = new Point(6, 463);
+            label8.Location = new Point(14, 617);
             label8.Name = "label8";
-            label8.Size = new Size(66, 19);
+            label8.Size = new Size(81, 24);
             label8.TabIndex = 21;
             label8.Text = "VAT (8%)";
             // 
@@ -250,9 +237,9 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label7.Location = new Point(6, 437);
+            label7.Location = new Point(14, 583);
             label7.Name = "label7";
-            label7.Size = new Size(65, 19);
+            label7.Size = new Size(82, 24);
             label7.TabIndex = 20;
             label7.Text = "Tạm tính";
             // 
@@ -260,9 +247,9 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.Location = new Point(3, 497);
+            label6.Location = new Point(14, 663);
             label6.Name = "label6";
-            label6.Size = new Size(75, 19);
+            label6.Size = new Size(93, 24);
             label6.TabIndex = 19;
             label6.Text = "Tổng cộng";
             // 
@@ -272,11 +259,10 @@
             roundedButton10.FlatStyle = FlatStyle.Flat;
             roundedButton10.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton10.ForeColor = Color.White;
-            roundedButton10.Location = new Point(6, 520);
-            roundedButton10.Margin = new Padding(3, 2, 3, 2);
+            roundedButton10.Location = new Point(14, 693);
             roundedButton10.Name = "roundedButton10";
-            roundedButton10.Padding = new Padding(9, 4, 9, 4);
-            roundedButton10.Size = new Size(374, 30);
+            roundedButton10.Padding = new Padding(10, 5, 10, 5);
+            roundedButton10.Size = new Size(405, 40);
             roundedButton10.TabIndex = 18;
             roundedButton10.Text = "Gửi xuống bếp";
             roundedButton10.UseVisualStyleBackColor = false;
@@ -287,11 +273,10 @@
             roundedButton9.FlatStyle = FlatStyle.Flat;
             roundedButton9.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton9.ForeColor = Color.Black;
-            roundedButton9.Location = new Point(6, 555);
-            roundedButton9.Margin = new Padding(3, 2, 3, 2);
+            roundedButton9.Location = new Point(14, 740);
             roundedButton9.Name = "roundedButton9";
-            roundedButton9.Padding = new Padding(9, 4, 9, 4);
-            roundedButton9.Size = new Size(374, 30);
+            roundedButton9.Padding = new Padding(10, 5, 10, 5);
+            roundedButton9.Size = new Size(404, 40);
             roundedButton9.TabIndex = 8;
             roundedButton9.Text = "Thanh toán";
             roundedButton9.UseVisualStyleBackColor = false;
@@ -301,47 +286,46 @@
             panel5.AutoScroll = true;
             panel5.Controls.Add(panel6);
             panel5.Controls.Add(orderItemCard1);
-            panel5.Location = new Point(0, 125);
-            panel5.Margin = new Padding(3, 2, 3, 2);
+            panel5.Location = new Point(0, 167);
             panel5.Name = "panel5";
-            panel5.Size = new Size(402, 310);
+            panel5.Size = new Size(459, 413);
             panel5.TabIndex = 17;
             // 
             // panel6
             // 
             panel6.AutoScroll = true;
             panel6.Controls.Add(orderItemCard2);
-            panel6.Location = new Point(-9, -1);
-            panel6.Margin = new Padding(3, 2, 3, 2);
+            panel6.Location = new Point(3, -1);
             panel6.Name = "panel6";
-            panel6.Size = new Size(402, 302);
+            panel6.Size = new Size(428, 403);
             panel6.TabIndex = 18;
             // 
             // orderItemCard2
             // 
             orderItemCard2.Font = new Font("Segoe UI", 10F);
-            orderItemCard2.Location = new Point(15, 3);
+            orderItemCard2.Location = new Point(3, -1);
+            orderItemCard2.Margin = new Padding(3, 4, 3, 4);
             orderItemCard2.Name = "orderItemCard2";
-            orderItemCard2.Size = new Size(363, 169);
+            orderItemCard2.Size = new Size(413, 225);
             orderItemCard2.TabIndex = 0;
             orderItemCard2.Text = "orderItemCard2";
             // 
             // orderItemCard1
             // 
             orderItemCard1.Font = new Font("Segoe UI", 10F);
-            orderItemCard1.Location = new Point(3, 3);
+            orderItemCard1.Location = new Point(3, 4);
+            orderItemCard1.Margin = new Padding(3, 4, 3, 4);
             orderItemCard1.Name = "orderItemCard1";
-            orderItemCard1.Size = new Size(363, 120);
+            orderItemCard1.Size = new Size(415, 160);
             orderItemCard1.TabIndex = 0;
             orderItemCard1.Text = "orderItemCard1";
             // 
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(12, 100);
-            pictureBox1.Margin = new Padding(3, 2, 3, 2);
+            pictureBox1.Location = new Point(14, 133);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(23, 21);
+            pictureBox1.Size = new Size(26, 28);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 16;
             pictureBox1.TabStop = false;
@@ -350,9 +334,9 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Calibri", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label5.Location = new Point(32, 100);
+            label5.Location = new Point(37, 133);
             label5.Name = "label5";
-            label5.Size = new Size(102, 22);
+            label5.Size = new Size(133, 28);
             label5.TabIndex = 15;
             label5.Text = "Đơn hàng (2)";
             // 
@@ -360,170 +344,20 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(6, 7);
+            label4.Location = new Point(7, 9);
             label4.Name = "label4";
-            label4.Size = new Size(107, 19);
+            label4.Size = new Size(139, 24);
             label4.TabIndex = 15;
             label4.Text = "Chọn bàn/sảnh";
             // 
-            // panel4
+            // panelDanhSachMon
             // 
-            panel4.AutoScroll = true;
-            panel4.BackColor = SystemColors.Control;
-            panel4.Controls.Add(foodItemButton10);
-            panel4.Controls.Add(foodItemButton7);
-            panel4.Controls.Add(foodItemButton8);
-            panel4.Controls.Add(foodItemButton11);
-            panel4.Controls.Add(foodItemButton12);
-            panel4.Controls.Add(foodItemButton9);
-            panel4.Controls.Add(foodItemButton4);
-            panel4.Controls.Add(foodItemButton5);
-            panel4.Controls.Add(foodItemButton6);
-            panel4.Controls.Add(foodItemButton3);
-            panel4.Controls.Add(foodItemButton2);
-            panel4.Controls.Add(btnTenMon);
-            panel4.Location = new Point(1, 179);
-            panel4.Margin = new Padding(3, 2, 3, 2);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(634, 476);
-            panel4.TabIndex = 13;
-            // 
-            // foodItemButton10
-            // 
-            foodItemButton10.BackColor = Color.Transparent;
-            foodItemButton10.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton10.Location = new Point(405, 468);
-            foodItemButton10.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton10.Name = "foodItemButton10";
-            foodItemButton10.Size = new Size(206, 159);
-            foodItemButton10.TabIndex = 11;
-            foodItemButton10.Text = "foodItemButton10";
-            // 
-            // foodItemButton7
-            // 
-            foodItemButton7.BackColor = Color.Transparent;
-            foodItemButton7.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton7.Location = new Point(405, 315);
-            foodItemButton7.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton7.Name = "foodItemButton7";
-            foodItemButton7.Size = new Size(206, 159);
-            foodItemButton7.TabIndex = 8;
-            foodItemButton7.Text = "foodItemButton7";
-            // 
-            // foodItemButton8
-            // 
-            foodItemButton8.BackColor = Color.Transparent;
-            foodItemButton8.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton8.Location = new Point(202, 315);
-            foodItemButton8.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton8.Name = "foodItemButton8";
-            foodItemButton8.Size = new Size(206, 159);
-            foodItemButton8.TabIndex = 7;
-            foodItemButton8.Text = "foodItemButton8";
-            // 
-            // foodItemButton11
-            // 
-            foodItemButton11.BackColor = Color.Transparent;
-            foodItemButton11.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton11.Location = new Point(202, 468);
-            foodItemButton11.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton11.Name = "foodItemButton11";
-            foodItemButton11.Size = new Size(206, 159);
-            foodItemButton11.TabIndex = 10;
-            foodItemButton11.Text = "foodItemButton11";
-            // 
-            // foodItemButton12
-            // 
-            foodItemButton12.BackColor = Color.Transparent;
-            foodItemButton12.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton12.Location = new Point(-3, 468);
-            foodItemButton12.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton12.Name = "foodItemButton12";
-            foodItemButton12.Size = new Size(206, 159);
-            foodItemButton12.TabIndex = 9;
-            foodItemButton12.Text = "foodItemButton12";
-            // 
-            // foodItemButton9
-            // 
-            foodItemButton9.BackColor = Color.Transparent;
-            foodItemButton9.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton9.Location = new Point(-3, 315);
-            foodItemButton9.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton9.Name = "foodItemButton9";
-            foodItemButton9.Size = new Size(206, 159);
-            foodItemButton9.TabIndex = 6;
-            foodItemButton9.Text = "foodItemButton9";
-            // 
-            // foodItemButton4
-            // 
-            foodItemButton4.BackColor = Color.Transparent;
-            foodItemButton4.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton4.Location = new Point(405, 156);
-            foodItemButton4.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton4.Name = "foodItemButton4";
-            foodItemButton4.Size = new Size(206, 159);
-            foodItemButton4.TabIndex = 5;
-            foodItemButton4.Text = "foodItemButton4";
-            // 
-            // foodItemButton5
-            // 
-            foodItemButton5.BackColor = Color.Transparent;
-            foodItemButton5.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton5.Location = new Point(202, 156);
-            foodItemButton5.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton5.Name = "foodItemButton5";
-            foodItemButton5.Size = new Size(206, 159);
-            foodItemButton5.TabIndex = 4;
-            foodItemButton5.Text = "foodItemButton5";
-            // 
-            // foodItemButton6
-            // 
-            foodItemButton6.BackColor = Color.Transparent;
-            foodItemButton6.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton6.Location = new Point(-3, 156);
-            foodItemButton6.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton6.Name = "foodItemButton6";
-            foodItemButton6.Size = new Size(206, 159);
-            foodItemButton6.TabIndex = 3;
-            foodItemButton6.Text = "foodItemButton6";
-            // 
-            // foodItemButton3
-            // 
-            foodItemButton3.BackColor = Color.Transparent;
-            foodItemButton3.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton3.Location = new Point(405, 2);
-            foodItemButton3.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton3.Name = "foodItemButton3";
-            foodItemButton3.Size = new Size(206, 159);
-            foodItemButton3.TabIndex = 2;
-            foodItemButton3.Text = "Tôm hùm";
-            // 
-            // foodItemButton2
-            // 
-            foodItemButton2.BackColor = Color.Transparent;
-            foodItemButton2.Font = new Font("Segoe UI Semibold", 11F);
-            foodItemButton2.Icon = (Image)resources.GetObject("foodItemButton2.Icon");
-            foodItemButton2.Location = new Point(202, 2);
-            foodItemButton2.Margin = new Padding(3, 2, 3, 2);
-            foodItemButton2.Name = "foodItemButton2";
-            foodItemButton2.Size = new Size(206, 159);
-            foodItemButton2.TabIndex = 1;
-            foodItemButton2.Text = "Salad";
-            foodItemButton2.Title = "Salad";
-            // 
-            // btnTenMon
-            // 
-            btnTenMon.BackColor = Color.Transparent;
-            btnTenMon.Font = new Font("Segoe UI Semibold", 11F);
-            btnTenMon.Icon = (Image)resources.GetObject("btnTenMon.Icon");
-            btnTenMon.Location = new Point(-3, 2);
-            btnTenMon.Margin = new Padding(3, 2, 3, 2);
-            btnTenMon.Name = "btnTenMon";
-            btnTenMon.Size = new Size(206, 159);
-            btnTenMon.TabIndex = 0;
-            btnTenMon.Text = "Tôm hùm";
-            btnTenMon.Title = "Tôm hùm";
-            btnTenMon.Click += btnTenMon_Click;
+            panelDanhSachMon.AutoScroll = true;
+            panelDanhSachMon.BackColor = SystemColors.Control;
+            panelDanhSachMon.Location = new Point(1, 239);
+            panelDanhSachMon.Name = "panelDanhSachMon";
+            panelDanhSachMon.Size = new Size(755, 635);
+            panelDanhSachMon.TabIndex = 13;
             // 
             // roundedButton8
             // 
@@ -532,174 +366,39 @@
             roundedButton8.FlatStyle = FlatStyle.Flat;
             roundedButton8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
             roundedButton8.ForeColor = Color.White;
-            roundedButton8.Location = new Point(748, 14);
-            roundedButton8.Margin = new Padding(3, 2, 3, 2);
+            roundedButton8.Location = new Point(855, 19);
             roundedButton8.Name = "roundedButton8";
-            roundedButton8.Padding = new Padding(9, 4, 9, 4);
-            roundedButton8.Size = new Size(258, 42);
+            roundedButton8.Padding = new Padding(10, 5, 10, 5);
+            roundedButton8.Size = new Size(295, 56);
             roundedButton8.TabIndex = 14;
             roundedButton8.Text = "Số bàn đang phục vụ: 3";
             roundedButton8.UseVisualStyleBackColor = false;
             // 
-            // roundedButton1
-            // 
-            roundedButton1.BackColor = Color.Black;
-            roundedButton1.BorderColor = Color.Black;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
-            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton1.ForeColor = Color.White;
-            roundedButton1.HoverBackColor = Color.FromArgb(64, 64, 64);
-            roundedButton1.Location = new Point(6, 4);
-            roundedButton1.Margin = new Padding(3, 2, 3, 2);
-            roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(9, 4, 9, 4);
-            roundedButton1.PressedBackColor = Color.Gray;
-            roundedButton1.Size = new Size(109, 34);
-            roundedButton1.TabIndex = 26;
-            roundedButton1.Text = "Tất cả";
-            roundedButton1.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton2
-            // 
-            roundedButton2.BackColor = Color.White;
-            roundedButton2.BorderColor = Color.Black;
-            roundedButton2.BorderThickness = 2;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.Black;
-            roundedButton2.HoverBackColor = Color.WhiteSmoke;
-            roundedButton2.Location = new Point(121, 4);
-            roundedButton2.Margin = new Padding(3, 2, 3, 2);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(9, 4, 9, 4);
-            roundedButton2.PressedBackColor = Color.LightGray;
-            roundedButton2.Size = new Size(109, 34);
-            roundedButton2.TabIndex = 27;
-            roundedButton2.Text = "Khai vị";
-            roundedButton2.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton3
-            // 
-            roundedButton3.BackColor = Color.White;
-            roundedButton3.BorderColor = Color.Black;
-            roundedButton3.BorderThickness = 2;
-            roundedButton3.FlatStyle = FlatStyle.Flat;
-            roundedButton3.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton3.ForeColor = Color.Black;
-            roundedButton3.HoverBackColor = Color.WhiteSmoke;
-            roundedButton3.Location = new Point(236, 4);
-            roundedButton3.Margin = new Padding(3, 2, 3, 2);
-            roundedButton3.Name = "roundedButton3";
-            roundedButton3.Padding = new Padding(9, 4, 9, 4);
-            roundedButton3.PressedBackColor = Color.LightGray;
-            roundedButton3.Size = new Size(109, 34);
-            roundedButton3.TabIndex = 28;
-            roundedButton3.Text = "Món chính";
-            roundedButton3.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton4
-            // 
-            roundedButton4.BackColor = Color.White;
-            roundedButton4.BorderColor = Color.Black;
-            roundedButton4.BorderThickness = 2;
-            roundedButton4.FlatStyle = FlatStyle.Flat;
-            roundedButton4.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton4.ForeColor = Color.Black;
-            roundedButton4.HoverBackColor = Color.WhiteSmoke;
-            roundedButton4.Location = new Point(351, 4);
-            roundedButton4.Margin = new Padding(3, 2, 3, 2);
-            roundedButton4.Name = "roundedButton4";
-            roundedButton4.Padding = new Padding(9, 4, 9, 4);
-            roundedButton4.PressedBackColor = Color.LightGray;
-            roundedButton4.Size = new Size(109, 34);
-            roundedButton4.TabIndex = 29;
-            roundedButton4.Text = "Canh/Súp";
-            roundedButton4.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton5
-            // 
-            roundedButton5.BackColor = Color.White;
-            roundedButton5.BorderColor = Color.Black;
-            roundedButton5.BorderThickness = 2;
-            roundedButton5.FlatStyle = FlatStyle.Flat;
-            roundedButton5.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton5.ForeColor = Color.Black;
-            roundedButton5.HoverBackColor = Color.WhiteSmoke;
-            roundedButton5.Location = new Point(466, 4);
-            roundedButton5.Margin = new Padding(3, 2, 3, 2);
-            roundedButton5.Name = "roundedButton5";
-            roundedButton5.Padding = new Padding(9, 4, 9, 4);
-            roundedButton5.PressedBackColor = Color.LightGray;
-            roundedButton5.Size = new Size(109, 34);
-            roundedButton5.TabIndex = 30;
-            roundedButton5.Text = "Hải sản";
-            roundedButton5.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton6
-            // 
-            roundedButton6.BackColor = Color.White;
-            roundedButton6.BorderColor = Color.Black;
-            roundedButton6.BorderThickness = 2;
-            roundedButton6.FlatStyle = FlatStyle.Flat;
-            roundedButton6.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton6.ForeColor = Color.Black;
-            roundedButton6.HoverBackColor = Color.WhiteSmoke;
-            roundedButton6.Location = new Point(696, 2);
-            roundedButton6.Margin = new Padding(3, 2, 3, 2);
-            roundedButton6.Name = "roundedButton6";
-            roundedButton6.Padding = new Padding(9, 4, 9, 4);
-            roundedButton6.PressedBackColor = Color.LightGray;
-            roundedButton6.Size = new Size(109, 34);
-            roundedButton6.TabIndex = 32;
-            roundedButton6.Text = "Đồ uống";
-            roundedButton6.UseVisualStyleBackColor = false;
-            // 
-            // roundedButton7
-            // 
-            roundedButton7.BackColor = Color.White;
-            roundedButton7.BorderColor = Color.Black;
-            roundedButton7.BorderThickness = 2;
-            roundedButton7.FlatStyle = FlatStyle.Flat;
-            roundedButton7.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton7.ForeColor = Color.Black;
-            roundedButton7.HoverBackColor = Color.WhiteSmoke;
-            roundedButton7.Location = new Point(581, 2);
-            roundedButton7.Margin = new Padding(3, 2, 3, 2);
-            roundedButton7.Name = "roundedButton7";
-            roundedButton7.Padding = new Padding(9, 4, 9, 4);
-            roundedButton7.PressedBackColor = Color.LightGray;
-            roundedButton7.Size = new Size(109, 34);
-            roundedButton7.TabIndex = 31;
-            roundedButton7.Text = "Tráng miệng";
-            roundedButton7.UseVisualStyleBackColor = false;
-            // 
             // FrmBanHang
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1041, 675);
+            ClientSize = new Size(1190, 900);
             ControlBox = false;
             Controls.Add(roundedButton8);
-            Controls.Add(panel4);
+            Controls.Add(panelDanhSachMon);
             Controls.Add(panel3);
             Controls.Add(panel1);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 2, 3, 2);
             Name = "FrmBanHang";
             StartPosition = FormStartPosition.CenterParent;
             Text = "FrmBanHang";
             Load += FrmBanHang_Load;
             panel1.ResumeLayout(false);
-            panel2.ResumeLayout(false);
+            panelNhomMon.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             panel5.ResumeLayout(false);
             panel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel4.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -711,22 +410,10 @@
         private Label label3;
         private Panel panel1;
         private Controls.RoundedTextBox roundedTextBox1;
-        private Panel panel2;
+        private Panel panelNhomMon;
         private Panel panel3;
-        private Panel panel4;
+        private Panel panelDanhSachMon;
         private Controls.RoundedButton roundedButton8;
-        private Controls.FoodItemButton btnTenMon;
-        private Controls.FoodItemButton foodItemButton10;
-        private Controls.FoodItemButton foodItemButton7;
-        private Controls.FoodItemButton foodItemButton8;
-        private Controls.FoodItemButton foodItemButton11;
-        private Controls.FoodItemButton foodItemButton12;
-        private Controls.FoodItemButton foodItemButton9;
-        private Controls.FoodItemButton foodItemButton4;
-        private Controls.FoodItemButton foodItemButton5;
-        private Controls.FoodItemButton foodItemButton6;
-        private Controls.FoodItemButton foodItemButton3;
-        private Controls.FoodItemButton foodItemButton2;
         private Label label4;
         private Controls.RoundedButton roundedButton10;
         private Controls.RoundedButton roundedButton9;
@@ -744,12 +431,6 @@
         private Panel panel6;
         private Controls.OrderItemCard orderItemCard2;
         private Controls.OrderItemCard orderItemCard1;
-        private Controls.RoundedButton roundedButton2;
         private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedButton roundedButton6;
-        private Controls.RoundedButton roundedButton7;
-        private Controls.RoundedButton roundedButton5;
-        private Controls.RoundedButton roundedButton4;
-        private Controls.RoundedButton roundedButton3;
     }
 }

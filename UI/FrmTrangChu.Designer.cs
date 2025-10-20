@@ -584,6 +584,8 @@
             Controls.Add(panel3);
             Name = "FrmTrangChu";
             StartPosition = FormStartPosition.CenterScreen;
+            FormClosing += FrmTrangChu_FormClosing;
+            FormClosed += FrmTrangChu_FormClosed;
             Load += FrmTrangChu_Load;
             panel3.ResumeLayout(false);
             panel3.PerformLayout();

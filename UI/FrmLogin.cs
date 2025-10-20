@@ -1,5 +1,6 @@
 ﻿using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
+using QLNhaHangTiecCuoi.Share;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

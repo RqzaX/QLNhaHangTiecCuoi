@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
+using QLNhaHangTiecCuoi.Share;
 using UI.Common;
 
 namespace UI
@@ -26,53 +27,34 @@ namespace UI
             _dbHelper = new DatabaseHelper();
             _bll = new NguoiDungBLL(_dbHelper);
         }
-
-        /// <summary>
-        /// Form Load - Tự động load dữ liệu chi nhánh
-        /// </summary>
         private void Frm_ChonChiNhanh_Load(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("=== Frm_ChonChiNhanh_Load gọi ===");
             try
             {
                 LoadChiNhanhComboBox();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Exception in Load: {ex.Message}");
                 MessageBox.Show("Lỗi khi load form: " + ex.Message, "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        /// <summary>
-        /// Load danh sách chi nhánh vào ComboBox
-        /// </summary>
         private void LoadChiNhanhComboBox()
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("1. Bắt đầu LoadChiNhanhComboBox");
 
                 // Lấy dữ liệu từ database
                 DataTable dt = _bll.LayDanhSachChiNhanh();
 
-                System.Diagnostics.Debug.WriteLine($"2. DataTable có {dt?.Rows.Count ?? 0} rows");
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("3. DataTable null hoặc rỗng");
                     MessageBox.Show("Không có chi nhánh nào trong hệ thống!",
                         "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     btnTiepTuc.Enabled = false;
                     return;
-                }
-
-                // In ra dữ liệu để kiểm tra
-                System.Diagnostics.Debug.WriteLine("4. Dữ liệu từ DB:");
-                foreach (DataRow row in dt.Rows)
-                {
-                    System.Diagnostics.Debug.WriteLine($"   - ID: {row["chi_nhanh_id"]}, Tên: {row["ten"]}");
                 }
 
                 // Xóa DataSource cũ nếu có
@@ -81,29 +63,21 @@ namespace UI
                     cbbChonChiNhanh.DataSource = null;
                 }
 
-                System.Diagnostics.Debug.WriteLine("5. Bind dữ liệu vào ComboBox");
 
-                // Bind dữ liệu vào ComboBox
                 cbbChonChiNhanh.DataSource = dt;
                 cbbChonChiNhanh.DisplayMember = "ten";           // Hiển thị tên chi nhánh
                 cbbChonChiNhanh.ValueMember = "chi_nhanh_id";    // Lưu ID chi nhánh
-
-                System.Diagnostics.Debug.WriteLine($"6. ComboBox Items: {cbbChonChiNhanh.Items.Count}");
 
                 // Chọn mục đầu tiên
                 if (cbbChonChiNhanh.Items.Count > 0)
                 {
                     cbbChonChiNhanh.SelectedIndex = 0;
-                    System.Diagnostics.Debug.WriteLine($"7. Chọn SelectedIndex = 0, giá trị: {cbbChonChiNhanh.Text}");
                 }
 
                 btnTiepTuc.Enabled = true;
-                System.Diagnostics.Debug.WriteLine("8. ✓ Load thành công");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Exception: {ex.GetType().Name} - {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                 MessageBox.Show("Lỗi load chi nhánh: " + ex.Message, "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnTiepTuc.Enabled = false;
@@ -117,8 +91,6 @@ namespace UI
 
             if (result == DialogResult.Yes)
             {
-                FrmLogin frmLogin = new FrmLogin();
-                frmLogin.Show();
                 this.Close();
             }
         }
@@ -134,11 +106,8 @@ namespace UI
                     return;
                 }
 
-                // Lấy ID và tên chi nhánh được chọn
                 int chiNhanhId = (int)cbbChonChiNhanh.SelectedValue;
                 string tenChiNhanh = cbbChonChiNhanh.Text;
-
-                System.Diagnostics.Debug.WriteLine($"Chọn Chi Nhánh: ID={chiNhanhId}, Tên={tenChiNhanh}");
 
                 // Lưu vào Session
                 Session.ChiNhanhId = chiNhanhId;

@@ -1,7 +1,8 @@
-﻿// ========== BLL LAYER (Business Logic Layer) ==========
-using System;
+﻿using System;
 using System.Data;
+using Microsoft.Data.SqlClient;
 using QLNhaHangTiecCuoi.DAL;
+using QLNhaHangTiecCuoi.Share;
 
 namespace QLNhaHangTiecCuoi.BLL
 {
@@ -14,12 +15,8 @@ namespace QLNhaHangTiecCuoi.BLL
             _dal = new NguoiDungDAL(dbHelper);
         }
 
-        /// <summary>
-        /// Xác thực đăng nhập
-        /// </summary>
         public (bool success, string message, int nguoiDungId, string hoTen) XacThucDangNhap(string taiKhoan, string matKhau)
         {
-            // Validation
             if (string.IsNullOrWhiteSpace(taiKhoan))
                 return (false, "Tài khoản không được để trống!", 0, "");
 
@@ -53,9 +50,6 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// <summary>
-        /// Lấy danh sách chi nhánh
-        /// </summary>
         public DataTable LayDanhSachChiNhanh()
         {
             try
@@ -68,9 +62,6 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// <summary>
-        /// Lấy thông tin chi nhánh
-        /// </summary>
         public DataTable LayChiNhanhById(int chiNhanhId)
         {
             if (chiNhanhId <= 0)
