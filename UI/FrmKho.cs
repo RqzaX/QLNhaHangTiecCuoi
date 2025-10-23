@@ -1,143 +1,229 @@
-﻿using System;
+﻿using BLL;
+using QLNhaHangTiecCuoi.BLL;
+using QLNhaHangTiecCuoi.Share;
+using System;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
+
 
 namespace UI
 {
+
     [SupportedOSPlatform("windows")]
     public partial class FrmKho : Form
     {
-        public FrmKho()
+
+        
+        private readonly NguyenLieuBLL _bll;
+        private readonly DatabaseHelper _dbHelper;
+        private readonly Timer _debounceTimer = new Timer();
+        private const int DebounceMs = 300;
+        private const decimal NguongCanhBaoMacDinh = 30.000m;
+
+
+        public FrmKho(DatabaseHelper dbHelper)
         {
+
+
             InitializeComponent();
+            _bll = new NguyenLieuBLL(dbHelper);
+            dgvKho.CellContentClick += dgvKho_CellContentClick;
+            InitGrid();
+            InitSearchRealtime();
+            WireEvents();
         }
-        private const string K_TEN = "TenNL";
-        private const string K_DONVI = "DonVi";
-        private const string K_TON = "TonKho";
-        private const string K_TOITH = "ToiThieu";
-        private const string K_TB = "DungTB";
-        private const string K_GIA = "GiaTri";
-        private const string K_TT = "TrangThai";
-        private const string K_TAC = "ThaoTac";
+
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
             using (var f = new Frm_NhapKho())
             {
+
                 f.StartPosition = FormStartPosition.CenterParent;
                 f.ShowDialog(this);
+
             }
-        }
-
-
-        private void label3_Click(object sender, EventArgs e)
-        {
 
         }
 
+
+
+        public FrmKho() : this(new DatabaseHelper()) { }
+        private const string ColActionName = "colChiTiet";
+        private bool _gridColumnsBuilt = false;
         private void FrmKho_Load(object sender, EventArgs e)
         {
-            InitDgvKho();
-            LoadData();
+
+            LoadTinhTrangCombo();
+            ReloadGrid();
+            UpdateSummaryPanels();
+            
         }
-        private void InitDgvKho()
+        private void InitGrid()
         {
-            var dgv = dgvKho;
+            if (_gridColumnsBuilt) return;
+            _gridColumnsBuilt = true;
 
-            dgv.DataSource = null;
-            dgv.AutoGenerateColumns = false;
-            dgv.Columns.Clear();
-            dgv.AllowUserToAddRows = false;
-            dgv.RowHeadersVisible = false;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvKho.AutoGenerateColumns = false;
+            dgvKho.MultiSelect = false;
+            dgvKho.RowHeadersVisible = false;
 
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TEN, HeaderText = "Tên nguyên liệu", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 260 });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_DONVI, HeaderText = "Đơn vị", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TON, HeaderText = "Tồn kho", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TOITH, HeaderText = "Tồn tối thiểu", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TB, HeaderText = "Dùng TB/ngày", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_GIA, HeaderText = "Giá trị", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-            dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = K_TT, HeaderText = "Trạng thái", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-
-            dgv.Columns.Add(new DataGridViewLinkColumn
+            dgvKho.Columns.Clear();
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "nl_id", Name = "nl_id", Visible = false });
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ma_nl", Name = "ma_nl", HeaderText = "Mã NL", Width = 110 });
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ten_nl", Name = "ten_nl", HeaderText = "Tên nguyên liệu", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "don_vi", Name = "don_vi", HeaderText = "Đơn vị", Width = 90 });
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = K_TAC,
-                HeaderText = "Thao tác",
-                Text = "Chi tiết",
-                UseColumnTextForLinkValue = true,
-                LinkBehavior = LinkBehavior.HoverUnderline,
-                LinkColor = Color.FromArgb(23, 82, 255),
-                ActiveLinkColor = Color.FromArgb(23, 82, 255),
-                VisitedLinkColor = Color.FromArgb(23, 82, 255)
+                DataPropertyName = "sl_ton",
+                Name = "sl_ton",
+                HeaderText = "SL tồn",
+                Width = 90,
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N3" }
             });
 
-            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10f);
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10.5f);
-            dgv.DefaultCellStyle.Padding = new Padding(12, 8, 12, 8);
-            dgv.RowTemplate.Height = 56;
+            // === CỘT GIÁ TRỊ ===
+           
 
-
-            dgv.CellMouseEnter += (s, e) =>
+            if (dgvKho.Columns["colChiTiet"] == null)
             {
-                if (e.RowIndex >= 0 && e.ColumnIndex >= 0 &&
-                    dgv.Columns[e.ColumnIndex].Name == K_TAC) dgv.Cursor = Cursors.Hand;
-            };
-            dgv.CellMouseLeave += (s, e) => dgv.Cursor = Cursors.Default;
+                dgvKho.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "colChiTiet",
+                    HeaderText = "Thao tác",
+                    Text = "Chi tiết",
+                    UseColumnTextForButtonValue = true,
+                    Width = 90
+                });
+            }
         }
-        private void LoadData()
+        private void InitSearchRealtime()
         {
-            dgvKho.Rows.Clear();
+            _debounceTimer.Interval = DebounceMs;
+            _debounceTimer.Tick += DebounceTimer_Tick;
+        }
+        private void WireEvents()
+        {
+           this.Load += FrmKho_Load;
+    cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
+    txtSearch.TextChanged += txtSearch_TextChanged;
 
-            AddRow("Thịt bò Úc", "kg", 45, 20, 15, 13500000m);
-            AddRow("Tôm sú", "kg", 12, 15, 8, 7200000m);
-            AddRow("Cá hồi Na Uy", "kg", 8, 10, 6, 6400000m);
-            AddRow("Rau xà lách", "kg", 25, 10, 12, 500000m);
-            AddRow("Bia Tiger", "thùng", 45, 30, 20, 13500000m);
-            AddRow("Coca Cola", "thùng", 18, 20, 15, 3600000m);
+    // THÊM:
+
         }
-        private void AddRow(string ten, string donvi, int ton, int toiThieu, int dungTBNgay, decimal giaTri)
+        private void LoadTinhTrangCombo()
         {
-            bool duHang = ton >= toiThieu;
-            dgvKho.Rows.Add(ten, donvi, ton, toiThieu, dungTBNgay, Money(giaTri),
-                            duHang ? "Đủ hàng" : "Sắp hết", "Chi tiết");
+            var tb = new DataTable();
+            tb.Columns.Add("Value", typeof(int));
+            tb.Columns.Add("Text", typeof(string));
+            tb.Rows.Add(0, "Tất cả");
+            tb.Rows.Add(1, "Còn hàng (>0)");
+            tb.Rows.Add(2, "Hết hàng (=0)");
+            tb.Rows.Add(3, $"Sắp hết (≤ {NguongCanhBaoMacDinh})");
+
+            cbbTinhTrang.DisplayMember = "Text";
+            cbbTinhTrang.ValueMember = "Value";
+            cbbTinhTrang.DataSource = tb;
+            cbbTinhTrang.SelectedValue = 0;
         }
+        private int GetTinhTrang()
+        {
+            return int.TryParse(cbbTinhTrang?.SelectedValue?.ToString(), out var v) ? v : 0;
+        }
+        private static decimal SafeGetDecimal(DataRow r, string col)
+        {
+            return r.Table.Columns.Contains(col) && r[col] != DBNull.Value
+                ? Convert.ToDecimal(r[col])
+                : 0m;
+        }
+
+        private void ReloadGrid()
+        {
+            // 1) Lấy tất cả (không lọc ở BLL)
+            DataTable tb = _bll.LayTonKhoTheoTinhTrang(0);
+            if (tb == null) { dgvKho.DataSource = null; return; }
+
+            // 2) Lọc tại UI theo combobox
+            var stt = GetTinhTrang();
+            var dv = tb.DefaultView;
+
+            string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
+            // RowFilter dùng InvariantCulture cho số thập phân
+            switch (stt)
+            {
+                case 1: // Còn hàng
+                    dv.RowFilter = "sl_ton > 0";
+                    break;
+                case 2: // Hết hàng
+                    dv.RowFilter = "sl_ton = 0";
+                    break;
+                case 3: // Sắp hết: 0 < sl_ton <= ngưỡng
+                    dv.RowFilter = $"sl_ton > 0 AND sl_ton <= {canhBao}";
+                    break;
+                default: // Tất cả
+                    dv.RowFilter = string.Empty;
+                    break;
+            }
+
+            // 3) (tuỳ chọn) tính cột Giá trị nếu dataset chưa có
+            if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
+            foreach (DataRow r in tb.Rows)
+            {
+                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value
+                    ? Convert.ToDecimal(r["sl_ton"])
+                    : 0m;
+
+                decimal giaTri = 0m;
+                if (tb.Columns.Contains("gia_tri"))
+                    giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
+                else
+                {
+                    decimal donGia = 0m;
+                    if (tb.Columns.Contains("gia_nhap")) donGia = r["gia_nhap"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_nhap"]);
+                    else if (tb.Columns.Contains("don_gia")) donGia = r["don_gia"] == DBNull.Value ? 0m : Convert.ToDecimal(r["don_gia"]);
+                    giaTri = sl * donGia;
+                }
+                r["GiaTri"] = giaTri;
+            }
+
+            // 4) Bind
+            dgvKho.DataSource = null;
+            dgvKho.DataSource = dv.ToTable();     // lấy bảng sau khi đã lọc
+        }
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            _debounceTimer.Stop();
+            _debounceTimer.Start();
+        }
+
+        private void DebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _debounceTimer.Stop();
+            ReloadGrid();
+        }
+
+        private void cbbTinhTrang_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            ReloadGrid();
+        }
+
+
 
         private static string Money(decimal v) => string.Format("{0:#,0} đ", v).Replace(",", ".");
 
         private void dgvKho_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            var dgv = (DataGridView)sender;
-            var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            if (dgv.Columns[e.ColumnIndex].Name == K_TT)
-            {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
-
-                string text = Convert.ToString(e.FormattedValue) ?? "";
-                bool ok = text.Equals("Đủ hàng", StringComparison.OrdinalIgnoreCase);
-
-                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 28) / 2, 90, 28);
-                using var path = Rounded(chip, 14);
-                using var fill = new SolidBrush(ok ? Color.FromArgb(209, 250, 229) : Color.FromArgb(254, 243, 199));
-                using var br = new SolidBrush(ok ? Color.FromArgb(16, 128, 67) : Color.FromArgb(146, 64, 14));
-
-                g.FillPath(fill, path);
-                g.DrawString(text, new Font("Segoe UI Semibold", 9f), br, chip,
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;
-            }
         }
         private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
         {
@@ -152,15 +238,57 @@ namespace UI
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            if (dgvKho.Columns[e.ColumnIndex].Name != ColActionName) return;
+
+            if (dgvKho.Rows[e.RowIndex].DataBoundItem is DataRowView drv)
+            {
+                var r = drv.Row;
+                int nlId = r.Table.Columns.Contains("nl_id") ? Convert.ToInt32(r["nl_id"]) : -1;
+                if (nlId <= 0)
+                {
+                    MessageBox.Show("Không tìm thấy nl_id của dòng này.", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                OpenNguyenLieuChiTiet(nlId);
+            }
         }
+
+        private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e, DatabaseHelper _dbHelper)
+        {
+            
+
+        }
+
 
         private void dgvKho_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            if (dgvKho.Columns[e.ColumnIndex].Name != K_TAC) return;
 
-            string ten = dgvKho.Rows[e.RowIndex].Cells[K_TEN].Value?.ToString();
-            MessageBox.Show($"Xem chi tiết nguyên liệu: {ten}", "Kho");
+        }
+        private int CurrentBranchId
+        {
+            get
+            {
+                // TODO: nếu có combobox chi nhánh thì đọc từ đó
+                return 1;
+            }
+        }
+        private void OpenNguyenLieuChiTiet(int nlId)
+        {
+            using (var f = new UI.FrmNguyenLieuChiTiet(
+        nlId,
+        CurrentBranchId,                           // id chi nhánh hiện tại
+        _bll                                        // truyền thẳng BLL đang dùng
+    ))
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+                    ReloadGrid();
+                    UpdateSummaryPanels();
+                }
+            }
         }
 
         private void roundedButton1_Click_1(object sender, EventArgs e)
@@ -179,6 +307,64 @@ namespace UI
                 f.StartPosition = FormStartPosition.CenterParent;
                 f.ShowDialog(this);
             }
+        }
+        private void UpdateSummaryPanels()
+        {
+            try
+            {
+                // Lấy toàn bộ tồn kho
+                var all = _bll.LayTonKhoTheoTinhTrang(0);
+
+                int tongMatHang = all?.Rows.Count ?? 0;
+
+                // Đếm hết hàng (=0) và sắp hết (0 < sl_ton ≤ ngưỡng)
+                int hetHang = 0, sapHet = 0;
+                decimal tongGiaTri = 0m;
+
+                if (all != null)
+                {
+                    foreach (DataRow r in all.Rows)
+                    {
+                        decimal slTon = 0m;
+                        decimal giaTri = 0m;
+                        decimal giaNhap = 0m;
+
+                        if (all.Columns.Contains("sl_ton"))
+                            slTon = Convert.ToDecimal(r["sl_ton"]);
+
+                        // Ưu tiên cột đã tính sẵn "gia_tri"; nếu không có thì thử sl_ton * gia_nhap
+                        if (all.Columns.Contains("gia_tri"))
+                            giaTri = Convert.ToDecimal(r["gia_tri"]);
+                        else if (all.Columns.Contains("gia_nhap"))
+                            giaTri = slTon * Convert.ToDecimal(r["gia_nhap"]);
+                        else if (all.Columns.Contains("don_gia"))
+                            giaTri = slTon * Convert.ToDecimal(r["don_gia"]);
+
+                        tongGiaTri += giaTri;
+
+                        if (slTon <= 0) hetHang++;
+                        else if (slTon <= NguongCanhBaoMacDinh) sapHet++;
+                    }
+                }
+
+               
+                label8.Text = tongMatHang.ToString();     // Tổng mặt hàng
+                label9.Text = sapHet.ToString();          // Sắp hết hàng
+                label10.Text = hetHang.ToString();         // Hết hàng
+            }
+            catch
+            {
+                // Nếu có lỗi dữ liệu, vẫn an toàn gán về 0 để không vỡ UI
+              
+                label8.Text = "0";
+                label9.Text = "0";
+                label10.Text = "0";
+            }
+        }
+
+        private void btnKiemKe_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

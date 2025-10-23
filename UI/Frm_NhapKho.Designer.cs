@@ -38,8 +38,8 @@
             dateTimePicker1 = new DateTimePicker();
             label5 = new Label();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            roundedButton1 = new UI.Controls.RoundedButton();
-            roundedButton2 = new UI.Controls.RoundedButton();
+            btnHuy = new UI.Controls.RoundedButton();
+            btnTaoPhieuNhap = new UI.Controls.RoundedButton();
             SuspendLayout();
             // 
             // label1
@@ -143,47 +143,49 @@
             roundedTextBox1.Size = new Size(600, 82);
             roundedTextBox1.TabIndex = 6;
             // 
-            // roundedButton1
+            // btnHuy
             // 
-            roundedButton1.BackColor = Color.White;
-            roundedButton1.FlatAppearance.BorderSize = 0;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
-            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton1.ForeColor = Color.Black;
-            roundedButton1.HoverBackColor = Color.White;
-            roundedButton1.Location = new Point(325, 396);
-            roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.PressedBackColor = Color.White;
-            roundedButton1.Size = new Size(94, 29);
-            roundedButton1.TabIndex = 9;
-            roundedButton1.Text = "Hủy";
-            roundedButton1.UseVisualStyleBackColor = false;
+            btnHuy.BackColor = Color.White;
+            btnHuy.FlatAppearance.BorderSize = 0;
+            btnHuy.FlatStyle = FlatStyle.Flat;
+            btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnHuy.ForeColor = Color.Black;
+            btnHuy.HoverBackColor = Color.White;
+            btnHuy.Location = new Point(325, 396);
+            btnHuy.Name = "btnHuy";
+            btnHuy.Padding = new Padding(10, 6, 10, 6);
+            btnHuy.PressedBackColor = Color.White;
+            btnHuy.Size = new Size(94, 29);
+            btnHuy.TabIndex = 9;
+            btnHuy.Text = "Hủy";
+            btnHuy.UseVisualStyleBackColor = false;
+            btnHuy.Click += btnHuy_Click;
             // 
-            // roundedButton2
+            // btnTaoPhieuNhap
             // 
-            roundedButton2.BackColor = Color.Black;
-            roundedButton2.FlatAppearance.BorderSize = 0;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.White;
-            roundedButton2.HoverBackColor = Color.White;
-            roundedButton2.Location = new Point(425, 396);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.PressedBackColor = Color.White;
-            roundedButton2.Size = new Size(161, 29);
-            roundedButton2.TabIndex = 9;
-            roundedButton2.Text = "Tạo Phiếu Nhập";
-            roundedButton2.UseVisualStyleBackColor = false;
+            btnTaoPhieuNhap.BackColor = Color.Black;
+            btnTaoPhieuNhap.FlatAppearance.BorderSize = 0;
+            btnTaoPhieuNhap.FlatStyle = FlatStyle.Flat;
+            btnTaoPhieuNhap.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnTaoPhieuNhap.ForeColor = Color.White;
+            btnTaoPhieuNhap.HoverBackColor = Color.White;
+            btnTaoPhieuNhap.Location = new Point(425, 396);
+            btnTaoPhieuNhap.Name = "btnTaoPhieuNhap";
+            btnTaoPhieuNhap.Padding = new Padding(10, 6, 10, 6);
+            btnTaoPhieuNhap.PressedBackColor = Color.White;
+            btnTaoPhieuNhap.Size = new Size(161, 29);
+            btnTaoPhieuNhap.TabIndex = 9;
+            btnTaoPhieuNhap.Text = "Tạo Phiếu Nhập";
+            btnTaoPhieuNhap.UseVisualStyleBackColor = false;
+            btnTaoPhieuNhap.Click += btnTaoPhieuNhap_Click;
             // 
             // Frm_NhapKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(624, 455);
-            Controls.Add(roundedButton2);
-            Controls.Add(roundedButton1);
+            Controls.Add(btnTaoPhieuNhap);
+            Controls.Add(btnHuy);
             Controls.Add(dateTimePicker1);
             Controls.Add(borderComboBox1);
             Controls.Add(roundedTextBox1);
@@ -212,7 +214,7 @@
         private DateTimePicker dateTimePicker1;
         private Label label5;
         private Controls.RoundedTextBox roundedTextBox1;
-        private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedButton roundedButton2;
+        private Controls.RoundedButton btnHuy;
+        private Controls.RoundedButton btnTaoPhieuNhap;
     }
 }

@@ -308,6 +308,7 @@ CREATE TABLE dbo.nguyen_lieu(
   don_vi  NVARCHAR(30)  NOT NULL
 );
 
+
 IF OBJECT_ID('dbo.ton_kho','U') IS NULL
 CREATE TABLE dbo.ton_kho(
   chi_nhanh_id INT NOT NULL,
@@ -403,3 +404,145 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_hd_lap' AND object_id=O
   CREATE INDEX IX_hd_lap ON dbo.hoa_don(chi_nhanh_id, loai, ngay_lap);
 
 GO
+/*=======Thêm Dữ liệu vào Nguyên liệu==========*/
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-GAO')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-GAO',      N'Gạo',          N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-THIT-BO')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-THIT-BO',  N'Thịt bò',      N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-THIT-GA')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-THIT-GA',  N'Thịt gà',      N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TOM')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TOM',      N'Tôm',          N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-CA-HOI')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-CA-HOI',   N'Cá hồi',       N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TRUNG')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TRUNG',    N'Trứng',        N'quả');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-BOT-MI',   N'Bột mì',       N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-DUONG')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-DUONG',    N'Đường',        N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-MUOI')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-MUOI',     N'Muối',         N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TIEU')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TIEU',     N'Tiêu',         N'g');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-DAU-AN')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-DAU-AN',   N'Dầu ăn',       N'lít');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-NUOC-MAM')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-NUOC-MAM', N'Nước mắm',     N'chai');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TOI')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TOI',      N'Tỏi',          N'kg');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-HANH-LA')
+INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-HANH-LA',  N'Hành lá',      N'bó');
+
+/* 1) Xác định chi nhánh để seed
+        - Ưu tiên tên 'Chi nhánh Hồ Chí Minh'
+        - Nếu không có, lấy chi nhánh có ID nhỏ nhất
+  */
+  DECLARE @cn_id INT =
+      (SELECT TOP 1 chi_nhanh_id
+       FROM dbo.chi_nhanh
+       WHERE ten = N'Chi nhánh Hồ Chí Minh'
+       ORDER BY chi_nhanh_id);
+
+  IF @cn_id IS NULL
+      SELECT @cn_id = MIN(chi_nhanh_id) FROM dbo.chi_nhanh;
+	  /* 2) Chèn tồn kho cho TẤT CẢ nguyên liệu chưa có trong tồn kho của chi nhánh @cn_id,
+        gán số lượng khởi tạo theo ma_nl (có thể chỉnh sửa các giá trị bên dưới) */
+  INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
+  SELECT
+      @cn_id,
+      nl.nl_id,
+      CAST(CASE nl.ma_nl
+            WHEN N'NL-GAO'       THEN 100
+            WHEN N'NL-THIT-BO'   THEN 40
+            WHEN N'NL-THIT-GA'   THEN 60
+            WHEN N'NL-TOM'       THEN 30
+            WHEN N'NL-CA-HOI'    THEN 20
+            WHEN N'NL-TRUNG'     THEN 200
+            WHEN N'NL-BOT-MI'    THEN 100
+            WHEN N'NL-DUONG'     THEN 80
+            WHEN N'NL-MUOI'      THEN 50
+            WHEN N'NL-TIEU'      THEN 10
+            WHEN N'NL-DAU-AN'    THEN 30
+            WHEN N'NL-NUOC-MAM'  THEN 25
+            WHEN N'NL-TOI'       THEN 40
+            WHEN N'NL-HANH-LA'   THEN 50
+            ELSE 0
+          END AS DECIMAL(18,3)) AS sl_ton
+  FROM dbo.nguyen_lieu AS nl
+  WHERE NOT EXISTS (
+      SELECT 1
+      FROM dbo.ton_kho tk
+      WHERE tk.chi_nhanh_id = @cn_id
+        AND tk.nl_id = nl.nl_id
+  );
+  select * from mon_an
+  
+/*----Nếu muốn tạo đủ dòng ton_kho cho mọi chi nhánh trước, để sau này mới cập nhật số lượng:
+INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
+SELECT cn.chi_nhanh_id, nl.nl_id, 0
+FROM dbo.chi_nhanh cn
+CROSS JOIN dbo.nguyen_lieu nl
+WHERE NOT EXISTS (
+  SELECT 1 FROM dbo.ton_kho tk
+  WHERE tk.chi_nhanh_id = cn.chi_nhanh_id
+    AND tk.nl_id = nl.nl_id
+);
+---*/
+-- Lấy nl_id nhanh theo mã NL (ví dụ: 'NL-BOT-MI')
+DECLARE @nl_id INT =
+(
+    SELECT nl_id FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI'
+);
+-- CHÈN các dòng ton_kho = 0 cho mọi chi nhánh còn thiếu của nguyên liệu này
+INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
+SELECT cn.chi_nhanh_id, @nl_id, 0
+FROM dbo.chi_nhanh AS cn
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM dbo.ton_kho AS tk
+    WHERE tk.chi_nhanh_id = cn.chi_nhanh_id
+      AND tk.nl_id        = @nl_id
+);
+--kiem tra
+SELECT tk.chi_nhanh_id, cn.ten AS ten_chi_nhanh, tk.sl_ton
+FROM dbo.ton_kho tk
+LEFT JOIN dbo.chi_nhanh cn ON cn.chi_nhanh_id = tk.chi_nhanh_id
+WHERE tk.nl_id = (SELECT nl_id FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI')
+ORDER BY cn.ten;
+
+
+	select * from ton_kho
+--- Thêm Dữ Liệu Gói Tiệc
+IF OBJECT_ID('dbo.goi_tiec','U') IS NOT NULL
+BEGIN
+    -- Lệnh INSERT INTO để thêm dữ liệu
+    INSERT INTO dbo.goi_tiec (ma_goi, ten_goi, gia_co_ban)
+    VALUES
+    -- Gói tiệc CƠ BẢN
+    ('GT-CB01', N'Gói Tiệc Cưới Cơ Bản', 5000000.00),
+    
+    -- Gói tiệc TRUNG CẤP
+    ('GT-TC02', N'Gói Tiệc Sinh Nhật Thịnh Vượng', 8500000.00),
+    
+    -- Gói tiệc CAO CẤP
+    ('GT-CC03', N'Gói Tiệc Cưới Cao Cấp', 12000000.00),
+    
+    -- Gói tiệc KẾT HỢP
+    ('GT-KH04', N'Gói Tiệc  Trọn Gói', 7250000.00);
+END
+select * from mon_an
