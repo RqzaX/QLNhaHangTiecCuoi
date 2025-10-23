@@ -38,8 +38,8 @@
             dateTimePicker1 = new DateTimePicker();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             label5 = new Label();
-            roundedButton1 = new UI.Controls.RoundedButton();
-            roundedButton2 = new UI.Controls.RoundedButton();
+            btnHuy = new UI.Controls.RoundedButton();
+            btnTaoPhieuChuyen = new UI.Controls.RoundedButton();
             SuspendLayout();
             // 
             // label1
@@ -148,43 +148,45 @@
             label5.TabIndex = 13;
             label5.Text = "Ghi Chú";
             // 
-            // roundedButton1
+            // btnHuy
             // 
-            roundedButton1.BackColor = Color.White;
-            roundedButton1.FlatAppearance.BorderSize = 0;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
-            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton1.ForeColor = Color.Black;
-            roundedButton1.Location = new Point(336, 424);
-            roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(94, 29);
-            roundedButton1.TabIndex = 14;
-            roundedButton1.Text = "Hủy";
-            roundedButton1.UseVisualStyleBackColor = false;
+            btnHuy.BackColor = Color.White;
+            btnHuy.FlatAppearance.BorderSize = 0;
+            btnHuy.FlatStyle = FlatStyle.Flat;
+            btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnHuy.ForeColor = Color.Black;
+            btnHuy.Location = new Point(336, 424);
+            btnHuy.Name = "btnHuy";
+            btnHuy.Padding = new Padding(10, 6, 10, 6);
+            btnHuy.Size = new Size(94, 29);
+            btnHuy.TabIndex = 14;
+            btnHuy.Text = "Hủy";
+            btnHuy.UseVisualStyleBackColor = false;
+            btnHuy.Click += btnHuy_Click;
             // 
-            // roundedButton2
+            // btnTaoPhieuChuyen
             // 
-            roundedButton2.BackColor = Color.Black;
-            roundedButton2.FlatAppearance.BorderSize = 0;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(451, 424);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(167, 29);
-            roundedButton2.TabIndex = 14;
-            roundedButton2.Text = "Tạo Phiếu Chuyển";
-            roundedButton2.UseVisualStyleBackColor = false;
+            btnTaoPhieuChuyen.BackColor = Color.Black;
+            btnTaoPhieuChuyen.FlatAppearance.BorderSize = 0;
+            btnTaoPhieuChuyen.FlatStyle = FlatStyle.Flat;
+            btnTaoPhieuChuyen.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnTaoPhieuChuyen.ForeColor = Color.White;
+            btnTaoPhieuChuyen.Location = new Point(451, 424);
+            btnTaoPhieuChuyen.Name = "btnTaoPhieuChuyen";
+            btnTaoPhieuChuyen.Padding = new Padding(10, 6, 10, 6);
+            btnTaoPhieuChuyen.Size = new Size(167, 29);
+            btnTaoPhieuChuyen.TabIndex = 14;
+            btnTaoPhieuChuyen.Text = "Tạo Phiếu Chuyển";
+            btnTaoPhieuChuyen.UseVisualStyleBackColor = false;
+            btnTaoPhieuChuyen.Click += btnTaoPhieuChuyen_Click;
             // 
             // Frm_ChuyenKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(630, 478);
-            Controls.Add(roundedButton2);
-            Controls.Add(roundedButton1);
+            Controls.Add(btnTaoPhieuChuyen);
+            Controls.Add(btnHuy);
             Controls.Add(label5);
             Controls.Add(roundedTextBox1);
             Controls.Add(dateTimePicker1);
@@ -213,7 +215,7 @@
         private DateTimePicker dateTimePicker1;
         private Controls.RoundedTextBox roundedTextBox1;
         private Label label5;
-        private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedButton roundedButton2;
+        private Controls.RoundedButton btnHuy;
+        private Controls.RoundedButton btnTaoPhieuChuyen;
     }
 }

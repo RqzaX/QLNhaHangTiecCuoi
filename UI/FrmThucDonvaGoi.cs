@@ -8,17 +8,63 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows.Forms;
 using UiControls;
+using BLL;
 
 namespace UI
 {
     [SupportedOSPlatform("windows")]
     public partial class FrmThucDonvaGoi : Form
     {
+        private ThucDonGoiBLL _bll;
+        private string _loaiHienTai = "MONAN";
+        private Rectangle _hoverEditButton = Rectangle.Empty;
+        private Rectangle _hoverDeleteButton = Rectangle.Empty;
+
+        private const string COL_ID = "ID";
+        private const string COL_TEN = "TenMon";
+        private const string COL_DM = "DanhMuc";
+        private const string COL_GB = "GiaBan";
+        private const string COL_GV = "GiaVon";
+        private const string COL_LN = "LoiNhuan";
+        private const string COL_TT = "TrangThai";
+        private const string COL_TTAC = "ThaoTac";
+
         public FrmThucDonvaGoi()
         {
             InitializeComponent();
+           
+            try
+            {
+
+                _bll = new ThucDonGoiBLL();
+
+
+                if (!_bll.TestConnection())
+                {
+                    MessageBox.Show(
+                        "Không thể kết nối đến database!\n\n" +
+                        "Kiểm tra lại:\n" +
+                        "1. SQL Server đang chạy\n" +
+                        "2. Server name: LAPTOP-2L5G5GIH\\SQLEXPRESS03\n" +
+                        "3. Database: QL_NhaHangTiecCuoi_V3\n\n" +
+                        "Mở SQL Server Management Studio để kiểm tra.",
+                        "Lỗi Kết Nối Database",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Lỗi khởi tạo BLL:\n{ex.Message}\n\n{ex.StackTrace}",
+                    "Lỗi Khởi Tạo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            roundedTextBox1.TextChanged += roundedTextBox1_TextChanged;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -30,41 +76,143 @@ namespace UI
         {
 
         }
-        private const string COL_TEN = "TenMon";
-        private const string COL_DM = "DanhMuc";
-        private const string COL_GB = "GiaBan";
-        private const string COL_GV = "GiaVon";
-        private const string COL_LN = "LoiNhuan";
-        private const string COL_TT = "TrangThai";
-        private const string COL_TTAC = "ThaoTac";
+
         private void FrmThucDonvaGoi_Load(object sender, EventArgs e)
         {
+            try
+            {
+                if (_bll == null)
+                {
+                    MessageBox.Show("BLL chưa được khởi tạo!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            LoadDataThucDonVaGoi();
 
+                if (!dgvThucDonVaGoi.Columns.Contains(COL_ID))
+                {
+                    DataGridViewTextBoxColumn colId = new DataGridViewTextBoxColumn();
+                    colId.Name = COL_ID;
+                    colId.HeaderText = "ID";
+                    colId.Visible = false;
+                    dgvThucDonVaGoi.Columns.Insert(0, colId);
+                }
+
+                ConfigureDataGridView();
+                LoadDataThucDonVaGoi();
+                EnsureActionColumns();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi load form:\n{ex.Message}\n\n{ex.StackTrace}",
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        private void ConfigureDataGridView()
+        {
+            dgvThucDonVaGoi.AutoGenerateColumns = false;
+            dgvThucDonVaGoi.AllowUserToAddRows = false;
+            dgvThucDonVaGoi.ReadOnly = true;
+            dgvThucDonVaGoi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvThucDonVaGoi.MultiSelect = false;
+            dgvThucDonVaGoi.RowHeadersVisible = false;
+            dgvThucDonVaGoi.RowTemplate.Height = 60;
+        }
+
         private void LoadDataThucDonVaGoi()
         {
-            var dgv = dgvThucDonVaGoi;
-            dgv.Rows.Clear();
+            try
+            {
+                DataTable dt;
 
-            AddTDRow("Gỏi cuốn tôm thịt", "Khai vị", 45000m, 25000m, true);
-            AddTDRow("Salad hải sản", "Khai vị", 85000m, 45000m, true);
-            AddTDRow("Bò nướng lá lốt", "Món chính", 120000m, 60000m, true);
-            AddTDRow("Gà quay bơ tỏi", "Món chính", 150000m, 70000m, true);
-            AddTDRow("Cá hấp xì dầu", "Hải sản", 280000m, 150000m, true);
-            AddTDRow("Tôm hùm nướng phô mai", "Hải sản", 850000m, 450000m, false);
+                if (_loaiHienTai == "MONAN")
+                {
+                    dt = _bll.GetDanhSachMonAn();
+                }
+                else
+                {
+                    dt = _bll.GetDanhSachGoiTiec();
+                }
+
+                dgvThucDonVaGoi.Rows.Clear();
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int id = Convert.ToInt32(row["ID"]);
+                        string ten = row["TenMon"].ToString();
+                        string dm = row["DanhMuc"].ToString();
+                        decimal gb = Convert.ToDecimal(row["GiaBan"]);
+                        decimal gv = Convert.ToDecimal(row["GiaVon"]);
+                        bool conHang = row["TrangThai"].ToString() == "Còn hàng";
+
+                        AddTDRow(id, ten, dm, gb, gv, conHang);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không có dữ liệu để hiển thị!", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi load dữ liệu:\n{ex.Message}\n\n{ex.StackTrace}",
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
-        private void AddTDRow(string ten, string dm, decimal gb, decimal gv, bool conHang)
+        private const string COL_EDIT = "colSua";
+        private const string COL_DEL = "colXoa";
+
+        private void EnsureActionColumns()
         {
-            decimal ln = gb - gv;
-            string loiNhuanCell = $"{Money(ln)}\n({ProfitPercent(gb, gv)})";
-            int row = dgvThucDonVaGoi.Rows.Add(
-                ten, dm, Money(gb), Money(gv), loiNhuanCell,
-                conHang ? "Còn hàng" : "Hết hàng", "edit|delete"
-            );
+            if (!dgvThucDonVaGoi.Columns.Contains(COL_EDIT))
+            {
+                var colSua = new DataGridViewButtonColumn
+                {
+                    Name = COL_EDIT,
+                    HeaderText = "Thao tác",
+                    Text = "Sửa",
+                    UseColumnTextForButtonValue = true,
+                    Width = 100
+                };
+                dgvThucDonVaGoi.Columns.Add(colSua);
+            }
+
+            if (!dgvThucDonVaGoi.Columns.Contains(COL_DEL))
+            {
+                var colXoa = new DataGridViewButtonColumn
+                {
+                    Name = COL_DEL,
+                    HeaderText = "",
+                    Text = "Xóa",
+                    UseColumnTextForButtonValue = true,
+                    Width = 70
+                };
+                dgvThucDonVaGoi.Columns.Add(colXoa);
+            }
         }
+
+        private void AddTDRow(int id, string ten, string dm, decimal gb, decimal gv, bool conHang)
+        {
+            int idx = dgvThucDonVaGoi.Rows.Add();
+            var row = dgvThucDonVaGoi.Rows[idx];
+
+            row.Cells[COL_ID].Value = id;
+            row.Cells[COL_TEN].Value = ten;
+            row.Cells[COL_DM].Value = dm;
+            row.Cells[COL_GB].Value = Money(gb);
+            row.Cells[COL_GV].Value = Money(gv);
+            row.Cells[COL_LN].Value = Money(gb - gv) + "\n" + ProfitPercent(gb, gv);
+            row.Cells[COL_TT].Value = conHang ? "Còn hàng" : "Hết hàng";
+            row.Cells[COL_TTAC].Value = "";
+        }
+
         private static string Money(decimal v) => string.Format("{0:#,0} đ", v).Replace(",", ".");
+
         private static string ProfitPercent(decimal gb, decimal gv)
         {
             if (gb <= 0) return "0%";
@@ -72,172 +220,180 @@ namespace UI
             return Math.Round(p, 1).ToString("0.0") + "%";
         }
 
-        private void dgvThucDonVaGoi_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            var dgv = (DataGridView)sender;
-            var col = dgv.Columns[e.ColumnIndex].Name;
-            var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-            // Lợi nhuận: 2 dòng
-            if (col == COL_LN)
-            {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
-                var parts = (e.FormattedValue?.ToString() ?? "").Split('\n');
-                string top = parts.ElementAtOrDefault(0) ?? "";
-                string sub = parts.ElementAtOrDefault(1) ?? "";
-
-                var rect = Rectangle.Inflate(e.CellBounds, -8, -4);
-                using var fTop = new Font(e.CellStyle.Font, FontStyle.Bold);
-                using var fSub = new Font(e.CellStyle.Font.FontFamily, e.CellStyle.Font.Size - 1f);
-                using var brTop = new SolidBrush(e.CellStyle.ForeColor);
-                using var brSub = new SolidBrush(Color.FromArgb(110, 119, 135));
-
-                g.DrawString(top, fTop, brTop, new RectangleF(rect.X, rect.Y + 2, rect.Width, rect.Height / 2f),
-                    new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near });
-                g.DrawString(sub, fSub, brSub, new RectangleF(rect.X, rect.Y + rect.Height / 2f - 2, rect.Width, rect.Height / 2f),
-                    new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near });
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;
-            }
-
-            // Trạng thái: chip
-            if (col == COL_TT)
-            {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
-
-                bool conHang = string.Equals(Convert.ToString(e.FormattedValue), "Còn hàng", StringComparison.OrdinalIgnoreCase);
-                string text = conHang ? "Còn hàng" : "Hết hàng";
-
-                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 26) / 2, 86, 26);
-                using var path = Rounded(chip, 13);
-                using var fill = new SolidBrush(conHang ? Color.FromArgb(208, 247, 225) : Color.FromArgb(255, 216, 222));
-                using var br = new SolidBrush(conHang ? Color.FromArgb(16, 128, 67) : Color.FromArgb(176, 16, 48));
-
-                g.FillPath(fill, path);
-                g.DrawString(text, new Font("Segoe UI Semibold", 9f), br, chip,
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;
-            }
-
-            // Thao tác: hai icon như button (bút & thùng rác)
-            if (col == COL_TTAC)
-            {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
-
-                var r = Rectangle.Inflate(e.CellBounds, -8, -8);
-                // hình tròn
-                var btnEdit = new Rectangle(r.Right - 88, r.Y + (r.Height - 30) / 2, 30, 30);
-                var btnDel = new Rectangle(r.Right - 48, r.Y + (r.Height - 30) / 2, 30, 30);
-
-                DrawCircleButton(g, btnEdit, Color.White, Color.FromArgb(223, 229, 241));
-                DrawEditIcon(g, new Rectangle(btnEdit.X + 6, btnEdit.Y + 6, 18, 18), Color.FromArgb(23, 23, 23));
-
-                DrawCircleButton(g, btnDel, Color.White, Color.FromArgb(223, 229, 241));
-                DrawTrashIcon(g, new Rectangle(btnDel.X + 6, btnDel.Y + 6, 18, 18), Color.FromArgb(220, 38, 38));
-
-                // Lưu bounds vào Tag để hit-test (tránh tính lại nhiều lần)
-                dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = new Tuple<Rectangle, Rectangle>(btnEdit, btnDel);
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-            }
-        }
-        private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle rect, int radius)
-        {
-            int d = radius * 2;
-            var p = new System.Drawing.Drawing2D.GraphicsPath();
-            p.AddArc(rect.X, rect.Y, d, d, 180, 90);
-            p.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
-            p.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
-            p.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
-            p.CloseFigure(); return p;
-        }
-        private void DrawCircleButton(Graphics g, Rectangle r, Color fill, Color border)
-        {
-            using var sb = new SolidBrush(fill);
-            using var pen = new Pen(border);
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            g.FillEllipse(sb, r); g.DrawEllipse(pen, r);
-        }
-        private void DrawEditIcon(Graphics g, Rectangle r, Color c)
-        {
-            using var pen = new Pen(c, 1.7f) { LineJoin = System.Drawing.Drawing2D.LineJoin.Round };
-            g.DrawRectangle(pen, r.Left + 2, r.Top + 2, r.Width - 4, r.Height - 4);
-            g.DrawLine(pen, r.Left + 4, r.Bottom - 4, r.Right - 4, r.Top + 4);
-        }
-        private void DrawTrashIcon(Graphics g, Rectangle r, Color c)
-        {
-            using var pen = new Pen(c, 1.7f) { LineJoin = System.Drawing.Drawing2D.LineJoin.Round };
-            g.DrawLine(pen, r.Left + 3, r.Top + 5, r.Right - 3, r.Top + 5);
-            g.DrawRectangle(pen, r.Left + 4, r.Top + 6, r.Width - 8, r.Height - 10);
-            g.DrawLine(pen, r.Left + r.Width / 2 - 3, r.Top + 8, r.Left + r.Width / 2 - 3, r.Bottom - 5);
-            g.DrawLine(pen, r.Left + r.Width / 2 + 3, r.Top + 8, r.Left + r.Width / 2 + 3, r.Bottom - 5);
-        }
-
-        private void dgvThucDonVaGoi_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            if (dgvThucDonVaGoi.Columns[e.ColumnIndex].Name != COL_TTAC) return;
-
-            var cell = dgvThucDonVaGoi.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            if (cell.Tag is Tuple<Rectangle, Rectangle> boxes)
-            {
-                var pt = dgvThucDonVaGoi.PointToClient(Cursor.Position);
-                var cellRect = dgvThucDonVaGoi.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
-                var localPt = new Point(pt.X - cellRect.X, pt.Y - cellRect.Y);
-
-                if (boxes.Item1.Contains(localPt))
-                {
-                    string ten = dgvThucDonVaGoi.Rows[e.RowIndex].Cells[COL_TEN].Value?.ToString();
-                    MessageBox.Show($"Sửa món: {ten}");
-                }
-                else if (boxes.Item2.Contains(localPt))
-                {
-                    string ten = dgvThucDonVaGoi.Rows[e.RowIndex].Cells[COL_TEN].Value?.ToString();
-                    if (MessageBox.Show($"Xoá món \"{ten}\"?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        dgvThucDonVaGoi.Rows.RemoveAt(e.RowIndex);
-                }
-            }
-        }
-
-        private void dgvThucDonVaGoi_MouseMove(object sender, MouseEventArgs e)
-        {
-            var hit = dgvThucDonVaGoi.HitTest(e.X, e.Y);
-            if (hit.RowIndex >= 0 && hit.ColumnIndex >= 0 &&
-                dgvThucDonVaGoi.Columns[hit.ColumnIndex].Name == COL_TTAC)
-            {
-                var cell = dgvThucDonVaGoi.Rows[hit.RowIndex].Cells[hit.ColumnIndex];
-                if (cell.Tag is Tuple<Rectangle, Rectangle> boxes)
-                {
-                    var cellRect = dgvThucDonVaGoi.GetCellDisplayRectangle(hit.ColumnIndex, hit.RowIndex, true);
-                    var local = new Point(e.X - cellRect.X, e.Y - cellRect.Y);
-                    dgvThucDonVaGoi.Cursor = (boxes.Item1.Contains(local) || boxes.Item2.Contains(local))
-                        ? Cursors.Hand : Cursors.Default;
-                    return;
-                }
-            }
-            dgvThucDonVaGoi.Cursor = Cursors.Default;
-        }
-
-        private void segmentedPill1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void roundedButton2_Click(object sender, EventArgs e)
         {
-            using(var f= new Frm_ThemThucDon())
+            using (var f = new FrmThemMonMoi())
+            {
+                f.StartPosition = FormStartPosition.CenterParent;
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+
+                    _loaiHienTai = "MONAN";
+                    LoadDataThucDonVaGoi();
+                    EnsureActionColumns();
+
+
+                    if (f.CreatedMonId.HasValue)
+                    {
+                        foreach (DataGridViewRow row in dgvThucDonVaGoi.Rows)
+                        {
+                            if (row.Cells["ID"].Value is int id && id == f.CreatedMonId.Value)
+                            {
+                                row.Selected = true;
+                                dgvThucDonVaGoi.FirstDisplayedScrollingRowIndex =
+                                    Math.Max(row.Index - 3, 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void btnGoiTiecCuoi_Click(object sender, EventArgs e)
+        {
+            using (var f = new FrmGoiTiec())
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 f.ShowDialog(this);
             }
+        }
+        bool HasCol(string name) => dgvThucDonVaGoi.Columns.Contains(name);
+        object CellVal(DataGridViewRow r, string name) => HasCol(name) ? r.Cells[name].Value : null;
+
+        private void dgvThucDonVaGoi_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            var colName = dgvThucDonVaGoi.Columns[e.ColumnIndex].Name;
+            if (colName != COL_EDIT && colName != COL_DEL) return;
+
+            var row = dgvThucDonVaGoi.Rows[e.RowIndex];
+            var vId = CellVal(row, COL_ID);
+            if (vId == null || vId == DBNull.Value)
+            {
+                MessageBox.Show("Không xác định được ID món.");
+                return;
+            }
+            int monId = Convert.ToInt32(vId);
+
+            if (colName == COL_EDIT)
+            {
+                var info = _bll.GetMonAnById(monId);
+                if (info == null)
+                {
+                    MessageBox.Show("Không tìm thấy món trong cơ sở dữ liệu."); return;
+                }
+
+                using (var f = new FrmThemMonMoi(
+                    monId,
+                    info.Value.MaMon,
+                    info.Value.TenMon,
+                    info.Value.Nhom,
+                    info.Value.DonViTinh,
+                    info.Value.DonGia,
+                    info.Value.DangBan))
+                {
+                    if (f.ShowDialog(this) == DialogResult.OK)
+                    {
+                        LoadDataThucDonVaGoi();
+                        EnsureActionColumns();
+                        SelectRowById(monId);
+                    }
+                }
+            }
+            else if (colName == COL_DEL)
+            {
+                var ten = Convert.ToString(CellVal(row, COL_TEN));
+                if (MessageBox.Show($"Bạn có chắc muốn xóa món: {ten}?", "Xác nhận xóa",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    try
+                    {
+                        _bll.XoaMonAn(monId);
+                        LoadDataThucDonVaGoi();
+                        EnsureActionColumns();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Không thể xóa món.\n" + ex.Message, "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void SelectRowById(int monId)
+        {
+            foreach (DataGridViewRow r in dgvThucDonVaGoi.Rows)
+            {
+                var v = CellVal(r, COL_ID);
+                if (v is int id && id == monId)
+                {
+                    r.Selected = true;
+                    dgvThucDonVaGoi.FirstDisplayedScrollingRowIndex = Math.Max(r.Index - 3, 0);
+                    break;
+                }
+            }
+        }
+        private void roundedTextBox1_TextChanged(object? sender, EventArgs e)
+        {
+            ApplyFilter(roundedTextBox1.Text);
+        }
+        private void ApplyFilter(string? query)
+        {
+            string q = (query ?? "").Trim();
+            string normQ = NormalizeNoDiacritics(q);
+
+            // nếu ô tìm kiếm rỗng -> hiện tất cả
+            if (string.IsNullOrEmpty(normQ))
+            {
+                foreach (DataGridViewRow r in dgvThucDonVaGoi.Rows) r.Visible = true;
+                return;
+            }
+
+            foreach (DataGridViewRow r in dgvThucDonVaGoi.Rows)
+            {
+                bool match =
+                    MatchCell(r, COL_TEN, normQ) ||
+                    MatchCell(r, COL_DM, normQ) ||
+                    MatchCell(r, COL_GB, normQ) ||
+                    MatchCell(r, COL_GV, normQ) ||
+                    MatchCell(r, COL_LN, normQ) ||
+                    MatchCell(r, COL_TT, normQ);
+
+                r.Visible = match;
+            }
+        }
+
+        // So khớp 1 ô theo logic bỏ dấu + lowercase
+        private bool MatchCell(DataGridViewRow r, string colName, string normQ)
+        {
+            if (!dgvThucDonVaGoi.Columns.Contains(colName)) return false;
+            var val = r.Cells[colName].Value?.ToString() ?? "";
+            var normVal = NormalizeNoDiacritics(val);
+            return normVal.Contains(normQ);
+        }
+
+        // Bỏ dấu tiếng Việt và lower-case
+        private string NormalizeNoDiacritics(string input)
+        {
+            input = input?.Trim().ToLowerInvariant() ?? "";
+            string stFormD = input.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder(capacity: stFormD.Length);
+
+            foreach (var ch in stFormD)
+            {
+                var uc = CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private void roundedTextBox1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
