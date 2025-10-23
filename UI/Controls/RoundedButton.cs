@@ -12,7 +12,7 @@ namespace UI.Controls
     public class RoundedButton : Button
     {
         private int _radius = 14;
-        private int _border = 1;
+        private int _border = 0;
         private Color _borderColor = Color.FromArgb(0x1F, 0x6F, 0xEB); // Primary 500
         private Color _hoverBack = Color.FromArgb(0x1A, 0x5C, 0xD6);   // Primary 600
         private Color _pressedBack = Color.FromArgb(0x18, 0x4F, 0xB8); // darker
@@ -21,19 +21,28 @@ namespace UI.Controls
 
         public RoundedButton()
         {
+            // Tối ưu hóa rendering để tránh răng cưa
             SetStyle(ControlStyles.AllPaintingInWmPaint |
                      ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.UserPaint |
-                     ControlStyles.ResizeRedraw, true);
+                     ControlStyles.ResizeRedraw |
+                     ControlStyles.SupportsTransparentBackColor, true);
 
             FlatStyle = FlatStyle.Flat;
             FlatAppearance.BorderSize = 0;
+            // Không thể set BorderColor = Transparent, để mặc định
 
             BackColor = Color.FromArgb(0x1F, 0x6F, 0xEB); // default fill
             ForeColor = Color.White;
-            Font = new Font("Segoe UI Semibold", 10.5f);
-            Padding = new Padding(10, 6, 10, 6);
+            Font = new Font("Segoe UI Semibold", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);
+            Padding = new Padding(12, 8, 12, 8);
             Cursor = Cursors.Hand;
+            
+            // Cải thiện chất lượng text
+            UseCompatibleTextRendering = false;
+            
+            // Tạo Region ngay từ đầu
+            UpdateRegion();
         }
 
         // ====== Properties ======
@@ -52,8 +61,8 @@ namespace UI.Controls
             get { return _border; }
             set { _border = value < 0 ? 0 : value; Invalidate(); }
         }
-        public bool ShouldSerializeBorderThickness() { return _border != 1; }
-        public void ResetBorderThickness() { BorderThickness = 1; }
+        public bool ShouldSerializeBorderThickness() { return _border != 0; }
+        public void ResetBorderThickness() { BorderThickness = 0; }
 
         [Category("Appearance"), Description("Màu viền."), DefaultValue(typeof(Color), "31,111,235")]
         public Color BorderColor
@@ -94,9 +103,9 @@ namespace UI.Controls
 
         private void UpdateRegion()
         {
+            // Tạo Region để loại bỏ hoàn toàn viền đen
             using (GraphicsPath path = BuildPath(ClientRectangle, _radius))
             {
-                if (Region != null) Region.Dispose();
                 Region = new Region(path);
             }
         }
@@ -104,33 +113,38 @@ namespace UI.Controls
         // ====== Painting ======
         protected override void OnPaint(PaintEventArgs e)
         {
+            // Cải thiện chất lượng rendering
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
+            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
             Rectangle rect = ClientRectangle;
-            rect.Width -= 1; rect.Height -= 1;
 
             Color fill = BackColor;
             if (!Enabled)
-                fill = ControlPaint.Light(BackColor, 0.6f);
+                fill = Color.FromArgb(200, 200, 200);
             else if (_pressed)
                 fill = _pressedBack;
             else if (_hovered)
                 fill = _hoverBack;
 
+            // Vẽ background đơn giản - không có border
             using (GraphicsPath path = BuildPath(rect, _radius))
-            using (SolidBrush br = new SolidBrush(fill))
             {
-                e.Graphics.FillPath(br, path);
-                if (_border > 0)
+                using (SolidBrush br = new SolidBrush(fill))
                 {
-                    using (Pen pen = new Pen(_borderColor, _border))
-                        e.Graphics.DrawPath(pen, path);
+                    e.Graphics.FillPath(br, path);
                 }
             }
 
-            // Vẽ Text/Image (giữa nút)
+            // Vẽ Text đơn giản
+            Rectangle textRect = new Rectangle(rect.X + Padding.Left, rect.Y + Padding.Top, 
+                                             rect.Width - Padding.Left - Padding.Right, 
+                                             rect.Height - Padding.Top - Padding.Bottom);
+            
             TextRenderer.DrawText(
-                e.Graphics, Text, Font, rect,
+                e.Graphics, Text, Font, textRect,
                 Enabled ? ForeColor : SystemColors.GrayText,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
         }
@@ -139,12 +153,26 @@ namespace UI.Controls
         {
             GraphicsPath p = new GraphicsPath();
             if (radius <= 0) { p.AddRectangle(r); return p; }
+            
+            // Cải thiện thuật toán bo góc để mượt mà hơn
             int d = radius * 2;
+            
+            // Đảm bảo radius không vượt quá kích thước
+            if (d > r.Width) d = r.Width;
+            if (d > r.Height) d = r.Height;
+            
+            // Tạo path với các góc bo tròn mượt mà
+            p.StartFigure();
             p.AddArc(r.Left, r.Top, d, d, 180, 90);
+            p.AddLine(r.Left + radius, r.Top, r.Right - radius, r.Top);
             p.AddArc(r.Right - d, r.Top, d, d, 270, 90);
+            p.AddLine(r.Right, r.Top + radius, r.Right, r.Bottom - radius);
             p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            p.AddLine(r.Right - radius, r.Bottom, r.Left + radius, r.Bottom);
             p.AddArc(r.Left, r.Bottom - d, d, d, 90, 90);
+            p.AddLine(r.Left, r.Bottom - radius, r.Left, r.Top + radius);
             p.CloseFigure();
+            
             return p;
         }
     }

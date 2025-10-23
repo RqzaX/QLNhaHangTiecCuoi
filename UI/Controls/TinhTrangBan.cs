@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
@@ -18,109 +19,79 @@ namespace UI.Controls
         private string _tableCode = "A01";
         private TableState _status = TableState.Available;
         private int _capacity = 4;
-        private int _minutesUsed = 0;           // dùng khi InUse
-        private string _reservedTime = "13:00"; // dùng khi Reserved
+        private int _minutesUsed = 0;  
+        private string _reservedTime = "13:00";
         private decimal _price = 0m;
 
         // ====== Appearance ======
         private int _radius = 20;
 
-        // Hover animation
         private bool _hover;
-        private float _hoverT = 0f; // 0..1
+        private float _hoverT = 0f;
         private readonly Timer _anim;
-
-        // UI pieces (chỉ để trang trí/hiển thị)
-        private readonly Button _btnCode;     // chip mã bàn (trái trên)
-        private readonly Button _btnStatus;   // chip trạng thái (phải trên)
-        private readonly Label _lblCapacity;
-        private readonly Label _lblTime;
-        private readonly Label _lblPrice;
 
         public TinhTrangBan()
         {
-            // DoubleBuffer chuẩn
             SetStyle(ControlStyles.AllPaintingInWmPaint |
                      ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw |
                      ControlStyles.UserPaint, true);
             UpdateStyles();
 
-            Size = new Size(220, 140);
-            Padding = new Padding(14, 14, 14, 12);
-            Margin = new Padding(10);
-            Font = new Font("Segoe UI", 10f);
+            Size = new Size(280, 140);
+            Padding = new Padding(15, 15, 15, 15);
+            Margin = new Padding(8);
+            Font = new Font("Segoe UI", 11f);
             ForeColor = Color.FromArgb(17, 24, 39);
             BackColor = Color.Transparent;
-
-            // Buttons "chip"
-            _btnCode = MakeChip("A01", Color.White, Color.FromArgb(51, 65, 85));
-            _btnStatus = MakeChip("Trống", Color.FromArgb(16, 185, 129), Color.White);
-            Controls.Add(_btnCode);
-            Controls.Add(_btnStatus);
-
-            // Labels nội dung
-            _lblCapacity = MakeLabel();
-            _lblTime = MakeLabel();
-            _lblPrice = MakeLabel(true);
-            Controls.AddRange(new Control[] { _lblCapacity, _lblTime, _lblPrice });
-
-            // Layout lần đầu
-            LayoutContent();
-
-            // Anim
-            _anim = new Timer { Interval = 16 };
+            _anim = new Timer { Interval = 20 };
             _anim.Tick += (s, e) =>
             {
                 float target = _hover ? 1f : 0f;
-                _hoverT = Lerp(_hoverT, target, 0.20f);
-                if (Math.Abs(_hoverT - target) < 0.02f) { _hoverT = target; _anim.Stop(); }
+                _hoverT = Lerp(_hoverT, target, 0.15f);
+                if (Math.Abs(_hoverT - target) < 0.01f) { _hoverT = target; _anim.Stop(); }
                 Invalidate();
             };
 
             MouseEnter += (s, e) => { _hover = true; if (!_anim.Enabled) _anim.Start(); };
             MouseLeave += (s, e) => { _hover = false; if (!_anim.Enabled) _anim.Start(); };
-            Resize += (s, e) => LayoutContent();
-
-            // Không cần Click – chỉ hiển thị
-            UpdateTexts();
         }
 
         // ====== Public API ======
         [Category("Data")]
         public string TableCode
         {
-            get => _tableCode; set { _tableCode = value ?? ""; UpdateTexts(); Invalidate(); }
+            get => _tableCode; set { _tableCode = value ?? ""; Invalidate(); }
         }
 
         [Category("Data")]
         public TableState Status
         {
-            get => _status; set { _status = value; UpdateTexts(); Invalidate(); }
+            get => _status; set { _status = value; Invalidate(); }
         }
 
         [Category("Data")]
         public int Capacity
         {
-            get => _capacity; set { _capacity = value; UpdateTexts(); Invalidate(); }
+            get => _capacity; set { _capacity = value; Invalidate(); }
         }
 
         [Category("Data")]
         public int MinutesUsed
         {
-            get => _minutesUsed; set { _minutesUsed = value; UpdateTexts(); Invalidate(); }
+            get => _minutesUsed; set { _minutesUsed = value; Invalidate(); }
         }
 
         [Category("Data")]
         public string ReservedTime
         {
-            get => _reservedTime; set { _reservedTime = value ?? ""; UpdateTexts(); Invalidate(); }
+            get => _reservedTime; set { _reservedTime = value ?? ""; Invalidate(); }
         }
 
         [Category("Data")]
         public decimal Price
         {
-            get => _price; set { _price = value; UpdateTexts(); Invalidate(); }
+            get => _price; set { _price = value; Invalidate(); }
         }
 
         [Category("Appearance")]
@@ -129,139 +100,226 @@ namespace UI.Controls
             get => _radius; set { _radius = Math.Max(10, value); Invalidate(); }
         }
 
-        // ====== Paint (vẽ thẻ + hover grow & darken) ======
+        // ====== Paint (vẽ thẻ + hover grow & darken + nội dung) ======
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
-            // vẽ vào buffer nội bộ để mượt
             using var buffer = new Bitmap(Width, Height);
             using var g = Graphics.FromImage(buffer);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.Clear(Parent?.BackColor ?? SystemColors.Control);
 
-            // theme theo trạng thái
-            var (border, fill, accent) = ThemeByState(_status);
+            var (primaryColor, backgroundColor, accentColor, textColor) = GetModernTheme(_status);
 
-            // hover: phồng to & đậm màu
-            int grow = (int)(4 * _hoverT); // phồng ~4px
-            var cardRect = new Rectangle(-grow, -grow, Width - 1 + grow * 2, Height - 1 + grow * 2);
+            // Hover effect nhẹ nhàng hơn
+            float scale = 1.0f + (0.04f * _hoverT); // Giảm scale effect
+            int grow = (int)(4 * _hoverT); // Giảm grow effect
+            var cardRect = new Rectangle(grow, grow, Width - 1 - grow * 2, Height - 1 - grow * 2);
 
-            Color fillDark = Blend(fill, border, 0.12 * _hoverT);
-
-            using (var path = RoundRect(cardRect, _radius + grow))
+            // Shadow effect nhẹ nhàng hơn khi hover
+            if (_hoverT > 0)
             {
-                using var sb = new SolidBrush(fillDark);
-                g.FillPath(sb, path);
+                int shadowOffset = (int)(3 * _hoverT);
+                int shadowBlur = (int)(4 * _hoverT);
+                using var shadowPath = RoundRect(new Rectangle(cardRect.X + shadowOffset, cardRect.Y + shadowOffset, cardRect.Width, cardRect.Height), _radius);
+                using var shadowBrush = new SolidBrush(Color.FromArgb((int)(20 * _hoverT), Color.Black));
+                g.FillPath(shadowBrush, shadowPath);
+            }
 
-                using var pen = new Pen(border, 2.0f) { Alignment = PenAlignment.Inset, LineJoin = LineJoin.Round };
+            using (var path = RoundRect(cardRect, _radius))
+            {
+                // Gradient background với hover effect
+                Color bgStart = backgroundColor;
+                Color bgEnd = _hoverT > 0 ? 
+                    Color.FromArgb(Math.Max(0, backgroundColor.A - 30), backgroundColor) : 
+                    Color.FromArgb(Math.Max(0, backgroundColor.A - 10), backgroundColor);
+                
+                using var gradientBrush = new LinearGradientBrush(
+                    cardRect, 
+                    bgStart, 
+                    bgEnd, 
+                    135f);
+                g.FillPath(gradientBrush, path);
+
+                // Border với hover effect
+                Color borderStart = primaryColor;
+                Color borderEnd = _hoverT > 0 ? 
+                    Color.FromArgb(255, primaryColor) : 
+                    Color.FromArgb(200, primaryColor);
+                
+                using var borderBrush = new LinearGradientBrush(
+                    cardRect,
+                    borderStart,
+                    borderEnd,
+                    45f);
+                
+                float borderWidth = 2.0f + (0.5f * _hoverT); // Tăng độ dày border nhẹ khi hover
+                using var pen = new Pen(borderBrush, borderWidth) { 
+                    Alignment = PenAlignment.Inset, 
+                    LineJoin = LineJoin.Round 
+                };
                 g.DrawPath(pen, path);
             }
 
-            // đổ ra màn hình
+            if (scale != 1.0f)
+            {
+                g.ScaleTransform(scale, scale);
+                g.TranslateTransform((1 - scale) * Width / 2, (1 - scale) * Height / 2);
+            }
+
+            DrawModernContent(g, primaryColor, backgroundColor, accentColor, textColor);
+
             e.Graphics.DrawImageUnscaled(buffer, 0, 0);
         }
 
-        // ====== Layout & Texts ======
-        private void LayoutContent()
+        // ====== Vẽ nội dung hiện đại ======
+        private void DrawModernContent(Graphics g, Color primaryColor, Color backgroundColor, Color accentColor, Color textColor)
         {
-            // chip mã bàn (trái trên)
-            _btnCode.Location = new Point(Padding.Left, Padding.Top);
-            _btnCode.AutoSize = true;
-
-            // chip trạng thái (phải trên)
-            _btnStatus.AutoSize = true;
-            _btnStatus.Location = new Point(
-                Width - Padding.Right - _btnStatus.Width,
-                Padding.Top
-            );
-
-            int startY = _btnCode.Bottom + 10;
-            int leftX = Padding.Left;
-
-            _lblCapacity.SetBounds(leftX, startY, Width - Padding.Horizontal, 24);
-            _lblTime.SetBounds(leftX, _lblCapacity.Bottom, Width - Padding.Horizontal, 24);
-            _lblPrice.SetBounds(leftX, _lblTime.Bottom, Width - Padding.Horizontal, 26);
-        }
-
-        private void UpdateTexts()
-        {
-            _btnCode.Text = _tableCode;
-
-            var (border, fill, accent) = ThemeByState(_status);
-            _btnStatus.Text = _status == TableState.Available ? "Trống" :
+            var fontHeader = new Font("Segoe UI", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
+            var fontSubheader = new Font("Segoe UI", 14f, FontStyle.Regular, GraphicsUnit.Pixel);
+            var fontBody = new Font("Segoe UI", 13f, FontStyle.Regular, GraphicsUnit.Pixel);
+            var fontCaption = new Font("Segoe UI", 12f, FontStyle.Regular, GraphicsUnit.Pixel);
+            
+            var colorTextPrimary = Color.FromArgb(31, 41, 55);
+            var colorTextSecondary = Color.FromArgb(75, 85, 99);
+            var colorTextMuted = Color.FromArgb(156, 163, 175);
+            
+            // Header section với table code - điều chỉnh cho chữ lớn hơn
+            var headerRect = new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - Padding.Right, 35);
+            
+            // Vẽ table code với background
+            using (var headerPath = RoundRect(headerRect, 8))
+            {
+                using var headerBrush = new SolidBrush(Color.FromArgb(240, 248, 255));
+                g.FillPath(headerBrush, headerPath);
+                
+                using var headerPen = new Pen(Color.FromArgb(219, 234, 254), 1f);
+                g.DrawPath(headerPen, headerPath);
+            }
+            
+            // Table code text - điều chỉnh cho chữ lớn hơn
+            var tableCodeRect = new RectangleF(headerRect.X + 10, headerRect.Y + 8, headerRect.Width - 20, 20);
+            var tableCodeFormat = new StringFormat 
+            { 
+                Alignment = StringAlignment.Center, 
+                LineAlignment = StringAlignment.Center 
+            };
+            g.DrawString(_tableCode, fontHeader, new SolidBrush(primaryColor), tableCodeRect, tableCodeFormat);
+            
+            // Status indicator (góc phải trên)
+            string statusText = _status == TableState.Available ? "Trống" :
                               _status == TableState.InUse ? "Đang dùng" : "Đã đặt";
-            _btnStatus.BackColor = accent;
-            _btnStatus.ForeColor = Color.White;
-
-            _lblCapacity.Text = $"Sức  {_capacity}  chứa người";
-
+            
+            var statusSize = g.MeasureString(statusText, fontCaption);
+            var statusRect = new RectangleF(
+                Width - Padding.Right - statusSize.Width - 16, 
+                Padding.Top + 6, 
+                statusSize.Width + 12, 
+                20
+            );
+            
+            // Vẽ status chip hiện đại
+            using (var statusPath = RoundRect(Rectangle.Round(statusRect), 10))
+            {
+                using var statusBrush = new SolidBrush(accentColor);
+                g.FillPath(statusBrush, statusPath);
+            }
+            
+            g.DrawString(statusText, fontCaption, new SolidBrush(Color.White), statusRect, 
+                new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+            
+            // Content section - điều chỉnh cho chữ lớn hơn
+            int contentY = Padding.Top + 45;
+            int contentX = Padding.Left + 12;
+            
+            // Capacity info với icon
+            string capacityText = $"👥 {_capacity} người";
+            g.DrawString(capacityText, fontBody, new SolidBrush(colorTextPrimary), contentX, contentY);
+            
+            // Time info với icon
+            string timeText = "";
             if (_status == TableState.InUse)
-                _lblTime.Text = $"Thời  {_minutesUsed}  gian phút";
+                timeText = $"⏱️ {_minutesUsed} phút";
             else if (_status == TableState.Reserved)
-                _lblTime.Text = $"Giờ  đặt  {_reservedTime}";
+                timeText = $"📅 {_reservedTime}";
             else
-                _lblTime.Text = " ";
-
-            _lblPrice.Text = $"$  Giá trị   {(_price <= 0 ? "0 đ" : string.Format("{0:n0} đ", _price))}";
-            _lblPrice.ForeColor = accent;
-
-            LayoutContent();
-        }
-
-        // ====== Helpers ======
-        private (Color border, Color fill, Color accent) ThemeByState(TableState st)
-        {
-            if (st == TableState.Available)
-                return (Color.FromArgb(34, 197, 94), Color.FromArgb(229, 250, 238), Color.FromArgb(16, 185, 129));
-            if (st == TableState.InUse)
-                return (Color.FromArgb(239, 68, 68), Color.FromArgb(255, 235, 238), Color.FromArgb(220, 38, 38));
-            return (Color.FromArgb(245, 158, 11), Color.FromArgb(255, 247, 214), Color.FromArgb(245, 158, 11));
-        }
-
-        private static Button MakeChip(string text, Color bg, Color fg)
-        {
-            var b = new Button
+                timeText = "✨ Sẵn sàng";
+                
+            g.DrawString(timeText, fontBody, new SolidBrush(colorTextSecondary), contentX, contentY + 20);
+            
+            // Price info với icon và styling đặc biệt
+            string priceText = _price <= 0 ? "💵 Chưa có đơn" : $"💰 {_price:N0} đ";
+            var priceRect = new RectangleF(contentX, contentY + 45, Width - contentX - Padding.Right, 25);
+            
+            // Background cho price
+            using (var pricePath = RoundRect(Rectangle.Round(priceRect), 6))
             {
-                Text = text,
-                AutoSize = true,
-                FlatStyle = FlatStyle.Flat,
-                BackColor = bg,
-                ForeColor = fg,
-                Padding = new Padding(10, 2, 10, 2),
-                TabStop = false
-            };
-            b.FlatAppearance.BorderSize = 0;
-            b.FlatAppearance.MouseOverBackColor = bg;
-            b.FlatAppearance.MouseDownBackColor = bg;
-
-            // bo tròn pill
-            b.Resize += (s, e) =>
-            {
-                var btn = (Button)s!;
-                var path = new GraphicsPath();
-                int r = btn.Height;
-                path.AddArc(0, 0, r, r, 90, 180);
-                path.AddArc(btn.Width - r, 0, r, r, 270, 180);
-                path.CloseFigure();
-                btn.Region = new Region(path);
-            };
-            return b;
+                using var priceBrush = new SolidBrush(Color.FromArgb(245, 245, 245));
+                g.FillPath(priceBrush, pricePath);
+            }
+            
+            g.DrawString(priceText, fontSubheader, new SolidBrush(accentColor), priceRect, 
+                new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+            
+            // Decorative elements
+            DrawDecorativeElements(g, primaryColor, accentColor);
         }
-
-        private static Label MakeLabel(bool strong = false)
+        
+        private void DrawDecorativeElements(Graphics g, Color primaryColor, Color accentColor)
         {
-            return new Label
-            {
-                AutoSize = false,
-                Height = 24,
-                TextAlign = ContentAlignment.MiddleLeft,
-                ForeColor = strong ? Color.FromArgb(55, 65, 81) : Color.FromArgb(107, 114, 128),
-                Font = new Font("Segoe UI", strong ? 10f : 9f, strong ? FontStyle.Bold : FontStyle.Regular),
-                BackColor = Color.Transparent
-            };
+            // Vẽ các đường trang trí nhẹ
+            using var pen = new Pen(Color.FromArgb(30, primaryColor), 1f);
+            
+            // Đường ngang nhẹ
+            g.DrawLine(pen, Padding.Left + 12, Padding.Top + 40, Width - Padding.Right - 12, Padding.Top + 40);
+            
+            // Điểm nhấn góc
+            var cornerSize = 8;
+            using var cornerBrush = new SolidBrush(accentColor);
+            g.FillEllipse(cornerBrush, Width - Padding.Right - 20, Height - Padding.Bottom - 20, cornerSize, cornerSize);
         }
+        
+
+        // ====== Modern Theme System ======
+        private (Color primary, Color background, Color accent, Color text) GetModernTheme(TableState st)
+        {
+            switch (st)
+            {
+                case TableState.Available:
+                    return (
+                        Color.FromArgb(34, 197, 94),        // Green-500 - Màu xanh lá tươi
+                        Color.FromArgb(240, 253, 244),       // Green-50 - Nền xanh nhạt
+                        Color.FromArgb(22, 163, 74),         // Green-600 - Xanh đậm hơn
+                        Color.FromArgb(20, 83, 45)           // Green-800 - Chữ xanh đậm
+                    );
+                case TableState.InUse:
+                    return (
+                        Color.FromArgb(239, 68, 68),         // Red-500 - Màu đỏ
+                        Color.FromArgb(254, 226, 226),       // Red-50 - Nền đỏ nhạt
+                        Color.FromArgb(220, 38, 38),         // Red-600 - Đỏ đậm hơn
+                        Color.FromArgb(153, 27, 27)          // Red-800 - Chữ đỏ đậm
+                    );
+                case TableState.Reserved:
+                    return (
+                        Color.FromArgb(251, 146, 60),        // Orange-500 - Màu cam
+                        Color.FromArgb(255, 247, 237),       // Orange-50 - Nền cam nhạt
+                        Color.FromArgb(234, 88, 12),         // Orange-600 - Cam đậm
+                        Color.FromArgb(154, 52, 18)          // Orange-800 - Chữ cam đậm
+                    );
+                default:
+                    return (
+                        Color.FromArgb(107, 114, 128),      // Gray-500
+                        Color.FromArgb(249, 250, 251),      // Gray-50
+                        Color.FromArgb(75, 85, 99),         // Gray-600
+                        Color.FromArgb(31, 41, 55)          // Gray-800
+                    );
+            }
+        }
+
+        // Đã loại bỏ MakeChip và MakeLabel vì không cần control con nữa
 
         private static GraphicsPath RoundRect(Rectangle r, int radius)
         {

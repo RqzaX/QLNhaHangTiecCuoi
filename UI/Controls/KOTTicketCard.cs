@@ -50,6 +50,7 @@ namespace UI.Controls
         private string _tableName = "Bàn A03";
         private string _ticketCode = "KOT003";
         private DateTime _time = DateTime.Now;
+        private string _notes = "";
         private readonly List<KotItem> _items = new List<KotItem>
         {
             new KotItem{ Qty = 4, Name = "Gỏi cuốn tôm thịt"},
@@ -130,6 +131,9 @@ namespace UI.Controls
 
         [Category("Data")]
         public DateTime OrderTime { get => _time; set { _time = value; Invalidate(); } }
+
+        [Category("Data")]
+        public string Notes { get => _notes; set { _notes = value; Invalidate(); } }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [Category("Data")]
@@ -242,10 +246,9 @@ namespace UI.Controls
                 g.DrawString(chipText, _fontMeta, chipTextBrush, chipRect.X + chipPad.Width - 2, chipRect.Y + 3);
             }
 
-            // chef hat (unicode) at right of chip
             using (var metaBrush = new SolidBrush(Color.FromArgb(90, 95, 110)))
             {
-                string chef = "👨‍🍳"; // thay bằng icon riêng nếu muốn
+                string chef = "👨‍🍳";
                 var szChef = g.MeasureString(chef, _fontMeta);
                 g.DrawString(chef, _fontMeta, metaBrush, chipRect.Right + 8, y + (chipH - szChef.Height) / 2f);
             }
@@ -258,6 +261,19 @@ namespace UI.Controls
                 {
                     g.DrawString(it.ToString(), _fontItem, itemBrush, x, y);
                     y += _fontItem.Height + 6;
+                }
+            }
+
+            // Notes (if any)
+            if (!string.IsNullOrWhiteSpace(_notes))
+            {
+                y += 8; // Extra spacing before notes
+                using (var notesBrush = new SolidBrush(Color.FromArgb(120, 120, 120)))
+                using (var notesFont = new Font("Segoe UI", 9.0f, FontStyle.Italic))
+                {
+                    string notesText = "📝 " + _notes;
+                    g.DrawString(notesText, notesFont, notesBrush, x, y);
+                    y += notesFont.Height + 8;
                 }
             }
 

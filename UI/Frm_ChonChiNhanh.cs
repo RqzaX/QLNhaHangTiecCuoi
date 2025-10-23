@@ -44,35 +44,32 @@ namespace UI
         {
             try
             {
+                if (Session.NguoiDungId <= 0)
+                {
+                    MessageBox.Show("Phiên đăng nhập không hợp lệ! Vui lòng đăng nhập lại.",
+                        "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    btnTiepTuc.Enabled = false;
+                    return;
+                }
 
-                // Lấy dữ liệu từ database
-                DataTable dt = _bll.LayDanhSachChiNhanh();
-
+                DataTable dt = _bll.LayChiNhanhTheoNguoiDung(Session.NguoiDungId);
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
-                    MessageBox.Show("Không có chi nhánh nào trong hệ thống!",
+                    MessageBox.Show("Bạn không được phân quyền truy cập chi nhánh nào!\nVui lòng liên hệ quản trị viên.",
                         "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     btnTiepTuc.Enabled = false;
                     return;
                 }
 
-                // Xóa DataSource cũ nếu có
                 if (cbbChonChiNhanh.DataSource != null)
                 {
                     cbbChonChiNhanh.DataSource = null;
                 }
 
-
                 cbbChonChiNhanh.DataSource = dt;
                 cbbChonChiNhanh.DisplayMember = "ten";           // Hiển thị tên chi nhánh
                 cbbChonChiNhanh.ValueMember = "chi_nhanh_id";    // Lưu ID chi nhánh
-
-                // Chọn mục đầu tiên
-                if (cbbChonChiNhanh.Items.Count > 0)
-                {
-                    cbbChonChiNhanh.SelectedIndex = 0;
-                }
 
                 btnTiepTuc.Enabled = true;
             }
@@ -109,11 +106,9 @@ namespace UI
                 int chiNhanhId = (int)cbbChonChiNhanh.SelectedValue;
                 string tenChiNhanh = cbbChonChiNhanh.Text;
 
-                // Lưu vào Session
                 Session.ChiNhanhId = chiNhanhId;
                 Session.TenChiNhanh = tenChiNhanh;
 
-                // Đóng form và mở Dashboard
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

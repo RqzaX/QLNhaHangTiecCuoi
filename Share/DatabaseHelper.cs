@@ -36,8 +36,11 @@ namespace QLNhaHangTiecCuoi.Share
             {
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
+                    conn.Open();
+                    
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 30;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -61,6 +64,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 30;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -83,6 +87,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 30;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);

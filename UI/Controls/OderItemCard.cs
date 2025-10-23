@@ -107,6 +107,26 @@ namespace UI.Controls
 
         // ====== Events ======
         public event EventHandler QuantityChanged;
+        public event EventHandler ItemRemoved;
+        
+        // Thuộc tính để quản lý món ăn
+        public int MonId { get; set; }
+        public string TenMon 
+        { 
+            get => _itemName; 
+            set { _itemName = value; Invalidate(); } 
+        }
+        public decimal DonGia 
+        { 
+            get => _unitPrice; 
+            set { _unitPrice = value; Invalidate(); } 
+        }
+        
+        // Phương thức cập nhật hiển thị
+        public void UpdateDisplay()
+        {
+            Invalidate();
+        }
         public event EventHandler NoteClicked;
         public event EventHandler DeleteClicked;
 
@@ -120,7 +140,7 @@ namespace UI.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
             Font = new Font("Segoe UI", 10f);
-            Size = new Size(400, 120);
+            Size = new Size(348, 120);
             Cursor = Cursors.Arrow;
         }
 
@@ -188,9 +208,8 @@ namespace UI.Controls
             DrawQtyText(g, rcQtyText);
             DrawCircleButton(g, _rcPlus, "+", _hoverPlus);
 
-            // Note pill button
-            y += btnSize + 12;
-            _rcNote = new Rectangle(x, y, 120, 34);
+            // Note pill button - moved to right side below total price
+            _rcNote = new Rectangle(card.Right - pad - 120, y, 120, 34);
             DrawNotePill(g, _rcNote, _hoverNote, Note);
 
             // bottom total (right) again for bố cục giống mẫu
@@ -318,11 +337,24 @@ namespace UI.Controls
             }
             else if (_rcNote.Contains(e.Location))
             {
-                NoteClicked?.Invoke(this, EventArgs.Empty);
+                ShowNoteDialog();
             }
             else if (_rcDelete.Contains(e.Location))
             {
                 DeleteClicked?.Invoke(this, EventArgs.Empty);
+                ItemRemoved?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void ShowNoteDialog()
+        {
+            using (var dialog = new NoteDialog(Note))
+            {
+                if (dialog.ShowDialog(this.FindForm()) == DialogResult.OK)
+                {
+                    Note = dialog.NoteText;
+                    NoteClicked?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
     }

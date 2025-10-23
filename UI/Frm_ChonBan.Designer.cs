@@ -39,45 +39,28 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
-            panel1 = new Panel();
-            tinhTrangBan9 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan10 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan11 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan12 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan13 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan14 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan15 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan16 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan8 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan7 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan6 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan5 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan4 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan3 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan2 = new UI.Controls.TinhTrangBan();
-            tinhTrangBan1 = new UI.Controls.TinhTrangBan();
+            panelDanhSachBan = new Panel();
             roundedPanel4 = new UI.Controls.RoundedPanel();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             roundedPanel5 = new UI.Controls.RoundedPanel();
             roundedPanel6 = new UI.Controls.RoundedPanel();
-            btnThoat = new Button();
+            btnThoat = new UI.Controls.RoundedButton();
             roundedPanel7 = new UI.Controls.RoundedPanel();
             pictureBox1 = new PictureBox();
-            label7 = new Label();
+            lbTongSoBan = new Label();
             label6 = new Label();
             roundedPanel8 = new UI.Controls.RoundedPanel();
             pictureBox2 = new PictureBox();
-            label8 = new Label();
+            lbBanTrong = new Label();
             label9 = new Label();
             roundedPanel9 = new UI.Controls.RoundedPanel();
             pictureBox3 = new PictureBox();
-            label10 = new Label();
+            lbDangPhucVu = new Label();
             label11 = new Label();
             roundedPanel10 = new UI.Controls.RoundedPanel();
             pictureBox4 = new PictureBox();
-            label12 = new Label();
+            lbDaDatTruoc = new Label();
             label13 = new Label();
-            panel1.SuspendLayout();
             roundedPanel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             roundedPanel8.SuspendLayout();
@@ -138,346 +121,29 @@
             label5.TabIndex = 14;
             label5.Text = "Đã đặt";
             // 
-            // panel1
+            // panelDanhSachBan
             // 
-            panel1.AutoScroll = true;
-            panel1.Controls.Add(tinhTrangBan9);
-            panel1.Controls.Add(tinhTrangBan10);
-            panel1.Controls.Add(tinhTrangBan11);
-            panel1.Controls.Add(tinhTrangBan12);
-            panel1.Controls.Add(tinhTrangBan13);
-            panel1.Controls.Add(tinhTrangBan14);
-            panel1.Controls.Add(tinhTrangBan15);
-            panel1.Controls.Add(tinhTrangBan16);
-            panel1.Controls.Add(tinhTrangBan8);
-            panel1.Controls.Add(tinhTrangBan7);
-            panel1.Controls.Add(tinhTrangBan6);
-            panel1.Controls.Add(tinhTrangBan5);
-            panel1.Controls.Add(tinhTrangBan4);
-            panel1.Controls.Add(tinhTrangBan3);
-            panel1.Controls.Add(tinhTrangBan2);
-            panel1.Controls.Add(tinhTrangBan1);
-            panel1.Location = new Point(2, 196);
-            panel1.Margin = new Padding(3, 2, 3, 2);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(808, 309);
-            panel1.TabIndex = 15;
-            // 
-            // tinhTrangBan9
-            // 
-            tinhTrangBan9.BackColor = Color.Transparent;
-            tinhTrangBan9.Capacity = 4;
-            tinhTrangBan9.CornerRadius = 20;
-            tinhTrangBan9.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan9.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan9.Location = new Point(596, 333);
-            tinhTrangBan9.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan9.MinutesUsed = 0;
-            tinhTrangBan9.Name = "tinhTrangBan9";
-            tinhTrangBan9.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan9.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan9.ReservedTime = "13:00";
-            tinhTrangBan9.Size = new Size(192, 105);
-            tinhTrangBan9.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan9.TabIndex = 15;
-            tinhTrangBan9.TableCode = "A01";
-            // 
-            // tinhTrangBan10
-            // 
-            tinhTrangBan10.BackColor = Color.Transparent;
-            tinhTrangBan10.Capacity = 4;
-            tinhTrangBan10.CornerRadius = 20;
-            tinhTrangBan10.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan10.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan10.Location = new Point(398, 333);
-            tinhTrangBan10.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan10.MinutesUsed = 0;
-            tinhTrangBan10.Name = "tinhTrangBan10";
-            tinhTrangBan10.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan10.Price = new decimal(new int[] { 353555, 0, 0, 0 });
-            tinhTrangBan10.ReservedTime = "13:00";
-            tinhTrangBan10.Size = new Size(192, 105);
-            tinhTrangBan10.Status = UI.Controls.TinhTrangBan.TableState.Reserved;
-            tinhTrangBan10.TabIndex = 14;
-            tinhTrangBan10.TableCode = "A04";
-            // 
-            // tinhTrangBan11
-            // 
-            tinhTrangBan11.BackColor = Color.Transparent;
-            tinhTrangBan11.Capacity = 4;
-            tinhTrangBan11.CornerRadius = 20;
-            tinhTrangBan11.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan11.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan11.Location = new Point(199, 333);
-            tinhTrangBan11.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan11.MinutesUsed = 0;
-            tinhTrangBan11.Name = "tinhTrangBan11";
-            tinhTrangBan11.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan11.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan11.ReservedTime = "13:00";
-            tinhTrangBan11.Size = new Size(192, 105);
-            tinhTrangBan11.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan11.TabIndex = 13;
-            tinhTrangBan11.TableCode = "A01";
-            // 
-            // tinhTrangBan12
-            // 
-            tinhTrangBan12.BackColor = Color.Transparent;
-            tinhTrangBan12.Capacity = 4;
-            tinhTrangBan12.CornerRadius = 20;
-            tinhTrangBan12.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan12.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan12.Location = new Point(3, 333);
-            tinhTrangBan12.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan12.MinutesUsed = 120;
-            tinhTrangBan12.Name = "tinhTrangBan12";
-            tinhTrangBan12.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan12.Price = new decimal(new int[] { 132424, 0, 0, 0 });
-            tinhTrangBan12.ReservedTime = "15:00";
-            tinhTrangBan12.Size = new Size(192, 105);
-            tinhTrangBan12.Status = UI.Controls.TinhTrangBan.TableState.InUse;
-            tinhTrangBan12.TabIndex = 12;
-            tinhTrangBan12.TableCode = "A02";
-            // 
-            // tinhTrangBan13
-            // 
-            tinhTrangBan13.BackColor = Color.Transparent;
-            tinhTrangBan13.Capacity = 4;
-            tinhTrangBan13.CornerRadius = 20;
-            tinhTrangBan13.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan13.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan13.Location = new Point(596, 224);
-            tinhTrangBan13.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan13.MinutesUsed = 0;
-            tinhTrangBan13.Name = "tinhTrangBan13";
-            tinhTrangBan13.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan13.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan13.ReservedTime = "13:00";
-            tinhTrangBan13.Size = new Size(192, 105);
-            tinhTrangBan13.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan13.TabIndex = 11;
-            tinhTrangBan13.TableCode = "A01";
-            // 
-            // tinhTrangBan14
-            // 
-            tinhTrangBan14.BackColor = Color.Transparent;
-            tinhTrangBan14.Capacity = 4;
-            tinhTrangBan14.CornerRadius = 20;
-            tinhTrangBan14.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan14.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan14.Location = new Point(398, 224);
-            tinhTrangBan14.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan14.MinutesUsed = 0;
-            tinhTrangBan14.Name = "tinhTrangBan14";
-            tinhTrangBan14.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan14.Price = new decimal(new int[] { 353555, 0, 0, 0 });
-            tinhTrangBan14.ReservedTime = "13:00";
-            tinhTrangBan14.Size = new Size(192, 105);
-            tinhTrangBan14.Status = UI.Controls.TinhTrangBan.TableState.Reserved;
-            tinhTrangBan14.TabIndex = 10;
-            tinhTrangBan14.TableCode = "A04";
-            // 
-            // tinhTrangBan15
-            // 
-            tinhTrangBan15.BackColor = Color.Transparent;
-            tinhTrangBan15.Capacity = 4;
-            tinhTrangBan15.CornerRadius = 20;
-            tinhTrangBan15.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan15.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan15.Location = new Point(200, 224);
-            tinhTrangBan15.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan15.MinutesUsed = 120;
-            tinhTrangBan15.Name = "tinhTrangBan15";
-            tinhTrangBan15.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan15.Price = new decimal(new int[] { 132424, 0, 0, 0 });
-            tinhTrangBan15.ReservedTime = "15:00";
-            tinhTrangBan15.Size = new Size(192, 105);
-            tinhTrangBan15.Status = UI.Controls.TinhTrangBan.TableState.InUse;
-            tinhTrangBan15.TabIndex = 9;
-            tinhTrangBan15.TableCode = "A02";
-            // 
-            // tinhTrangBan16
-            // 
-            tinhTrangBan16.BackColor = Color.Transparent;
-            tinhTrangBan16.Capacity = 4;
-            tinhTrangBan16.CornerRadius = 20;
-            tinhTrangBan16.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan16.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan16.Location = new Point(3, 224);
-            tinhTrangBan16.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan16.MinutesUsed = 0;
-            tinhTrangBan16.Name = "tinhTrangBan16";
-            tinhTrangBan16.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan16.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan16.ReservedTime = "13:00";
-            tinhTrangBan16.Size = new Size(192, 105);
-            tinhTrangBan16.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan16.TabIndex = 8;
-            tinhTrangBan16.TableCode = "A01";
-            // 
-            // tinhTrangBan8
-            // 
-            tinhTrangBan8.BackColor = Color.Transparent;
-            tinhTrangBan8.Capacity = 4;
-            tinhTrangBan8.CornerRadius = 20;
-            tinhTrangBan8.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan8.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan8.Location = new Point(596, 112);
-            tinhTrangBan8.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan8.MinutesUsed = 0;
-            tinhTrangBan8.Name = "tinhTrangBan8";
-            tinhTrangBan8.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan8.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan8.ReservedTime = "13:00";
-            tinhTrangBan8.Size = new Size(192, 105);
-            tinhTrangBan8.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan8.TabIndex = 7;
-            tinhTrangBan8.TableCode = "A01";
-            // 
-            // tinhTrangBan7
-            // 
-            tinhTrangBan7.BackColor = Color.Transparent;
-            tinhTrangBan7.Capacity = 4;
-            tinhTrangBan7.CornerRadius = 20;
-            tinhTrangBan7.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan7.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan7.Location = new Point(398, 112);
-            tinhTrangBan7.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan7.MinutesUsed = 0;
-            tinhTrangBan7.Name = "tinhTrangBan7";
-            tinhTrangBan7.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan7.Price = new decimal(new int[] { 353555, 0, 0, 0 });
-            tinhTrangBan7.ReservedTime = "13:00";
-            tinhTrangBan7.Size = new Size(192, 105);
-            tinhTrangBan7.Status = UI.Controls.TinhTrangBan.TableState.Reserved;
-            tinhTrangBan7.TabIndex = 6;
-            tinhTrangBan7.TableCode = "A04";
-            // 
-            // tinhTrangBan6
-            // 
-            tinhTrangBan6.BackColor = Color.Transparent;
-            tinhTrangBan6.Capacity = 4;
-            tinhTrangBan6.CornerRadius = 20;
-            tinhTrangBan6.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan6.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan6.Location = new Point(199, 112);
-            tinhTrangBan6.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan6.MinutesUsed = 0;
-            tinhTrangBan6.Name = "tinhTrangBan6";
-            tinhTrangBan6.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan6.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan6.ReservedTime = "13:00";
-            tinhTrangBan6.Size = new Size(192, 105);
-            tinhTrangBan6.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan6.TabIndex = 5;
-            tinhTrangBan6.TableCode = "A01";
-            // 
-            // tinhTrangBan5
-            // 
-            tinhTrangBan5.BackColor = Color.Transparent;
-            tinhTrangBan5.Capacity = 4;
-            tinhTrangBan5.CornerRadius = 20;
-            tinhTrangBan5.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan5.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan5.Location = new Point(3, 112);
-            tinhTrangBan5.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan5.MinutesUsed = 120;
-            tinhTrangBan5.Name = "tinhTrangBan5";
-            tinhTrangBan5.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan5.Price = new decimal(new int[] { 132424, 0, 0, 0 });
-            tinhTrangBan5.ReservedTime = "15:00";
-            tinhTrangBan5.Size = new Size(192, 105);
-            tinhTrangBan5.Status = UI.Controls.TinhTrangBan.TableState.InUse;
-            tinhTrangBan5.TabIndex = 4;
-            tinhTrangBan5.TableCode = "A02";
-            // 
-            // tinhTrangBan4
-            // 
-            tinhTrangBan4.BackColor = Color.Transparent;
-            tinhTrangBan4.Capacity = 4;
-            tinhTrangBan4.CornerRadius = 20;
-            tinhTrangBan4.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan4.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan4.Location = new Point(596, 3);
-            tinhTrangBan4.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan4.MinutesUsed = 0;
-            tinhTrangBan4.Name = "tinhTrangBan4";
-            tinhTrangBan4.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan4.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan4.ReservedTime = "13:00";
-            tinhTrangBan4.Size = new Size(192, 105);
-            tinhTrangBan4.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan4.TabIndex = 3;
-            tinhTrangBan4.TableCode = "A01";
-            // 
-            // tinhTrangBan3
-            // 
-            tinhTrangBan3.BackColor = Color.Transparent;
-            tinhTrangBan3.Capacity = 4;
-            tinhTrangBan3.CornerRadius = 20;
-            tinhTrangBan3.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan3.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan3.Location = new Point(398, 3);
-            tinhTrangBan3.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan3.MinutesUsed = 0;
-            tinhTrangBan3.Name = "tinhTrangBan3";
-            tinhTrangBan3.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan3.Price = new decimal(new int[] { 353555, 0, 0, 0 });
-            tinhTrangBan3.ReservedTime = "13:00";
-            tinhTrangBan3.Size = new Size(192, 105);
-            tinhTrangBan3.Status = UI.Controls.TinhTrangBan.TableState.Reserved;
-            tinhTrangBan3.TabIndex = 2;
-            tinhTrangBan3.TableCode = "A04";
-            // 
-            // tinhTrangBan2
-            // 
-            tinhTrangBan2.BackColor = Color.Transparent;
-            tinhTrangBan2.Capacity = 4;
-            tinhTrangBan2.CornerRadius = 20;
-            tinhTrangBan2.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan2.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan2.Location = new Point(200, 3);
-            tinhTrangBan2.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan2.MinutesUsed = 120;
-            tinhTrangBan2.Name = "tinhTrangBan2";
-            tinhTrangBan2.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan2.Price = new decimal(new int[] { 132424, 0, 0, 0 });
-            tinhTrangBan2.ReservedTime = "15:00";
-            tinhTrangBan2.Size = new Size(192, 105);
-            tinhTrangBan2.Status = UI.Controls.TinhTrangBan.TableState.InUse;
-            tinhTrangBan2.TabIndex = 1;
-            tinhTrangBan2.TableCode = "A02";
-            // 
-            // tinhTrangBan1
-            // 
-            tinhTrangBan1.BackColor = Color.Transparent;
-            tinhTrangBan1.Capacity = 4;
-            tinhTrangBan1.CornerRadius = 20;
-            tinhTrangBan1.Font = new Font("Segoe UI", 10F);
-            tinhTrangBan1.ForeColor = Color.FromArgb(17, 24, 39);
-            tinhTrangBan1.Location = new Point(3, 3);
-            tinhTrangBan1.Margin = new Padding(9, 8, 9, 8);
-            tinhTrangBan1.MinutesUsed = 0;
-            tinhTrangBan1.Name = "tinhTrangBan1";
-            tinhTrangBan1.Padding = new Padding(12, 10, 12, 9);
-            tinhTrangBan1.Price = new decimal(new int[] { 0, 0, 0, 0 });
-            tinhTrangBan1.ReservedTime = "13:00";
-            tinhTrangBan1.Size = new Size(192, 105);
-            tinhTrangBan1.Status = UI.Controls.TinhTrangBan.TableState.Available;
-            tinhTrangBan1.TabIndex = 0;
-            tinhTrangBan1.TableCode = "A01";
+            panelDanhSachBan.AutoScroll = true;
+            panelDanhSachBan.BackColor = Color.Transparent;
+            panelDanhSachBan.ForeColor = Color.Transparent;
+            panelDanhSachBan.Location = new Point(2, 196);
+            panelDanhSachBan.Margin = new Padding(3, 2, 3, 2);
+            panelDanhSachBan.Name = "panelDanhSachBan";
+            panelDanhSachBan.Size = new Size(808, 309);
+            panelDanhSachBan.TabIndex = 15;
+            panelDanhSachBan.Paint += panelDanhSachBan_Paint;
             // 
             // roundedPanel4
             // 
             roundedPanel4.BackColor = Color.LimeGreen;
             roundedPanel4.BorderColor = Color.Black;
             roundedPanel4.BorderThickness = 2;
-            roundedPanel4.ForeColor = Color.Transparent;
-            roundedPanel4.Location = new Point(34, 175);
+            roundedPanel4.ForeColor = Color.White;
+            roundedPanel4.Location = new Point(31, 168);
             roundedPanel4.Margin = new Padding(3, 2, 3, 2);
             roundedPanel4.Name = "roundedPanel4";
             roundedPanel4.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel4.Size = new Size(19, 16);
+            roundedPanel4.Size = new Size(25, 25);
             roundedPanel4.TabIndex = 16;
             // 
             // segmentedPill1
@@ -508,11 +174,11 @@
             roundedPanel5.BorderColor = Color.Black;
             roundedPanel5.BorderThickness = 2;
             roundedPanel5.ForeColor = Color.Transparent;
-            roundedPanel5.Location = new Point(119, 176);
+            roundedPanel5.Location = new Point(114, 169);
             roundedPanel5.Margin = new Padding(3, 2, 3, 2);
             roundedPanel5.Name = "roundedPanel5";
             roundedPanel5.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel5.Size = new Size(19, 16);
+            roundedPanel5.Size = new Size(25, 25);
             roundedPanel5.TabIndex = 17;
             // 
             // roundedPanel6
@@ -521,28 +187,27 @@
             roundedPanel6.BorderColor = Color.Black;
             roundedPanel6.BorderThickness = 2;
             roundedPanel6.ForeColor = Color.Transparent;
-            roundedPanel6.Location = new Point(242, 176);
+            roundedPanel6.Location = new Point(236, 169);
             roundedPanel6.Margin = new Padding(3, 2, 3, 2);
             roundedPanel6.Name = "roundedPanel6";
             roundedPanel6.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel6.Size = new Size(19, 16);
+            roundedPanel6.Size = new Size(25, 25);
             roundedPanel6.TabIndex = 18;
             // 
             // btnThoat
             // 
-            btnThoat.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnThoat.BackColor = Color.Transparent;
-            btnThoat.FlatAppearance.BorderSize = 0;
-            btnThoat.FlatStyle = FlatStyle.Flat;
+            btnThoat.BackColor = Color.FromArgb(239, 68, 68);
+            btnThoat.CornerRadius = 16;
             btnThoat.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnThoat.ForeColor = Color.Black;
+            btnThoat.ForeColor = Color.White;
+            btnThoat.HoverBackColor = Color.FromArgb(220, 38, 38);
             btnThoat.Location = new Point(761, 11);
             btnThoat.Margin = new Padding(3, 2, 3, 2);
             btnThoat.Name = "btnThoat";
+            btnThoat.PressedBackColor = Color.FromArgb(185, 28, 28);
             btnThoat.Size = new Size(48, 32);
             btnThoat.TabIndex = 19;
             btnThoat.Text = "✖";
-            btnThoat.UseVisualStyleBackColor = true;
             btnThoat.Click += btnThoat_Click_1;
             // 
             // roundedPanel7
@@ -551,7 +216,7 @@
             roundedPanel7.BorderColor = Color.SkyBlue;
             roundedPanel7.BorderThickness = 2;
             roundedPanel7.Controls.Add(pictureBox1);
-            roundedPanel7.Controls.Add(label7);
+            roundedPanel7.Controls.Add(lbTongSoBan);
             roundedPanel7.Controls.Add(label6);
             roundedPanel7.Location = new Point(12, 57);
             roundedPanel7.Margin = new Padding(3, 2, 3, 2);
@@ -572,15 +237,15 @@
             pictureBox1.TabIndex = 24;
             pictureBox1.TabStop = false;
             // 
-            // label7
+            // lbTongSoBan
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(78, 37);
-            label7.Name = "label7";
-            label7.Size = new Size(28, 21);
-            label7.TabIndex = 23;
-            label7.Text = "34";
+            lbTongSoBan.AutoSize = true;
+            lbTongSoBan.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbTongSoBan.Location = new Point(78, 37);
+            lbTongSoBan.Name = "lbTongSoBan";
+            lbTongSoBan.Size = new Size(28, 21);
+            lbTongSoBan.TabIndex = 23;
+            lbTongSoBan.Text = "34";
             // 
             // label6
             // 
@@ -598,7 +263,7 @@
             roundedPanel8.BorderColor = Color.LimeGreen;
             roundedPanel8.BorderThickness = 2;
             roundedPanel8.Controls.Add(pictureBox2);
-            roundedPanel8.Controls.Add(label8);
+            roundedPanel8.Controls.Add(lbBanTrong);
             roundedPanel8.Controls.Add(label9);
             roundedPanel8.Location = new Point(191, 57);
             roundedPanel8.Margin = new Padding(3, 2, 3, 2);
@@ -619,15 +284,15 @@
             pictureBox2.TabIndex = 25;
             pictureBox2.TabStop = false;
             // 
-            // label8
+            // lbBanTrong
             // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(78, 37);
-            label8.Name = "label8";
-            label8.Size = new Size(28, 21);
-            label8.TabIndex = 25;
-            label8.Text = "24";
+            lbBanTrong.AutoSize = true;
+            lbBanTrong.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbBanTrong.Location = new Point(78, 37);
+            lbBanTrong.Name = "lbBanTrong";
+            lbBanTrong.Size = new Size(28, 21);
+            lbBanTrong.TabIndex = 25;
+            lbBanTrong.Text = "24";
             // 
             // label9
             // 
@@ -645,7 +310,7 @@
             roundedPanel9.BorderColor = Color.Red;
             roundedPanel9.BorderThickness = 2;
             roundedPanel9.Controls.Add(pictureBox3);
-            roundedPanel9.Controls.Add(label10);
+            roundedPanel9.Controls.Add(lbDangPhucVu);
             roundedPanel9.Controls.Add(label11);
             roundedPanel9.Location = new Point(370, 57);
             roundedPanel9.Margin = new Padding(3, 2, 3, 2);
@@ -666,15 +331,15 @@
             pictureBox3.TabIndex = 26;
             pictureBox3.TabStop = false;
             // 
-            // label10
+            // lbDangPhucVu
             // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(72, 37);
-            label10.Name = "label10";
-            label10.Size = new Size(25, 21);
-            label10.TabIndex = 27;
-            label10.Text = "12";
+            lbDangPhucVu.AutoSize = true;
+            lbDangPhucVu.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbDangPhucVu.Location = new Point(72, 37);
+            lbDangPhucVu.Name = "lbDangPhucVu";
+            lbDangPhucVu.Size = new Size(25, 21);
+            lbDangPhucVu.TabIndex = 27;
+            lbDangPhucVu.Text = "12";
             // 
             // label11
             // 
@@ -692,7 +357,7 @@
             roundedPanel10.BorderColor = Color.Gold;
             roundedPanel10.BorderThickness = 2;
             roundedPanel10.Controls.Add(pictureBox4);
-            roundedPanel10.Controls.Add(label12);
+            roundedPanel10.Controls.Add(lbDaDatTruoc);
             roundedPanel10.Controls.Add(label13);
             roundedPanel10.Location = new Point(554, 57);
             roundedPanel10.Margin = new Padding(3, 2, 3, 2);
@@ -713,15 +378,15 @@
             pictureBox4.TabIndex = 28;
             pictureBox4.TabStop = false;
             // 
-            // label12
+            // lbDaDatTruoc
             // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(78, 37);
-            label12.Name = "label12";
-            label12.Size = new Size(19, 21);
-            label12.TabIndex = 29;
-            label12.Text = "3";
+            lbDaDatTruoc.AutoSize = true;
+            lbDaDatTruoc.Font = new Font("Segoe UI Variable Display Semib", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbDaDatTruoc.Location = new Point(78, 37);
+            lbDaDatTruoc.Name = "lbDaDatTruoc";
+            lbDaDatTruoc.Size = new Size(19, 21);
+            lbDaDatTruoc.TabIndex = 29;
+            lbDaDatTruoc.Text = "3";
             // 
             // label13
             // 
@@ -749,7 +414,7 @@
             Controls.Add(roundedPanel5);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
-            Controls.Add(panel1);
+            Controls.Add(panelDanhSachBan);
             Controls.Add(label5);
             Controls.Add(label4);
             Controls.Add(label3);
@@ -760,7 +425,6 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "Frm_ChonBan";
             Load += Frm_ChonBan_Load;
-            panel1.ResumeLayout(false);
             roundedPanel7.ResumeLayout(false);
             roundedPanel7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -788,42 +452,26 @@
         private Label label3;
         private Label label4;
         private Label label5;
-        private Panel panel1;
+        private Panel panelDanhSachBan;
         private Controls.RoundedPanel roundedPanel4;
         private Controls.RoundedPanel roundedPanel5;
         private Controls.RoundedPanel roundedPanel6;
-        private Button btnThoat;
+        private UI.Controls.RoundedButton btnThoat;
         private Controls.RoundedPanel roundedPanel7;
         private Controls.RoundedPanel roundedPanel8;
         private Controls.RoundedPanel roundedPanel9;
         private Controls.RoundedPanel roundedPanel10;
-        private Label label7;
+        private Label lbTongSoBan;
         private Label label6;
-        private Label label8;
+        private Label lbBanTrong;
         private Label label9;
-        private Label label10;
+        private Label lbDangPhucVu;
         private Label label11;
-        private Label label12;
+        private Label lbDaDatTruoc;
         private Label label13;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
         private PictureBox pictureBox4;
-        private Controls.TinhTrangBan tinhTrangBan9;
-        private Controls.TinhTrangBan tinhTrangBan10;
-        private Controls.TinhTrangBan tinhTrangBan11;
-        private Controls.TinhTrangBan tinhTrangBan12;
-        private Controls.TinhTrangBan tinhTrangBan13;
-        private Controls.TinhTrangBan tinhTrangBan14;
-        private Controls.TinhTrangBan tinhTrangBan15;
-        private Controls.TinhTrangBan tinhTrangBan16;
-        private Controls.TinhTrangBan tinhTrangBan8;
-        private Controls.TinhTrangBan tinhTrangBan7;
-        private Controls.TinhTrangBan tinhTrangBan6;
-        private Controls.TinhTrangBan tinhTrangBan5;
-        private Controls.TinhTrangBan tinhTrangBan4;
-        private Controls.TinhTrangBan tinhTrangBan3;
-        private Controls.TinhTrangBan tinhTrangBan2;
-        private Controls.TinhTrangBan tinhTrangBan1;
     }
 }

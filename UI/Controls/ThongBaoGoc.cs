@@ -9,6 +9,13 @@ using Timer = System.Windows.Forms.Timer;
 using System.ComponentModel;
 
 [SupportedOSPlatform("windows")]
+public enum ToastType
+{
+    Success,
+    Error,
+    Warning
+}
+
 public static class ThongBaoGoc
 {
     public static int MarginX = 16;      // cách mép phải form/panel
@@ -21,16 +28,39 @@ public static class ThongBaoGoc
     public static Color GreenBg = Color.FromArgb(9, 41, 30);
     public static Color GreenText = Color.FromArgb(74, 222, 128);
     public static Color GreenIconBg = Color.FromArgb(12, 84, 53);
-    public static Color ShadowColor = Color.FromArgb(40, 0, 0, 0);
+
+    // Style đỏ cho lỗi
+    public static Color RedBg = Color.FromArgb(41, 9, 9);
+    public static Color RedText = Color.FromArgb(248, 113, 113);
+    public static Color RedIconBg = Color.FromArgb(84, 12, 12);
+
+    // Style vàng cho cảnh báo
+    public static Color YellowBg = Color.FromArgb(41, 35, 9);
+    public static Color YellowText = Color.FromArgb(251, 191, 36);
+    public static Color YellowIconBg = Color.FromArgb(84, 72, 12);
 
     // 1 host/container cho mỗi owner
     private static readonly Dictionary<Control, ToastContainer> _hosts = new();
 
-    public static void ShowSuccess(Control owner, string message, bool autoHide = false, int durationMs = 2500)
+    public static void ShowSuccess(Control owner, string message, bool autoHide = true, int durationMs = 3000)
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
         var host = GetOrCreateHost(owner);
-        host.AddToast(new ToastCard(message, autoHide, durationMs));
+        host.AddToast(new ToastCard(message, autoHide, durationMs, ToastType.Success));
+    }
+
+    public static void ShowError(Control owner, string message, bool autoHide = true, int durationMs = 3000)
+    {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        var host = GetOrCreateHost(owner);
+        host.AddToast(new ToastCard(message, autoHide, durationMs, ToastType.Error));
+    }
+
+    public static void ShowWarning(Control owner, string message, bool autoHide = true, int durationMs = 3000)
+    {
+        if (owner == null) throw new ArgumentNullException(nameof(owner));
+        var host = GetOrCreateHost(owner);
+        host.AddToast(new ToastCard(message, autoHide, durationMs, ToastType.Warning));
     }
 
     private static ToastContainer GetOrCreateHost(Control owner)
@@ -172,6 +202,17 @@ public static class ThongBaoGoc
         }
 
         private static float Lerp(float a, float b, float k) => a + (b - a) * k;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dừng timer để tránh lỗi disposed object
+                _anim?.Stop();
+                _anim?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 
     // ================= Toast item =================
@@ -189,19 +230,21 @@ public static class ThongBaoGoc
         private readonly Timer _life;
         private readonly bool _autoHide;
         private readonly string _message;
+        private readonly ToastType _toastType;
 
         private const int Corner = 12;
-        private const int Shadow = 8;
 
-        public ToastCard(string message, bool autoHide, int durationMs)
+        public ToastCard(string message, bool autoHide, int durationMs, ToastType toastType = ToastType.Success)
         {
             _message = message ?? "";
             _autoHide = autoHide;
+            _toastType = toastType;
 
             SetStyle(ControlStyles.AllPaintingInWmPaint |
                      ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.ResizeRedraw |
-                     ControlStyles.UserPaint, true);
+                     ControlStyles.UserPaint |
+                     ControlStyles.SupportsTransparentBackColor, true);
 
             BackColor = Color.Transparent;
 
@@ -210,7 +253,7 @@ public static class ThongBaoGoc
             var bounds = TextRenderer.MeasureText(_message, font, new Size(MaxWidth - 24 - 32 - 24, 0),
                                                   TextFormatFlags.WordBreak);
             int hContent = Math.Max(48, bounds.Height + 16);
-            Height = hContent + 16; // + vùng shadow
+            Height = hContent + 16; // không cần vùng shadow
             Width = 24 + 32 + 12 + bounds.Width + 24;
 
             // Nút close (tuỳ chọn – click vào thẻ cũng đóng)
@@ -257,49 +300,98 @@ public static class ThongBaoGoc
             base.OnPaint(e);
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.Transparent); // Xóa nền hoàn toàn
 
             // Áp alpha lên màu
             Color A(Color c, float a) => Color.FromArgb((int)(c.A * a), c);
 
-            var rect = new Rectangle(0, 0, Width - 1, Height - 1 - 8);
+            var rect = new Rectangle(0, 0, Width, Height);
 
-            // Shadow mềm
-            for (int i = Shadow; i >= 1; i--)
+            // Lấy màu sắc theo loại toast
+            Color bgColor, textColor, iconBgColor;
+            switch (_toastType)
             {
-                using var pthS = RoundRect(new Rectangle(rect.X + 2, rect.Y + 2 + i, rect.Width, rect.Height), Corner + i);
-                using var brS = new SolidBrush(Color.FromArgb((int)(35f * (i / (float)Shadow) * Alpha), ShadowColor));
-                g.FillPath(brS, pthS);
+                case ToastType.Success:
+                    bgColor = GreenBg;
+                    textColor = GreenText;
+                    iconBgColor = GreenIconBg;
+                    break;
+                case ToastType.Error:
+                    bgColor = RedBg;
+                    textColor = RedText;
+                    iconBgColor = RedIconBg;
+                    break;
+                case ToastType.Warning:
+                    bgColor = YellowBg;
+                    textColor = YellowText;
+                    iconBgColor = YellowIconBg;
+                    break;
+                default:
+                    bgColor = GreenBg;
+                    textColor = GreenText;
+                    iconBgColor = GreenIconBg;
+                    break;
             }
 
-            // Nền card
+            // Nền card (không có shadow, không có viền)
             using (var path = RoundRect(rect, Corner))
-            using (var br = new SolidBrush(A(GreenBg, Alpha)))
+            using (var br = new SolidBrush(A(bgColor, Alpha)))
                 g.FillPath(br, path);
 
-            // Icon (tròn + check)
+            // Icon (tròn + icon tương ứng)
             int cx = rect.Left + 18;
             int cy = rect.Top + rect.Height / 2;
             int r = 11;
-            using (var brIcon = new SolidBrush(A(GreenIconBg, Alpha)))
+            using (var brIcon = new SolidBrush(A(iconBgColor, Alpha)))
                 g.FillEllipse(brIcon, cx - r, cy - r, r * 2, r * 2);
 
-            using (var penCheck = new Pen(A(GreenText, Alpha), 2.3f))
+            // Vẽ icon theo loại toast
+            using (var penIcon = new Pen(A(textColor, Alpha), 2.3f))
             {
-                penCheck.StartCap = LineCap.Round; penCheck.EndCap = LineCap.Round;
+                penIcon.StartCap = LineCap.Round; penIcon.EndCap = LineCap.Round;
                 using var gp = new GraphicsPath();
-                gp.AddLines(new[]
+                
+                switch (_toastType)
                 {
-                    new Point(cx - 5, cy),
-                    new Point(cx - 1, cy + 4),
-                    new Point(cx + 6, cy - 5)
-                });
-                g.DrawPath(penCheck, gp);
+                    case ToastType.Success:
+                        // Icon check ✓
+                        gp.AddLines(new[]
+                        {
+                            new Point(cx - 5, cy),
+                            new Point(cx - 1, cy + 4),
+                            new Point(cx + 6, cy - 5)
+                        });
+                        break;
+                    case ToastType.Error:
+                        // Icon X ✗
+                        gp.AddLines(new[]
+                        {
+                            new Point(cx - 4, cy - 4),
+                            new Point(cx + 4, cy + 4),
+                            new Point(cx + 4, cy - 4),
+                            new Point(cx - 4, cy + 4)
+                        });
+                        break;
+                    case ToastType.Warning:
+                        // Icon cảnh báo ⚠
+                        gp.AddLines(new[]
+                        {
+                            new Point(cx, cy - 6),
+                            new Point(cx - 4, cy + 4),
+                            new Point(cx + 4, cy + 4),
+                            new Point(cx, cy - 6)
+                        });
+                        // Thêm dấu chấm cảnh báo
+                        gp.AddEllipse(cx - 1, cy + 1, 2, 2);
+                        break;
+                }
+                g.DrawPath(penIcon, gp);
             }
 
             // Text
             var textRect = new Rectangle(cx + r + 10, rect.Top, rect.Right - (cx + r + 10) - 40, rect.Height);
             TextRenderer.DrawText(g, _message, new Font("Segoe UI", 10f, FontStyle.Bold),
-                                  textRect, A(GreenText, Alpha),
+                                  textRect, A(textColor, Alpha),
                                   TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix);
         }
 
@@ -315,6 +407,17 @@ public static class ThongBaoGoc
             arc.X = r.X; path.AddArc(arc, 90, 90);
             path.CloseFigure();
             return path;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dừng timer để tránh lỗi disposed object
+                _life?.Stop();
+                _life?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

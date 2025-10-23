@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Load += new System.EventHandler(this.Frm_ChonChiNhanh_Load);
             label1 = new Label();
             btnExit = new Button();
             label2 = new Label();
@@ -84,8 +83,9 @@
             // btnTiepTuc
             // 
             btnTiepTuc.BackColor = Color.FromArgb(31, 111, 235);
+            btnTiepTuc.BorderThickness = 0;
             btnTiepTuc.FlatStyle = FlatStyle.Flat;
-            btnTiepTuc.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnTiepTuc.Font = new Font("Segoe UI", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTiepTuc.ForeColor = Color.White;
             btnTiepTuc.Location = new Point(445, 220);
             btnTiepTuc.Margin = new Padding(3, 2, 3, 2);
@@ -99,11 +99,13 @@
             // 
             // cbbChonChiNhanh
             // 
-            cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbChonChiNhanh.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbChonChiNhanh.FlatStyle = FlatStyle.Popup;
+            cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             cbbChonChiNhanh.FormattingEnabled = true;
             cbbChonChiNhanh.Location = new Point(31, 163);
             cbbChonChiNhanh.Name = "cbbChonChiNhanh";
-            cbbChonChiNhanh.Size = new Size(423, 29);
+            cbbChonChiNhanh.Size = new Size(487, 31);
             cbbChonChiNhanh.TabIndex = 6;
             // 
             // Frm_ChonChiNhanh
@@ -124,6 +126,7 @@
             Name = "Frm_ChonChiNhanh";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Frm_ChonChiNhanh";
+            Load += Frm_ChonChiNhanh_Load;
             ResumeLayout(false);
             PerformLayout();
         }

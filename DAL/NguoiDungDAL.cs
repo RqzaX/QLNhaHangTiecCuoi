@@ -55,6 +55,24 @@ namespace QLNhaHangTiecCuoi.DAL
             return _dbHelper.GetDataTable(query, parameters);
         }
 
+        public DataTable LayChiNhanhTheoNguoiDung(int nguoiDungId)
+        {
+            string query = @"
+                SELECT c.chi_nhanh_id, c.ten, c.dia_chi, c.sdt, c.trang_thai
+                FROM dbo.chi_nhanh c
+                INNER JOIN dbo.nguoi_dung_chi_nhanh nc ON c.chi_nhanh_id = nc.chi_nhanh_id
+                WHERE nc.nguoi_dung_id = @nguoiDungId 
+                  AND c.trang_thai = 1
+                ORDER BY c.ten";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@nguoiDungId", nguoiDungId)
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
+
         public void CapNhatDangNhapLanCuoi(int nguoiDungId)
         {
             string query = @"

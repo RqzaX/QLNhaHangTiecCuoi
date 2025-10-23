@@ -76,5 +76,20 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception("Lỗi lấy chi nhánh: " + ex.Message);
             }
         }
+
+        public DataTable LayChiNhanhTheoNguoiDung(int nguoiDungId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+
+            try
+            {
+                return _dal.LayChiNhanhTheoNguoiDung(nguoiDungId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy chi nhánh theo người dùng: " + ex.Message);
+            }
+        }
     }
 }

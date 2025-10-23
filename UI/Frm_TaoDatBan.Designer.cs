@@ -32,27 +32,25 @@
             label1 = new Label();
             label3 = new Label();
             label4 = new Label();
-            roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            roundedTextBox2 = new UI.Controls.RoundedTextBox();
+            txtSoDienThoai = new UI.Controls.RoundedTextBox();
+            txtTenKhachHang = new UI.Controls.RoundedTextBox();
             label5 = new Label();
-            roundedTextBox3 = new UI.Controls.RoundedTextBox();
+            txtEmail = new UI.Controls.RoundedTextBox();
             label6 = new Label();
             label7 = new Label();
             label8 = new Label();
-            dateTimePicker1 = new DateTimePicker();
+            dateNgay = new DateTimePicker();
             btnExit = new Button();
             label9 = new Label();
-            timePickerExStyled1 = new UI.Controls.TimePickerExStyled();
-            roundedTextBox4 = new UI.Controls.RoundedTextBox();
+            timeGio = new UI.Controls.TimePickerExStyled();
+            txtSoKhach = new UI.Controls.RoundedTextBox();
             label10 = new Label();
             label11 = new Label();
-            comboBox1 = new ComboBox();
-            comboBox2 = new ComboBox();
+            cbbKhuVuc = new ComboBox();
+            cbbSoBan = new ComboBox();
             label12 = new Label();
-            label13 = new Label();
-            roundedTextBox5 = new UI.Controls.RoundedTextBox();
             label14 = new Label();
-            roundedTextBox6 = new UI.Controls.RoundedTextBox();
+            txtGhiChu = new UI.Controls.RoundedTextBox();
             btnTaoDatBan = new UI.Controls.RoundedButton();
             btnHuy = new UI.Controls.RoundedButton();
             SuspendLayout();
@@ -97,31 +95,31 @@
             label4.TabIndex = 15;
             label4.Text = "Số điện thoại *";
             // 
-            // roundedTextBox1
+            // txtSoDienThoai
             // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.CornerRadius = 18;
-            roundedTextBox1.Font = new Font("Segoe UI", 10F);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(25, 118);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox1.PlaceholderText = "Nhập SĐT để tìm khách hàng";
-            roundedTextBox1.Size = new Size(239, 36);
-            roundedTextBox1.TabIndex = 16;
+            txtSoDienThoai.BackColor = Color.White;
+            txtSoDienThoai.CornerRadius = 18;
+            txtSoDienThoai.Font = new Font("Segoe UI", 10F);
+            txtSoDienThoai.ForeColor = Color.Black;
+            txtSoDienThoai.Location = new Point(25, 118);
+            txtSoDienThoai.Name = "txtSoDienThoai";
+            txtSoDienThoai.Padding = new Padding(10, 8, 10, 8);
+            txtSoDienThoai.PlaceholderText = "Nhập SĐT để tìm khách hàng";
+            txtSoDienThoai.Size = new Size(239, 36);
+            txtSoDienThoai.TabIndex = 16;
             // 
-            // roundedTextBox2
+            // txtTenKhachHang
             // 
-            roundedTextBox2.BackColor = Color.White;
-            roundedTextBox2.CornerRadius = 18;
-            roundedTextBox2.Font = new Font("Segoe UI", 10F);
-            roundedTextBox2.ForeColor = Color.Black;
-            roundedTextBox2.Location = new Point(282, 118);
-            roundedTextBox2.Name = "roundedTextBox2";
-            roundedTextBox2.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox2.PlaceholderText = "Nhập tên khách hàng";
-            roundedTextBox2.Size = new Size(239, 36);
-            roundedTextBox2.TabIndex = 18;
+            txtTenKhachHang.BackColor = Color.White;
+            txtTenKhachHang.CornerRadius = 18;
+            txtTenKhachHang.Font = new Font("Segoe UI", 10F);
+            txtTenKhachHang.ForeColor = Color.Black;
+            txtTenKhachHang.Location = new Point(282, 118);
+            txtTenKhachHang.Name = "txtTenKhachHang";
+            txtTenKhachHang.Padding = new Padding(10, 8, 10, 8);
+            txtTenKhachHang.PlaceholderText = "Nhập tên khách hàng";
+            txtTenKhachHang.Size = new Size(289, 36);
+            txtTenKhachHang.TabIndex = 18;
             // 
             // label5
             // 
@@ -133,24 +131,24 @@
             label5.TabIndex = 17;
             label5.Text = "Tên khách hàng *";
             // 
-            // roundedTextBox3
+            // txtEmail
             // 
-            roundedTextBox3.BackColor = Color.White;
-            roundedTextBox3.CornerRadius = 18;
-            roundedTextBox3.Font = new Font("Segoe UI", 10F);
-            roundedTextBox3.ForeColor = Color.Black;
-            roundedTextBox3.Location = new Point(540, 118);
-            roundedTextBox3.Name = "roundedTextBox3";
-            roundedTextBox3.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox3.PlaceholderText = "email@example.com";
-            roundedTextBox3.Size = new Size(332, 36);
-            roundedTextBox3.TabIndex = 20;
+            txtEmail.BackColor = Color.White;
+            txtEmail.CornerRadius = 18;
+            txtEmail.Font = new Font("Segoe UI", 10F);
+            txtEmail.ForeColor = Color.Black;
+            txtEmail.Location = new Point(591, 118);
+            txtEmail.Name = "txtEmail";
+            txtEmail.Padding = new Padding(10, 8, 10, 8);
+            txtEmail.PlaceholderText = "email@example.com";
+            txtEmail.Size = new Size(281, 36);
+            txtEmail.TabIndex = 20;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Calibri", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(535, 94);
+            label6.Location = new Point(577, 94);
             label6.Name = "label6";
             label6.Size = new Size(48, 21);
             label6.TabIndex = 19;
@@ -176,14 +174,14 @@
             label8.TabIndex = 22;
             label8.Text = "Ngày *";
             // 
-            // dateTimePicker1
+            // dateNgay
             // 
-            dateTimePicker1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(32, 229);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(150, 29);
-            dateTimePicker1.TabIndex = 24;
+            dateNgay.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dateNgay.Format = DateTimePickerFormat.Short;
+            dateNgay.Location = new Point(32, 229);
+            dateNgay.Name = "dateNgay";
+            dateNgay.Size = new Size(171, 27);
+            dateNgay.TabIndex = 24;
             // 
             // btnExit
             // 
@@ -203,45 +201,46 @@
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Calibri", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label9.Location = new Point(214, 200);
+            label9.Location = new Point(259, 200);
             label9.Name = "label9";
             label9.Size = new Size(48, 21);
             label9.TabIndex = 26;
             label9.Text = "Giờ *";
             // 
-            // timePickerExStyled1
+            // timeGio
             // 
-            timePickerExStyled1.BackColor = Color.Transparent;
-            timePickerExStyled1.EndTime = TimeSpan.Parse("22:00:00");
-            timePickerExStyled1.IntervalMinutes = 30;
-            timePickerExStyled1.Location = new Point(214, 224);
-            timePickerExStyled1.MinimumSize = new Size(120, 34);
-            timePickerExStyled1.Name = "timePickerExStyled1";
-            timePickerExStyled1.Placeholder = "Chọn giờ";
-            timePickerExStyled1.SelectedTime = null;
-            timePickerExStyled1.Size = new Size(150, 38);
-            timePickerExStyled1.StartTime = TimeSpan.Parse("10:00:00");
-            timePickerExStyled1.TabIndex = 27;
+            timeGio.BackColor = Color.Transparent;
+            timeGio.EndTime = TimeSpan.Parse("22:00:00");
+            timeGio.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            timeGio.IntervalMinutes = 30;
+            timeGio.Location = new Point(259, 224);
+            timeGio.MinimumSize = new Size(120, 34);
+            timeGio.Name = "timeGio";
+            timeGio.Placeholder = "Chọn giờ";
+            timeGio.SelectedTime = null;
+            timeGio.Size = new Size(150, 38);
+            timeGio.StartTime = TimeSpan.Parse("10:00:00");
+            timeGio.TabIndex = 27;
             // 
-            // roundedTextBox4
+            // txtSoKhach
             // 
-            roundedTextBox4.BackColor = Color.White;
-            roundedTextBox4.CornerRadius = 18;
-            roundedTextBox4.Font = new Font("Segoe UI", 10F);
-            roundedTextBox4.ForeColor = Color.Black;
-            roundedTextBox4.Location = new Point(390, 224);
-            roundedTextBox4.Name = "roundedTextBox4";
-            roundedTextBox4.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox4.PlaceholderText = "0";
-            roundedTextBox4.Size = new Size(123, 36);
-            roundedTextBox4.TabIndex = 29;
-            roundedTextBox4.Load += roundedTextBox4_Load;
+            txtSoKhach.BackColor = Color.White;
+            txtSoKhach.CornerRadius = 18;
+            txtSoKhach.Font = new Font("Segoe UI", 10F);
+            txtSoKhach.ForeColor = Color.Black;
+            txtSoKhach.Location = new Point(435, 224);
+            txtSoKhach.Name = "txtSoKhach";
+            txtSoKhach.Padding = new Padding(10, 8, 10, 8);
+            txtSoKhach.PlaceholderText = "0";
+            txtSoKhach.Size = new Size(123, 36);
+            txtSoKhach.TabIndex = 29;
+            txtSoKhach.Load += roundedTextBox4_Load;
             // 
             // label10
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Calibri", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(381, 200);
+            label10.Location = new Point(426, 200);
             label10.Name = "label10";
             label10.Size = new Size(84, 21);
             label10.TabIndex = 28;
@@ -257,24 +256,24 @@
             label11.TabIndex = 30;
             label11.Text = "Khu vực *";
             // 
-            // comboBox1
+            // cbbKhuVuc
             // 
-            comboBox1.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(25, 309);
-            comboBox1.MaxDropDownItems = 10;
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(249, 31);
-            comboBox1.TabIndex = 31;
+            cbbKhuVuc.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbKhuVuc.FormattingEnabled = true;
+            cbbKhuVuc.Location = new Point(25, 309);
+            cbbKhuVuc.MaxDropDownItems = 10;
+            cbbKhuVuc.Name = "cbbKhuVuc";
+            cbbKhuVuc.Size = new Size(249, 31);
+            cbbKhuVuc.TabIndex = 31;
             // 
-            // comboBox2
+            // cbbSoBan
             // 
-            comboBox2.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(308, 309);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(249, 31);
-            comboBox2.TabIndex = 33;
+            cbbSoBan.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbSoBan.FormattingEnabled = true;
+            cbbSoBan.Location = new Point(308, 309);
+            cbbSoBan.Name = "cbbSoBan";
+            cbbSoBan.Size = new Size(249, 31);
+            cbbSoBan.TabIndex = 33;
             // 
             // label12
             // 
@@ -286,29 +285,6 @@
             label12.TabIndex = 32;
             label12.Text = "Bàn *";
             // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Calibri", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label13.Location = new Point(577, 285);
-            label13.Name = "label13";
-            label13.Size = new Size(113, 21);
-            label13.TabIndex = 34;
-            label13.Text = "Tiền cọc (VNĐ)";
-            // 
-            // roundedTextBox5
-            // 
-            roundedTextBox5.BackColor = Color.White;
-            roundedTextBox5.CornerRadius = 18;
-            roundedTextBox5.Font = new Font("Segoe UI", 10F);
-            roundedTextBox5.ForeColor = Color.Black;
-            roundedTextBox5.Location = new Point(577, 306);
-            roundedTextBox5.Name = "roundedTextBox5";
-            roundedTextBox5.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox5.PlaceholderText = "0";
-            roundedTextBox5.Size = new Size(295, 36);
-            roundedTextBox5.TabIndex = 35;
-            // 
             // label14
             // 
             label14.AutoSize = true;
@@ -319,18 +295,18 @@
             label14.TabIndex = 36;
             label14.Text = "Ghi chú - Yêu cầu đặc biệt";
             // 
-            // roundedTextBox6
+            // txtGhiChu
             // 
-            roundedTextBox6.BackColor = Color.White;
-            roundedTextBox6.CornerRadius = 18;
-            roundedTextBox6.Font = new Font("Segoe UI", 10F);
-            roundedTextBox6.ForeColor = Color.Black;
-            roundedTextBox6.Location = new Point(26, 383);
-            roundedTextBox6.Name = "roundedTextBox6";
-            roundedTextBox6.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox6.PlaceholderText = "Ví dụ: Chỗ ngồi gần cửa sổ, có trẻ em, sinh nhật, dị ứng thực phẩm,...";
-            roundedTextBox6.Size = new Size(842, 108);
-            roundedTextBox6.TabIndex = 37;
+            txtGhiChu.BackColor = Color.White;
+            txtGhiChu.CornerRadius = 18;
+            txtGhiChu.Font = new Font("Segoe UI", 10F);
+            txtGhiChu.ForeColor = Color.Black;
+            txtGhiChu.Location = new Point(26, 383);
+            txtGhiChu.Name = "txtGhiChu";
+            txtGhiChu.Padding = new Padding(10, 8, 10, 8);
+            txtGhiChu.PlaceholderText = "Ví dụ: Chỗ ngồi gần cửa sổ, có trẻ em, sinh nhật, dị ứng thực phẩm,...";
+            txtGhiChu.Size = new Size(842, 108);
+            txtGhiChu.TabIndex = 37;
             // 
             // btnTaoDatBan
             // 
@@ -379,27 +355,25 @@
             ClientSize = new Size(894, 553);
             Controls.Add(btnHuy);
             Controls.Add(btnTaoDatBan);
-            Controls.Add(roundedTextBox6);
+            Controls.Add(txtGhiChu);
             Controls.Add(label14);
-            Controls.Add(roundedTextBox5);
-            Controls.Add(label13);
-            Controls.Add(comboBox2);
+            Controls.Add(cbbSoBan);
             Controls.Add(label12);
-            Controls.Add(comboBox1);
+            Controls.Add(cbbKhuVuc);
             Controls.Add(label11);
-            Controls.Add(roundedTextBox4);
+            Controls.Add(txtSoKhach);
             Controls.Add(label10);
-            Controls.Add(timePickerExStyled1);
+            Controls.Add(timeGio);
             Controls.Add(label9);
             Controls.Add(btnExit);
-            Controls.Add(dateTimePicker1);
+            Controls.Add(dateNgay);
             Controls.Add(label8);
             Controls.Add(label7);
-            Controls.Add(roundedTextBox3);
+            Controls.Add(txtEmail);
             Controls.Add(label6);
-            Controls.Add(roundedTextBox2);
+            Controls.Add(txtTenKhachHang);
             Controls.Add(label5);
-            Controls.Add(roundedTextBox1);
+            Controls.Add(txtSoDienThoai);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -417,27 +391,25 @@
         private Label label1;
         private Label label3;
         private Label label4;
-        private Controls.RoundedTextBox roundedTextBox1;
-        private Controls.RoundedTextBox roundedTextBox2;
+        private Controls.RoundedTextBox txtSoDienThoai;
+        private Controls.RoundedTextBox txtTenKhachHang;
         private Label label5;
-        private Controls.RoundedTextBox roundedTextBox3;
+        private Controls.RoundedTextBox txtEmail;
         private Label label6;
         private Label label7;
         private Label label8;
-        private DateTimePicker dateTimePicker1;
+        private DateTimePicker dateNgay;
         private Button btnExit;
         private Label label9;
-        private Controls.TimePickerExStyled timePickerExStyled1;
-        private Controls.RoundedTextBox roundedTextBox4;
+        private Controls.TimePickerExStyled timeGio;
+        private Controls.RoundedTextBox txtSoKhach;
         private Label label10;
         private Label label11;
-        private ComboBox comboBox1;
-        private ComboBox comboBox2;
+        private ComboBox cbbKhuVuc;
+        private ComboBox cbbSoBan;
         private Label label12;
-        private Label label13;
-        private Controls.RoundedTextBox roundedTextBox5;
         private Label label14;
-        private Controls.RoundedTextBox roundedTextBox6;
+        private Controls.RoundedTextBox txtGhiChu;
         private Controls.RoundedButton btnTaoDatBan;
         private Controls.RoundedButton btnHuy;
     }

@@ -54,13 +54,13 @@
             panel4 = new Panel();
             pictureBox1 = new PictureBox();
             panel5 = new Panel();
-            button1 = new Button();
+            cbbChonChiNhanh = new ComboBox();
+            btnDangXuat = new Button();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             pictureBox3 = new PictureBox();
             datevnControl1 = new VanThuan.Controls.DateVNControl();
             digitalClockControl1 = new UI.Controls.DigitalClockControl();
             pictureBox2 = new PictureBox();
-            borderComboBox1 = new UiControls.BorderComboBox();
             panelChinh = new Panel();
             panel3.SuspendLayout();
             panel4.SuspendLayout();
@@ -145,7 +145,7 @@
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(12, 827);
             label21.Name = "label21";
-            label21.Size = new Size(86, 24);
+            label21.Size = new Size(68, 19);
             label21.TabIndex = 27;
             label21.Text = "Hệ thống";
             // 
@@ -212,7 +212,7 @@
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.Location = new Point(12, 667);
             label20.Name = "label20";
-            label20.Size = new Size(74, 24);
+            label20.Size = new Size(59, 19);
             label20.TabIndex = 23;
             label20.Text = "Quản lý";
             // 
@@ -298,7 +298,7 @@
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label19.Location = new Point(12, 476);
             label19.Name = "label19";
-            label19.Size = new Size(94, 24);
+            label19.Size = new Size(74, 19);
             label19.TabIndex = 18;
             label19.Text = "Danh mục";
             // 
@@ -422,7 +422,7 @@
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.Location = new Point(12, 205);
             label18.Name = "label18";
-            label18.Size = new Size(89, 24);
+            label18.Size = new Size(69, 19);
             label18.TabIndex = 11;
             label18.Text = "Vận hành";
             // 
@@ -451,7 +451,7 @@
             label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label17.Location = new Point(12, 128);
             label17.Name = "label17";
-            label17.Size = new Size(97, 24);
+            label17.Size = new Size(76, 19);
             label17.TabIndex = 9;
             label17.Text = "Tổng quan";
             // 
@@ -476,26 +476,36 @@
             // panel5
             // 
             panel5.BackColor = Color.White;
-            panel5.Controls.Add(button1);
+            panel5.Controls.Add(cbbChonChiNhanh);
+            panel5.Controls.Add(btnDangXuat);
             panel5.Controls.Add(roundedTextBox1);
             panel5.Controls.Add(pictureBox3);
             panel5.Controls.Add(datevnControl1);
             panel5.Controls.Add(digitalClockControl1);
             panel5.Controls.Add(pictureBox2);
-            panel5.Controls.Add(borderComboBox1);
             panel5.Location = new Point(256, 0);
             panel5.Name = "panel5";
             panel5.Size = new Size(1025, 82);
             panel5.TabIndex = 1;
             // 
-            // button1
+            // cbbChonChiNhanh
             // 
-            button1.Image = (Image)resources.GetObject("button1.Image");
-            button1.Location = new Point(950, 7);
-            button1.Name = "button1";
-            button1.Size = new Size(68, 68);
-            button1.TabIndex = 0;
-            button1.UseVisualStyleBackColor = true;
+            cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbChonChiNhanh.FormattingEnabled = true;
+            cbbChonChiNhanh.Location = new Point(64, 26);
+            cbbChonChiNhanh.Name = "cbbChonChiNhanh";
+            cbbChonChiNhanh.Size = new Size(225, 31);
+            cbbChonChiNhanh.TabIndex = 6;
+            // 
+            // btnDangXuat
+            // 
+            btnDangXuat.Image = (Image)resources.GetObject("btnDangXuat.Image");
+            btnDangXuat.Location = new Point(950, 7);
+            btnDangXuat.Name = "btnDangXuat";
+            btnDangXuat.Size = new Size(68, 68);
+            btnDangXuat.TabIndex = 0;
+            btnDangXuat.UseVisualStyleBackColor = true;
+            btnDangXuat.Click += btnDangXuat_Click;
             // 
             // roundedTextBox1
             // 
@@ -552,20 +562,6 @@
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 1;
             pictureBox2.TabStop = false;
-            // 
-            // borderComboBox1
-            // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FlatStyle = FlatStyle.Flat;
-            borderComboBox1.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 23;
-            borderComboBox1.Items.AddRange(new object[] { "Chi nhánh Quận 3" });
-            borderComboBox1.Location = new Point(64, 27);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(223, 29);
-            borderComboBox1.TabIndex = 0;
             // 
             // panelChinh
             // 
@@ -628,13 +624,13 @@
         private UiControls.NavButton btnPhanQuyen;
         private UiControls.NavButton btnCauHinh;
         private Label label21;
-        private UiControls.BorderComboBox borderComboBox1;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private Controls.DigitalClockControl digitalClockControl1;
         private VanThuan.Controls.DateVNControl datevnControl1;
         private Controls.RoundedTextBox roundedTextBox1;
         private PictureBox pictureBox3;
-        private Button button1;
+        private Button btnDangXuat;
+        private ComboBox cbbChonChiNhanh;
     }
 }

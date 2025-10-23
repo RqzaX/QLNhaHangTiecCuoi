@@ -110,5 +110,35 @@ namespace BLL
                 return (false, $"Lỗi: {ex.Message}");
             }
         }
+        
+        public DataTable TimKiemMonAn(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return LayTatCaMonAn();
+
+            try
+            {
+                return _dal.TimKiemMonAn(searchText.Trim());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi tìm kiếm món ăn: {ex.Message}");
+            }
+        }
+        
+        public DataTable TimKiemMonAnTheoNhom(string searchText, string nhom)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return LayMonAnTheoNhom(nhom);
+
+            try
+            {
+                return _dal.TimKiemMonAnTheoNhom(searchText.Trim(), nhom);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi tìm kiếm món ăn theo nhóm: {ex.Message}");
+            }
+        }
     }
 }

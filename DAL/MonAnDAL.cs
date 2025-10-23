@@ -101,5 +101,44 @@ namespace DAL
 
             return _dbHelper.ExecuteNonQuery(query, parameters);
         }
+        
+        public DataTable TimKiemMonAn(string searchText)
+        {
+            string query = @"
+                SELECT mon_id, ma_mon, ten_mon, nhom, don_vi_tinh, don_gia, dang_ban
+                FROM dbo.mon_an
+                WHERE dang_ban = 1 
+                AND (ten_mon LIKE @searchText 
+                     OR ma_mon LIKE @searchText 
+                     OR nhom LIKE @searchText)
+                ORDER BY ten_mon";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@searchText", $"%{searchText}%")
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
+        
+        public DataTable TimKiemMonAnTheoNhom(string searchText, string nhom)
+        {
+            string query = @"
+                SELECT mon_id, ma_mon, ten_mon, nhom, don_vi_tinh, don_gia, dang_ban
+                FROM dbo.mon_an
+                WHERE dang_ban = 1 
+                AND nhom = @nhom
+                AND (ten_mon LIKE @searchText 
+                     OR ma_mon LIKE @searchText)
+                ORDER BY ten_mon";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@searchText", $"%{searchText}%"),
+                new SqlParameter("@nhom", nhom)
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
     }
 }

@@ -52,11 +52,13 @@
             label16 = new Label();
             label17 = new Label();
             roundedPanel6 = new UI.Controls.RoundedPanel();
+            panelDanhSachDatBan = new UI.Controls.DataGripView_DatBan();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
             roundedPanel4.SuspendLayout();
             roundedPanel5.SuspendLayout();
+            roundedPanel6.SuspendLayout();
             SuspendLayout();
             // 
             // label2
@@ -82,6 +84,7 @@
             // btnTaoDatBanMoi
             // 
             btnTaoDatBanMoi.BackColor = Color.FromArgb(31, 111, 235);
+            btnTaoDatBanMoi.BorderThickness = 0;
             btnTaoDatBanMoi.CornerRadius = 17;
             btnTaoDatBanMoi.FlatStyle = FlatStyle.Flat;
             btnTaoDatBanMoi.Font = new Font("Segoe UI Semibold", 10.5F);
@@ -321,11 +324,22 @@
             roundedPanel6.AutoScroll = true;
             roundedPanel6.BackColor = Color.White;
             roundedPanel6.BorderThickness = 5;
+            roundedPanel6.Controls.Add(panelDanhSachDatBan);
             roundedPanel6.Location = new Point(12, 219);
             roundedPanel6.Name = "roundedPanel6";
             roundedPanel6.Padding = new Padding(12);
-            roundedPanel6.Size = new Size(1010, 454);
+            roundedPanel6.Size = new Size(981, 454);
             roundedPanel6.TabIndex = 17;
+            // 
+            // panelDanhSachDatBan
+            // 
+            panelDanhSachDatBan.Dock = DockStyle.Fill;
+            panelDanhSachDatBan.IconFolder = "";
+            panelDanhSachDatBan.Location = new Point(12, 12);
+            panelDanhSachDatBan.Name = "panelDanhSachDatBan";
+            panelDanhSachDatBan.Size = new Size(957, 430);
+            panelDanhSachDatBan.TabIndex = 0;
+            panelDanhSachDatBan.VirtualModeEnabled = false;
             // 
             // FrmDatBan
             // 
@@ -358,6 +372,7 @@
             roundedPanel4.PerformLayout();
             roundedPanel5.ResumeLayout(false);
             roundedPanel5.PerformLayout();
+            roundedPanel6.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -388,5 +403,6 @@
         private Label label16;
         private Label label17;
         private Controls.RoundedPanel roundedPanel6;
+        private Controls.DataGripView_DatBan panelDanhSachDatBan;
     }
 }

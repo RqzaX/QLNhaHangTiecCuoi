@@ -12,6 +12,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UiControls;
+using QLNhaHangTiecCuoi.BLL;
+using QLNhaHangTiecCuoi.DAL;
+using QLNhaHangTiecCuoi.Share;
+using UI.Common;
 
 namespace UI
 {
@@ -20,15 +24,23 @@ namespace UI
     {
         private readonly Dictionary<Type, Form> _cache = new();
         private ImageList _icons;
+        private NguoiDungBLL _bll;
+        private DatabaseHelper _dbHelper;
+        private bool _isLoggingOut = false;
         public FrmTrangChu()
         {
             InitializeComponent();
+            _dbHelper = new DatabaseHelper();
+            _bll = new NguoiDungBLL(_dbHelper);
             ShowChild<FrmDashboard>();
         }
 
         private void FrmTrangChu_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Application.Exit();
+            if (e.CloseReason == CloseReason.UserClosing && !_isLoggingOut)
+            {
+                Application.Exit();
+            }
         }
 
         private async void FrmTrangChu_Load(object sender, EventArgs e)
@@ -36,6 +48,9 @@ namespace UI
             WireNavButtons();
             var first = panel3.Controls.OfType<NavButton>().FirstOrDefault();
             if (first != null) SetSelected(first);
+
+            // Load dữ liệu chi nhánh
+            LoadChiNhanhComboBox();
 
             await IconPack.EnsureDownloadedAsync();
             _icons = IconPack.BuildImageListColored();
@@ -157,7 +172,47 @@ namespace UI
 
         private void FrmTrangChu_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Environment.Exit(0);
+            if (e.CloseReason == CloseReason.UserClosing && !_isLoggingOut)
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        private void btnDangXuat_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show(
+                    "Bạn có chắc chắn muốn đăng xuất?",
+                    "Xác nhận đăng xuất",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                _isLoggingOut = true;
+                
+                Session.NguoiDungId = 0;
+                Session.TaiKhoan = "";
+                Session.HoTen = "";
+                Session.ChiNhanhId = 0;
+                Session.TenChiNhanh = "";
+
+                FrmLogin frmLogin = new FrmLogin();
+                frmLogin.Show();
+                
+                this.Hide();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                ThongBaoGoc.ShowError(this, "Lỗi khi đăng xuất: " + ex.Message, true, 2500);
+            }
         }
 
         private void ShowChild<T>() where T : Form, new()
@@ -178,6 +233,149 @@ namespace UI
             panelChinh.Controls.Add(form);
             form.BringToFront();
             form.Show();
+        }
+
+        public void ShowBanHangWithTable(string soBan, string tenKhachHang, int soKhach)
+        {
+            try
+            {
+                // Tạo form bán hàng mới với thông tin bàn
+                var frmBanHang = new FrmBanHang(soBan, tenKhachHang, soKhach);
+                
+                // Set properties để hiển thị trong panel chính
+                frmBanHang.TopLevel = false;
+                frmBanHang.FormBorderStyle = FormBorderStyle.None;
+                frmBanHang.Dock = DockStyle.Fill;
+                
+                // Clear panel và add form mới
+                foreach (Control c in panelChinh.Controls) c.Hide();
+                panelChinh.Controls.Clear();
+                panelChinh.Controls.Add(frmBanHang);
+                frmBanHang.BringToFront();
+                frmBanHang.Show();
+                
+                // Cập nhật cache
+                _cache[typeof(FrmBanHang)] = frmBanHang;
+                
+                // Set selected button
+                SetSelected(btnBanHang);
+            }
+            catch (Exception ex)
+            {
+                ThongBaoGoc.ShowError(this, $"Lỗi chuyển sang form bán hàng: {ex.Message}", true, 2500);
+            }
+        }
+
+        private void ResetAllChildForms()
+        {
+            try
+            {
+                foreach (var kvp in _cache.ToList())
+                {
+                    if (kvp.Value != null && !kvp.Value.IsDisposed)
+                    {
+                        kvp.Value.Dispose();
+                    }
+                }
+                _cache.Clear();
+
+                ResetFrmBanHang();
+            }
+            catch (Exception ex)
+            {
+                ThongBaoGoc.ShowError(this, $"Lỗi reset form: {ex.Message}", true, 2500);
+            }
+        }
+
+        private void ResetFrmBanHang()
+        {
+            try
+            {
+                var frmBanHang = new FrmBanHang
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+                _cache[typeof(FrmBanHang)] = frmBanHang;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi reset FrmBanHang: {ex.Message}");
+            }
+        }
+
+        private void LoadChiNhanhComboBox()
+        {
+            try
+            {
+                if (Session.NguoiDungId <= 0)
+                {
+                    ThongBaoGoc.ShowError(this, "Phiên đăng nhập không hợp lệ! Vui lòng đăng nhập lại.", true, 2500);
+                    cbbChonChiNhanh.Enabled = false;
+                    return;
+                }
+
+                DataTable dt = _bll.LayChiNhanhTheoNguoiDung(Session.NguoiDungId);
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    ThongBaoGoc.ShowWarning(this, "Bạn không được phân quyền truy cập chi nhánh nào!\nVui lòng liên hệ quản trị viên.", true, 2500);
+                    cbbChonChiNhanh.Enabled = false;
+                    return;
+                }
+
+                if (cbbChonChiNhanh.DataSource != null)
+                {
+                    cbbChonChiNhanh.DataSource = null;
+                }
+
+                cbbChonChiNhanh.DataSource = dt;
+                cbbChonChiNhanh.DisplayMember = "ten";           // Hiển thị tên chi nhánh
+                cbbChonChiNhanh.ValueMember = "chi_nhanh_id";    // Lưu ID chi nhánh
+
+                if (Session.ChiNhanhId > 0)
+                {
+                    cbbChonChiNhanh.SelectedValue = Session.ChiNhanhId;
+                }
+
+                cbbChonChiNhanh.SelectedIndexChanged -= ComboBox1_SelectedIndexChanged;
+                cbbChonChiNhanh.SelectedIndexChanged += ComboBox1_SelectedIndexChanged;
+
+                cbbChonChiNhanh.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                ThongBaoGoc.ShowError(this, "Lỗi load chi nhánh: " + ex.Message, true, 2500);
+                cbbChonChiNhanh.Enabled = false;
+            }
+        }
+
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cbbChonChiNhanh.SelectedValue != null)
+                {
+                    int chiNhanhId = (int)cbbChonChiNhanh.SelectedValue;
+                    string tenChiNhanh = cbbChonChiNhanh.Text;
+
+                    Session.ChiNhanhId = chiNhanhId;
+                    Session.TenChiNhanh = tenChiNhanh;
+
+                    ResetAllChildForms();
+
+                    ShowChild<FrmDashboard>();
+                    
+                    SetSelected(btnDashboard);
+
+                    ThongBaoGoc.ShowSuccess(this, $"Đã chuyển sang chi nhánh: {tenChiNhanh}", true, 2500);
+                }
+            }
+            catch (Exception ex)
+            {
+                ThongBaoGoc.ShowError(this, "Lỗi khi chuyển chi nhánh: " + ex.Message, true, 2500);
+            }
         }
     }
 }
