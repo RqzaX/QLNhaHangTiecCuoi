@@ -252,9 +252,31 @@ namespace DAL
             }
         }
 
-       
+        public bool KiemTraMonAnCoDangSuDung(int monId)
+        {
+            const string sql = @"
+                SELECT COUNT(*) 
+                FROM dbo.phieu_order_ct 
+                WHERE mon_id = @id;";
+            
+            try
+            {
+                var result = _dbHelper.ExecuteScalar(sql, new[] { new SqlParameter("@id", monId) });
+                return Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi kiểm tra món đang được sử dụng: {ex.Message}", ex);
+            }
+        }
+
         public int XoaMonAn(int monId)
         {
+            if (KiemTraMonAnCoDangSuDung(monId))
+            {
+                throw new Exception("Không thể xóa món này vì đang được sử dụng trong các đơn hàng. Vui lòng kiểm tra lại.");
+            }
+
             const string sql = @"DELETE FROM dbo.mon_an WHERE mon_id=@id;";
             return _dbHelper.ExecuteNonQuery(sql, new[] { new SqlParameter("@id", monId) });
         }

@@ -82,11 +82,10 @@ namespace UI
                 {
                     foreach (DataRow row in dtKhuVuc.Rows)
                     {
-                        cbbKhuVuc.Items.Add(new ComboBoxItem
-                        {
-                            Text = row["ten_khu_vuc"].ToString(),
-                            Value = Convert.ToInt32(row["khu_vuc_id"])
-                        });
+                        cbbKhuVuc.Items.Add(new ComboBoxItem(
+                            row["ten_khu_vuc"].ToString(),
+                            Convert.ToInt32(row["khu_vuc_id"])
+                        ));
                     }
                 }
 
@@ -113,11 +112,10 @@ namespace UI
                         string trangThai = row["trang_thai"].ToString();
                         if (trangThai == "TRỐNG")
                         {
-                            cbbSoBan.Items.Add(new ComboBoxItem
-                            {
-                                Text = $"Bàn {row["so_ban"]} (Sức chứa: {row["suc_chua"]})",
-                                Value = Convert.ToInt32(row["ban_id"])
-                            });
+                            cbbSoBan.Items.Add(new ComboBoxItem(
+                                $"Bàn {row["so_ban"]} (Sức chứa: {row["suc_chua"]})",
+                                Convert.ToInt32(row["ban_id"])
+                            ));
                         }
                     }
                 }
@@ -330,14 +328,4 @@ namespace UI
         }
     }
 
-    public class ComboBoxItem
-    {
-        public string Text { get; set; }
-        public int Value { get; set; }
-        
-        public override string ToString()
-        {
-            return Text;
-        }
-    }
 }

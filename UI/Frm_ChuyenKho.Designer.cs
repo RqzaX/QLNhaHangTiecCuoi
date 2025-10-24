@@ -31,15 +31,17 @@
             label1 = new Label();
             label2 = new Label();
             label8 = new Label();
-            borderComboBox1 = new UiControls.BorderComboBox();
-            borderComboBox2 = new UiControls.BorderComboBox();
+            cbbTuKho = new UiControls.BorderComboBox();
+            cbbDenKho = new UiControls.BorderComboBox();
             label3 = new Label();
             label4 = new Label();
-            dateTimePicker1 = new DateTimePicker();
-            roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            label5 = new Label();
+            dateNgayChuyen = new DateTimePicker();
             btnHuy = new UI.Controls.RoundedButton();
             btnTaoPhieuChuyen = new UI.Controls.RoundedButton();
+            cbbNguyenLieu = new UiControls.BorderComboBox();
+            label6 = new Label();
+            label7 = new Label();
+            txtSoLuong = new UI.Controls.RoundedTextBox();
             SuspendLayout();
             // 
             // label1
@@ -70,33 +72,34 @@
             label8.Size = new Size(60, 20);
             label8.TabIndex = 9;
             label8.Text = "Từ Kho";
-            label8.Click += label8_Click;
             // 
-            // borderComboBox1
+            // cbbTuKho
             // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Kho Trung Tâm", "Kho Quận 1", "Kho Quận 3" });
-            borderComboBox1.Location = new Point(12, 115);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(237, 32);
-            borderComboBox1.TabIndex = 10;
-            borderComboBox1.Text = "Chọn Kho Nguồn";
+            cbbTuKho.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbTuKho.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbTuKho.FormattingEnabled = true;
+            cbbTuKho.IntegralHeight = false;
+            cbbTuKho.ItemHeight = 26;
+            cbbTuKho.Items.AddRange(new object[] { "Kho Trung Tâm", "Kho Quận 1", "Kho Quận 3" });
+            cbbTuKho.Location = new Point(12, 115);
+            cbbTuKho.Name = "cbbTuKho";
+            cbbTuKho.Size = new Size(237, 32);
+            cbbTuKho.TabIndex = 10;
+            cbbTuKho.Text = "Chọn Kho Nguồn";
             // 
-            // borderComboBox2
+            // cbbDenKho
             // 
-            borderComboBox2.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox2.FormattingEnabled = true;
-            borderComboBox2.IntegralHeight = false;
-            borderComboBox2.ItemHeight = 26;
-            borderComboBox2.Items.AddRange(new object[] { "Kho Trung Tâm", "Kho Quận 1", "Kho Quận 3" });
-            borderComboBox2.Location = new Point(378, 115);
-            borderComboBox2.Name = "borderComboBox2";
-            borderComboBox2.Size = new Size(240, 32);
-            borderComboBox2.TabIndex = 10;
-            borderComboBox2.Text = "Chọn Kho Đích";
+            cbbDenKho.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbDenKho.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbDenKho.FormattingEnabled = true;
+            cbbDenKho.IntegralHeight = false;
+            cbbDenKho.ItemHeight = 26;
+            cbbDenKho.Items.AddRange(new object[] { "Kho Trung Tâm", "Kho Quận 1", "Kho Quận 3" });
+            cbbDenKho.Location = new Point(378, 115);
+            cbbDenKho.Name = "cbbDenKho";
+            cbbDenKho.Size = new Size(240, 32);
+            cbbDenKho.TabIndex = 10;
+            cbbDenKho.Text = "Chọn Kho Đích";
             // 
             // label3
             // 
@@ -107,91 +110,114 @@
             label3.Size = new Size(69, 20);
             label3.TabIndex = 9;
             label3.Text = "Đến Kho";
-            label3.Click += label8_Click;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(12, 177);
+            label4.Location = new Point(32, 240);
             label4.Name = "label4";
             label4.Size = new Size(102, 20);
             label4.TabIndex = 9;
             label4.Text = "Ngày Chuyển";
-            label4.Click += label8_Click;
             // 
-            // dateTimePicker1
+            // dateNgayChuyen
             // 
-            dateTimePicker1.Location = new Point(12, 211);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(606, 27);
-            dateTimePicker1.TabIndex = 11;
-            // 
-            // roundedTextBox1
-            // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.Font = new Font("Segoe UI", 10F);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(12, 311);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox1.Size = new Size(606, 61);
-            roundedTextBox1.TabIndex = 12;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(12, 288);
-            label5.Name = "label5";
-            label5.Size = new Size(64, 20);
-            label5.TabIndex = 13;
-            label5.Text = "Ghi Chú";
+            dateNgayChuyen.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dateNgayChuyen.Format = DateTimePickerFormat.Short;
+            dateNgayChuyen.Location = new Point(32, 263);
+            dateNgayChuyen.Name = "dateNgayChuyen";
+            dateNgayChuyen.Size = new Size(188, 31);
+            dateNgayChuyen.TabIndex = 11;
             // 
             // btnHuy
             // 
             btnHuy.BackColor = Color.White;
+            btnHuy.BorderThickness = 0;
             btnHuy.FlatAppearance.BorderSize = 0;
             btnHuy.FlatStyle = FlatStyle.Flat;
             btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
             btnHuy.ForeColor = Color.Black;
-            btnHuy.Location = new Point(336, 424);
+            btnHuy.Location = new Point(275, 261);
             btnHuy.Name = "btnHuy";
             btnHuy.Padding = new Padding(10, 6, 10, 6);
-            btnHuy.Size = new Size(94, 29);
+            btnHuy.Size = new Size(94, 41);
             btnHuy.TabIndex = 14;
             btnHuy.Text = "Hủy";
             btnHuy.UseVisualStyleBackColor = false;
-            btnHuy.Click += btnHuy_Click;
             // 
             // btnTaoPhieuChuyen
             // 
             btnTaoPhieuChuyen.BackColor = Color.Black;
+            btnTaoPhieuChuyen.BorderThickness = 0;
             btnTaoPhieuChuyen.FlatAppearance.BorderSize = 0;
             btnTaoPhieuChuyen.FlatStyle = FlatStyle.Flat;
             btnTaoPhieuChuyen.Font = new Font("Segoe UI Semibold", 10.5F);
             btnTaoPhieuChuyen.ForeColor = Color.White;
-            btnTaoPhieuChuyen.Location = new Point(451, 424);
+            btnTaoPhieuChuyen.Location = new Point(390, 263);
             btnTaoPhieuChuyen.Name = "btnTaoPhieuChuyen";
             btnTaoPhieuChuyen.Padding = new Padding(10, 6, 10, 6);
-            btnTaoPhieuChuyen.Size = new Size(167, 29);
+            btnTaoPhieuChuyen.Size = new Size(194, 41);
             btnTaoPhieuChuyen.TabIndex = 14;
             btnTaoPhieuChuyen.Text = "Tạo Phiếu Chuyển";
             btnTaoPhieuChuyen.UseVisualStyleBackColor = false;
-            btnTaoPhieuChuyen.Click += btnTaoPhieuChuyen_Click;
+            // 
+            // cbbNguyenLieu
+            // 
+            cbbNguyenLieu.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbNguyenLieu.FormattingEnabled = true;
+            cbbNguyenLieu.IntegralHeight = false;
+            cbbNguyenLieu.ItemHeight = 26;
+            cbbNguyenLieu.Location = new Point(12, 191);
+            cbbNguyenLieu.Name = "cbbNguyenLieu";
+            cbbNguyenLieu.Size = new Size(406, 32);
+            cbbNguyenLieu.TabIndex = 16;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(12, 165);
+            label6.Name = "label6";
+            label6.Size = new Size(93, 20);
+            label6.TabIndex = 15;
+            label6.Text = "Nguyên liệu";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(424, 162);
+            label7.Name = "label7";
+            label7.Size = new Size(71, 20);
+            label7.TabIndex = 17;
+            label7.Text = "Số lượng";
+            // 
+            // txtSoLuong
+            // 
+            txtSoLuong.BackColor = Color.White;
+            txtSoLuong.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtSoLuong.ForeColor = Color.Black;
+            txtSoLuong.Location = new Point(441, 185);
+            txtSoLuong.Name = "txtSoLuong";
+            txtSoLuong.Padding = new Padding(10, 8, 10, 8);
+            txtSoLuong.Size = new Size(177, 44);
+            txtSoLuong.TabIndex = 18;
             // 
             // Frm_ChuyenKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(630, 478);
+            ClientSize = new Size(630, 322);
+            Controls.Add(txtSoLuong);
+            Controls.Add(label7);
+            Controls.Add(cbbNguyenLieu);
+            Controls.Add(label6);
             Controls.Add(btnTaoPhieuChuyen);
             Controls.Add(btnHuy);
-            Controls.Add(label5);
-            Controls.Add(roundedTextBox1);
-            Controls.Add(dateTimePicker1);
-            Controls.Add(borderComboBox2);
-            Controls.Add(borderComboBox1);
+            Controls.Add(dateNgayChuyen);
+            Controls.Add(cbbDenKho);
+            Controls.Add(cbbTuKho);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label8);
@@ -208,14 +234,16 @@
         private Label label1;
         private Label label2;
         private Label label8;
-        private UiControls.BorderComboBox borderComboBox1;
-        private UiControls.BorderComboBox borderComboBox2;
+        private UiControls.BorderComboBox cbbTuKho;
+        private UiControls.BorderComboBox cbbDenKho;
         private Label label3;
         private Label label4;
-        private DateTimePicker dateTimePicker1;
-        private Controls.RoundedTextBox roundedTextBox1;
-        private Label label5;
+        private DateTimePicker dateNgayChuyen;
         private Controls.RoundedButton btnHuy;
         private Controls.RoundedButton btnTaoPhieuChuyen;
+        private UiControls.BorderComboBox cbbNguyenLieu;
+        private Label label6;
+        private Label label7;
+        private Controls.RoundedTextBox txtSoLuong;
     }
 }

@@ -57,7 +57,6 @@
             dgvtxtThaoTac = new DataGridViewTextBoxColumn();
             roundedButton1 = new UI.Controls.RoundedButton();
             btnChuyenKho = new UI.Controls.RoundedButton();
-            btnKiemKe = new UI.Controls.RoundedButton();
             txtSearch = new UI.Controls.RoundedTextBox();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
@@ -86,13 +85,17 @@
             // 
             // btnNhapKho
             // 
-            btnNhapKho.BackColor = Color.WhiteSmoke;
+            btnNhapKho.BackColor = Color.White;
+            btnNhapKho.BorderColor = Color.White;
+            btnNhapKho.BorderThickness = 0;
             btnNhapKho.FlatStyle = FlatStyle.Flat;
             btnNhapKho.Font = new Font("Segoe UI Semibold", 10.5F);
             btnNhapKho.ForeColor = Color.Black;
+            btnNhapKho.HoverBackColor = Color.Silver;
             btnNhapKho.Location = new Point(571, 45);
             btnNhapKho.Name = "btnNhapKho";
             btnNhapKho.Padding = new Padding(10, 6, 10, 6);
+            btnNhapKho.PressedBackColor = Color.Silver;
             btnNhapKho.Size = new Size(142, 37);
             btnNhapKho.TabIndex = 13;
             btnNhapKho.Text = "Nhập Kho ";
@@ -258,7 +261,6 @@
             dgvKho.Size = new Size(1148, 473);
             dgvKho.TabIndex = 19;
             dgvKho.CellClick += dgvKho_CellClick;
-           
             dgvKho.CellPainting += dgvKho_CellPainting;
             // 
             // dgvtxtTenNguyenLieu
@@ -328,14 +330,17 @@
             // roundedButton1
             // 
             roundedButton1.BackColor = Color.White;
+            roundedButton1.BorderColor = Color.FromArgb(224, 224, 224);
+            roundedButton1.BorderThickness = 0;
             roundedButton1.FlatAppearance.BorderSize = 0;
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.Black;
-            roundedButton1.HoverBackColor = Color.Black;
+            roundedButton1.HoverBackColor = Color.FromArgb(224, 224, 224);
             roundedButton1.Location = new Point(719, 45);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
+            roundedButton1.PressedBackColor = Color.Silver;
             roundedButton1.Size = new Size(142, 37);
             roundedButton1.TabIndex = 20;
             roundedButton1.Text = "Xuất Kho";
@@ -345,34 +350,22 @@
             // btnChuyenKho
             // 
             btnChuyenKho.BackColor = Color.White;
+            btnChuyenKho.BorderColor = Color.White;
+            btnChuyenKho.BorderThickness = 0;
             btnChuyenKho.FlatAppearance.BorderSize = 0;
             btnChuyenKho.FlatStyle = FlatStyle.Flat;
             btnChuyenKho.Font = new Font("Segoe UI Semibold", 10.5F);
             btnChuyenKho.ForeColor = Color.Black;
+            btnChuyenKho.HoverBackColor = Color.FromArgb(224, 224, 224);
             btnChuyenKho.Location = new Point(867, 45);
             btnChuyenKho.Name = "btnChuyenKho";
             btnChuyenKho.Padding = new Padding(10, 6, 10, 6);
+            btnChuyenKho.PressedBackColor = Color.Silver;
             btnChuyenKho.Size = new Size(145, 37);
             btnChuyenKho.TabIndex = 21;
             btnChuyenKho.Text = "Chuyển Kho";
             btnChuyenKho.UseVisualStyleBackColor = false;
             btnChuyenKho.Click += btnChuyenKho_Click;
-            // 
-            // btnKiemKe
-            // 
-            btnKiemKe.BackColor = Color.Black;
-            btnKiemKe.FlatAppearance.BorderSize = 0;
-            btnKiemKe.FlatStyle = FlatStyle.Flat;
-            btnKiemKe.Font = new Font("Segoe UI Semibold", 10.5F);
-            btnKiemKe.ForeColor = Color.White;
-            btnKiemKe.Location = new Point(1018, 45);
-            btnKiemKe.Name = "btnKiemKe";
-            btnKiemKe.Padding = new Padding(10, 6, 10, 6);
-            btnKiemKe.Size = new Size(142, 37);
-            btnKiemKe.TabIndex = 22;
-            btnKiemKe.Text = "Kiểm Kê";
-            btnKiemKe.UseVisualStyleBackColor = false;
-            btnKiemKe.Click += btnKiemKe_Click;
             // 
             // txtSearch
             // 
@@ -390,7 +383,6 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 853);
-            Controls.Add(btnKiemKe);
             Controls.Add(btnChuyenKho);
             Controls.Add(roundedButton1);
             Controls.Add(dgvKho);
@@ -444,7 +436,6 @@
         private DataGridViewTextBoxColumn dgvtxtThaoTac;
         private Controls.RoundedButton roundedButton1;
         private Controls.RoundedButton btnChuyenKho;
-        private Controls.RoundedButton btnKiemKe;
         private Controls.RoundedTextBox txtSearch;
     }
 }

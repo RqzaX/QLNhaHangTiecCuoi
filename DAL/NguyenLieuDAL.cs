@@ -59,9 +59,9 @@ WHERE 1 = 1";
             nl.nl_id, nl.ma_nl, nl.ten_nl, nl.don_vi,
             ISNULL(tk.sl_ton, 0) AS sl_ton
         FROM dbo.nguyen_lieu nl
-        EFT JOIN dbo.ton_kho tk
+        LEFT JOIN dbo.ton_kho tk
         ON tk.nl_id = nl.nl_id
-        AND (@cn IS NULL OR tk.chi_nhanh_id = @cn)    -- <<< lọc CN
+        AND (@cn IS NULL OR tk.chi_nhanh_id = @cn)
     WHERE (nl.ma_nl LIKE @kw OR nl.ten_nl LIKE @kw)";
             var sb = new System.Text.StringBuilder(sql);
             var prms = new List<SqlParameter> {
@@ -164,6 +164,135 @@ WHERE 1 = 1";
                          FROM dbo.nguyen_lieu
                          WHERE nl_id = @id";
             return _db.GetDataTable(sql, new[] { new SqlParameter("@id", nlId) });
+        }
+
+        // Method để thực hiện query tùy ý (cho BLL sử dụng)
+        public DataTable GetDataTable(string sql, SqlParameter[] parameters = null)
+        {
+            try
+            {
+                return _db.GetDataTable(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetDataTable: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG NHẬP KHO =====
+        public int NhapKho(int chiNhanhId, int nlId, decimal soLuong)
+        {
+            const string sql = @"
+                -- Cập nhật tồn kho
+                UPDATE dbo.ton_kho 
+                SET sl_ton = sl_ton + @soLuong 
+                WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId;
+                -- Nếu chưa có record tồn kho thì tạo mới
+                IF NOT EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId)
+                BEGIN
+                    INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
+                    VALUES (@chiNhanhId, @nlId, @soLuong);
+                END";
+            
+            var parameters = new[]
+            {
+                new SqlParameter("@chiNhanhId", chiNhanhId),
+                new SqlParameter("@nlId", nlId),
+                new SqlParameter("@soLuong", soLuong)
+            };
+            
+            try
+            {
+                return _db.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - NhapKho: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG XUẤT KHO =====
+        public int XuatKho(int chiNhanhId, int nlId, decimal soLuong)
+        {
+            const string sql = @"
+                -- Cập nhật tồn kho (trừ đi)
+                UPDATE dbo.ton_kho 
+                SET sl_ton = sl_ton - @soLuong 
+                WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId;
+                -- Kiểm tra tồn kho không âm
+                IF EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId AND sl_ton < 0)
+                BEGIN
+                    -- Rollback nếu tồn kho âm
+                    UPDATE dbo.ton_kho 
+                    SET sl_ton = sl_ton + @soLuong 
+                    WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId;
+                    RAISERROR('Không đủ tồn kho để xuất', 16, 1);
+                END";
+            
+            var parameters = new[]
+            {
+                new SqlParameter("@chiNhanhId", chiNhanhId),
+                new SqlParameter("@nlId", nlId),
+                new SqlParameter("@soLuong", soLuong)
+            };
+            
+            try
+            {
+                return _db.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - XuatKho: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG CHUYỂN KHO =====
+        public int ChuyenKho(int chiNhanhNguonId, int chiNhanhDichId, int nlId, decimal soLuong)
+        {
+            const string sql = @"
+                -- Trừ tồn kho ở chi nhánh nguồn
+                UPDATE dbo.ton_kho 
+                SET sl_ton = sl_ton - @soLuong 
+                WHERE chi_nhanh_id = @chiNhanhNguonId AND nl_id = @nlId;
+                -- Kiểm tra tồn kho không âm
+                IF EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhNguonId AND nl_id = @nlId AND sl_ton < 0)
+                BEGIN
+                    -- Rollback nếu tồn kho âm
+                    UPDATE dbo.ton_kho 
+                    SET sl_ton = sl_ton + @soLuong 
+                    WHERE chi_nhanh_id = @chiNhanhNguonId AND nl_id = @nlId;
+                    RAISERROR('Không đủ tồn kho ở chi nhánh nguồn để chuyển', 16, 1);
+                END
+                ELSE
+                BEGIN
+                    -- Cộng tồn kho ở chi nhánh đích
+                    UPDATE dbo.ton_kho 
+                    SET sl_ton = sl_ton + @soLuong 
+                    WHERE chi_nhanh_id = @chiNhanhDichId AND nl_id = @nlId;
+                    -- Nếu chưa có record tồn kho ở chi nhánh đích thì tạo mới
+                    IF NOT EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhDichId AND nl_id = @nlId)
+                    BEGIN
+                        INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
+                        VALUES (@chiNhanhDichId, @nlId, @soLuong);
+                    END
+                END";
+            
+            var parameters = new[]
+            {
+                new SqlParameter("@chiNhanhNguonId", chiNhanhNguonId),
+                new SqlParameter("@chiNhanhDichId", chiNhanhDichId),
+                new SqlParameter("@nlId", nlId),
+                new SqlParameter("@soLuong", soLuong)
+            };
+            
+            try
+            {
+                return _db.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - ChuyenKho: {ex.Message}", ex);
+            }
         }
     }
 }

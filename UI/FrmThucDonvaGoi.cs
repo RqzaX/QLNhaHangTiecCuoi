@@ -305,6 +305,29 @@ namespace UI
             else if (colName == COL_DEL)
             {
                 var ten = Convert.ToString(CellVal(row, COL_TEN));
+                
+                try
+                {
+                    if (_bll.KiemTraMonAnCoDangSuDung(monId))
+                    {
+                        MessageBox.Show(
+                            $"Không thể xóa món '{ten}' vì đang được sử dụng trong các đơn hàng.\n\n" +
+                            "Để xóa món này, bạn cần:\n" +
+                            "1. Xóa tất cả các đơn hàng chứa món này, hoặc\n" +
+                            "2. Thay đổi món khác trong các đơn hàng đó trước khi xóa.",
+                            "Không thể xóa món",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi kiểm tra món: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 if (MessageBox.Show($"Bạn có chắc muốn xóa món: {ten}?", "Xác nhận xóa",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -313,6 +336,8 @@ namespace UI
                         _bll.XoaMonAn(monId);
                         LoadDataThucDonVaGoi();
                         EnsureActionColumns();
+                        MessageBox.Show($"Đã xóa món '{ten}' thành công!", "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {

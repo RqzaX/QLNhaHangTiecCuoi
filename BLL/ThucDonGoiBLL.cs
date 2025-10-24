@@ -145,6 +145,12 @@ namespace BLL
             return _dal.CapNhatMonAn(monId, maMon.Trim(), tenMon.Trim(), nhom?.Trim(), donViTinh.Trim(), donGia, dangBan);
         }
 
+        public bool KiemTraMonAnCoDangSuDung(int monId)
+        {
+            if (monId <= 0) throw new ArgumentException("ID món không hợp lệ.");
+            return _dal.KiemTraMonAnCoDangSuDung(monId);
+        }
+
         public int XoaMonAn(int monId)
         {
             if (monId <= 0) throw new ArgumentException("ID món không hợp lệ.");

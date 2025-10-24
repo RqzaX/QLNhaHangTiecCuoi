@@ -37,5 +37,122 @@ namespace QLNhaHangTiecCuoi.BLL
             var dt = _dal.GetNguyenLieuById(nlId);
             return (dt != null && dt.Rows.Count > 0) ? dt.Rows[0] : null;
         }
+
+        // Thêm method để lấy danh sách chi nhánh có dữ liệu tồn kho
+        public DataTable LayChiNhanhCoDuLieuTonKho()
+        {
+            try
+            {
+                // Sử dụng DAL để lấy dữ liệu tồn kho cho tất cả chi nhánh
+                var result = new DataTable();
+                result.Columns.Add("chi_nhanh_id", typeof(int));
+                result.Columns.Add("ten", typeof(string));
+                result.Columns.Add("co_du_lieu", typeof(bool));
+
+                // Lấy tất cả chi nhánh
+                string sql = "SELECT chi_nhanh_id, ten FROM dbo.chi_nhanh WHERE trang_thai = 1 ORDER BY chi_nhanh_id";
+                var allBranches = _dal.GetDataTable(sql);
+                
+                if (allBranches != null)
+                {
+                    foreach (System.Data.DataRow row in allBranches.Rows)
+                    {
+                        int branchId = Convert.ToInt32(row["chi_nhanh_id"]);
+                        string branchName = row["ten"].ToString();
+                        
+                        // Kiểm tra xem chi nhánh này có dữ liệu tồn kho không
+                        var inventoryData = LayTonKhoTheoTinhTrang(0, branchId);
+                        bool hasInventory = false;
+                        
+                        if (inventoryData != null && inventoryData.Rows.Count > 0)
+                        {
+                            foreach (System.Data.DataRow invRow in inventoryData.Rows)
+                            {
+                                if (invRow["sl_ton"] != DBNull.Value && Convert.ToDecimal(invRow["sl_ton"]) > 0)
+                                {
+                                    hasInventory = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        result.Rows.Add(branchId, branchName, hasInventory);
+                    }
+                }
+                
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayChiNhanhCoDuLieuTonKho: {ex.Message}", ex);
+            }
+        }
+
+        // Method để lấy tất cả chi nhánh
+        public DataTable LayTatCaChiNhanh()
+        {
+            try
+            {
+                string sql = "SELECT chi_nhanh_id, ten FROM dbo.chi_nhanh WHERE trang_thai = 1 ORDER BY chi_nhanh_id";
+                return _dal.GetDataTable(sql);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayTatCaChiNhanh: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG NHẬP KHO =====
+        public int NhapKho(int chiNhanhId, int nlId, decimal soLuong)
+        {
+            try
+            {
+                return _dal.NhapKho(chiNhanhId, nlId, soLuong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - NhapKho: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG XUẤT KHO =====
+        public int XuatKho(int chiNhanhId, int nlId, decimal soLuong)
+        {
+            try
+            {
+                return _dal.XuatKho(chiNhanhId, nlId, soLuong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - XuatKho: {ex.Message}", ex);
+            }
+        }
+
+        // ===== CHỨC NĂNG CHUYỂN KHO =====
+        public int ChuyenKho(int chiNhanhNguonId, int chiNhanhDichId, int nlId, decimal soLuong)
+        {
+            try
+            {
+                return _dal.ChuyenKho(chiNhanhNguonId, chiNhanhDichId, nlId, soLuong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - ChuyenKho: {ex.Message}", ex);
+            }
+        }
+
+        // ===== KIỂM TRA TỒN KHO =====
+        public bool KiemTraTonKhoDu(int chiNhanhId, int nlId, decimal soLuongCan)
+        {
+            try
+            {
+                decimal tonHienTai = LayTonKhoTaiChiNhanh(chiNhanhId, nlId);
+                return tonHienTai >= soLuongCan;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - KiemTraTonKhoDu: {ex.Message}", ex);
+            }
+        }
     }
 }

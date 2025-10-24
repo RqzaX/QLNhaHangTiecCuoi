@@ -13,6 +13,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UI.Common;
 using Timer = System.Windows.Forms.Timer;
 
 
@@ -28,14 +29,14 @@ namespace UI
         private readonly DatabaseHelper _dbHelper;
         private readonly Timer _debounceTimer = new Timer();
         private const int DebounceMs = 300;
-        private const decimal NguongCanhBaoMacDinh = 30.000m;
+        private const decimal NguongCanhBaoMacDinh = 30;
+        private int _selectedBranchId = Session.ChiNhanhId;
 
 
         public FrmKho(DatabaseHelper dbHelper)
         {
-
-
             InitializeComponent();
+            _dbHelper = dbHelper;
             _bll = new NguyenLieuBLL(dbHelper);
             dgvKho.CellContentClick += dgvKho_CellContentClick;
             InitGrid();
@@ -48,12 +49,15 @@ namespace UI
         {
             using (var f = new Frm_NhapKho())
             {
-
                 f.StartPosition = FormStartPosition.CenterParent;
-                f.ShowDialog(this);
-
+                var result = f.ShowDialog(this);
+                
+                if (result == DialogResult.OK)
+                {
+                    ReloadGrid();
+                    UpdateSummaryPanels();
+                }
             }
-
         }
 
 
@@ -63,11 +67,10 @@ namespace UI
         private bool _gridColumnsBuilt = false;
         private void FrmKho_Load(object sender, EventArgs e)
         {
-
+            LoadBranchCombo();
             LoadTinhTrangCombo();
             ReloadGrid();
             UpdateSummaryPanels();
-            
         }
         private void InitGrid()
         {
@@ -89,7 +92,7 @@ namespace UI
                 Name = "sl_ton",
                 HeaderText = "SL tồn",
                 Width = 90,
-                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N3" }
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
 
             // === CỘT GIÁ TRỊ ===
@@ -121,6 +124,85 @@ namespace UI
     // THÊM:
 
         }
+        private void LoadBranchCombo()
+        {
+            try
+            {
+                if (_dbHelper == null)
+                {
+                    MessageBox.Show("Database helper chưa được khởi tạo!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách chi nhánh: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _selectedBranchId = 1;
+            }
+        }
+
+        // Helper method để lấy chi nhánh có dữ liệu tồn kho
+        private List<(int BranchId, string BranchName)> GetBranchesWithInventoryData()
+        {
+            try
+            {
+                var result = new List<(int BranchId, string BranchName)>();
+                
+                // Sử dụng BLL để lấy danh sách chi nhánh có dữ liệu tồn kho
+                var branchesData = _bll.LayChiNhanhCoDuLieuTonKho();
+                
+                if (branchesData != null)
+                {
+                    foreach (System.Data.DataRow row in branchesData.Rows)
+                    {
+                        bool hasData = Convert.ToBoolean(row["co_du_lieu"]);
+                        if (hasData)
+                        {
+                            result.Add((Convert.ToInt32(row["chi_nhanh_id"]), row["ten"].ToString()));
+                        }
+                    }
+                }
+                
+                return result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lấy danh sách chi nhánh có dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<(int BranchId, string BranchName)>();
+            }
+        }
+
+        // Helper method để lấy tất cả chi nhánh
+        private List<(int BranchId, string BranchName)> GetAllBranches()
+        {
+            try
+            {
+                var result = new List<(int BranchId, string BranchName)>();
+                
+                // Sử dụng BLL để lấy tất cả chi nhánh
+                var allBranches = _bll.LayTatCaChiNhanh();
+                
+                if (allBranches != null)
+                {
+                    foreach (System.Data.DataRow row in allBranches.Rows)
+                    {
+                        result.Add((Convert.ToInt32(row["chi_nhanh_id"]), row["ten"].ToString()));
+                    }
+                }
+                
+                return result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lấy danh sách chi nhánh: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<(int BranchId, string BranchName)>();
+            }
+        }
+
         private void LoadTinhTrangCombo()
         {
             var tb = new DataTable();
@@ -147,10 +229,10 @@ namespace UI
                 : 0m;
         }
 
-        private void ReloadGrid()
+        public void ReloadGrid()
         {
-            // 1) Lấy tất cả (không lọc ở BLL)
-            DataTable tb = _bll.LayTonKhoTheoTinhTrang(0);
+            // 1) Lấy tất cả (có lọc theo chi nhánh)
+            DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
             if (tb == null) { dgvKho.DataSource = null; return; }
 
             // 2) Lọc tại UI theo combobox
@@ -270,8 +352,7 @@ namespace UI
         {
             get
             {
-                // TODO: nếu có combobox chi nhánh thì đọc từ đó
-                return 1;
+                return _selectedBranchId;
             }
         }
         private void OpenNguyenLieuChiTiet(int nlId)
@@ -296,7 +377,13 @@ namespace UI
             using (var f = new Frm_XuatKho())
             {
                 f.StartPosition = FormStartPosition.CenterParent;
-                f.ShowDialog(this);
+                var result = f.ShowDialog(this);
+                
+                if (result == DialogResult.OK)
+                {
+                    ReloadGrid();
+                    UpdateSummaryPanels();
+                }
             }
         }
 
@@ -305,15 +392,21 @@ namespace UI
             using (var f = new Frm_ChuyenKho())
             {
                 f.StartPosition = FormStartPosition.CenterParent;
-                f.ShowDialog(this);
+                var result = f.ShowDialog(this);
+                
+                if (result == DialogResult.OK)
+                {
+                    ReloadGrid();
+                    UpdateSummaryPanels();
+                }
             }
         }
         private void UpdateSummaryPanels()
         {
             try
             {
-                // Lấy toàn bộ tồn kho
-                var all = _bll.LayTonKhoTheoTinhTrang(0);
+                // Lấy toàn bộ tồn kho theo chi nhánh
+                var all = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
 
                 int tongMatHang = all?.Rows.Count ?? 0;
 
@@ -365,6 +458,51 @@ namespace UI
         private void btnKiemKe_Click(object sender, EventArgs e)
         {
 
+        }
+
+        // Public method to set branch ID from outside
+        public void SetBranchId(int branchId)
+        {
+            _selectedBranchId = branchId;
+            ReloadGrid();
+            UpdateSummaryPanels();
+        }
+
+        // Method to get current branch ID
+        public int GetCurrentBranchId()
+        {
+            return _selectedBranchId;
+        }
+
+        // Method to show branch selection dialog (simplified)
+        public void ShowBranchSelection()
+        {
+            try
+            {
+                var branchesWithData = GetBranchesWithInventoryData();
+                
+                if (branchesWithData != null && branchesWithData.Count > 0)
+                {
+                    string message = "Chi nhánh có dữ liệu tồn kho:\n\n";
+                    foreach (var branch in branchesWithData)
+                    {
+                        message += $"• {branch.BranchName} (ID: {branch.BranchId})\n";
+                    }
+                    
+                    MessageBox.Show(message, "Danh Sách Chi Nhánh", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Không có chi nhánh nào có dữ liệu tồn kho!", 
+                        "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi hiển thị danh sách chi nhánh: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

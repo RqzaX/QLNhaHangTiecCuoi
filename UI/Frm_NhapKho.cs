@@ -8,61 +8,179 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UI.Controls;
+using BLL;
+using QLNhaHangTiecCuoi.Share;
+using QLNhaHangTiecCuoi.BLL;
+using UI.Common;
 
 namespace UI
 {
     public partial class Frm_NhapKho : Form
     {
+        private readonly NguyenLieuBLL _bll;
+        private readonly DatabaseHelper _dbHelper;
+
         public Frm_NhapKho()
         {
             InitializeComponent();
-
+            _dbHelper = new DatabaseHelper();
+            _bll = new NguyenLieuBLL(_dbHelper);
+            
+            LoadData();
+            WireEvents();
         }
 
-        private void btnHuy_Click(object sender, EventArgs e)
+        private void WireEvents()
+        {
+            btnHuy.Click += BtnHuy_Click;
+            btnTaoPhieuNhap.Click += BtnTaoPhieuNhap_Click;
+        }
+
+        private void LoadData()
+        {
+            try
+            {
+                // Load danh sách nguyên liệu
+                LoadNguyenLieu();
+                
+                // Load danh sách chi nhánh
+                LoadChiNhanh();
+                
+                // Set ngày mặc định
+                dateNgayNhap.Value = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadNguyenLieu()
+        {
+            try
+            {
+                var dt = _bll.LayDanhMuc();
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    cbbTenMon.Items.Clear();
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string displayText = $"{row["ma_nl"]} - {row["ten_nl"]} ({row["don_vi"]})";
+                        cbbTenMon.Items.Add(new ComboBoxItem(displayText, Convert.ToInt32(row["nl_id"])));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách nguyên liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadChiNhanh()
+        {
+            try
+            {
+                var dt = _bll.LayTatCaChiNhanh();
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    cbbChiNhanh.Items.Clear();
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string displayText = $"{row["ten"]} (ID: {row["chi_nhanh_id"]})";
+                        cbbChiNhanh.Items.Add(new ComboBoxItem(displayText, Convert.ToInt32(row["chi_nhanh_id"])));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách chi nhánh: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnHuy_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnTaoPhieuNhap_Click(object sender, EventArgs e)
+        private void BtnTaoPhieuNhap_Click(object sender, EventArgs e)
         {
-            // Kiểm tra dữ liệu
-            if (borderComboBox1.SelectedIndex == -1)
+            try
             {
-                MessageBox.Show("Vui lòng chọn danh mục món ăn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                // Kiểm tra dữ liệu
+                if (cbbTenMon.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Vui lòng chọn nguyên liệu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            if (string.IsNullOrWhiteSpace(roundedTextBox2.Text.Trim()))
+                if (cbbChiNhanh.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Vui lòng chọn chi nhánh!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                 if (!decimal.TryParse(txtSoLuong.Text, out decimal soLuong) || soLuong <= 0)
+                 {
+                     MessageBox.Show("Số lượng phải là số dương!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                     return;
+                 }
+
+                // Lấy thông tin đã chọn
+                var selectedNguyenLieu = (ComboBoxItem)cbbTenMon.SelectedItem;
+                var selectedChiNhanh = (ComboBoxItem)cbbChiNhanh.SelectedItem;
+                
+                int nlId = selectedNguyenLieu.Value;
+                int chiNhanhId = selectedChiNhanh.Value;
+                
+                // Tạo mã phiếu nhập kho
+                string maPhieu = "PNK" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                
+                // Nhập kho trực tiếp
+                int result = _bll.NhapKho(chiNhanhId, nlId, soLuong);
+
+                if (result > 0)
+                {
+                    // Hiển thị thông báo thành công
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("NHẬP KHO THÀNH CÔNG!");
+                    sb.AppendLine("══════════════════════════════");
+                    sb.AppendLine($"Mã Phiếu: {maPhieu}");
+                    sb.AppendLine($"Nguyên Liệu: {selectedNguyenLieu.Text}");
+                    sb.AppendLine($"Chi Nhánh: {selectedChiNhanh.Text}");
+                    sb.AppendLine($"Số Lượng: {soLuong:N2}");
+                    sb.AppendLine($"Ngày Nhập: {dateNgayNhap.Value:dd/MM/yyyy HH:mm}");
+                    sb.AppendLine("══════════════════════════════");
+
+                    MessageBox.Show(sb.ToString(), "Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
+                    // Reset form
+                    ResetForm();
+                    
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi khi nhập kho!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Vui lòng nhập số hóa đơn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                MessageBox.Show($"Lỗi khi tạo phiếu nhập kho: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            // Thu thập thông tin
-            string danhMuc = borderComboBox1.SelectedItem.ToString();
-            string soHoaDon = roundedTextBox2.Text.Trim();
-            string ngayNhap = dateTimePicker1.Value.ToString("dd/MM/yyyy");
-            string ghiChu = string.IsNullOrWhiteSpace(roundedTextBox1.Text) ? "Không có" : roundedTextBox1.Text.Trim();
-
-            // Tạo mã phiếu tự động (ví dụ)
-            string maPhieu = "PNK" + DateTime.Now.ToString("yyyyMMddHHmmss");
-
-            // Tạo nội dung thông báo chi tiết
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("PHIẾU NHẬP KHO ĐÃ TẠO THÀNH CÔNG!");
-            sb.AppendLine("══════════════════════════════");
-            sb.AppendLine($"Mã Phiếu: {maPhieu}");
-            sb.AppendLine($"Danh Mục: {danhMuc}");
-            sb.AppendLine($"Số Hóa Đơn: {soHoaDon}");
-            sb.AppendLine($"Ngày Nhập: {ngayNhap}");
-            sb.AppendLine($"Ghi Chú: {ghiChu}");
-            sb.AppendLine("══════════════════════════════\n");
-
-            // Hiển thị thông báo
-            MessageBox.Show(sb.ToString(), "Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            this.Close();
         }
+
+         private void ResetForm()
+         {
+             cbbTenMon.SelectedIndex = -1;
+             cbbChiNhanh.SelectedIndex = -1;
+             txtSoLuong.Text = "";
+             dateNgayNhap.Value = DateTime.Now;
+         }
     }
 }
