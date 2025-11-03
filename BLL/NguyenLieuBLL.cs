@@ -21,11 +21,11 @@ namespace QLNhaHangTiecCuoi.BLL
 
         public DataTable TimKiemTheoTinhTrang(string keyword, int tinhTrang, int? chiNhanhId = null, decimal? canhBao = null)
             => _dal.SearchByTinhTrang(keyword, tinhTrang, canhBao ?? NGUONG_CANH_BAO_MAC_DINH, chiNhanhId);
-        // Chi tiết
+   
         public DataTable LayTheoIdCoTon(int nlId) => _dal.GetByIdWithTon(nlId);
         public DataTable LayTonKhoTheoChiNhanhCuaNguyenLieu(int nlId) => _dal.GetTonKhoTheoChiNhanhCuaNguyenLieu(nlId);
 
-        // Cập nhật
+       
         public int Sua(int nlId, string ma, string ten, string donVi) => _dal.Update(nlId, ma, ten, donVi);
         public decimal LayTonKhoTaiChiNhanh(int chiNhanhId, int nlId)
      => _dal.GetTonKho(chiNhanhId, nlId);
@@ -38,18 +38,18 @@ namespace QLNhaHangTiecCuoi.BLL
             return (dt != null && dt.Rows.Count > 0) ? dt.Rows[0] : null;
         }
 
-        // Thêm method để lấy danh sách chi nhánh có dữ liệu tồn kho
+     
         public DataTable LayChiNhanhCoDuLieuTonKho()
         {
             try
             {
-                // Sử dụng DAL để lấy dữ liệu tồn kho cho tất cả chi nhánh
+         
                 var result = new DataTable();
                 result.Columns.Add("chi_nhanh_id", typeof(int));
                 result.Columns.Add("ten", typeof(string));
                 result.Columns.Add("co_du_lieu", typeof(bool));
 
-                // Lấy tất cả chi nhánh
+               
                 string sql = "SELECT chi_nhanh_id, ten FROM dbo.chi_nhanh WHERE trang_thai = 1 ORDER BY chi_nhanh_id";
                 var allBranches = _dal.GetDataTable(sql);
                 
@@ -60,7 +60,7 @@ namespace QLNhaHangTiecCuoi.BLL
                         int branchId = Convert.ToInt32(row["chi_nhanh_id"]);
                         string branchName = row["ten"].ToString();
                         
-                        // Kiểm tra xem chi nhánh này có dữ liệu tồn kho không
+                      
                         var inventoryData = LayTonKhoTheoTinhTrang(0, branchId);
                         bool hasInventory = false;
                         
@@ -88,7 +88,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // Method để lấy tất cả chi nhánh
+        
         public DataTable LayTatCaChiNhanh()
         {
             try
@@ -102,7 +102,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // ===== CHỨC NĂNG NHẬP KHO =====
+
         public int NhapKho(int chiNhanhId, int nlId, decimal soLuong)
         {
             try
@@ -115,7 +115,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // ===== CHỨC NĂNG XUẤT KHO =====
+     
         public int XuatKho(int chiNhanhId, int nlId, decimal soLuong)
         {
             try
@@ -128,7 +128,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // ===== CHỨC NĂNG CHUYỂN KHO =====
+        
         public int ChuyenKho(int chiNhanhNguonId, int chiNhanhDichId, int nlId, decimal soLuong)
         {
             try
@@ -141,7 +141,6 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // ===== KIỂM TRA TỒN KHO =====
         public bool KiemTraTonKhoDu(int chiNhanhId, int nlId, decimal soLuongCan)
         {
             try

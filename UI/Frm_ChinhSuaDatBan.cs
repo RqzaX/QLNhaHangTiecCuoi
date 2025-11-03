@@ -1,27 +1,32 @@
-using System;
-using System.Data;
-using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
 using QLNhaHangTiecCuoi.Share;
+using System;
+using System.Data;
+using System.Runtime.Versioning;
+using System.Windows.Forms;
+using UI.Common;
 using UI.Controls;
 
 namespace UI
 {
+    [SupportedOSPlatform("windows")]
     public partial class Frm_ChinhSuaDatBan : Form
     {
         private BanBLL _banBLL;
         private KhachHangBLL _khachHangBLL;
         private KhuVucBLL _khuVucBLL;
-        private DataGripView_DatBan.Reservation _reservation;
+        private Reservation _reservation;
+        private int _chiNhanhId;
 
-        public Frm_ChinhSuaDatBan(DataGripView_DatBan.Reservation reservation)
+        public Frm_ChinhSuaDatBan(Reservation reservation)
         {
             InitializeComponent();
             _banBLL = new BanBLL(new DatabaseHelper());
             _khachHangBLL = new KhachHangBLL();
             _khuVucBLL = new KhuVucBLL();
             _reservation = reservation;
+            _chiNhanhId = Session.ChiNhanhId > 0 ? Session.ChiNhanhId : 1; // Fallback to 1 if session not set
             
             LoadData();
         }
@@ -30,16 +35,36 @@ namespace UI
         {
             try
             {
-                var dtKhuVuc = _khuVucBLL.LayDanhSachKhuVuc(1); // Sử dụng chi nhánh ID = 1
+                if (_chiNhanhId <= 0)
+                {
+                    MessageBox.Show("Chưa chọn chi nhánh! Vui lòng chọn chi nhánh trước.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    this.DialogResult = DialogResult.Cancel;
+                    this.Close();
+                    return;
+                }
+
+                var dtKhuVuc = _khuVucBLL.LayDanhSachKhuVuc(_chiNhanhId);
                 if (dtKhuVuc != null && dtKhuVuc.Rows.Count > 0)
                 {
                     cboKhuVuc.DataSource = dtKhuVuc;
                     cboKhuVuc.DisplayMember = "ten_khu_vuc";
                     cboKhuVuc.ValueMember = "khu_vuc_id";
+                    
+                    // Chọn khu vực hiện tại của reservation
+                    if (!string.IsNullOrEmpty(_reservation.Area))
+                    {
+                        for (int i = 0; i < dtKhuVuc.Rows.Count; i++)
+                        {
+                            if (dtKhuVuc.Rows[i]["ten_khu_vuc"].ToString() == _reservation.Area)
+                            {
+                                cboKhuVuc.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 LoadGioDat();
-                LoadBanTheoKhuVuc();
                 DisplayCurrentReservation();
             }
             catch (Exception ex)
@@ -208,11 +233,39 @@ namespace UI
             return true;
         }
 
+        private int GetKhachHangId()
+        {
+            try
+            {
+                // Tìm khách hàng theo số điện thoại
+                var dtKhachHang = _khachHangBLL.TimKhachHangTheoSdt(txtSoDienThoai.Text.Trim());
+                
+                if (dtKhachHang != null && dtKhachHang.Rows.Count > 0)
+                {
+                    // Tìm thấy khách hàng, trả về ID
+                    return Convert.ToInt32(dtKhachHang.Rows[0]["khach_hang_id"]);
+                }
+                else
+                {
+                    // Không tìm thấy, tạo khách hàng mới
+                    return _khachHangBLL.TaoKhachHang(
+                        txtTenKhachHang.Text.Trim(),
+                        txtSoDienThoai.Text.Trim(),
+                        "", // Email
+                        ""  // Ghi chú
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy/thêm khách hàng: {ex.Message}");
+            }
+        }
+
         private bool UpdateReservation()
         {
             try
             {
-                // Lấy thông tin bàn
                 DataTable dtBan = (DataTable)cboBan.DataSource;
                 int banId = Convert.ToInt32(cboBan.SelectedValue);
                 int sucChua = 0;
@@ -227,17 +280,19 @@ namespace UI
                         break;
                     }
                 }
-
-                // Kết hợp ngày và giờ đặt
+                
                 string selectedTime = cboGioDat.SelectedItem?.ToString() ?? "08:00";
                 string[] timeParts = selectedTime.Split(':');
                 int hour = int.Parse(timeParts[0]);
                 int minute = int.Parse(timeParts[1]);
                 DateTime ngayGioDat = dtpNgayDat.Value.Date.Add(new TimeSpan(hour, minute, 0));
                 
+                // Lấy hoặc tạo khách hàng ID
+                int khachHangId = GetKhachHangId();
+                
                 return _banBLL.CapNhatDatBan(
                     _reservation.Code,
-                    1, // Khách hàng ID mặc định (có thể cần thay đổi logic này)
+                    khachHangId,
                     banId,
                     Convert.ToInt32(txtSoKhach.Text),
                     ngayGioDat,

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
-using static UI.Controls.DataGripView_DatBan;
 
 #region Rounded helpers
 [SupportedOSPlatform("windows")]

@@ -42,7 +42,6 @@ namespace UI
 
         private void ConfigureDataGridView()
         {
-            // Cấu hình DataGridView
             dgvGoiTiec.AutoGenerateColumns = false;
             dgvGoiTiec.AllowUserToAddRows = false;
             dgvGoiTiec.ReadOnly = true;
@@ -51,10 +50,8 @@ namespace UI
             dgvGoiTiec.RowHeadersVisible = false;
             dgvGoiTiec.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // Clear các cột cũ (nếu có)
             dgvGoiTiec.Columns.Clear();
 
-            // Thêm các cột
             dgvGoiTiec.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "ID",
@@ -92,7 +89,7 @@ namespace UI
                 }
             });
 
-            // Đặt chiều cao dòng
+          
             dgvGoiTiec.RowTemplate.Height = 35;
         }
 
@@ -152,7 +149,7 @@ namespace UI
                 _isEditing = true;
                 btnCapNhat.Text = "Cập Nhật";
                 btnCapNhat.BackColor = System.Drawing.Color.DodgerBlue;
-                txtMaGoi.Enabled = false; // Không cho sửa mã gói
+                txtMaGoi.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -171,7 +168,6 @@ namespace UI
 
                 if (_isEditing)
                 {
-                    // Cập nhật
                     bool success = _bll.CapNhatGoiTiec(_goiIdDangChon, maGoi, tenGoi, giaGoi, out string errorMessage);
 
                     if (success)
@@ -189,7 +185,6 @@ namespace UI
                 }
                 else
                 {
-                    // Thêm mới
                     bool success = _bll.ThemGoiTiec(maGoi, tenGoi, giaGoi, out string errorMessage);
 
                     if (success)
@@ -259,7 +254,6 @@ namespace UI
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
-            // Nút "Chọn Gói"
             if (_goiIdDangChon == 0)
             {
                 MessageBox.Show("Vui lòng chọn một gói tiệc!", "Thông báo",
@@ -301,10 +295,9 @@ namespace UI
             }
         }
 
-        // Thêm các event handlers khác
         private void txtGiaGoi_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Chỉ cho phép nhập số
+          
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
@@ -313,7 +306,6 @@ namespace UI
 
         private void txtGiaGoi_Leave(object sender, EventArgs e)
         {
-            // Format hiển thị tiền khi rời khỏi textbox
             decimal gia = _bll.ParseTien(txtGiaGoi.Text);
             if (gia > 0)
             {

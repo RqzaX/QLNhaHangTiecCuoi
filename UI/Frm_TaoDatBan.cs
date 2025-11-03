@@ -43,10 +43,6 @@ namespace UI
             this.Close();
         }
 
-        private void roundedTextBox4_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {

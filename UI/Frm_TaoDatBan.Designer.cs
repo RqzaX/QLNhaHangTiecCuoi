@@ -1,4 +1,6 @@
-﻿namespace UI
+﻿using Guna.UI2.WinForms;
+
+namespace UI
 {
     partial class Frm_TaoDatBan
     {
@@ -32,27 +34,27 @@
             label1 = new Label();
             label3 = new Label();
             label4 = new Label();
-            txtSoDienThoai = new UI.Controls.RoundedTextBox();
-            txtTenKhachHang = new UI.Controls.RoundedTextBox();
+            txtSoDienThoai = new Guna2TextBox();
+            txtTenKhachHang = new Guna2TextBox();
             label5 = new Label();
-            txtEmail = new UI.Controls.RoundedTextBox();
+            txtEmail = new Guna2TextBox();
             label6 = new Label();
             label7 = new Label();
             label8 = new Label();
-            dateNgay = new DateTimePicker();
-            btnExit = new Button();
+            dateNgay = new Guna2DateTimePicker();
+            btnExit = new Guna2Button();
             label9 = new Label();
             timeGio = new UI.Controls.TimePickerExStyled();
-            txtSoKhach = new UI.Controls.RoundedTextBox();
+            txtSoKhach = new Guna2TextBox();
             label10 = new Label();
             label11 = new Label();
-            cbbKhuVuc = new ComboBox();
-            cbbSoBan = new ComboBox();
+            cbbKhuVuc = new Guna2ComboBox();
+            cbbSoBan = new Guna2ComboBox();
             label12 = new Label();
             label14 = new Label();
-            txtGhiChu = new UI.Controls.RoundedTextBox();
-            btnTaoDatBan = new UI.Controls.RoundedButton();
-            btnHuy = new UI.Controls.RoundedButton();
+            txtGhiChu = new Guna2TextBox();
+            btnTaoDatBan = new Guna2Button();
+            btnHuy = new Guna2Button();
             SuspendLayout();
             // 
             // label2
@@ -97,27 +99,45 @@
             // 
             // txtSoDienThoai
             // 
-            txtSoDienThoai.BackColor = Color.White;
-            txtSoDienThoai.CornerRadius = 18;
+            txtSoDienThoai.BorderRadius = 18;
+            txtSoDienThoai.DefaultText = "";
+            txtSoDienThoai.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtSoDienThoai.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtSoDienThoai.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtSoDienThoai.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtSoDienThoai.FillColor = Color.White;
+            txtSoDienThoai.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSoDienThoai.Font = new Font("Segoe UI", 10F);
             txtSoDienThoai.ForeColor = Color.Black;
+            txtSoDienThoai.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSoDienThoai.Location = new Point(25, 118);
+            txtSoDienThoai.Margin = new Padding(10, 8, 10, 8);
             txtSoDienThoai.Name = "txtSoDienThoai";
-            txtSoDienThoai.Padding = new Padding(10, 8, 10, 8);
+            txtSoDienThoai.PasswordChar = '\0';
             txtSoDienThoai.PlaceholderText = "Nhập SĐT để tìm khách hàng";
+            txtSoDienThoai.SelectedText = "";
             txtSoDienThoai.Size = new Size(239, 36);
             txtSoDienThoai.TabIndex = 16;
             // 
             // txtTenKhachHang
             // 
-            txtTenKhachHang.BackColor = Color.White;
-            txtTenKhachHang.CornerRadius = 18;
+            txtTenKhachHang.BorderRadius = 18;
+            txtTenKhachHang.DefaultText = "";
+            txtTenKhachHang.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtTenKhachHang.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtTenKhachHang.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtTenKhachHang.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtTenKhachHang.FillColor = Color.White;
+            txtTenKhachHang.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtTenKhachHang.Font = new Font("Segoe UI", 10F);
             txtTenKhachHang.ForeColor = Color.Black;
+            txtTenKhachHang.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtTenKhachHang.Location = new Point(282, 118);
+            txtTenKhachHang.Margin = new Padding(10, 8, 10, 8);
             txtTenKhachHang.Name = "txtTenKhachHang";
-            txtTenKhachHang.Padding = new Padding(10, 8, 10, 8);
+            txtTenKhachHang.PasswordChar = '\0';
             txtTenKhachHang.PlaceholderText = "Nhập tên khách hàng";
+            txtTenKhachHang.SelectedText = "";
             txtTenKhachHang.Size = new Size(289, 36);
             txtTenKhachHang.TabIndex = 18;
             // 
@@ -133,14 +153,23 @@
             // 
             // txtEmail
             // 
-            txtEmail.BackColor = Color.White;
-            txtEmail.CornerRadius = 18;
+            txtEmail.BorderRadius = 18;
+            txtEmail.DefaultText = "";
+            txtEmail.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtEmail.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtEmail.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtEmail.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtEmail.FillColor = Color.White;
+            txtEmail.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtEmail.Font = new Font("Segoe UI", 10F);
             txtEmail.ForeColor = Color.Black;
+            txtEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtEmail.Location = new Point(591, 118);
+            txtEmail.Margin = new Padding(10, 8, 10, 8);
             txtEmail.Name = "txtEmail";
-            txtEmail.Padding = new Padding(10, 8, 10, 8);
+            txtEmail.PasswordChar = '\0';
             txtEmail.PlaceholderText = "email@example.com";
+            txtEmail.SelectedText = "";
             txtEmail.Size = new Size(281, 36);
             txtEmail.TabIndex = 20;
             // 
@@ -176,25 +205,36 @@
             // 
             // dateNgay
             // 
-            dateNgay.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dateNgay.BorderRadius = 18;
+            dateNgay.Checked = true;
+            dateNgay.FillColor = Color.White;
+            dateNgay.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
             dateNgay.Format = DateTimePickerFormat.Short;
             dateNgay.Location = new Point(32, 229);
+            dateNgay.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
+            dateNgay.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             dateNgay.Name = "dateNgay";
-            dateNgay.Size = new Size(171, 27);
+            dateNgay.Size = new Size(171, 36);
             dateNgay.TabIndex = 24;
+            dateNgay.Value = new DateTime(2025, 11, 1, 22, 27, 54, 0);
             // 
             // btnExit
             // 
-            btnExit.FlatAppearance.BorderSize = 0;
-            btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnExit.Animated = true;
+            btnExit.BorderRadius = 10;
+            btnExit.DisabledState.BorderColor = Color.DarkGray;
+            btnExit.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnExit.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnExit.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnExit.FillColor = Color.Transparent;
+            btnExit.Font = new Font("Calibri", 16.2F, FontStyle.Bold);
+            btnExit.ForeColor = Color.Black;
             btnExit.Location = new Point(830, 8);
             btnExit.Margin = new Padding(3, 2, 3, 2);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(55, 43);
             btnExit.TabIndex = 25;
             btnExit.Text = "✖";
-            btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 
             // label9
@@ -224,17 +264,25 @@
             // 
             // txtSoKhach
             // 
-            txtSoKhach.BackColor = Color.White;
-            txtSoKhach.CornerRadius = 18;
+            txtSoKhach.BorderRadius = 18;
+            txtSoKhach.DefaultText = "";
+            txtSoKhach.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtSoKhach.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtSoKhach.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtSoKhach.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtSoKhach.FillColor = Color.White;
+            txtSoKhach.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSoKhach.Font = new Font("Segoe UI", 10F);
             txtSoKhach.ForeColor = Color.Black;
+            txtSoKhach.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSoKhach.Location = new Point(435, 224);
+            txtSoKhach.Margin = new Padding(10, 8, 10, 8);
             txtSoKhach.Name = "txtSoKhach";
-            txtSoKhach.Padding = new Padding(10, 8, 10, 8);
+            txtSoKhach.PasswordChar = '\0';
             txtSoKhach.PlaceholderText = "0";
+            txtSoKhach.SelectedText = "";
             txtSoKhach.Size = new Size(123, 36);
             txtSoKhach.TabIndex = 29;
-            txtSoKhach.Load += roundedTextBox4_Load;
             // 
             // label10
             // 
@@ -258,21 +306,35 @@
             // 
             // cbbKhuVuc
             // 
-            cbbKhuVuc.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cbbKhuVuc.FormattingEnabled = true;
+            cbbKhuVuc.BackColor = Color.Transparent;
+            cbbKhuVuc.BorderRadius = 18;
+            cbbKhuVuc.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbKhuVuc.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbKhuVuc.FocusedColor = Color.FromArgb(94, 148, 255);
+            cbbKhuVuc.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            cbbKhuVuc.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold);
+            cbbKhuVuc.ForeColor = Color.Black;
+            cbbKhuVuc.ItemHeight = 30;
             cbbKhuVuc.Location = new Point(25, 309);
             cbbKhuVuc.MaxDropDownItems = 10;
             cbbKhuVuc.Name = "cbbKhuVuc";
-            cbbKhuVuc.Size = new Size(249, 31);
+            cbbKhuVuc.Size = new Size(249, 36);
             cbbKhuVuc.TabIndex = 31;
             // 
             // cbbSoBan
             // 
-            cbbSoBan.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cbbSoBan.FormattingEnabled = true;
+            cbbSoBan.BackColor = Color.Transparent;
+            cbbSoBan.BorderRadius = 18;
+            cbbSoBan.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbSoBan.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbSoBan.FocusedColor = Color.FromArgb(94, 148, 255);
+            cbbSoBan.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            cbbSoBan.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold);
+            cbbSoBan.ForeColor = Color.Black;
+            cbbSoBan.ItemHeight = 30;
             cbbSoBan.Location = new Point(308, 309);
             cbbSoBan.Name = "cbbSoBan";
-            cbbSoBan.Size = new Size(249, 31);
+            cbbSoBan.Size = new Size(249, 36);
             cbbSoBan.TabIndex = 33;
             // 
             // label12
@@ -297,54 +359,67 @@
             // 
             // txtGhiChu
             // 
-            txtGhiChu.BackColor = Color.White;
-            txtGhiChu.CornerRadius = 18;
+            txtGhiChu.BorderRadius = 18;
+            txtGhiChu.DefaultText = "";
+            txtGhiChu.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtGhiChu.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtGhiChu.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtGhiChu.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtGhiChu.FillColor = Color.White;
+            txtGhiChu.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtGhiChu.Font = new Font("Segoe UI", 10F);
             txtGhiChu.ForeColor = Color.Black;
+            txtGhiChu.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtGhiChu.Location = new Point(26, 383);
+            txtGhiChu.Margin = new Padding(10, 8, 10, 8);
+            txtGhiChu.Multiline = true;
             txtGhiChu.Name = "txtGhiChu";
-            txtGhiChu.Padding = new Padding(10, 8, 10, 8);
+            txtGhiChu.PasswordChar = '\0';
             txtGhiChu.PlaceholderText = "Ví dụ: Chỗ ngồi gần cửa sổ, có trẻ em, sinh nhật, dị ứng thực phẩm,...";
+            txtGhiChu.SelectedText = "";
             txtGhiChu.Size = new Size(842, 108);
             txtGhiChu.TabIndex = 37;
             // 
             // btnTaoDatBan
             // 
-            btnTaoDatBan.BackColor = Color.FromArgb(31, 111, 235);
-            btnTaoDatBan.BorderColor = Color.Black;
+            btnTaoDatBan.Animated = true;
+            btnTaoDatBan.BorderRadius = 17;
             btnTaoDatBan.BorderThickness = 2;
-            btnTaoDatBan.CornerRadius = 17;
-            btnTaoDatBan.FlatAppearance.BorderSize = 0;
-            btnTaoDatBan.FlatStyle = FlatStyle.Flat;
-            btnTaoDatBan.Font = new Font("Arial", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnTaoDatBan.DisabledState.BorderColor = Color.DarkGray;
+            btnTaoDatBan.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnTaoDatBan.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnTaoDatBan.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnTaoDatBan.FillColor = Color.FromArgb(31, 111, 235);
+            btnTaoDatBan.Font = new Font("Arial", 12.75F, FontStyle.Bold);
             btnTaoDatBan.ForeColor = Color.White;
             btnTaoDatBan.Location = new Point(711, 503);
             btnTaoDatBan.Name = "btnTaoDatBan";
-            btnTaoDatBan.Padding = new Padding(10, 6, 10, 6);
-            btnTaoDatBan.Size = new Size(150, 34);
+            btnTaoDatBan.ShadowDecoration.BorderRadius = 17;
+            btnTaoDatBan.ShadowDecoration.Depth = 3;
+            btnTaoDatBan.ShadowDecoration.Enabled = true;
+            btnTaoDatBan.Size = new Size(150, 38);
             btnTaoDatBan.TabIndex = 38;
             btnTaoDatBan.Text = "+ Tạo đặt bàn";
-            btnTaoDatBan.UseVisualStyleBackColor = false;
             // 
             // btnHuy
             // 
-            btnHuy.BackColor = Color.White;
-            btnHuy.BorderColor = Color.Black;
+            btnHuy.Animated = true;
+            btnHuy.BorderRadius = 17;
             btnHuy.BorderThickness = 2;
-            btnHuy.CornerRadius = 17;
-            btnHuy.FlatAppearance.BorderSize = 0;
-            btnHuy.FlatStyle = FlatStyle.Flat;
-            btnHuy.Font = new Font("Arial", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnHuy.DisabledState.BorderColor = Color.DarkGray;
+            btnHuy.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnHuy.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnHuy.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnHuy.FillColor = Color.White;
+            btnHuy.Font = new Font("Arial", 12.75F, FontStyle.Bold);
             btnHuy.ForeColor = Color.Black;
-            btnHuy.HoverBackColor = Color.White;
+            btnHuy.HoverState.FillColor = Color.FromArgb(240, 240, 240);
             btnHuy.Location = new Point(631, 503);
             btnHuy.Name = "btnHuy";
-            btnHuy.Padding = new Padding(10, 6, 10, 6);
-            btnHuy.PressedBackColor = Color.FromArgb(224, 224, 224);
-            btnHuy.Size = new Size(74, 34);
+            btnHuy.ShadowDecoration.BorderRadius = 17;
+            btnHuy.Size = new Size(74, 38);
             btnHuy.TabIndex = 39;
             btnHuy.Text = "Hủy";
-            btnHuy.UseVisualStyleBackColor = false;
             btnHuy.Click += btnHuy_Click;
             // 
             // Frm_TaoDatBan
@@ -391,26 +466,26 @@
         private Label label1;
         private Label label3;
         private Label label4;
-        private Controls.RoundedTextBox txtSoDienThoai;
-        private Controls.RoundedTextBox txtTenKhachHang;
+        private Guna2TextBox txtSoDienThoai;
+        private Guna2TextBox txtTenKhachHang;
         private Label label5;
-        private Controls.RoundedTextBox txtEmail;
+        private Guna2TextBox txtEmail;
         private Label label6;
         private Label label7;
         private Label label8;
-        private DateTimePicker dateNgay;
-        private Button btnExit;
+        private Guna2DateTimePicker dateNgay;
+        private Guna2Button btnExit;
         private Label label9;
         private Controls.TimePickerExStyled timeGio;
-        private Controls.RoundedTextBox txtSoKhach;
+        private Guna2TextBox txtSoKhach;
         private Label label10;
         private Label label11;
-        private ComboBox cbbKhuVuc;
-        private ComboBox cbbSoBan;
+        private Guna2ComboBox cbbKhuVuc;
+        private Guna2ComboBox cbbSoBan;
         private Label label12;
         private Label label14;
-        private Controls.RoundedTextBox txtGhiChu;
-        private Controls.RoundedButton btnTaoDatBan;
-        private Controls.RoundedButton btnHuy;
+        private Guna2TextBox txtGhiChu;
+        private Guna2Button btnTaoDatBan;
+        private Guna2Button btnHuy;
     }
 }

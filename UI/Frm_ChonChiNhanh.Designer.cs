@@ -1,4 +1,6 @@
-﻿namespace UI
+﻿using Guna.UI2.WinForms;
+
+namespace UI
 {
     partial class Frm_ChonChiNhanh
     {
@@ -29,11 +31,11 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            btnExit = new Button();
+            btnExit = new Guna2ControlBox();
             label2 = new Label();
             label3 = new Label();
-            btnTiepTuc = new UI.Controls.RoundedButton();
-            cbbChonChiNhanh = new ComboBox();
+            btnTiepTuc = new Guna2Button();
+            cbbChonChiNhanh = new Guna2ComboBox();
             SuspendLayout();
             // 
             // label1
@@ -48,16 +50,16 @@
             // 
             // btnExit
             // 
-            btnExit.FlatAppearance.BorderSize = 0;
-            btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnExit.Animated = true;
+            btnExit.BorderRadius = 10;
+            btnExit.FillColor = Color.Transparent;
+            btnExit.IconColor = Color.Black;
             btnExit.Location = new Point(517, 0);
             btnExit.Margin = new Padding(3, 2, 3, 2);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(55, 43);
             btnExit.TabIndex = 1;
-            btnExit.Text = "✖";
-            btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 
             // label2
@@ -82,30 +84,43 @@
             // 
             // btnTiepTuc
             // 
-            btnTiepTuc.BackColor = Color.FromArgb(31, 111, 235);
-            btnTiepTuc.BorderThickness = 0;
-            btnTiepTuc.FlatStyle = FlatStyle.Flat;
+            btnTiepTuc.Animated = true;
+            btnTiepTuc.BorderRadius = 15;
+            btnTiepTuc.DisabledState.BorderColor = Color.DarkGray;
+            btnTiepTuc.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnTiepTuc.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnTiepTuc.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnTiepTuc.FillColor = Color.FromArgb(31, 111, 235);
             btnTiepTuc.Font = new Font("Segoe UI", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTiepTuc.ForeColor = Color.White;
             btnTiepTuc.Location = new Point(445, 220);
             btnTiepTuc.Margin = new Padding(3, 2, 3, 2);
             btnTiepTuc.Name = "btnTiepTuc";
-            btnTiepTuc.Padding = new Padding(9, 4, 9, 4);
+            btnTiepTuc.ShadowDecoration.BorderRadius = 15;
+            btnTiepTuc.ShadowDecoration.Depth = 3;
+            btnTiepTuc.ShadowDecoration.Enabled = true;
             btnTiepTuc.Size = new Size(106, 32);
             btnTiepTuc.TabIndex = 5;
             btnTiepTuc.Text = "Tiếp Tục";
-            btnTiepTuc.UseVisualStyleBackColor = false;
             btnTiepTuc.Click += btnTiepTuc_Click;
             // 
             // cbbChonChiNhanh
             // 
+            cbbChonChiNhanh.BackColor = Color.Transparent;
+            cbbChonChiNhanh.BorderColor = Color.FromArgb(225, 229, 234);
+            cbbChonChiNhanh.BorderRadius = 10;
+            cbbChonChiNhanh.BorderThickness = 2;
+            cbbChonChiNhanh.DrawMode = DrawMode.OwnerDrawFixed;
             cbbChonChiNhanh.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbbChonChiNhanh.FlatStyle = FlatStyle.Popup;
+            cbbChonChiNhanh.FillColor = Color.White;
+            cbbChonChiNhanh.FocusedColor = Color.FromArgb(31, 111, 235);
+            cbbChonChiNhanh.FocusedState.BorderColor = Color.FromArgb(31, 111, 235);
             cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cbbChonChiNhanh.FormattingEnabled = true;
+            cbbChonChiNhanh.ForeColor = Color.FromArgb(68, 88, 112);
+            cbbChonChiNhanh.ItemHeight = 30;
             cbbChonChiNhanh.Location = new Point(31, 163);
             cbbChonChiNhanh.Name = "cbbChonChiNhanh";
-            cbbChonChiNhanh.Size = new Size(487, 31);
+            cbbChonChiNhanh.Size = new Size(487, 36);
             cbbChonChiNhanh.TabIndex = 6;
             // 
             // Frm_ChonChiNhanh
@@ -134,10 +149,10 @@
         #endregion
 
         private Label label1;
-        private Button btnExit;
+        private Guna2ControlBox btnExit;
         private Label label2;
         private Label label3;
-        private Controls.RoundedButton btnTiepTuc;
-        private ComboBox cbbChonChiNhanh;
+        private Guna2Button btnTiepTuc;
+        private Guna2ComboBox cbbChonChiNhanh;
     }
 }

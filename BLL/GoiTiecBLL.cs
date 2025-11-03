@@ -13,7 +13,6 @@ namespace BLL
             _dal = new GoiTiecDAL();
         }
 
-        // Lấy tất cả gói tiệc
         public DataTable GetAllGoiTiec()
         {
             try
@@ -26,7 +25,6 @@ namespace BLL
             }
         }
 
-        // Lấy thông tin gói tiệc theo ID
         public DataRow GetGoiTiecById(int goiId)
         {
             try
@@ -42,14 +40,12 @@ namespace BLL
             }
         }
 
-        // Thêm gói tiệc mới
         public bool ThemGoiTiec(string maGoi, string tenGoi, decimal giaCoBan, out string errorMessage)
         {
             errorMessage = string.Empty;
 
             try
             {
-                // Validate dữ liệu
                 if (string.IsNullOrWhiteSpace(maGoi))
                 {
                     errorMessage = "Vui lòng nhập mã gói!";
@@ -68,7 +64,6 @@ namespace BLL
                     return false;
                 }
 
-                // Kiểm tra mã gói đã tồn tại
                 if (_dal.KiemTraMaGoiTonTai(maGoi.Trim()))
                 {
                     errorMessage = $"Mã gói '{maGoi}' đã tồn tại!";
@@ -84,14 +79,12 @@ namespace BLL
             }
         }
 
-        // Cập nhật gói tiệc
         public bool CapNhatGoiTiec(int goiId, string maGoi, string tenGoi, decimal giaCoBan, out string errorMessage)
         {
             errorMessage = string.Empty;
 
             try
             {
-                // Validate dữ liệu
                 if (goiId <= 0)
                 {
                     errorMessage = "ID gói tiệc không hợp lệ!";
@@ -116,7 +109,6 @@ namespace BLL
                     return false;
                 }
 
-                // Kiểm tra mã gói đã tồn tại (trừ chính nó)
                 if (_dal.KiemTraMaGoiTonTai(maGoi.Trim(), goiId))
                 {
                     errorMessage = $"Mã gói '{maGoi}' đã tồn tại!";
@@ -132,7 +124,6 @@ namespace BLL
             }
         }
 
-        // Xóa gói tiệc
         public bool XoaGoiTiec(int goiId, out string errorMessage)
         {
             errorMessage = string.Empty;
@@ -154,7 +145,6 @@ namespace BLL
             }
         }
 
-        // Tìm kiếm gói tiệc
         public DataTable TimKiemGoiTiec(string keyword)
         {
             try
@@ -170,19 +160,16 @@ namespace BLL
             }
         }
 
-        // Format tiền
         public string FormatTien(decimal amount)
         {
             return amount.ToString("#,##0") + " đ";
         }
 
-        // Parse tiền từ string
         public decimal ParseTien(string tienText)
         {
             if (string.IsNullOrWhiteSpace(tienText))
                 return 0;
 
-            // Loại bỏ các ký tự không phải số
             string cleanText = tienText.Replace("đ", "").Replace(".", "").Replace(",", "").Trim();
 
             if (decimal.TryParse(cleanText, out decimal result))

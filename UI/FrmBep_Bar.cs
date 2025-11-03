@@ -11,18 +11,22 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Printing;
 using UI.Common;
 using UI.Controls;
+using Sunny.UI;
+using Timer = System.Windows.Forms.Timer;
 
 namespace UI
 {
     [SupportedOSPlatform("windows")]
-    public partial class FrmBep_Bar : Form
+    public partial class FrmBep_Bar : Form, IFormRefreshable
     {
         private DatabaseHelper _dbHelper;
         private KOTBLL _kotBLL;
         private List<KOTTicket> _kotTickets = new List<KOTTicket>();
         private KOTStatus _currentStatus = KOTStatus.Pending;
+        private Timer _autoRefreshTimer;
 
         public enum KOTStatus
         {
@@ -56,6 +60,12 @@ namespace UI
             InitializeComponent();
             _dbHelper = new DatabaseHelper();
             _kotBLL = new KOTBLL(_dbHelper);
+            this.Load += FrmBep_Bar_Load;
+            this.FormClosing += (s, e) =>
+            {
+                _autoRefreshTimer?.Stop();
+                _autoRefreshTimer?.Dispose();
+            };
         }
 
         private void FrmBep_Bar_Load(object sender, EventArgs e)
@@ -82,6 +92,37 @@ namespace UI
         private void SetupEventHandlers()
         {
             segmentedPill1.SelectedIndexChanged += SegmentedPill1_SelectedIndexChanged;
+            
+            // Auto-refresh timer: refresh mỗi 5 giây khi form đang visible
+            _autoRefreshTimer = new Timer { Interval = 5000 }; // 5 giây
+            _autoRefreshTimer.Tick += (s, e) =>
+            {
+                if (this.Visible && this.Parent != null && this.Parent.Visible)
+                {
+                    RefreshData();
+                }
+            };
+            _autoRefreshTimer.Start(); // Bắt đầu timer ngay sau khi load
+        }
+        
+        /// <summary>
+        /// Implement IFormRefreshable - Refresh dữ liệu khi form được chọn lại
+        /// </summary>
+        public void RefreshData()
+        {
+            try
+            {
+                // Chỉ refresh nếu form đang visible để tránh refresh không cần thiết
+                if (this.Visible && this.Parent != null)
+                {
+                    LoadKOTTickets();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silent fail để tránh spam error
+                System.Diagnostics.Debug.WriteLine($"FrmBep_Bar RefreshData error: {ex.Message}");
+            }
         }
 
         private void LoadKOTTickets()
@@ -90,7 +131,6 @@ namespace UI
             {
                 if (!TestDatabaseConnection())
                 {
-                    CreateSampleData();
                     DisplayKOTTickets();
                     UpdateStatistics();
                     return;
@@ -98,7 +138,6 @@ namespace UI
                 
                 if (Session.ChiNhanhId <= 0)
                 {
-                    CreateSampleData();
                     DisplayKOTTickets();
                     UpdateStatistics();
                     return;
@@ -108,33 +147,15 @@ namespace UI
                 
                 ProcessKOTData(dt);
                 
-                if (_kotTickets.Count == 0)
-                {
-                    CreateSampleData();
-                }
-                
                 DisplayKOTTickets();
                 UpdateStatistics();
             }
             catch (Exception ex)
             {
-                CreateSampleData();
                 DisplayKOTTickets();
                 UpdateStatistics();
             }
         }
-
-        private string GetStatusString(KOTStatus status)
-        {
-            switch (status)
-            {
-                case KOTStatus.Pending: return "ĐANG PHỤC VỤ";
-                case KOTStatus.InProgress: return "CHỜ THANH TOÁN";
-                case KOTStatus.Ready: return "ĐÃ ĐÓNG";
-                default: return "ĐANG PHỤC VỤ"; // Default to Pending status
-            }
-        }
-
 
         private void ProcessKOTData(DataTable dt)
         {
@@ -144,6 +165,15 @@ namespace UI
             {
                 foreach (DataRow row in dt.Rows)
                 {
+                    var trangThai = row["trang_thai"]?.ToString() ?? "";
+                    
+                    var trangThaiUpper = trangThai.ToUpper().Trim();
+                    if (trangThaiUpper == "ĐÃ ĐÓNG" || trangThaiUpper == "DA DONG" || trangThaiUpper == "ĐÃĐÓNG")
+                    {
+                        continue; // Không thêm vào danh sách
+                    }
+                    
+                    var status = GetStatusFromString(trangThai);
                     var soBan = row["so_ban"].ToString();
                     var tableName = soBan == "TIỆC" ? "Tiệc cưới" : $"Bàn {soBan}";
                     
@@ -153,7 +183,7 @@ namespace UI
                         TicketCode = row["ma_kot"].ToString(),
                         TableName = tableName,
                         OrderTime = Convert.ToDateTime(row["thoi_gian_dat"]),
-                        Status = GetStatusFromString(row["trang_thai"].ToString()),
+                        Status = status,
                         IsPriority = Convert.ToBoolean(row["uu_tien"]),
                         Notes = row["ghi_chu"]?.ToString()
                     };
@@ -161,53 +191,6 @@ namespace UI
                     _kotTickets.Add(kot);
                 }
             }
-            else
-            {
-            }
-        }
-
-        private void CreateSampleData()
-        {            
-            var sampleKOT1 = new KOTTicket
-            {
-                KOTId = 1,
-                TicketCode = "KOT001",
-                TableName = "Bàn 01",
-                OrderTime = DateTime.Now.AddMinutes(-30),
-                Status = KOTStatus.Pending,
-                IsPriority = false,
-                Notes = "Không cay"
-            };
-            sampleKOT1.Items.Add(new KOTItem { ItemId = 1, Name = "Phở bò", Quantity = 2 });
-            sampleKOT1.Items.Add(new KOTItem { ItemId = 2, Name = "Bún bò Huế", Quantity = 1 });
-            _kotTickets.Add(sampleKOT1);
-
-            var sampleKOT2 = new KOTTicket
-            {
-                KOTId = 2,
-                TicketCode = "KOT002",
-                TableName = "Bàn 05",
-                OrderTime = DateTime.Now.AddMinutes(-15),
-                Status = KOTStatus.InProgress,
-                IsPriority = true,
-                Notes = "Ưu tiên"
-            };
-            sampleKOT2.Items.Add(new KOTItem { ItemId = 3, Name = "Cơm tấm", Quantity = 3 });
-            sampleKOT2.Items.Add(new KOTItem { ItemId = 4, Name = "Canh chua", Quantity = 2 });
-            _kotTickets.Add(sampleKOT2);
-
-            var sampleKOT3 = new KOTTicket
-            {
-                KOTId = 3,
-                TicketCode = "KOT003",
-                TableName = "Tiệc cưới",
-                OrderTime = DateTime.Now.AddMinutes(-45),
-                Status = KOTStatus.Ready,
-                IsPriority = false,
-                Notes = ""
-            };
-            sampleKOT3.Items.Add(new KOTItem { ItemId = 5, Name = "Bánh mì", Quantity = 4 });
-            _kotTickets.Add(sampleKOT3);
         }
 
         private bool TestDatabaseConnection()
@@ -292,23 +275,56 @@ namespace UI
             }
 
             int cardWidth = 450;
-            int cardHeight = 300;
             int spacing = 20;
             int cardsPerRow = (panelDanhSach.Width - spacing) / (cardWidth + spacing);
+            int currentY = spacing;
+            int currentRowMaxHeight = 0;
 
             for (int i = 0; i < filteredTickets.Count; i++)
             {
                 var kot = filteredTickets[i];
-                var card = CreateKOTCard(kot);
-                int row = i / cardsPerRow;
                 int col = i % cardsPerRow;
+                
+                // Tính chiều cao dựa trên số lượng items
+                int cardHeight = CalculateCardHeight(kot);
+                
+                if (col == 0 && i > 0)
+                {
+                    currentY += currentRowMaxHeight + spacing;
+                    currentRowMaxHeight = 0;
+                }
+                
+                // Cập nhật chiều cao tối đa của hàng hiện tại
+                currentRowMaxHeight = Math.Max(currentRowMaxHeight, cardHeight);
+                
                 int x = spacing + col * (cardWidth + spacing);
-                int y = spacing + row * (cardHeight + spacing);
-
+                int y = currentY;
+                
+                var card = CreateKOTCard(kot);
                 card.Location = new Point(x, y);
                 card.Size = new Size(cardWidth, cardHeight);
                 panelDanhSach.Controls.Add(card);
             }
+        }
+
+        private int CalculateCardHeight(KOTTicket kot)
+        {
+            // Dựa trên layout của KOTTicketCard
+            const int paddingTop = 16;
+            const int paddingBottom = 16;
+            const int titleHeight = 30;
+            const int chipRowHeight = 36;
+            const int itemRowHeight = 24;
+            const int buttonHeight = 40;
+            const int shadowMargin = 8;
+            const int minHeight = 200;
+
+            int baseHeight = paddingTop + titleHeight + chipRowHeight + paddingBottom + buttonHeight + shadowMargin;
+            int itemsHeight = kot.Items.Count * itemRowHeight;
+            int notesHeight = !string.IsNullOrWhiteSpace(kot.Notes) ? 31 : 0;
+
+            int totalHeight = baseHeight + itemsHeight + notesHeight;
+            return Math.Max(minHeight, totalHeight);
         }
 
         private KOTTicketCard CreateKOTCard(KOTTicket kot)
@@ -347,18 +363,74 @@ namespace UI
                 case KOTStatus.Pending:
                     card.ActionText = "Bắt đầu làm";
                     card.StartClicked += (s, e) => StartCooking(kot.KOTId);
+                    card.SecondaryText = "In món";
+                    card.SecondaryVisible = true;
+                    card.SecondaryClicked += (s, e) => PrintKOT(kot);
                     break;
                 case KOTStatus.InProgress:
                     card.ActionText = "Đã xong";
                     card.StartClicked += (s, e) => MarkAsReady(kot.KOTId);
+                    card.SecondaryText = "In món";
+                    card.SecondaryVisible = true;
+                    card.SecondaryClicked += (s, e) => PrintKOT(kot);
                     break;
                 case KOTStatus.Ready:
                     card.ActionText = "Đã phục vụ";
                     card.StartClicked += (s, e) => MarkAsServed(kot.KOTId);
+                    card.SecondaryText = "In món";
+                    card.SecondaryVisible = true;
+                    card.SecondaryClicked += (s, e) => PrintKOT(kot);
                     break;
             }
 
             return card;
+        }
+
+        private void PrintKOT(KOTTicket kot)
+        {
+            try
+            {
+                var lines = new List<string>();
+                lines.Add($"KOT: {kot.TicketCode}");
+                lines.Add($"Bàn: {kot.TableName}");
+                lines.Add($"Thời gian: {kot.OrderTime:HH:mm dd/MM/yyyy}");
+                if (!string.IsNullOrWhiteSpace(kot.Notes))
+                {
+                    lines.Add($"Ghi chú: {kot.Notes}");
+                }
+                lines.Add("------------------------------");
+                foreach (var it in kot.Items)
+                {
+                    var note = string.IsNullOrWhiteSpace(it.Notes) ? "" : $" – {it.Notes}";
+                    lines.Add($"{it.Quantity}x {it.Name}{note}");
+                }
+
+                string content = string.Join("\n", lines);
+
+                using (var doc = new PrintDocument())
+                {
+                    doc.DocumentName = $"KOT_{kot.TicketCode}";
+                    doc.PrintPage += (s, e) =>
+                    {
+                        var font = new Font("Segoe UI", 10f);
+                        e.Graphics.DrawString(content, font, Brushes.Black, new RectangleF(40, 40, e.PageBounds.Width - 80, e.PageBounds.Height - 80));
+                        e.HasMorePages = false;
+                    };
+
+                    using (var dlg = new PrintDialog())
+                    {
+                        dlg.Document = doc;
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                        {
+                            doc.Print();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GunaToast.Show(this, $"Lỗi in: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
+            }
         }
 
         private void StartCooking(int kotId)
@@ -376,17 +448,17 @@ namespace UI
                         kot.Status = KOTStatus.InProgress;
                         UpdateStatistics();
                         DisplayKOTTickets();
-                        MessageBox.Show($"Đã bắt đầu làm {kot.TicketCode}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        GunaToast.Show(this, $"Đã bắt đầu làm {kot.TicketCode}", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
                     }
                     else
                     {
-                        MessageBox.Show($"Không thể cập nhật trạng thái {kot.TicketCode}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        GunaToast.Show(this, $"Không thể cập nhật trạng thái {kot.TicketCode}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                GunaToast.Show(this, $"Lỗi: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -404,17 +476,17 @@ namespace UI
                         kot.Status = KOTStatus.Ready;
                         UpdateStatistics();
                         DisplayKOTTickets();
-                        MessageBox.Show($"Đã hoàn thành {kot.TicketCode}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        GunaToast.Show(this, $"Đã hoàn thành {kot.TicketCode}", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
                     }
                     else
                     {
-                        MessageBox.Show($"Không thể cập nhật trạng thái {kot.TicketCode}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        GunaToast.Show(this, $"Không thể cập nhật trạng thái {kot.TicketCode}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                GunaToast.Show(this, $"Lỗi: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -433,17 +505,17 @@ namespace UI
                         _kotTickets.Remove(kot);
                         UpdateStatistics();
                         DisplayKOTTickets();
-                        MessageBox.Show($"Đã phục vụ {kot.TicketCode}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        GunaToast.Show(this, $"Đã phục vụ {kot.TicketCode}", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
                     }
                     else
                     {
-                        MessageBox.Show($"Không thể cập nhật trạng thái {kot.TicketCode}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        GunaToast.Show(this, $"Không thể cập nhật trạng thái {kot.TicketCode}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                GunaToast.Show(this, $"Lỗi: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
 

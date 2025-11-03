@@ -14,7 +14,7 @@ namespace DAL
             _dbHelper = new DatabaseHelper();
         }
 
-        // Lấy tất cả gói tiệc
+       
         public DataTable GetAllGoiTiec()
         {
             string query = @"
@@ -36,7 +36,7 @@ namespace DAL
             }
         }
 
-        // Lấy thông tin gói tiệc theo ID
+       
         public DataRow GetGoiTiecById(int goiId)
         {
             string query = @"
@@ -59,7 +59,7 @@ namespace DAL
             }
         }
 
-        // Thêm gói tiệc mới
+   
         public bool ThemGoiTiec(string maGoi, string tenGoi, decimal giaCoBan)
         {
             string query = @"
@@ -83,7 +83,6 @@ namespace DAL
             }
         }
 
-        // Cập nhật gói tiệc
         public bool CapNhatGoiTiec(int goiId, string maGoi, string tenGoi, decimal giaCoBan)
         {
             string query = @"
@@ -111,7 +110,7 @@ namespace DAL
             }
         }
 
-        // Xóa gói tiệc
+    
         public bool XoaGoiTiec(int goiId)
         {
             string query = "DELETE FROM dbo.goi_tiec WHERE goi_id = @goiId";
@@ -131,7 +130,7 @@ namespace DAL
             }
         }
 
-        // Kiểm tra mã gói đã tồn tại chưa
+      
         public bool KiemTraMaGoiTonTai(string maGoi, int? goiIdBoQua = null)
         {
             string query = @"
@@ -164,7 +163,7 @@ namespace DAL
             }
         }
 
-        // Tìm kiếm gói tiệc
+    
         public DataTable TimKiemGoiTiec(string keyword)
         {
             string query = @"

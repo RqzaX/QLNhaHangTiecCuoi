@@ -40,13 +40,10 @@ namespace UI
         {
             try
             {
-                // Load danh sách nguyên liệu
                 LoadNguyenLieu();
                 
-                // Load danh sách chi nhánh
                 LoadChiNhanh();
                 
-                // Set ngày mặc định
                 dateNgayChuyen.Value = DateTime.Now;
             }
             catch (Exception ex)
@@ -154,7 +151,6 @@ namespace UI
                 int chiNhanhDichId = selectedChiNhanhDich.Value;
                 int nlId = selectedNguyenLieu.Value;
 
-                // Kiểm tra tồn kho ở chi nhánh nguồn
                 if (!_bll.KiemTraTonKhoDu(chiNhanhNguonId, nlId, soLuong))
                 {
                     decimal tonHienTai = _bll.LayTonKhoTaiChiNhanh(chiNhanhNguonId, nlId);
@@ -163,15 +159,12 @@ namespace UI
                     return;
                 }
 
-                // Tạo mã phiếu chuyển kho
                 string maPhieu = "PCK" + DateTime.Now.ToString("yyyyMMddHHmmss");
                 
-                // Chuyển kho trực tiếp
                 int result = _bll.ChuyenKho(chiNhanhNguonId, chiNhanhDichId, nlId, soLuong);
 
                 if (result > 0)
                 {
-                    // Hiển thị thông báo thành công
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("CHUYỂN KHO THÀNH CÔNG!");
                     sb.AppendLine("══════════════════════════════");
@@ -185,7 +178,6 @@ namespace UI
 
                     MessageBox.Show(sb.ToString(), "Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
-                    // Reset form
                     ResetForm();
                     
                     this.DialogResult = DialogResult.OK;

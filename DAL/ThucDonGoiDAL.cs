@@ -14,7 +14,7 @@ namespace DAL
             _dbHelper = new DatabaseHelper(connectionString);
         }
 
-        // Lấy danh sách món ăn
+        
         public DataTable GetDanhSachMonAn()
         {
             string query = @"
@@ -38,7 +38,7 @@ namespace DAL
             }
         }
 
-        // Lấy danh sách gói tiệc
+      
         public DataTable GetDanhSachGoiTiec()
         {
             string query = @"
@@ -62,10 +62,9 @@ namespace DAL
             }
         }
 
-        // Xóa món ăn
-       
+   
 
-        // Xóa gói tiệc
+    
         public bool XoaGoiTiec(int goiId)
         {
             string query = "DELETE FROM dbo.goi_tiec WHERE goi_id = @goiId";
@@ -84,7 +83,7 @@ namespace DAL
             }
         }
 
-        // Lấy chi tiết món ăn
+  
         public DataRow GetChiTietMonAn(int monId)
         {
             string query = @"
@@ -107,7 +106,7 @@ namespace DAL
             }
         }
 
-        // Lấy chi tiết gói tiệc
+  
         public DataRow GetChiTietGoiTiec(int goiId)
         {
             string query = @"
@@ -130,7 +129,7 @@ namespace DAL
             }
         }
 
-        // Tìm kiếm món ăn
+    
         public DataTable TimKiemMonAn(string keyword)
         {
             string query = @"
@@ -159,7 +158,7 @@ namespace DAL
             }
         }
 
-        // Tìm kiếm gói tiệc
+  
         public DataTable TimKiemGoiTiec(string keyword)
         {
             string query = @"
@@ -188,13 +187,13 @@ namespace DAL
             }
         }
 
-        // Test kết nối
+     
         public bool TestConnection()
         {
             return _dbHelper.TestConnection();
         }
 
-        // INSERT
+     
         public int ThemMonAn(string maMon, string tenMon, string nhom, string donViTinh, decimal donGia, bool dangBan)
         {
             const string sql = @"
@@ -223,7 +222,7 @@ namespace DAL
             }
         }
 
-        // UPDATE
+  
         public int CapNhatMonAn(int monId, string maMon, string tenMon, string nhom, string donViTinh, decimal donGia, bool dangBan)
         {
             const string sql = @"
@@ -290,7 +289,7 @@ namespace DAL
 
             var prms = new[] { new SqlParameter("@id", monId) };
 
-            // Dùng đúng helper có sẵn
+          
             DataTable dt = _dbHelper.GetDataTable(sql, prms);
             return (dt != null && dt.Rows.Count > 0) ? dt.Rows[0] : null;
         }

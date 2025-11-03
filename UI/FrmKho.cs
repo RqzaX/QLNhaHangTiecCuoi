@@ -95,7 +95,6 @@ namespace UI
                 DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
 
-            // === CỘT GIÁ TRỊ ===
            
 
             if (dgvKho.Columns["colChiTiet"] == null)
@@ -121,7 +120,6 @@ namespace UI
     cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
     txtSearch.TextChanged += txtSearch_TextChanged;
 
-    // THÊM:
 
         }
         private void LoadBranchCombo()
@@ -143,14 +141,12 @@ namespace UI
             }
         }
 
-        // Helper method để lấy chi nhánh có dữ liệu tồn kho
         private List<(int BranchId, string BranchName)> GetBranchesWithInventoryData()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
                 
-                // Sử dụng BLL để lấy danh sách chi nhánh có dữ liệu tồn kho
                 var branchesData = _bll.LayChiNhanhCoDuLieuTonKho();
                 
                 if (branchesData != null)
@@ -175,14 +171,12 @@ namespace UI
             }
         }
 
-        // Helper method để lấy tất cả chi nhánh
         private List<(int BranchId, string BranchName)> GetAllBranches()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
                 
-                // Sử dụng BLL để lấy tất cả chi nhánh
                 var allBranches = _bll.LayTatCaChiNhanh();
                 
                 if (allBranches != null)
@@ -231,33 +225,31 @@ namespace UI
 
         public void ReloadGrid()
         {
-            // 1) Lấy tất cả (có lọc theo chi nhánh)
             DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
             if (tb == null) { dgvKho.DataSource = null; return; }
 
-            // 2) Lọc tại UI theo combobox
             var stt = GetTinhTrang();
             var dv = tb.DefaultView;
 
             string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
-            // RowFilter dùng InvariantCulture cho số thập phân
+            
             switch (stt)
             {
-                case 1: // Còn hàng
+                case 1: 
                     dv.RowFilter = "sl_ton > 0";
                     break;
-                case 2: // Hết hàng
+                case 2: 
                     dv.RowFilter = "sl_ton = 0";
                     break;
-                case 3: // Sắp hết: 0 < sl_ton <= ngưỡng
+                case 3:
                     dv.RowFilter = $"sl_ton > 0 AND sl_ton <= {canhBao}";
                     break;
-                default: // Tất cả
+                default:
                     dv.RowFilter = string.Empty;
                     break;
             }
 
-            // 3) (tuỳ chọn) tính cột Giá trị nếu dataset chưa có
+        
             if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
             foreach (DataRow r in tb.Rows)
             {
@@ -278,9 +270,9 @@ namespace UI
                 r["GiaTri"] = giaTri;
             }
 
-            // 4) Bind
+          
             dgvKho.DataSource = null;
-            dgvKho.DataSource = dv.ToTable();     // lấy bảng sau khi đã lọc
+            dgvKho.DataSource = dv.ToTable();  
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -359,8 +351,8 @@ namespace UI
         {
             using (var f = new UI.FrmNguyenLieuChiTiet(
         nlId,
-        CurrentBranchId,                           // id chi nhánh hiện tại
-        _bll                                        // truyền thẳng BLL đang dùng
+        CurrentBranchId,                         
+        _bll                                       
     ))
             {
                 f.StartPosition = FormStartPosition.CenterParent;
@@ -405,12 +397,12 @@ namespace UI
         {
             try
             {
-                // Lấy toàn bộ tồn kho theo chi nhánh
+                
                 var all = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
 
                 int tongMatHang = all?.Rows.Count ?? 0;
 
-                // Đếm hết hàng (=0) và sắp hết (0 < sl_ton ≤ ngưỡng)
+               
                 int hetHang = 0, sapHet = 0;
                 decimal tongGiaTri = 0m;
 
@@ -425,7 +417,7 @@ namespace UI
                         if (all.Columns.Contains("sl_ton"))
                             slTon = Convert.ToDecimal(r["sl_ton"]);
 
-                        // Ưu tiên cột đã tính sẵn "gia_tri"; nếu không có thì thử sl_ton * gia_nhap
+                      
                         if (all.Columns.Contains("gia_tri"))
                             giaTri = Convert.ToDecimal(r["gia_tri"]);
                         else if (all.Columns.Contains("gia_nhap"))
@@ -441,13 +433,13 @@ namespace UI
                 }
 
                
-                label8.Text = tongMatHang.ToString();     // Tổng mặt hàng
-                label9.Text = sapHet.ToString();          // Sắp hết hàng
-                label10.Text = hetHang.ToString();         // Hết hàng
+                label8.Text = tongMatHang.ToString();     
+                label9.Text = sapHet.ToString();          
+                label10.Text = hetHang.ToString();         
             }
             catch
             {
-                // Nếu có lỗi dữ liệu, vẫn an toàn gán về 0 để không vỡ UI
+                
               
                 label8.Text = "0";
                 label9.Text = "0";
@@ -460,7 +452,7 @@ namespace UI
 
         }
 
-        // Public method to set branch ID from outside
+      
         public void SetBranchId(int branchId)
         {
             _selectedBranchId = branchId;
@@ -468,13 +460,13 @@ namespace UI
             UpdateSummaryPanels();
         }
 
-        // Method to get current branch ID
+       
         public int GetCurrentBranchId()
         {
             return _selectedBranchId;
         }
 
-        // Method to show branch selection dialog (simplified)
+        
         public void ShowBranchSelection()
         {
             try

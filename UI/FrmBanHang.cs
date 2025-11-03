@@ -12,7 +12,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UI.Controls;
+using Guna.UI2.WinForms;
 using UI.Common;
+using Sunny.UI;
+using Tulpep.NotificationWindow;
 using Windows.UI.Notifications;
 
 namespace UI
@@ -27,7 +30,7 @@ namespace UI
         private const int BUTTON_HEIGHT = 150;
         private const int SPACING_X = -5;
         private const int SPACING_Y = -5;
-        private RoundedButton _btnTatCaSelected;
+        private Guna2Button _btnTatCaSelected;
         // Giỏ hàng
         private List<OrderItemCard> _cartItems = new List<OrderItemCard>();
         // Thông tin bàn đã chọn
@@ -54,8 +57,20 @@ namespace UI
             
             // Cập nhật UI
             btnChonBan.Text = $"{soBan}    PHỤC VỤ\n👥 {soKhach} khách";
-            btnChonBan.TextAlign = ContentAlignment.MiddleLeft;
-            btnChonBan.Padding = new Padding(14, 10, 14, 10);
+            // Guna2Button uses TextOffset instead of TextAlign for alignment
+            if (btnChonBan is Guna2Button gb)
+            {
+                // Điều chỉnh font size để text không bị cắt
+                gb.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
+                gb.TextOffset = new Point(14, 0);
+                gb.Padding = new Padding(14, 8, 14, 8);
+                // Tăng height nếu text dài để đủ hiển thị
+                if (gb.Height < 50)
+                {
+                    gb.Height = 50;
+                }
+            }
+            // Note: btnChonBan is always Guna2Button now, so no else clause needed
             ApplySelectedTableStyle("PHỤC VỤ");
         }
 
@@ -64,17 +79,14 @@ namespace UI
             LoadDanhSachNhomDynamic();
             LoadDanhSachMon();
             SetupSearchFunctionality();
-            
             btnXoaTatCaMon.Click += btnXoaTatCaMon_Click;
-            
-            // Wire up event handlers
             SetupEventHandlers();
         }
 
         private void SetupEventHandlers()
         {
-            // Tìm nút "Gửi xuống bếp" và wire up event
-            var btnGuiXuongBep = this.Controls.Find("roundedButton10", true).FirstOrDefault() as RoundedButton;
+            // Tìm nút "Gửi xuống bếp"
+            var btnGuiXuongBep = this.Controls.Find("btnGuiXuongBep", true).FirstOrDefault() as Guna2Button;
             if (btnGuiXuongBep != null)
             {
                 btnGuiXuongBep.Click += GuiDonXuongBep_Click;
@@ -87,7 +99,7 @@ namespace UI
                 panelNhomMon.Controls.Clear();
 
                 // Tạo button "Tất cả" 
-                RoundedButton btnTatCa = CreateNhomButton("Tất cả", null);
+                Guna2Button btnTatCa = CreateNhomButton("Tất cả", null);
                 btnTatCa.Location = new Point(5, 10); 
                 panelNhomMon.Controls.Add(btnTatCa);
                 _btnTatCaSelected = btnTatCa;
@@ -106,7 +118,7 @@ namespace UI
                         if (string.IsNullOrWhiteSpace(tenNhom))
                             continue;
 
-                        RoundedButton btn = CreateNhomButton(tenNhom, tenNhom);
+                        Guna2Button btn = CreateNhomButton(tenNhom, tenNhom);
                         btn.Location = new Point(x, y);
                         panelNhomMon.Controls.Add(btn);
                         
@@ -225,8 +237,8 @@ namespace UI
             }
             
             UpdateOrderCount();
-            
-            ThongBaoGoc.ShowSuccess(this, $"Đã thêm: {mon.TenMon}\nGiá: {mon.DonGia:N0} đ", autoHide: true, durationMs: 1500);
+
+            GunaToast.Show(this, $"Đã thêm: {mon.TenMon}\nGiá: {mon.DonGia:N0} đ", UI.Controls.ToastType.Success, 2600, UI.Controls.ToastPos.TopRight);
         }
         private void btnTenMon_Click(object sender, EventArgs e)
         {
@@ -249,10 +261,18 @@ namespace UI
                     // Lưu thông tin bàn đã chọn
                     _selectedSoBan = soBan;
                     _selectedBanId = GetBanIdFromSoBan(soBan);
-
                     btnChonBan.Text = $"{soBan}    {trangThai}\n👥 0/{sucChua} khách";
-                    btnChonBan.TextAlign = ContentAlignment.MiddleLeft;
-                    btnChonBan.Padding = new Padding(14, 10, 14, 10);
+                    if (btnChonBan is Guna2Button gb)
+                    {
+                        gb.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
+                        gb.TextOffset = new Point(14, 0);
+                        gb.Padding = new Padding(14, 8, 14, 8);
+                        // Tăng height
+                        if (gb.Height < 50)
+                        {
+                            gb.Height = 50;
+                        }
+                    }
                     ApplySelectedTableStyle(trangThai);
                 }
             }
@@ -269,7 +289,7 @@ namespace UI
             {
                 if (_cartItems.Count == 0)
                 {
-                    ThongBaoGoc.ShowWarning(this, "Giỏ hàng đã trống!", autoHide: true, durationMs: 2000);
+                    GunaToast.Show(this, "Giỏ hàng đã trống!", UI.Controls.ToastType.Info, 2000, UI.Controls.ToastPos.TopRight);
                     return;
                 }
 
@@ -292,12 +312,12 @@ namespace UI
                     
                     UpdateOrderCount();
                     
-                    ThongBaoGoc.ShowSuccess(this, "Đã xóa tất cả món trong giỏ hàng!", autoHide: true, durationMs: 2000);
+                    GunaToast.Show(this, "Đã xóa tất cả món trong giỏ hàng!", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
                 }
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, $"Lỗi khi xóa món: {ex.Message}", autoHide: true, durationMs: 3000);
+                GunaToast.Show(this, $"Lỗi khi xóa món: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -330,25 +350,14 @@ namespace UI
                 border = Color.FromArgb(245, 158, 11);  // Amber-500
             }
 
-            btnChonBan.FlatStyle = FlatStyle.Flat;
-            btnChonBan.FlatAppearance.BorderSize = 0;
-            btnChonBan.FlatAppearance.MouseOverBackColor = back;
-            btnChonBan.FlatAppearance.MouseDownBackColor = back;
-            btnChonBan.UseVisualStyleBackColor = false;
-            btnChonBan.BackColor = back;
-            btnChonBan.ForeColor = text;
-
-            if (btnChonBan is RoundedButton rb)
+            if (btnChonBan is Guna2Button rb)
             {
                 Color customHover = Blend(back, border, 0.12);
                 Color customDown = Blend(back, border, 0.22);
-                rb.HoverBackColor = customHover;
-                rb.PressedBackColor = customDown;
-                rb.BackColor = back;
-            }
-            else
-            {
-                ApplyCustomHover(btnChonBan, back, border);
+                rb.HoverState.FillColor = customHover;
+                rb.FillColor = back;
+                rb.ForeColor = text;
+                // Guna2Button doesn't have PressedState.FillColor, use HoverState instead
             }
         }
 
@@ -418,13 +427,13 @@ namespace UI
             {
                 if (_selectedBanId == 0 || string.IsNullOrEmpty(_selectedSoBan))
                 {
-                    ThongBaoGoc.ShowWarning(this, "Vui lòng chọn bàn trước khi gửi đơn!", autoHide: true, durationMs: 2000);
+                    GunaToast.Show(this, "Vui lòng chọn bàn trước khi gửi đơn!", UI.Controls.ToastType.Info, 2000, UI.Controls.ToastPos.TopRight);
                     return;
                 }
 
                 if (_cartItems.Count == 0)
                 {
-                    ThongBaoGoc.ShowWarning(this, "Giỏ hàng trống! Vui lòng thêm món trước khi gửi đơn.", autoHide: true, durationMs: 2000);
+                    GunaToast.Show(this, "Giỏ hàng trống! Vui lòng thêm món trước khi gửi đơn.", UI.Controls.ToastType.Info, 2000, UI.Controls.ToastPos.TopRight);
                     return;
                 }
 
@@ -460,24 +469,24 @@ namespace UI
                     _cartItems.Clear();
                     UpdateOrderCount();
 
-                    ThongBaoGoc.ShowSuccess(this, $"Đã gửi đơn cho {_selectedSoBan} xuống bếp thành công!", autoHide: true, durationMs: 2000);
+                    GunaToast.Show(this, $"Đã gửi đơn cho {_selectedSoBan} xuống bếp thành công!", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
                 }
                 else
                 {
-                    ThongBaoGoc.ShowError(this, "Có lỗi xảy ra khi gửi đơn xuống bếp!", autoHide: true, durationMs: 3000);
+                    GunaToast.Show(this, "Có lỗi xảy ra khi gửi đơn xuống bếp!", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
                 }
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, $"Lỗi gửi đơn: {ex.Message}", autoHide: true, durationMs: 3000);
+                GunaToast.Show(this, $"Lỗi gửi đơn: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
-        private RoundedButton CreateNhomButton(string displayName, string nhomName)
+        private Guna2Button CreateNhomButton(string displayName, string nhomName)
         {
             int textWidth = TextRenderer.MeasureText(displayName, new Font("Segoe UI", 11, FontStyle.Bold)).Width;
             int buttonWidth = Math.Max(120, textWidth + 20);
             
-            RoundedButton btn = new RoundedButton
+            Guna2Button btn = new Guna2Button
             {
                 Text = displayName,
                 Name = $"btnNhom_{displayName}",
@@ -485,29 +494,30 @@ namespace UI
                 Height = 33,
                 Margin = new Padding(5, 5, 5, 5),
                 Tag = nhomName,
-                FlatStyle = FlatStyle.Flat,
-                FlatAppearance = { BorderSize = 0, BorderColor = System.Drawing.Color.LightGray },
-                BackColor = System.Drawing.Color.White,
-                ForeColor = System.Drawing.Color.Black,
-                Font = new System.Drawing.Font("Segoe UI", 11, System.Drawing.FontStyle.Bold),
+                FillColor = Color.White,
+                ForeColor = Color.Black,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 Cursor = Cursors.Hand,
-                TextAlign = ContentAlignment.MiddleCenter
+                BorderRadius = 10,
+                BorderColor = Color.FromArgb(225, 229, 234),
+                BorderThickness = 1,
+                Animated = true
             };
 
             btn.Click += (s, e) => BtnNhom_Click(btn);
 
             return btn;
         }
-        private void BtnNhom_Click(RoundedButton btn)
+        private void BtnNhom_Click(Guna2Button btn)
         {
             if (_btnTatCaSelected != null)
             {
-                _btnTatCaSelected.BackColor = System.Drawing.Color.White;
-                _btnTatCaSelected.ForeColor = System.Drawing.Color.Black;
+                _btnTatCaSelected.FillColor = Color.White;
+                _btnTatCaSelected.ForeColor = Color.Black;
             }
 
-            btn.BackColor = System.Drawing.Color.FromArgb(31, 111, 235);
-            btn.ForeColor = System.Drawing.Color.White;
+            btn.FillColor = Color.FromArgb(31, 111, 235);
+            btn.ForeColor = Color.White;
             _btnTatCaSelected = btn;
 
             string nhom = btn.Tag as string;
@@ -726,7 +736,7 @@ namespace UI
                     label.Dispose();
                 }
 
-                var allButtons = panelNhomMon.Controls.OfType<RoundedButton>().ToList();
+                var allButtons = panelNhomMon.Controls.OfType<Guna2Button>().ToList();
                 var matchingButtons = allButtons.Where(btn => 
                     btn.Text.ToLower().Contains(searchText.ToLower())).ToList();
 
