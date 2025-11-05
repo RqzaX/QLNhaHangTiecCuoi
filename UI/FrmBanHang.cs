@@ -17,6 +17,7 @@ using UI.Common;
 using Sunny.UI;
 using Tulpep.NotificationWindow;
 using Windows.UI.Notifications;
+using BLL; // OrderBLL
 
 namespace UI
 {
@@ -36,12 +37,15 @@ namespace UI
         // Thông tin bàn đã chọn
         private int _selectedBanId = 0;
         private string _selectedSoBan = "";
+        private int? _phieuOrderId = null;
+        private readonly OrderBLL _orderBLL;
         public FrmBanHang()
         {
             InitializeComponent();
             _dbHelper = new DatabaseHelper();
             _bll = new MonAnBLL(_dbHelper);
             _kotBLL = new KOTBLL(_dbHelper);
+            _orderBLL = new OrderBLL(_dbHelper);
         }
 
         public FrmBanHang(string soBan, string tenKhachHang, int soKhach)
@@ -50,6 +54,7 @@ namespace UI
             _dbHelper = new DatabaseHelper();
             _bll = new MonAnBLL(_dbHelper);
             _kotBLL = new KOTBLL(_dbHelper);
+            _orderBLL = new OrderBLL(_dbHelper);
             
             // Set thông tin bàn và khách hàng
             _selectedSoBan = soBan;
@@ -57,20 +62,16 @@ namespace UI
             
             // Cập nhật UI
             btnChonBan.Text = $"{soBan}    PHỤC VỤ\n👥 {soKhach} khách";
-            // Guna2Button uses TextOffset instead of TextAlign for alignment
             if (btnChonBan is Guna2Button gb)
             {
-                // Điều chỉnh font size để text không bị cắt
                 gb.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
                 gb.TextOffset = new Point(14, 0);
                 gb.Padding = new Padding(14, 8, 14, 8);
-                // Tăng height nếu text dài để đủ hiển thị
                 if (gb.Height < 50)
                 {
                     gb.Height = 50;
                 }
             }
-            // Note: btnChonBan is always Guna2Button now, so no else clause needed
             ApplySelectedTableStyle("PHỤC VỤ");
         }
 
@@ -357,7 +358,6 @@ namespace UI
                 rb.HoverState.FillColor = customHover;
                 rb.FillColor = back;
                 rb.ForeColor = text;
-                // Guna2Button doesn't have PressedState.FillColor, use HoverState instead
             }
         }
 
@@ -447,6 +447,7 @@ namespace UI
                     return;
 
                 var orderItems = new List<KOTBLL.OrderItem>();
+                var forPersist = new List<OrderItemInput>();
                 foreach (var cartItem in _cartItems)
                 {
                     orderItems.Add(new KOTBLL.OrderItem
@@ -455,12 +456,26 @@ namespace UI
                         Quantity = cartItem.Quantity,
                         Notes = cartItem.Note
                     });
+
+                    forPersist.Add(new OrderItemInput
+                    {
+                        MonId = cartItem.MonId,
+                        TenMon = cartItem.TenMon,
+                        DonGia = cartItem.DonGia,
+                        SoLuong = cartItem.Quantity
+                    });
                 }
 
                 bool success = _kotBLL.GuiDonXuongBep(_selectedBanId, Session.ChiNhanhId, Session.NguoiDungId, orderItems, "BẾP");
 
                 if (success)
                 {
+                    // Lưu phiếu order vào DB và sinh hóa đơn chờ thanh toán
+                    int poId = _orderBLL.SaveOrder(Session.ChiNhanhId, _selectedBanId, Session.HoTen, forPersist);
+                    _phieuOrderId = poId;
+                    // VAT mặc định 8%
+                    int hdId = _orderBLL.CreateInvoiceFromCart(Session.ChiNhanhId, forPersist, 8m, 0m, 0m);
+
                     panelGioHang.Controls.Clear();
                     foreach (var item in _cartItems)
                     {

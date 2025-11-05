@@ -28,37 +28,80 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges27 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges28 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges25 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmThanhToan_HoaDon));
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges19 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges20 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges21 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges23 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges24 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             roundedPanel1 = new UI.Controls.RoundedPanel();
             label5 = new Label();
-            label4 = new Label();
+            lbSoHD = new Label();
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
             roundedPanel2 = new UI.Controls.RoundedPanel();
-            label6 = new Label();
-            label7 = new Label();
+            lbSoSanhPhanTram = new Label();
+            lbTongThuHomNay = new Label();
             label8 = new Label();
             roundedPanel3 = new UI.Controls.RoundedPanel();
             label9 = new Label();
-            label10 = new Label();
+            lbSoGiaoDich = new Label();
             label11 = new Label();
             roundedPanel4 = new UI.Controls.RoundedPanel();
             label12 = new Label();
-            label13 = new Label();
+            lbSoTienTrungBinh = new Label();
             label14 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
-            panelThanhToan = new Panel();
-            thanhToan_Panel1 = new UI.Controls.ThanhToan_Panel();
-            hoaDon_Button1 = new UI.Controls.HoaDon_Button();
-            hoaDon_Button2 = new UI.Controls.HoaDon_Button();
-            hoaDon_Button3 = new UI.Controls.HoaDon_Button();
+            panelHoaDonThanhToan = new Panel();
+            label15 = new Label();
+            panelDanhSachHoaDon = new Panel();
+            lbDanhSachHoaDon = new Label();
+            panelLichSuGiaoDich = new Guna.UI2.WinForms.Guna2Panel();
+            panelDanhSachLichSuGiaoDich = new Panel();
+            guna2GradientPanel1 = new Guna.UI2.WinForms.Guna2GradientPanel();
+            dateDenNgay = new Guna.UI2.WinForms.Guna2DateTimePicker();
+            pictureBox1 = new PictureBox();
+            dateTuNgay = new Guna.UI2.WinForms.Guna2DateTimePicker();
+            guna2ComboBox2 = new Guna.UI2.WinForms.Guna2ComboBox();
+            guna2ComboBox1 = new Guna.UI2.WinForms.Guna2ComboBox();
+            guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
+            dgvHoaDon = new Guna.UI2.WinForms.Guna2DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
+            Column4 = new DataGridViewTextBoxColumn();
+            Column5 = new DataGridViewTextBoxColumn();
+            Column6 = new DataGridViewTextBoxColumn();
+            Column7 = new DataGridViewTextBoxColumn();
+            Column8 = new DataGridViewTextBoxColumn();
+            Column9 = new DataGridViewTextBoxColumn();
+            Column10 = new DataGridViewTextBoxColumn();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
             roundedPanel4.SuspendLayout();
-            panelThanhToan.SuspendLayout();
+            panelHoaDonThanhToan.SuspendLayout();
+            panelLichSuGiaoDich.SuspendLayout();
+            panelDanhSachLichSuGiaoDich.SuspendLayout();
+            guna2GradientPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvHoaDon).BeginInit();
             SuspendLayout();
             // 
             // roundedPanel1
@@ -66,12 +109,12 @@
             roundedPanel1.BackColor = Color.White;
             roundedPanel1.BorderThickness = 5;
             roundedPanel1.Controls.Add(label5);
-            roundedPanel1.Controls.Add(label4);
+            roundedPanel1.Controls.Add(lbSoHD);
             roundedPanel1.Controls.Add(label3);
             roundedPanel1.Location = new Point(12, 57);
             roundedPanel1.Name = "roundedPanel1";
             roundedPanel1.Padding = new Padding(12);
-            roundedPanel1.Size = new Size(245, 149);
+            roundedPanel1.Size = new Size(243, 85);
             roundedPanel1.TabIndex = 25;
             // 
             // label5
@@ -79,27 +122,27 @@
             label5.AutoSize = true;
             label5.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label5.ForeColor = SystemColors.ControlDarkDark;
-            label5.Location = new Point(27, 111);
+            label5.Location = new Point(15, 56);
             label5.Name = "label5";
             label5.Size = new Size(52, 14);
             label5.TabIndex = 20;
             label5.Text = "hóa đơn";
             // 
-            // label4
+            // lbSoHD
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(27, 79);
-            label4.Name = "label4";
-            label4.Size = new Size(20, 23);
-            label4.TabIndex = 19;
-            label4.Text = "2";
+            lbSoHD.AutoSize = true;
+            lbSoHD.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbSoHD.Location = new Point(15, 33);
+            lbSoHD.Name = "lbSoHD";
+            lbSoHD.Size = new Size(20, 23);
+            lbSoHD.TabIndex = 19;
+            lbSoHD.Text = "2";
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(27, 25);
+            label3.Location = new Point(15, 12);
             label3.Name = "label3";
             label3.Size = new Size(119, 21);
             label3.TabIndex = 18;
@@ -111,9 +154,9 @@
             label2.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label2.Location = new Point(12, 35);
             label2.Name = "label2";
-            label2.Size = new Size(272, 19);
+            label2.Size = new Size(242, 19);
             label2.TabIndex = 24;
-            label2.Text = "Quản lý hợp đồng tiệc và thanh toán cọc";
+            label2.Text = "Quản lý thanh toán và xuất hóa đơn";
             // 
             // label1
             // 
@@ -121,65 +164,65 @@
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(154, 27);
+            label1.Size = new Size(216, 27);
             label1.TabIndex = 23;
-            label1.Text = "Hợp đồng - Cọc";
+            label1.Text = "Thanh toán - Hóa đơn";
             // 
             // roundedPanel2
             // 
             roundedPanel2.BackColor = Color.White;
             roundedPanel2.BorderThickness = 5;
-            roundedPanel2.Controls.Add(label6);
-            roundedPanel2.Controls.Add(label7);
+            roundedPanel2.Controls.Add(lbSoSanhPhanTram);
+            roundedPanel2.Controls.Add(lbTongThuHomNay);
             roundedPanel2.Controls.Add(label8);
-            roundedPanel2.Location = new Point(263, 57);
+            roundedPanel2.Location = new Point(261, 57);
             roundedPanel2.Name = "roundedPanel2";
             roundedPanel2.Padding = new Padding(12);
-            roundedPanel2.Size = new Size(245, 149);
+            roundedPanel2.Size = new Size(243, 85);
             roundedPanel2.TabIndex = 26;
             // 
-            // label6
+            // lbSoSanhPhanTram
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.ForeColor = Color.DarkGreen;
-            label6.Location = new Point(35, 111);
-            label6.Name = "label6";
-            label6.Size = new Size(99, 14);
-            label6.TabIndex = 20;
-            label6.Text = "+12% vs hôm qua";
+            lbSoSanhPhanTram.AutoSize = true;
+            lbSoSanhPhanTram.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbSoSanhPhanTram.ForeColor = Color.DarkGreen;
+            lbSoSanhPhanTram.Location = new Point(11, 56);
+            lbSoSanhPhanTram.Name = "lbSoSanhPhanTram";
+            lbSoSanhPhanTram.Size = new Size(99, 14);
+            lbSoSanhPhanTram.TabIndex = 20;
+            lbSoSanhPhanTram.Text = "+12% vs hôm qua";
             // 
-            // label7
+            // lbTongThuHomNay
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(35, 79);
-            label7.Name = "label7";
-            label7.Size = new Size(89, 23);
-            label7.TabIndex = 19;
-            label7.Text = "25.5 Triệu";
+            lbTongThuHomNay.AutoSize = true;
+            lbTongThuHomNay.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbTongThuHomNay.Location = new Point(15, 33);
+            lbTongThuHomNay.Name = "lbTongThuHomNay";
+            lbTongThuHomNay.Size = new Size(89, 23);
+            lbTongThuHomNay.TabIndex = 19;
+            lbTongThuHomNay.Text = "25.5 Triệu";
             // 
             // label8
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label8.Location = new Point(35, 25);
+            label8.Location = new Point(11, 12);
             label8.Name = "label8";
-            label8.Size = new Size(113, 21);
+            label8.Size = new Size(135, 21);
             label8.TabIndex = 18;
-            label8.Text = "Tổng hợp đồng";
+            label8.Text = "Tổng thu hôm nay";
             // 
             // roundedPanel3
             // 
             roundedPanel3.BackColor = Color.White;
             roundedPanel3.BorderThickness = 5;
             roundedPanel3.Controls.Add(label9);
-            roundedPanel3.Controls.Add(label10);
+            roundedPanel3.Controls.Add(lbSoGiaoDich);
             roundedPanel3.Controls.Add(label11);
-            roundedPanel3.Location = new Point(514, 57);
+            roundedPanel3.Location = new Point(512, 57);
             roundedPanel3.Name = "roundedPanel3";
             roundedPanel3.Padding = new Padding(12);
-            roundedPanel3.Size = new Size(245, 149);
+            roundedPanel3.Size = new Size(243, 85);
             roundedPanel3.TabIndex = 26;
             // 
             // label9
@@ -187,27 +230,27 @@
             label9.AutoSize = true;
             label9.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ControlDarkDark;
-            label9.Location = new Point(37, 111);
+            label9.Location = new Point(15, 56);
             label9.Name = "label9";
             label9.Size = new Size(57, 14);
             label9.TabIndex = 20;
             label9.Text = "giao dịch";
             // 
-            // label10
+            // lbSoGiaoDich
             // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(37, 79);
-            label10.Name = "label10";
-            label10.Size = new Size(30, 23);
-            label10.TabIndex = 19;
-            label10.Text = "48";
+            lbSoGiaoDich.AutoSize = true;
+            lbSoGiaoDich.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbSoGiaoDich.Location = new Point(15, 33);
+            lbSoGiaoDich.Name = "lbSoGiaoDich";
+            lbSoGiaoDich.Size = new Size(30, 23);
+            lbSoGiaoDich.TabIndex = 19;
+            lbSoGiaoDich.Text = "48";
             // 
             // label11
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label11.Location = new Point(37, 25);
+            label11.Location = new Point(15, 12);
             label11.Name = "label11";
             label11.Size = new Size(93, 21);
             label11.TabIndex = 18;
@@ -218,12 +261,12 @@
             roundedPanel4.BackColor = Color.White;
             roundedPanel4.BorderThickness = 5;
             roundedPanel4.Controls.Add(label12);
-            roundedPanel4.Controls.Add(label13);
+            roundedPanel4.Controls.Add(lbSoTienTrungBinh);
             roundedPanel4.Controls.Add(label14);
-            roundedPanel4.Location = new Point(765, 57);
+            roundedPanel4.Location = new Point(763, 57);
             roundedPanel4.Name = "roundedPanel4";
             roundedPanel4.Padding = new Padding(12);
-            roundedPanel4.Size = new Size(245, 149);
+            roundedPanel4.Size = new Size(243, 85);
             roundedPanel4.TabIndex = 26;
             // 
             // label12
@@ -231,27 +274,27 @@
             label12.AutoSize = true;
             label12.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label12.ForeColor = SystemColors.ControlDarkDark;
-            label12.Location = new Point(39, 111);
+            label12.Location = new Point(15, 56);
             label12.Name = "label12";
             label12.Size = new Size(76, 14);
             label12.TabIndex = 20;
             label12.Text = "mỗi hóa đơn";
             // 
-            // label13
+            // lbSoTienTrungBinh
             // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label13.Location = new Point(39, 79);
-            label13.Name = "label13";
-            label13.Size = new Size(90, 23);
-            label13.TabIndex = 19;
-            label13.Text = "531.524 đ";
+            lbSoTienTrungBinh.AutoSize = true;
+            lbSoTienTrungBinh.Font = new Font("Calibri", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbSoTienTrungBinh.Location = new Point(15, 33);
+            lbSoTienTrungBinh.Name = "lbSoTienTrungBinh";
+            lbSoTienTrungBinh.Size = new Size(90, 23);
+            lbSoTienTrungBinh.TabIndex = 19;
+            lbSoTienTrungBinh.Text = "531.524 đ";
             // 
             // label14
             // 
             label14.AutoSize = true;
             label14.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label14.Location = new Point(39, 25);
+            label14.Location = new Point(15, 12);
             label14.Name = "label14";
             label14.Size = new Size(74, 21);
             label14.TabIndex = 18;
@@ -260,128 +303,327 @@
             // segmentedPill1
             // 
             segmentedPill1.BackColor = Color.Transparent;
+            segmentedPill1.ContainerPadding = new Padding(3);
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem1.Text = "Chờ thanh toán";
-            pillItem2.Text = "Lịch sử giao dịch";
-            segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
-            segmentedPill1.Location = new Point(12, 212);
+            pillItem3.Text = "Chờ thanh toán";
+            pillItem4.Text = "Lịch sử giao dịch";
+            segmentedPill1.Items.Add(pillItem3);
+            segmentedPill1.Items.Add(pillItem4);
+            segmentedPill1.Location = new Point(12, 148);
             segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(312, 38);
+            segmentedPill1.Size = new Size(284, 40);
             segmentedPill1.TabIndex = 27;
             segmentedPill1.Text = "segmentedPill1";
             // 
-            // panelThanhToan
+            // panelHoaDonThanhToan
             // 
-            panelThanhToan.Controls.Add(thanhToan_Panel1);
-            panelThanhToan.Location = new Point(541, 220);
-            panelThanhToan.Name = "panelThanhToan";
-            panelThanhToan.Size = new Size(469, 519);
-            panelThanhToan.TabIndex = 29;
+            panelHoaDonThanhToan.AccessibleDescription = "Hiển thị chi tiết hóa đơn có các chức năng thanh toán";
+            panelHoaDonThanhToan.AutoScroll = true;
+            panelHoaDonThanhToan.BackColor = Color.White;
+            panelHoaDonThanhToan.Controls.Add(label15);
+            panelHoaDonThanhToan.Location = new Point(559, 148);
+            panelHoaDonThanhToan.Name = "panelHoaDonThanhToan";
+            panelHoaDonThanhToan.Size = new Size(447, 515);
+            panelHoaDonThanhToan.TabIndex = 29;
             // 
-            // thanhToan_Panel1
+            // label15
             // 
-            thanhToan_Panel1.BackColor = Color.FromArgb(250, 250, 250);
-            thanhToan_Panel1.Location = new Point(16, 18);
-            thanhToan_Panel1.Name = "thanhToan_Panel1";
-            thanhToan_Panel1.Padding = new Padding(20);
-            thanhToan_Panel1.Size = new Size(439, 488);
-            thanhToan_Panel1.SubTotal = new decimal(new int[] { 850000, 0, 0, 0 });
-            thanhToan_Panel1.TabIndex = 0;
-            thanhToan_Panel1.VATPercent = new decimal(new int[] { 10, 0, 0, 0 });
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label15.ForeColor = Color.Silver;
+            label15.Location = new Point(95, 208);
+            label15.Name = "label15";
+            label15.Size = new Size(290, 30);
+            label15.TabIndex = 0;
+            label15.Text = "Chọn hóa đơn để thanh toán";
             // 
-            // hoaDon_Button1
+            // panelDanhSachHoaDon
             // 
-            hoaDon_Button1.BackCardColor = Color.White;
-            hoaDon_Button1.BackColor = Color.Transparent;
-            hoaDon_Button1.BadgeCode = "B001";
-            hoaDon_Button1.BorderColor = Color.FromArgb(40, 40, 60);
-            hoaDon_Button1.BorderThickness = 2;
-            hoaDon_Button1.CardPadding = new Padding(14, 12, 14, 12);
-            hoaDon_Button1.CornerRadius = 20;
-            hoaDon_Button1.Dishes = 8;
-            hoaDon_Button1.DividerColor = Color.FromArgb(230, 230, 235);
-            hoaDon_Button1.FlatAppearance.BorderSize = 0;
-            hoaDon_Button1.FlatStyle = FlatStyle.Flat;
-            hoaDon_Button1.ForeColor = Color.Transparent;
-            hoaDon_Button1.ForeMain = Color.Black;
-            hoaDon_Button1.ForeMuted = Color.FromArgb(90, 90, 110);
-            hoaDon_Button1.Guests = 4;
-            hoaDon_Button1.Location = new Point(24, 266);
-            hoaDon_Button1.MinimumSize = new Size(260, 150);
-            hoaDon_Button1.Name = "hoaDon_Button1";
-            hoaDon_Button1.ShowShadow = false;
-            hoaDon_Button1.Size = new Size(496, 150);
-            hoaDon_Button1.StartTimeText = "14:30";
-            hoaDon_Button1.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
-            hoaDon_Button1.TabIndex = 30;
-            hoaDon_Button1.TableTitle = "Bàn A01";
-            hoaDon_Button1.Text = "hoaDon_Button1";
-            hoaDon_Button1.Total = new decimal(new int[] { 935000, 0, 0, 0 });
-            hoaDon_Button1.UseVisualStyleBackColor = false;
-            hoaDon_Button1.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
+            panelDanhSachHoaDon.AccessibleDescription = "Danh sách hiện hóa đơn";
+            panelDanhSachHoaDon.AllowDrop = true;
+            panelDanhSachHoaDon.Location = new Point(12, 217);
+            panelDanhSachHoaDon.Name = "panelDanhSachHoaDon";
+            panelDanhSachHoaDon.Size = new Size(545, 446);
+            panelDanhSachHoaDon.TabIndex = 30;
             // 
-            // hoaDon_Button2
+            // lbDanhSachHoaDon
             // 
-            hoaDon_Button2.BackCardColor = Color.White;
-            hoaDon_Button2.BackColor = Color.Transparent;
-            hoaDon_Button2.BadgeCode = "B001";
-            hoaDon_Button2.BorderColor = Color.FromArgb(40, 40, 60);
-            hoaDon_Button2.BorderThickness = 2;
-            hoaDon_Button2.CardPadding = new Padding(14, 12, 14, 12);
-            hoaDon_Button2.CornerRadius = 20;
-            hoaDon_Button2.Dishes = 8;
-            hoaDon_Button2.DividerColor = Color.FromArgb(230, 230, 235);
-            hoaDon_Button2.FlatAppearance.BorderSize = 0;
-            hoaDon_Button2.FlatStyle = FlatStyle.Flat;
-            hoaDon_Button2.ForeColor = Color.Transparent;
-            hoaDon_Button2.ForeMain = Color.Black;
-            hoaDon_Button2.ForeMuted = Color.FromArgb(90, 90, 110);
-            hoaDon_Button2.Guests = 4;
-            hoaDon_Button2.Location = new Point(24, 432);
-            hoaDon_Button2.MinimumSize = new Size(260, 150);
-            hoaDon_Button2.Name = "hoaDon_Button2";
-            hoaDon_Button2.ShowShadow = false;
-            hoaDon_Button2.Size = new Size(496, 150);
-            hoaDon_Button2.StartTimeText = "14:30";
-            hoaDon_Button2.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
-            hoaDon_Button2.TabIndex = 31;
-            hoaDon_Button2.TableTitle = "Bàn A02";
-            hoaDon_Button2.Text = "hoaDon_Button2";
-            hoaDon_Button2.Total = new decimal(new int[] { 845845, 0, 0, 0 });
-            hoaDon_Button2.UseVisualStyleBackColor = false;
-            hoaDon_Button2.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
+            lbDanhSachHoaDon.AutoSize = true;
+            lbDanhSachHoaDon.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbDanhSachHoaDon.Location = new Point(12, 191);
+            lbDanhSachHoaDon.Name = "lbDanhSachHoaDon";
+            lbDanhSachHoaDon.Size = new Size(159, 23);
+            lbDanhSachHoaDon.TabIndex = 21;
+            lbDanhSachHoaDon.Text = "Danh sách hóa đơn";
             // 
-            // hoaDon_Button3
+            // panelLichSuGiaoDich
             // 
-            hoaDon_Button3.BackCardColor = Color.White;
-            hoaDon_Button3.BackColor = Color.Transparent;
-            hoaDon_Button3.BadgeCode = "B001";
-            hoaDon_Button3.BorderColor = Color.FromArgb(40, 40, 60);
-            hoaDon_Button3.BorderThickness = 2;
-            hoaDon_Button3.CardPadding = new Padding(14, 12, 14, 12);
-            hoaDon_Button3.CornerRadius = 20;
-            hoaDon_Button3.Dishes = 8;
-            hoaDon_Button3.DividerColor = Color.FromArgb(230, 230, 235);
-            hoaDon_Button3.FlatAppearance.BorderSize = 0;
-            hoaDon_Button3.FlatStyle = FlatStyle.Flat;
-            hoaDon_Button3.ForeColor = Color.Transparent;
-            hoaDon_Button3.ForeMain = Color.Black;
-            hoaDon_Button3.ForeMuted = Color.FromArgb(90, 90, 110);
-            hoaDon_Button3.Guests = 7;
-            hoaDon_Button3.Location = new Point(24, 601);
-            hoaDon_Button3.MinimumSize = new Size(260, 150);
-            hoaDon_Button3.Name = "hoaDon_Button3";
-            hoaDon_Button3.ShowShadow = false;
-            hoaDon_Button3.Size = new Size(496, 150);
-            hoaDon_Button3.StartTimeText = "14:30";
-            hoaDon_Button3.Subtotal = new decimal(new int[] { 850000, 0, 0, 0 });
-            hoaDon_Button3.TabIndex = 32;
-            hoaDon_Button3.TableTitle = "Bàn A04";
-            hoaDon_Button3.Text = "hoaDon_Button3";
-            hoaDon_Button3.Total = new decimal(new int[] { 746745, 0, 0, 0 });
-            hoaDon_Button3.UseVisualStyleBackColor = false;
-            hoaDon_Button3.VatRate = new decimal(new int[] { 10, 0, 0, 131072 });
+            panelLichSuGiaoDich.Controls.Add(panelDanhSachLichSuGiaoDich);
+            panelLichSuGiaoDich.Controls.Add(guna2GradientPanel1);
+            panelLichSuGiaoDich.CustomizableEdges = customizableEdges27;
+            panelLichSuGiaoDich.Location = new Point(12, 191);
+            panelLichSuGiaoDich.Name = "panelLichSuGiaoDich";
+            panelLichSuGiaoDich.ShadowDecoration.CustomizableEdges = customizableEdges28;
+            panelLichSuGiaoDich.Size = new Size(994, 472);
+            panelLichSuGiaoDich.TabIndex = 0;
+            // 
+            // panelDanhSachLichSuGiaoDich
+            // 
+            panelDanhSachLichSuGiaoDich.AutoScroll = true;
+            panelDanhSachLichSuGiaoDich.BackColor = Color.White;
+            panelDanhSachLichSuGiaoDich.Controls.Add(dgvHoaDon);
+            panelDanhSachLichSuGiaoDich.Location = new Point(3, 57);
+            panelDanhSachLichSuGiaoDich.Name = "panelDanhSachLichSuGiaoDich";
+            panelDanhSachLichSuGiaoDich.Size = new Size(988, 412);
+            panelDanhSachLichSuGiaoDich.TabIndex = 1;
+            // 
+            // guna2GradientPanel1
+            // 
+            guna2GradientPanel1.BackColor = Color.Transparent;
+            guna2GradientPanel1.BorderRadius = 20;
+            guna2GradientPanel1.Controls.Add(dateDenNgay);
+            guna2GradientPanel1.Controls.Add(pictureBox1);
+            guna2GradientPanel1.Controls.Add(dateTuNgay);
+            guna2GradientPanel1.Controls.Add(guna2ComboBox2);
+            guna2GradientPanel1.Controls.Add(guna2ComboBox1);
+            guna2GradientPanel1.Controls.Add(guna2TextBox1);
+            guna2GradientPanel1.CustomizableEdges = customizableEdges25;
+            guna2GradientPanel1.FillColor = Color.White;
+            guna2GradientPanel1.FillColor2 = Color.White;
+            guna2GradientPanel1.Location = new Point(3, 3);
+            guna2GradientPanel1.Name = "guna2GradientPanel1";
+            guna2GradientPanel1.ShadowDecoration.CustomizableEdges = customizableEdges26;
+            guna2GradientPanel1.Size = new Size(988, 51);
+            guna2GradientPanel1.TabIndex = 0;
+            // 
+            // dateDenNgay
+            // 
+            dateDenNgay.BorderRadius = 15;
+            dateDenNgay.Checked = true;
+            dateDenNgay.CustomizableEdges = customizableEdges15;
+            dateDenNgay.FillColor = Color.White;
+            dateDenNgay.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dateDenNgay.ForeColor = Color.Black;
+            dateDenNgay.Format = DateTimePickerFormat.Short;
+            dateDenNgay.Location = new Point(849, 8);
+            dateDenNgay.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
+            dateDenNgay.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            dateDenNgay.Name = "dateDenNgay";
+            dateDenNgay.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            dateDenNgay.Size = new Size(131, 36);
+            dateDenNgay.TabIndex = 5;
+            dateDenNgay.Value = new DateTime(2025, 11, 5, 0, 6, 7, 327);
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(788, 4);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(57, 43);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 4;
+            pictureBox1.TabStop = false;
+            // 
+            // dateTuNgay
+            // 
+            dateTuNgay.BorderRadius = 15;
+            dateTuNgay.Checked = true;
+            dateTuNgay.CustomizableEdges = customizableEdges17;
+            dateTuNgay.FillColor = Color.White;
+            dateTuNgay.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dateTuNgay.ForeColor = Color.Black;
+            dateTuNgay.Format = DateTimePickerFormat.Short;
+            dateTuNgay.Location = new Point(652, 8);
+            dateTuNgay.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
+            dateTuNgay.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
+            dateTuNgay.Name = "dateTuNgay";
+            dateTuNgay.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            dateTuNgay.Size = new Size(131, 36);
+            dateTuNgay.TabIndex = 3;
+            dateTuNgay.Value = new DateTime(2025, 11, 5, 0, 6, 7, 327);
+            // 
+            // guna2ComboBox2
+            // 
+            guna2ComboBox2.BackColor = Color.Transparent;
+            guna2ComboBox2.BorderRadius = 15;
+            guna2ComboBox2.CustomizableEdges = customizableEdges19;
+            guna2ComboBox2.DrawMode = DrawMode.OwnerDrawFixed;
+            guna2ComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            guna2ComboBox2.FocusedColor = Color.FromArgb(94, 148, 255);
+            guna2ComboBox2.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2ComboBox2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            guna2ComboBox2.ForeColor = Color.FromArgb(68, 88, 112);
+            guna2ComboBox2.ItemHeight = 30;
+            guna2ComboBox2.Items.AddRange(new object[] { "Tất cả trạng thái", "Hoàn thành", "Đã hoàn tiền" });
+            guna2ComboBox2.Location = new Point(429, 8);
+            guna2ComboBox2.Name = "guna2ComboBox2";
+            guna2ComboBox2.ShadowDecoration.CustomizableEdges = customizableEdges20;
+            guna2ComboBox2.Size = new Size(166, 36);
+            guna2ComboBox2.StartIndex = 0;
+            guna2ComboBox2.TabIndex = 2;
+            // 
+            // guna2ComboBox1
+            // 
+            guna2ComboBox1.BackColor = Color.Transparent;
+            guna2ComboBox1.BorderRadius = 15;
+            guna2ComboBox1.CustomizableEdges = customizableEdges21;
+            guna2ComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
+            guna2ComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            guna2ComboBox1.FocusedColor = Color.FromArgb(94, 148, 255);
+            guna2ComboBox1.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2ComboBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            guna2ComboBox1.ForeColor = Color.FromArgb(68, 88, 112);
+            guna2ComboBox1.ItemHeight = 30;
+            guna2ComboBox1.Items.AddRange(new object[] { "Tất cả phương thức", "Tiền mặt", "Thẻ", "Chuyển khoản" });
+            guna2ComboBox1.Location = new Point(232, 8);
+            guna2ComboBox1.Name = "guna2ComboBox1";
+            guna2ComboBox1.ShadowDecoration.CustomizableEdges = customizableEdges22;
+            guna2ComboBox1.Size = new Size(191, 36);
+            guna2ComboBox1.StartIndex = 0;
+            guna2ComboBox1.TabIndex = 1;
+            // 
+            // guna2TextBox1
+            // 
+            guna2TextBox1.BorderRadius = 18;
+            guna2TextBox1.CustomizableEdges = customizableEdges23;
+            guna2TextBox1.DefaultText = "";
+            guna2TextBox1.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            guna2TextBox1.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            guna2TextBox1.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            guna2TextBox1.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            guna2TextBox1.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2TextBox1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            guna2TextBox1.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2TextBox1.Location = new Point(4, 4);
+            guna2TextBox1.Margin = new Padding(4);
+            guna2TextBox1.Name = "guna2TextBox1";
+            guna2TextBox1.PlaceholderText = "Tìm mã HĐ, bàn, . . .";
+            guna2TextBox1.SelectedText = "";
+            guna2TextBox1.ShadowDecoration.CustomizableEdges = customizableEdges24;
+            guna2TextBox1.Size = new Size(221, 43);
+            guna2TextBox1.TabIndex = 0;
+            // 
+            // dgvHoaDon
+            // 
+            dgvHoaDon.AllowUserToAddRows = false;
+            dgvHoaDon.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle5.BackColor = Color.White;
+            dgvHoaDon.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = Color.White;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+            dgvHoaDon.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dgvHoaDon.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvHoaDon.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6, Column7, Column8, Column9, Column10 });
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = Color.White;
+            dataGridViewCellStyle7.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle7.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle7.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle7.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.False;
+            dgvHoaDon.DefaultCellStyle = dataGridViewCellStyle7;
+            dgvHoaDon.GridColor = Color.FromArgb(231, 229, 255);
+            dgvHoaDon.ImeMode = ImeMode.NoControl;
+            dgvHoaDon.Location = new Point(0, 0);
+            dgvHoaDon.Name = "dgvHoaDon";
+            dgvHoaDon.ReadOnly = true;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = Color.White;
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle8.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = Color.White;
+            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
+            dgvHoaDon.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dgvHoaDon.RowHeadersVisible = false;
+            dgvHoaDon.Size = new Size(988, 412);
+            dgvHoaDon.TabIndex = 0;
+            dgvHoaDon.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            dgvHoaDon.ThemeStyle.AlternatingRowsStyle.Font = null;
+            dgvHoaDon.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            dgvHoaDon.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            dgvHoaDon.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            dgvHoaDon.ThemeStyle.BackColor = Color.White;
+            dgvHoaDon.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            dgvHoaDon.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            dgvHoaDon.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvHoaDon.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dgvHoaDon.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            dgvHoaDon.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvHoaDon.ThemeStyle.HeaderStyle.Height = 36;
+            dgvHoaDon.ThemeStyle.ReadOnly = true;
+            dgvHoaDon.ThemeStyle.RowsStyle.BackColor = Color.White;
+            dgvHoaDon.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvHoaDon.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            dgvHoaDon.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            dgvHoaDon.ThemeStyle.RowsStyle.Height = 25;
+            dgvHoaDon.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dgvHoaDon.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // Column1
+            // 
+            Column1.HeaderText = "Mã hóa đơn";
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Bàn/Sảnh";
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            // 
+            // Column3
+            // 
+            Column3.HeaderText = "Số tiền";
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            // 
+            // Column4
+            // 
+            Column4.HeaderText = "Khuyến mãi";
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            Column5.HeaderText = "Phương thức";
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            // 
+            // Column6
+            // 
+            Column6.HeaderText = "Ngày";
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            // 
+            // Column7
+            // 
+            Column7.HeaderText = "Thời gian";
+            Column7.Name = "Column7";
+            Column7.ReadOnly = true;
+            // 
+            // Column8
+            // 
+            Column8.HeaderText = "Thu ngân";
+            Column8.Name = "Column8";
+            Column8.ReadOnly = true;
+            // 
+            // Column9
+            // 
+            Column9.HeaderText = "Trạng thái";
+            Column9.Name = "Column9";
+            Column9.ReadOnly = true;
+            // 
+            // Column10
+            // 
+            Column10.HeaderText = "Thao tác";
+            Column10.Name = "Column10";
+            Column10.ReadOnly = true;
             // 
             // FrmThanhToan_HoaDon
             // 
@@ -389,10 +631,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1041, 675);
-            Controls.Add(hoaDon_Button3);
-            Controls.Add(hoaDon_Button2);
-            Controls.Add(hoaDon_Button1);
-            Controls.Add(panelThanhToan);
+            Controls.Add(panelLichSuGiaoDich);
+            Controls.Add(lbDanhSachHoaDon);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
             Controls.Add(roundedPanel3);
@@ -400,6 +640,8 @@
             Controls.Add(roundedPanel1);
             Controls.Add(label2);
             Controls.Add(label1);
+            Controls.Add(panelDanhSachHoaDon);
+            Controls.Add(panelHoaDonThanhToan);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmThanhToan_HoaDon";
             Text = "FrmThanhToan_HoaDon";
@@ -412,7 +654,13 @@
             roundedPanel3.PerformLayout();
             roundedPanel4.ResumeLayout(false);
             roundedPanel4.PerformLayout();
-            panelThanhToan.ResumeLayout(false);
+            panelHoaDonThanhToan.ResumeLayout(false);
+            panelHoaDonThanhToan.PerformLayout();
+            panelLichSuGiaoDich.ResumeLayout(false);
+            panelDanhSachLichSuGiaoDich.ResumeLayout(false);
+            guna2GradientPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvHoaDon).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -421,27 +669,46 @@
 
         private Controls.RoundedPanel roundedPanel1;
         private Label label5;
-        private Label label4;
+        private Label lbSoHD;
         private Label label3;
         private Label label2;
         private Label label1;
         private Controls.RoundedPanel roundedPanel2;
-        private Label label6;
-        private Label label7;
+        private Label lbSoSanhPhanTram;
+        private Label lbTongThuHomNay;
         private Label label8;
         private Controls.RoundedPanel roundedPanel3;
         private Label label9;
-        private Label label10;
+        private Label lbSoGiaoDich;
         private Label label11;
         private Controls.RoundedPanel roundedPanel4;
         private Label label12;
-        private Label label13;
+        private Label lbSoTienTrungBinh;
         private Label label14;
         private VanThuan.UI.SegmentedPill segmentedPill1;
-        private Panel panelThanhToan;
-        private UI.Controls.ThanhToan_Panel thanhToan_Panel1;
-        private Controls.HoaDon_Button hoaDon_Button1;
-        private Controls.HoaDon_Button hoaDon_Button2;
-        private Controls.HoaDon_Button hoaDon_Button3;
+        private Panel panelHoaDonThanhToan;
+        private Label label15;
+        private Panel panelDanhSachHoaDon;
+        private Label lbDanhSachHoaDon;
+        private Guna.UI2.WinForms.Guna2Panel panelLichSuGiaoDich;
+        private Panel panelDanhSachLichSuGiaoDich;
+        private Guna.UI2.WinForms.Guna2GradientPanel guna2GradientPanel1;
+        private Guna.UI2.WinForms.Guna2TextBox guna2TextBox1;
+        private Guna.UI2.WinForms.Guna2DateTimePicker dateTuNgay;
+        private Guna.UI2.WinForms.Guna2ComboBox guna2ComboBox2;
+        private Guna.UI2.WinForms.Guna2ComboBox guna2ComboBox1;
+        private Guna.UI2.WinForms.Guna2DateTimePicker dateDenNgay;
+        private PictureBox pictureBox1;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvHoaDon;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn Column5;
+        private DataGridViewTextBoxColumn Column6;
+        private DataGridViewTextBoxColumn Column7;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn Column9;
+        private DataGridViewTextBoxColumn Column10;
     }
 }
