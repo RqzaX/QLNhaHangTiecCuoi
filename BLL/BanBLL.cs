@@ -241,5 +241,29 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - Xác nhận đặt bàn: {ex.Message}");
             }
         }
+
+        public int CapNhatTrangThaiTreGio()
+        {
+            try
+            {
+                return _banDAL.CapNhatTrangThaiTreGio();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Cập nhật trạng thái trễ giờ: {ex.Message}");
+            }
+        }
+
+        public int TuDongHuyDatBanTreGio()
+        {
+            try
+            {
+                return _banDAL.TuDongHuyDatBanTreGio();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Tự động hủy đặt bàn trễ giờ: {ex.Message}");
+            }
+        }
     }
 }

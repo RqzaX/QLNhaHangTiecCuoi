@@ -31,6 +31,7 @@
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBep_Bar));
             roundedPanel4 = new UI.Controls.RoundedPanel();
             lbThoiGianTB = new Label();
             label10 = new Label();
@@ -47,16 +48,25 @@
             label1 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             panelDanhSach = new Panel();
+            pictureBox1 = new PictureBox();
+            pictureBox2 = new PictureBox();
+            pictureBox3 = new PictureBox();
+            pictureBox4 = new PictureBox();
             roundedPanel4.SuspendLayout();
             roundedPanel3.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             SuspendLayout();
             // 
             // roundedPanel4
             // 
             roundedPanel4.BackColor = Color.White;
             roundedPanel4.BorderThickness = 5;
+            roundedPanel4.Controls.Add(pictureBox4);
             roundedPanel4.Controls.Add(lbThoiGianTB);
             roundedPanel4.Controls.Add(label10);
             roundedPanel4.Location = new Point(759, 73);
@@ -90,6 +100,7 @@
             // 
             roundedPanel3.BackColor = Color.White;
             roundedPanel3.BorderThickness = 5;
+            roundedPanel3.Controls.Add(pictureBox3);
             roundedPanel3.Controls.Add(lbSanSang);
             roundedPanel3.Controls.Add(label8);
             roundedPanel3.Location = new Point(510, 73);
@@ -123,6 +134,7 @@
             // 
             roundedPanel2.BackColor = Color.White;
             roundedPanel2.BorderThickness = 5;
+            roundedPanel2.Controls.Add(pictureBox2);
             roundedPanel2.Controls.Add(lbDangLam);
             roundedPanel2.Controls.Add(label6);
             roundedPanel2.Location = new Point(261, 73);
@@ -156,6 +168,7 @@
             // 
             roundedPanel1.BackColor = Color.White;
             roundedPanel1.BorderThickness = 5;
+            roundedPanel1.Controls.Add(pictureBox1);
             roundedPanel1.Controls.Add(lbChoLam);
             roundedPanel1.Controls.Add(label3);
             roundedPanel1.Location = new Point(12, 73);
@@ -229,6 +242,46 @@
             panelDanhSach.Size = new Size(1018, 408);
             panelDanhSach.TabIndex = 23;
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(144, 15);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(84, 82);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 18;
+            pictureBox1.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(144, 15);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(84, 82);
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 19;
+            pictureBox2.TabStop = false;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
+            pictureBox3.Location = new Point(144, 15);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(84, 82);
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox3.TabIndex = 20;
+            pictureBox3.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
+            pictureBox4.Location = new Point(144, 15);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new Size(84, 82);
+            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox4.TabIndex = 22;
+            pictureBox4.TabStop = false;
+            // 
             // FrmBep_Bar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -253,6 +306,10 @@
             roundedPanel2.PerformLayout();
             roundedPanel1.ResumeLayout(false);
             roundedPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -275,5 +332,9 @@
         private Label label6;
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private Panel panelDanhSach;
+        private PictureBox pictureBox1;
+        private PictureBox pictureBox4;
+        private PictureBox pictureBox3;
+        private PictureBox pictureBox2;
     }
 }

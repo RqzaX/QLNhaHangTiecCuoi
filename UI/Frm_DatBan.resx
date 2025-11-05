@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -117,20 +117,45 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Blue Gradient Linktree Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Blue Gradient Linktree Background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="logo-app" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo-app.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Purple Abstract Lintree Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Purple Abstract Lintree Background.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="success" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\success.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="error" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\error.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        rkJggg==
+</value>
   </data>
 </root>

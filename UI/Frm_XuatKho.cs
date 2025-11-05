@@ -108,7 +108,6 @@ namespace UI
         {
             try
             {
-                // Kiểm tra dữ liệu bắt buộc
                 if (cbbNguyenLieu.SelectedIndex == -1)
                 {
                     MessageBox.Show("Vui lòng chọn nguyên liệu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -127,14 +126,12 @@ namespace UI
                     return;
                 }
 
-                // Lấy thông tin đã chọn
                 var selectedNguyenLieu = (ComboBoxItem)cbbNguyenLieu.SelectedItem;
                 var selectedChiNhanh = (ComboBoxItem)cbbKhoXuat.SelectedItem;
                 
                 int nlId = selectedNguyenLieu.Value;
                 int chiNhanhId = selectedChiNhanh.Value;
 
-                // Kiểm tra tồn kho
                 if (!_bll.KiemTraTonKhoDu(chiNhanhId, nlId, soLuong))
                 {
                     decimal tonHienTai = _bll.LayTonKhoTaiChiNhanh(chiNhanhId, nlId);
@@ -143,15 +140,12 @@ namespace UI
                     return;
                 }
 
-                // Tạo mã phiếu xuất kho
                 string maPhieu = "PXK" + DateTime.Now.ToString("yyyyMMddHHmmss");
                 
-                // Xuất kho trực tiếp
                 int result = _bll.XuatKho(chiNhanhId, nlId, soLuong);
 
                 if (result > 0)
                 {
-                    // Hiển thị thông báo thành công
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("XUẤT KHO THÀNH CÔNG!");
                     sb.AppendLine("══════════════════════════════");

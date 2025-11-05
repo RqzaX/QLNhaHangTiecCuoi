@@ -97,7 +97,7 @@ namespace UI
                 DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
 
-      
+
            
 
             if (dgvKho.Columns["colChiTiet"] == null)
@@ -122,7 +122,7 @@ namespace UI
            this.Load += FrmKho_Load;
     cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
     txtSearch.TextChanged += txtSearch_TextChanged;
-          
+
 
         }
         private void LoadBranchCombo()
@@ -143,15 +143,12 @@ namespace UI
                 _selectedBranchId = 1;
             }
         }
-
-    
         private List<(int BranchId, string BranchName)> GetBranchesWithInventoryData()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
                 
-               
                 var branchesData = _bll.LayChiNhanhCoDuLieuTonKho();
                 
                 if (branchesData != null)
@@ -176,13 +173,11 @@ namespace UI
             }
         }
 
-     
         private List<(int BranchId, string BranchName)> GetAllBranches()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
-           
                 var allBranches = _bll.LayTatCaChiNhanh();
                 
                 if (allBranches != null)
@@ -257,6 +252,7 @@ namespace UI
             DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
             if (tb == null) { dgvKho.DataSource = null; return; }
 
+
             var dv = tb.DefaultView;
 
             // lấy trạng thái hiện tại + text đang gõ
@@ -266,7 +262,27 @@ namespace UI
             // gộp filter
             dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
 
-            // (giữ nguyên phần tính cột GiaTri nếu bạn cần)
+
+            string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
+            
+            switch (stt)
+            {
+                case 1: 
+                    dv.RowFilter = "sl_ton > 0";
+                    break;
+                case 2: 
+                    dv.RowFilter = "sl_ton = 0";
+                    break;
+                case 3:
+                    dv.RowFilter = $"sl_ton > 0 AND sl_ton <= {canhBao}";
+                    break;
+                default:
+                    dv.RowFilter = string.Empty;
+                    break;
+            }
+
+        
+
             if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
             foreach (DataRow r in tb.Rows)
             {
@@ -283,8 +299,14 @@ namespace UI
                 r["GiaTri"] = giaTri;
             }
 
+
             dgvKho.DataSource = null;
             dgvKho.DataSource = dv.ToTable();
+
+          
+            dgvKho.DataSource = null;
+            dgvKho.DataSource = dv.ToTable();  
+
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -354,8 +376,10 @@ namespace UI
         {
             using (var f = new UI.FrmNguyenLieuChiTiet(
         nlId,
+
         CurrentBranchId,                           
-        _bll                                     
+        _bll                                        
+
     ))
             {
                 f.StartPosition = FormStartPosition.CenterParent;
@@ -400,12 +424,10 @@ namespace UI
         {
             try
             {
-              
                 var all = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
 
                 int tongMatHang = all?.Rows.Count ?? 0;
 
-                
                 int hetHang = 0, sapHet = 0;
                 decimal tongGiaTri = 0m;
 
@@ -420,7 +442,7 @@ namespace UI
                         if (all.Columns.Contains("sl_ton"))
                             slTon = Convert.ToDecimal(r["sl_ton"]);
 
-                        // Ưu tiên cột đã tính sẵn "gia_tri"; nếu không có thì thử sl_ton * gia_nhap
+                      
                         if (all.Columns.Contains("gia_tri"))
                             giaTri = Convert.ToDecimal(r["gia_tri"]);
                         else if (all.Columns.Contains("gia_nhap"))
@@ -452,7 +474,7 @@ namespace UI
             }
             catch
             {
-               
+                
               
                 label8.Text = "0";
                 label9.Text = "0";
@@ -465,7 +487,6 @@ namespace UI
 
         }
 
-        
         public void SetBranchId(int branchId)
         {
             _selectedBranchId = branchId;
@@ -485,7 +506,6 @@ namespace UI
             return _selectedBranchId;
         }
 
-       
         public void ShowBranchSelection()
         {
             try

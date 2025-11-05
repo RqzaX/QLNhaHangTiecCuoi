@@ -29,7 +29,7 @@ namespace QLNhaHangTiecCuoi.DAL
                         po.phieu_order_id as kot_id,
                         'KOT' + RIGHT('000' + CAST(po.phieu_order_id AS VARCHAR), 3) as ma_kot,
                         po.ban_id,
-                        ISNULL(b.so_ban, 'TIỆC') as so_ban,
+                        ISNULL(b.so_ban, N'TIỆC') as so_ban,
                         po.ngay_gio as thoi_gian_dat,
                         po.trang_thai,
                         CASE 
@@ -74,7 +74,7 @@ namespace QLNhaHangTiecCuoi.DAL
                         poc.mon_id,
                         m.ten_mon,
                         poc.so_luong,
-                        ISNULL(poc.ghi_chu_bep, '') as ghi_chu
+                        ISNULL(poc.ghi_chu_bep, '') as ghi_chu_bep
                     FROM phieu_order_ct poc
                     INNER JOIN mon_an m ON poc.mon_id = m.mon_id
                     WHERE poc.phieu_order_id = @kotId

@@ -22,7 +22,7 @@ namespace QLNhaHangTiecCuoi.DAL
             return _db.GetDataTable(sql);
         }
 
-        // Lưới kho chính theo tình trạng (đã dùng trước đó)
+      
         public DataTable GetTonKhoByTinhTrang(int tinhTrang, decimal canhBao, int? chiNhanhId)
         {
             var sql = @"
@@ -84,9 +84,7 @@ WHERE 1 = 1";
             return _db.GetDataTable(sb.ToString(), prms.ToArray());
         }
 
-        // ===== CHI TIẾT NGUYÊN LIỆU =====
-
-        // Header chi tiết + tổng tồn
+      
         public DataTable GetByIdWithTon(int nlId)
         {
             const string sql = @"
@@ -99,7 +97,7 @@ WHERE 1 = 1";
             return _db.GetDataTable(sql, new[] { new SqlParameter("@id", nlId) });
         }
 
-        // Bảng tồn theo chi nhánh của 1 nguyên liệu
+      
         public DataTable GetTonKhoTheoChiNhanhCuaNguyenLieu(int nlId)
         {
             const string sql = @"
@@ -114,7 +112,7 @@ WHERE 1 = 1";
             return _db.GetDataTable(sql, new[] { new SqlParameter("@id", nlId) });
         }
 
-        // Cập nhật header
+     
         public int Update(int nlId, string ma, string ten, string donVi)
         {
             const string sql = @"
@@ -131,7 +129,7 @@ WHERE 1 = 1";
             return _db.ExecuteNonQuery(sql, prms);
         }
 
-        // Upsert tồn kho (update nếu có, insert nếu chưa)
+       
         public decimal GetTonKho(int chiNhanhId, int nlId)
         {
             const string sql = @"SELECT sl_ton FROM dbo.ton_kho 
@@ -144,7 +142,7 @@ WHERE 1 = 1";
             return Convert.ToDecimal(dt.Rows[0]["sl_ton"]);
         }
 
-        // Cập nhật (upsert) SL tồn
+      
         public int UpsertTonKho(int chiNhanhId, int nlId, decimal slTon)
         {
             const string sql = @"
@@ -166,7 +164,7 @@ WHERE 1 = 1";
             return _db.GetDataTable(sql, new[] { new SqlParameter("@id", nlId) });
         }
 
-        // Method để thực hiện query tùy ý (cho BLL sử dụng)
+        
         public DataTable GetDataTable(string sql, SqlParameter[] parameters = null)
         {
             try
@@ -179,7 +177,7 @@ WHERE 1 = 1";
             }
         }
 
-        // ===== CHỨC NĂNG NHẬP KHO =====
+     
         public int NhapKho(int chiNhanhId, int nlId, decimal soLuong)
         {
             const string sql = @"
@@ -211,7 +209,7 @@ WHERE 1 = 1";
             }
         }
 
-        // ===== CHỨC NĂNG XUẤT KHO =====
+   
         public int XuatKho(int chiNhanhId, int nlId, decimal soLuong)
         {
             const string sql = @"
@@ -246,7 +244,7 @@ WHERE 1 = 1";
             }
         }
 
-        // ===== CHỨC NĂNG CHUYỂN KHO =====
+      
         public int ChuyenKho(int chiNhanhNguonId, int chiNhanhDichId, int nlId, decimal soLuong)
         {
             const string sql = @"

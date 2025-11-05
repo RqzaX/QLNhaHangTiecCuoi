@@ -153,7 +153,7 @@ ELSE
             }
         }
 
-        // Lấy tất cả gói tiệc
+       
         public DataTable GetAllGoiTiec()
         {
             const string query = @"
@@ -175,7 +175,7 @@ ELSE
             }
         }
 
-        // Lấy thông tin gói tiệc theo ID
+       
         public DataRow GetGoiTiecById(int goiId)
         {
             string query = @"
@@ -256,6 +256,7 @@ ELSE
         }
 
         // Thêm gói tiệc mới
+
         public bool ThemGoiTiec(string maGoi, string tenGoi, decimal giaCoBan)
         {
             string query = @"
@@ -279,7 +280,6 @@ ELSE
             }
         }
 
-        // Cập nhật gói tiệc
         public bool CapNhatGoiTiec(int goiId, string maGoi, string tenGoi, decimal giaCoBan)
         {
             string query = @"
@@ -307,7 +307,7 @@ ELSE
             }
         }
 
-        // Xóa gói tiệc
+    
         public bool XoaGoiTiec(int goiId)
         {
             string query = "DELETE FROM dbo.goi_tiec WHERE goi_id = @goiId";
@@ -327,7 +327,7 @@ ELSE
             }
         }
 
-        // Kiểm tra mã gói đã tồn tại chưa
+      
         public bool KiemTraMaGoiTonTai(string maGoi, int? goiIdBoQua = null)
         {
             string query = @"
@@ -360,7 +360,7 @@ ELSE
             }
         }
 
-        // Tìm kiếm gói tiệc
+    
         public DataTable TimKiemGoiTiec(string keyword)
         {
             string query = @"

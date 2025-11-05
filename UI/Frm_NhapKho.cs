@@ -40,13 +40,10 @@ namespace UI
         {
             try
             {
-                // Load danh sách nguyên liệu
                 LoadNguyenLieu();
                 
-                // Load danh sách chi nhánh
                 LoadChiNhanh();
                 
-                // Set ngày mặc định
                 dateNgayNhap.Value = DateTime.Now;
             }
             catch (Exception ex)
@@ -109,7 +106,7 @@ namespace UI
         {
             try
             {
-                // Kiểm tra dữ liệu
+             
                 if (cbbTenMon.SelectedIndex == -1)
                 {
                     MessageBox.Show("Vui lòng chọn nguyên liệu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -128,22 +125,20 @@ namespace UI
                      return;
                  }
 
-                // Lấy thông tin đã chọn
                 var selectedNguyenLieu = (ComboBoxItem)cbbTenMon.SelectedItem;
                 var selectedChiNhanh = (ComboBoxItem)cbbChiNhanh.SelectedItem;
                 
                 int nlId = selectedNguyenLieu.Value;
                 int chiNhanhId = selectedChiNhanh.Value;
                 
-                // Tạo mã phiếu nhập kho
+              
                 string maPhieu = "PNK" + DateTime.Now.ToString("yyyyMMddHHmmss");
                 
-                // Nhập kho trực tiếp
+              
                 int result = _bll.NhapKho(chiNhanhId, nlId, soLuong);
 
                 if (result > 0)
                 {
-                    // Hiển thị thông báo thành công
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("NHẬP KHO THÀNH CÔNG!");
                     sb.AppendLine("══════════════════════════════");

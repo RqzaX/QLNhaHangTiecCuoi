@@ -8,19 +8,19 @@ namespace UI
 {
     public partial class FrmNguyenLieuChiTiet : Form
     {
-        // ====== fields ======
+    
         private readonly int _nlId;
         private readonly int _chiNhanhId;
         private readonly NguyenLieuBLL _bll;
 
-        // ====== controls ======
+        
         private TextBox txtMa, txtTen, txtDonVi;
         private NumericUpDown nudTon;
         private Button btnSua, btnLuu, btnDong;
 
         private bool _isEdit = false;
 
-        // === ctor KHỞI TẠO TỪ FrmKho ===
+     
         public FrmNguyenLieuChiTiet(int nlId, int chiNhanhId, NguyenLieuBLL bll)
         {
             _nlId = nlId;
@@ -32,7 +32,7 @@ namespace UI
             SetEdit(false);
         }
 
-        // =========== UI ===========
+      
         private void BuildUI()
         {
             Text = "Nguyên liệu - Chi tiết";
@@ -87,11 +87,11 @@ namespace UI
             btnLuu.Enabled = enable;
         }
 
-        // =========== DATA ===========
+    
         private void LoadData()
         {
-            // 1) Thông tin nguyên liệu
-            var r = _bll.LayNguyenLieuById(_nlId); // DataRow (đã hướng dẫn tạo BLL trước đó)
+         
+            var r = _bll.LayNguyenLieuById(_nlId); 
             if (r != null)
             {
                 txtMa.Text = r["ma_nl"]?.ToString();
@@ -99,8 +99,7 @@ namespace UI
                 txtDonVi.Text = r["don_vi"]?.ToString();
             }
 
-            // 2) Số lượng tồn theo chi nhánh hiện tại
-            var slTon = _bll.LayTonKhoTaiChiNhanh(_chiNhanhId, _nlId); // decimal
+            var slTon = _bll.LayTonKhoTaiChiNhanh(_chiNhanhId, _nlId);
             if (slTon < nudTon.Minimum) slTon = nudTon.Minimum;
             if (slTon > nudTon.Maximum) slTon = nudTon.Maximum;
             nudTon.Value = slTon;
@@ -123,10 +122,10 @@ namespace UI
 
             try
             {
-                // 1) Cập nhật thông tin nguyên liệu
+               
                 _bll.Sua(_nlId, ma, ten, dv);
 
-                // 2) Cập nhật/Upsert tồn kho cho chi nhánh hiện tại
+               
                 _bll.CapNhatTonKho(_chiNhanhId, _nlId, nudTon.Value);
 
                 DialogResult = DialogResult.OK;

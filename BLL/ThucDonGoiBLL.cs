@@ -14,7 +14,7 @@ namespace BLL
             _dal = new ThucDonGoiDAL(connectionString);
         }
 
-        // Test kết nối
+   
         public bool TestConnection()
         {
             try
@@ -27,7 +27,6 @@ namespace BLL
             }
         }
 
-        // ... các method khác giữ nguyên như cũ
 
         public DataTable GetDanhSachMonAn()
         {

@@ -16,6 +16,8 @@ using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
 using QLNhaHangTiecCuoi.Share;
 using UI.Common;
+using UI.Controls;
+using Sunny.UI;
 
 namespace UI
 {
@@ -211,7 +213,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, "Lỗi khi đăng xuất: " + ex.Message, true, 2500);
+                GunaToast.Show(this, "Lỗi khi đăng xuất: " + ex.Message, UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -233,6 +235,12 @@ namespace UI
             panelChinh.Controls.Add(form);
             form.BringToFront();
             form.Show();
+            
+            // Nếu form implement IFormRefreshable thì refresh dữ liệu
+            if (form is IFormRefreshable refreshable)
+            {
+                refreshable.RefreshData();
+            }
         }
 
         public void ShowBanHangWithTable(string soBan, string tenKhachHang, int soKhach)
@@ -262,7 +270,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, $"Lỗi chuyển sang form bán hàng: {ex.Message}", true, 2500);
+                GunaToast.Show(this, $"Lỗi chuyển sang form bán hàng: {ex.Message}", UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -283,7 +291,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, $"Lỗi reset form: {ex.Message}", true, 2500);
+                GunaToast.Show(this, $"Lỗi reset form: {ex.Message}", UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
             }
         }
 
@@ -311,7 +319,7 @@ namespace UI
             {
                 if (Session.NguoiDungId <= 0)
                 {
-                    ThongBaoGoc.ShowError(this, "Phiên đăng nhập không hợp lệ! Vui lòng đăng nhập lại.", true, 2500);
+                    GunaToast.Show(this, "Phiên đăng nhập không hợp lệ! Vui lòng đăng nhập lại.", UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
                     cbbChonChiNhanh.Enabled = false;
                     return;
                 }
@@ -320,7 +328,7 @@ namespace UI
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
-                    ThongBaoGoc.ShowWarning(this, "Bạn không được phân quyền truy cập chi nhánh nào!\nVui lòng liên hệ quản trị viên.", true, 2500);
+                    GunaToast.Show(this, "Bạn không được phân quyền truy cập chi nhánh nào!\nVui lòng liên hệ quản trị viên.", UI.Controls.ToastType.Info, 2500, UI.Controls.ToastPos.TopRight);
                     cbbChonChiNhanh.Enabled = false;
                     return;
                 }
@@ -346,7 +354,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, "Lỗi load chi nhánh: " + ex.Message, true, 2500);
+                GunaToast.Show(this, "Lỗi load chi nhánh: " + ex.Message, UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
                 cbbChonChiNhanh.Enabled = false;
             }
         }
@@ -369,12 +377,12 @@ namespace UI
                     
                     SetSelected(btnDashboard);
 
-                    ThongBaoGoc.ShowSuccess(this, $"Đã chuyển sang chi nhánh: {tenChiNhanh}", true, 2500);
+                    GunaToast.Show(this, $"Đã chuyển sang chi nhánh: {tenChiNhanh}", UI.Controls.ToastType.Success, 2500, UI.Controls.ToastPos.TopRight);
                 }
             }
             catch (Exception ex)
             {
-                ThongBaoGoc.ShowError(this, "Lỗi khi chuyển chi nhánh: " + ex.Message, true, 2500);
+                GunaToast.Show(this, "Lỗi khi chuyển chi nhánh: " + ex.Message, UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
             }
         }
     }

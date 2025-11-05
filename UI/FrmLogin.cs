@@ -123,5 +123,15 @@ namespace UI
                 e.Handled = true;
             }
         }
+
+        private void txtMatKhau_TextChanged(object sender, EventArgs e)
+        {
+            // text changed
+        }
+
+        private void parrotButton1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

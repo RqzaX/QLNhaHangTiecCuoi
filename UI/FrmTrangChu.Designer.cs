@@ -1,4 +1,5 @@
-﻿namespace UI
+﻿using Guna.UI2.WinForms;
+namespace UI
 {
     partial class FrmTrangChu
     {
@@ -29,6 +30,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTrangChu));
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panel3 = new Panel();
             btnPhanQuyen = new UiControls.NavButton();
             btnCauHinh = new UiControls.NavButton();
@@ -54,14 +59,14 @@
             panel4 = new Panel();
             pictureBox1 = new PictureBox();
             panel5 = new Panel();
-            cbbChonChiNhanh = new ComboBox();
+            cbbChonChiNhanh = new Guna2ComboBox();
             btnDangXuat = new Button();
-            roundedTextBox1 = new UI.Controls.RoundedTextBox();
             pictureBox3 = new PictureBox();
             datevnControl1 = new VanThuan.Controls.DateVNControl();
             digitalClockControl1 = new UI.Controls.DigitalClockControl();
             pictureBox2 = new PictureBox();
             panelChinh = new Panel();
+            txtTimKiem = new Guna2TextBox();
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -145,7 +150,7 @@
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(12, 827);
             label21.Name = "label21";
-            label21.Size = new Size(68, 19);
+            label21.Size = new Size(86, 24);
             label21.TabIndex = 27;
             label21.Text = "Hệ thống";
             // 
@@ -212,7 +217,7 @@
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.Location = new Point(12, 667);
             label20.Name = "label20";
-            label20.Size = new Size(59, 19);
+            label20.Size = new Size(74, 24);
             label20.TabIndex = 23;
             label20.Text = "Quản lý";
             // 
@@ -298,7 +303,7 @@
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label19.Location = new Point(12, 476);
             label19.Name = "label19";
-            label19.Size = new Size(74, 19);
+            label19.Size = new Size(94, 24);
             label19.TabIndex = 18;
             label19.Text = "Danh mục";
             // 
@@ -422,7 +427,7 @@
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.Location = new Point(12, 205);
             label18.Name = "label18";
-            label18.Size = new Size(69, 19);
+            label18.Size = new Size(89, 24);
             label18.TabIndex = 11;
             label18.Text = "Vận hành";
             // 
@@ -451,7 +456,7 @@
             label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label17.Location = new Point(12, 128);
             label17.Name = "label17";
-            label17.Size = new Size(76, 19);
+            label17.Size = new Size(97, 24);
             label17.TabIndex = 9;
             label17.Text = "Tổng quan";
             // 
@@ -476,9 +481,9 @@
             // panel5
             // 
             panel5.BackColor = Color.White;
+            panel5.Controls.Add(txtTimKiem);
             panel5.Controls.Add(cbbChonChiNhanh);
             panel5.Controls.Add(btnDangXuat);
-            panel5.Controls.Add(roundedTextBox1);
             panel5.Controls.Add(pictureBox3);
             panel5.Controls.Add(datevnControl1);
             panel5.Controls.Add(digitalClockControl1);
@@ -490,11 +495,23 @@
             // 
             // cbbChonChiNhanh
             // 
+            cbbChonChiNhanh.BackColor = Color.Transparent;
+            cbbChonChiNhanh.BorderColor = Color.FromArgb(225, 229, 234);
+            cbbChonChiNhanh.BorderRadius = 10;
+            cbbChonChiNhanh.BorderThickness = 2;
+            cbbChonChiNhanh.CustomizableEdges = customizableEdges3;
+            cbbChonChiNhanh.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbChonChiNhanh.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbChonChiNhanh.FocusedColor = Color.FromArgb(31, 111, 235);
+            cbbChonChiNhanh.FocusedState.BorderColor = Color.FromArgb(31, 111, 235);
             cbbChonChiNhanh.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            cbbChonChiNhanh.ForeColor = Color.FromArgb(68, 88, 112);
             cbbChonChiNhanh.FormattingEnabled = true;
-            cbbChonChiNhanh.Location = new Point(64, 26);
+            cbbChonChiNhanh.ItemHeight = 30;
+            cbbChonChiNhanh.Location = new Point(64, 23);
             cbbChonChiNhanh.Name = "cbbChonChiNhanh";
-            cbbChonChiNhanh.Size = new Size(225, 31);
+            cbbChonChiNhanh.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            cbbChonChiNhanh.Size = new Size(225, 36);
             cbbChonChiNhanh.TabIndex = 6;
             // 
             // btnDangXuat
@@ -507,21 +524,10 @@
             btnDangXuat.UseVisualStyleBackColor = true;
             btnDangXuat.Click += btnDangXuat_Click;
             // 
-            // roundedTextBox1
-            // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(304, 22);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox1.Size = new Size(334, 40);
-            roundedTextBox1.TabIndex = 5;
-            // 
             // pictureBox3
             // 
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(644, 26);
+            pictureBox3.Location = new Point(697, 26);
             pictureBox3.Name = "pictureBox3";
             pictureBox3.Size = new Size(29, 29);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
@@ -533,7 +539,7 @@
             datevnControl1.BackColor = Color.Transparent;
             datevnControl1.Font = new Font("Segoe UI", 11F);
             datevnControl1.ForeColor = Color.FromArgb(40, 40, 40);
-            datevnControl1.Location = new Point(643, 38);
+            datevnControl1.Location = new Point(696, 38);
             datevnControl1.Name = "datevnControl1";
             datevnControl1.Size = new Size(253, 24);
             datevnControl1.TabIndex = 3;
@@ -544,7 +550,7 @@
             digitalClockControl1.BackColor = Color.Transparent;
             digitalClockControl1.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold);
             digitalClockControl1.ForeColor = Color.Black;
-            digitalClockControl1.Location = new Point(668, 12);
+            digitalClockControl1.Location = new Point(721, 12);
             digitalClockControl1.Name = "digitalClockControl1";
             digitalClockControl1.Size = new Size(89, 37);
             digitalClockControl1.Smooth = true;
@@ -570,6 +576,27 @@
             panelChinh.Name = "panelChinh";
             panelChinh.Size = new Size(1025, 665);
             panelChinh.TabIndex = 2;
+            // 
+            // txtTimKiem
+            // 
+            txtTimKiem.BorderRadius = 15;
+            txtTimKiem.CustomizableEdges = customizableEdges1;
+            txtTimKiem.DefaultText = "";
+            txtTimKiem.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtTimKiem.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtTimKiem.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtTimKiem.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtTimKiem.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtTimKiem.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtTimKiem.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtTimKiem.Location = new Point(295, 22);
+            txtTimKiem.Margin = new Padding(3, 4, 3, 4);
+            txtTimKiem.Name = "txtTimKiem";
+            txtTimKiem.PlaceholderText = "Tìm kiếm mọi thứ . . . ";
+            txtTimKiem.SelectedText = "";
+            txtTimKiem.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            txtTimKiem.Size = new Size(395, 40);
+            txtTimKiem.TabIndex = 7;
             // 
             // FrmTrangChu
             // 
@@ -628,9 +655,9 @@
         private PictureBox pictureBox2;
         private Controls.DigitalClockControl digitalClockControl1;
         private VanThuan.Controls.DateVNControl datevnControl1;
-        private Controls.RoundedTextBox roundedTextBox1;
         private PictureBox pictureBox3;
         private Button btnDangXuat;
-        private ComboBox cbbChonChiNhanh;
+        private Guna2ComboBox cbbChonChiNhanh;
+        private Guna2TextBox txtTimKiem;
     }
 }

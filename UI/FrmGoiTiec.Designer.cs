@@ -53,10 +53,17 @@
             btnCapNhat.FlatStyle = FlatStyle.Flat;
             btnCapNhat.Font = new Font("Segoe UI Semibold", 10.5F);
             btnCapNhat.ForeColor = Color.White;
+
             btnCapNhat.Location = new Point(869, 72);
             btnCapNhat.Name = "btnCapNhat";
             btnCapNhat.Padding = new Padding(10, 6, 10, 6);
             btnCapNhat.Size = new Size(123, 39);
+
+            btnCapNhat.Location = new Point(869, 162);
+            btnCapNhat.Name = "btnCapNhat";
+            btnCapNhat.Padding = new Padding(10, 6, 10, 6);
+            btnCapNhat.Size = new Size(123, 52);
+
             btnCapNhat.TabIndex = 0;
             btnCapNhat.Text = "Cập nhật";
             btnCapNhat.UseVisualStyleBackColor = false;
@@ -82,10 +89,17 @@
             btnXoa.FlatStyle = FlatStyle.Flat;
             btnXoa.Font = new Font("Segoe UI Semibold", 10.5F);
             btnXoa.ForeColor = Color.WhiteSmoke;
+
             btnXoa.Location = new Point(741, 121);
             btnXoa.Name = "btnXoa";
             btnXoa.Padding = new Padding(10, 6, 10, 6);
             btnXoa.Size = new Size(112, 39);
+
+            btnXoa.Location = new Point(751, 162);
+            btnXoa.Name = "btnXoa";
+            btnXoa.Padding = new Padding(10, 6, 10, 6);
+            btnXoa.Size = new Size(112, 52);
+
             btnXoa.TabIndex = 3;
             btnXoa.Text = "Xóa Gói";
             btnXoa.UseVisualStyleBackColor = false;
@@ -159,10 +173,17 @@
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
+
             roundedButton1.Location = new Point(741, 72);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
             roundedButton1.Size = new Size(112, 39);
+
+            roundedButton1.Location = new Point(604, 162);
+            roundedButton1.Name = "roundedButton1";
+            roundedButton1.Padding = new Padding(10, 6, 10, 6);
+            roundedButton1.Size = new Size(141, 52);
+
             roundedButton1.TabIndex = 9;
             roundedButton1.Text = "Chọn Gói";
             roundedButton1.UseVisualStyleBackColor = false;

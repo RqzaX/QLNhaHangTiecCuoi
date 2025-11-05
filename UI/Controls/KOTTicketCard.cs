@@ -72,6 +72,13 @@ namespace UI.Controls
         private int _btnHeight = 40;
         private int _btnRadius = 12;
 
+        // Secondary button (e.g., In món)
+        private string _secondaryText = "In món";
+        private bool _secondaryVisible = true;
+        private RectangleF _secBtnRect;
+        private bool _secHovering;
+        private bool _secPressed;
+
         // State
         private bool _btnHovering;
         private bool _btnPressed;
@@ -99,13 +106,18 @@ namespace UI.Controls
             MouseMove += (s, e) =>
             {
                 bool h = _btnRect.Contains(e.Location);
-                if (h != _btnHovering) { _btnHovering = h; Invalidate(); }
+                bool hs = _secBtnRect.Contains(e.Location);
+                if (h != _btnHovering || hs != _secHovering) { _btnHovering = h; _secHovering = hs; Invalidate(); }
             };
             MouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Left && _btnRect.Contains(e.Location))
                 {
                     _btnPressed = true; Invalidate();
+                }
+                if (e.Button == MouseButtons.Left && _secBtnRect.Contains(e.Location))
+                {
+                    _secPressed = true; Invalidate();
                 }
             };
             MouseUp += (s, e) =>
@@ -115,10 +127,15 @@ namespace UI.Controls
                     _btnPressed = false; Invalidate();
                     if (_btnRect.Contains(e.Location)) OnStartClicked(EventArgs.Empty);
                 }
+                if (_secPressed)
+                {
+                    _secPressed = false; Invalidate();
+                    if (_secBtnRect.Contains(e.Location)) OnSecondaryClicked(EventArgs.Empty);
+                }
             };
             MouseLeave += (s, e) =>
             {
-                if (_btnHovering || _btnPressed) { _btnHovering = _btnPressed = false; Invalidate(); }
+                if (_btnHovering || _btnPressed || _secHovering || _secPressed) { _btnHovering = _btnPressed = _secHovering = _secPressed = false; Invalidate(); }
             };
         }
 
@@ -155,6 +172,12 @@ namespace UI.Controls
         public string ActionText { get => _actionText; set { _actionText = value; Invalidate(); } }
 
         [Category("Appearance")]
+        public string SecondaryText { get => _secondaryText; set { _secondaryText = value; Invalidate(); } }
+
+        [Category("Appearance")]
+        public bool SecondaryVisible { get => _secondaryVisible; set { _secondaryVisible = value; Invalidate(); } }
+
+        [Category("Appearance")]
         public Color ButtonColor { get => _btnColor; set { _btnColor = value; Invalidate(); } }
 
         [Category("Appearance")]
@@ -172,6 +195,9 @@ namespace UI.Controls
         // ====== Event ======
         public event EventHandler StartClicked;
         protected virtual void OnStartClicked(EventArgs e) => StartClicked?.Invoke(this, e);
+
+        public event EventHandler SecondaryClicked;
+        protected virtual void OnSecondaryClicked(EventArgs e) => SecondaryClicked?.Invoke(this, e);
 
         // ====== Layout helpers ======
         private static GraphicsPath RoundedRect(RectangleF bounds, float radius)
@@ -223,7 +249,7 @@ namespace UI.Controls
                 g.DrawString(_tableName, _fontTitle, titleBrush, x, y);
                 // Time (🕒)
                 string timeStr = _time.ToString("HH:mm");
-                var timeText = "🕒 " + timeStr;
+                var timeText = "Thời gian: " + timeStr;
                 var sz = g.MeasureString(timeText, _fontMeta);
                 g.DrawString(timeText, _fontMeta, metaBrush, right - sz.Width, y + 2);
             }
@@ -248,7 +274,7 @@ namespace UI.Controls
 
             using (var metaBrush = new SolidBrush(Color.FromArgb(90, 95, 110)))
             {
-                string chef = "👨‍🍳";
+                string chef = "Nhà bếp";
                 var szChef = g.MeasureString(chef, _fontMeta);
                 g.DrawString(chef, _fontMeta, metaBrush, chipRect.Right + 8, y + (chipH - szChef.Height) / 2f);
             }
@@ -271,15 +297,25 @@ namespace UI.Controls
                 using (var notesBrush = new SolidBrush(Color.FromArgb(120, 120, 120)))
                 using (var notesFont = new Font("Segoe UI", 9.0f, FontStyle.Italic))
                 {
-                    string notesText = "📝 " + _notes;
+                    string notesText = "Ghi chú: " + _notes;
                     g.DrawString(notesText, notesFont, notesBrush, x, y);
                     y += notesFont.Height + 8;
                 }
             }
 
-            // Button
+            // Buttons
             y = Math.Max(y, card.Bottom - _cardPadding.Bottom - _btnHeight);
-            _btnRect = new RectangleF(x, y, right - x, _btnHeight);
+            float secWidth = _secondaryVisible ? 110f : 0f;
+            float gap = _secondaryVisible ? 8f : 0f;
+            if (_secondaryVisible)
+            {
+                _secBtnRect = new RectangleF(right - secWidth, y, secWidth, _btnHeight);
+            }
+            else
+            {
+                _secBtnRect = RectangleF.Empty;
+            }
+            _btnRect = new RectangleF(x, y, (right - x) - (secWidth + gap), _btnHeight);
             using (var btnPath = RoundedRect(_btnRect, _btnRadius))
             using (var btnBack = new SolidBrush(_btnPressed
                        ? ControlPaint.Dark(_btnHovering ? _btnHover : _btnColor)
@@ -292,6 +328,34 @@ namespace UI.Controls
                 var tx = _btnRect.X + (_btnRect.Width - tSize.Width) / 2f;
                 var ty = _btnRect.Y + (_btnRect.Height - tSize.Height) / 2f;
                 g.DrawString(_actionText, _fontButton, btnTextBrush, tx, ty + 1);
+            }
+
+            // Secondary button (outline style)
+            if (_secondaryVisible)
+            {
+                using (var secPath = RoundedRect(_secBtnRect, _btnRadius))
+                using (var secBack = new SolidBrush(Color.White))
+                using (var secBorder = new Pen(_btnColor, 1.2f))
+                using (var secTextBrush = new SolidBrush(_btnColor))
+                {
+                    if (_secPressed)
+                    {
+                        g.FillPath(new SolidBrush(Color.FromArgb(245, 245, 245)), secPath);
+                    }
+                    else if (_secHovering)
+                    {
+                        g.FillPath(new SolidBrush(Color.FromArgb(250, 250, 250)), secPath);
+                    }
+                    else
+                    {
+                        g.FillPath(secBack, secPath);
+                    }
+                    g.DrawPath(secBorder, secPath);
+                    var tSize2 = g.MeasureString(_secondaryText, _fontButton);
+                    var tx2 = _secBtnRect.X + (_secBtnRect.Width - tSize2.Width) / 2f;
+                    var ty2 = _secBtnRect.Y + (_secBtnRect.Height - tSize2.Height) / 2f;
+                    g.DrawString(_secondaryText, _fontButton, secTextBrush, tx2, ty2 + 1);
+                }
             }
         }
 

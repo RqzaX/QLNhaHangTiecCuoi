@@ -57,7 +57,7 @@ namespace UI
 
             dgvGoiTiec.Columns.Clear();
 
-            // Ẩn ID nhưng GIỮ DataPropertyName = goi_id
+
             dgvGoiTiec.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "goi_id",
@@ -169,11 +169,16 @@ namespace UI
 
                 _isEditing = true;
 
+
                 // Chỉ cho phép cập nhật, không cho bấm thêm
                 btnThemGoi.Enabled = false;
                 btnCapNhat.Enabled = true;
 
                 // Không cho sửa mã gói khi cập nhật
+
+                btnCapNhat.Text = "Cập Nhật";
+                btnCapNhat.BackColor = System.Drawing.Color.DodgerBlue;
+
                 txtMaGoi.Enabled = false;
             }
             catch (Exception ex)
@@ -193,7 +198,6 @@ namespace UI
 
                 if (_isEditing)
                 {
-                    // Cập nhật
                     bool success = _bll.CapNhatGoiTiec(_goiIdDangChon, maGoi, tenGoi, giaGoi, out string errorMessage);
 
                     if (success)
@@ -211,7 +215,6 @@ namespace UI
                 }
                 else
                 {
-                    // Thêm mới
                     bool success = _bll.ThemGoiTiec(maGoi, tenGoi, giaGoi, out string errorMessage);
 
                     if (success)
@@ -282,7 +285,6 @@ namespace UI
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
-            // Nút "Chọn Gói"
             if (_goiIdDangChon == 0)
             {
                 MessageBox.Show("Vui lòng chọn một gói tiệc!", "Thông báo",
@@ -324,10 +326,9 @@ namespace UI
             }
         }
 
-        // Thêm các event handlers khác
         private void txtGiaGoi_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Chỉ cho phép nhập số
+          
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
@@ -336,6 +337,7 @@ namespace UI
 
         private void txtGiaGoi_Leave(object sender, EventArgs e)
         {
+
             // Format hiển thị tiền khi rời khỏi textbox
             if (string.IsNullOrWhiteSpace(txtGiaGoi.Text))
             {
@@ -343,6 +345,7 @@ namespace UI
                 return;
             }
             
+
             decimal gia = _bll.ParseTien(txtGiaGoi.Text);
             if (gia > 0)
             {

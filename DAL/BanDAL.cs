@@ -403,7 +403,7 @@ namespace QLNhaHangTiecCuoi.DAL
             {
                 string query = @"
                     INSERT INTO dat_ban (chi_nhanh_id, ban_id, khach_hang_id, ngay_gio, so_khach, trang_thai, ghi_chu)
-                    VALUES (@chiNhanhId, @banId, @khachHangId, @ngayGio, @soKhach, N'CHỜ XÁC NHẬN', @ghiChu)";
+                    VALUES (@chiNhanhId, @banId, @khachHangId, @ngayGio, @soKhach, N'ĐÃ XÁC NHẬN', @ghiChu)";
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {
@@ -460,13 +460,17 @@ namespace QLNhaHangTiecCuoi.DAL
                         kv.ten_khu_vuc,
                         db.so_khach,
                         db.trang_thai,
+                        ISNULL(db.ghi_chu, '') as ghi_chu,
                         0 as tien_coc
                     FROM dat_ban db
                     INNER JOIN khach_hang kh ON db.khach_hang_id = kh.khach_hang_id
                     INNER JOIN ban b ON db.ban_id = b.ban_id
                     LEFT JOIN khu_vuc kv ON b.khu_vuc_id = kv.khu_vuc_id
                     WHERE db.chi_nhanh_id = @chiNhanhId
-                    ORDER BY db.ngay_gio DESC";
+                    ORDER BY 
+                        CASE WHEN CAST(db.ngay_gio AS DATE) = CAST(GETDATE() AS DATE) THEN 0 ELSE 1 END,
+                        CAST(db.ngay_gio AS DATE) ASC,
+                        db.ngay_gio ASC";
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {
@@ -571,10 +575,12 @@ namespace QLNhaHangTiecCuoi.DAL
         {
             try
             {
+                // Xác nhận đã đến - không cần xóa ghi chú vì ghi chú cảnh báo chỉ là hiển thị
                 string query = @"
                     UPDATE dat_ban 
-                    SET trang_thai = N'ĐÃ XÁC NHẬN' 
-                    WHERE 'DB' + RIGHT('000' + CAST(dat_ban_id AS VARCHAR), 3) = @maDatBan;
+                    SET trang_thai = N'ĐÃ PHỤC VỤ'
+                    WHERE ('DB' + RIGHT('000' + CAST(dat_ban_id AS VARCHAR), 3) = @maDatBan)
+                    AND trang_thai = N'ĐÃ XÁC NHẬN';
                     
                     UPDATE ban 
                     SET trang_thai = N'PHỤC VỤ' 
@@ -614,6 +620,48 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi xác nhận đặt bàn: {ex.Message}");
+            }
+        }
+
+        public int CapNhatTrangThaiTreGio()
+        {
+            // Không cập nhật database, chỉ để tương thích với BLL
+            // Logic hiển thị "Trễ giờ đặt" được xử lý hoàn toàn ở UI dựa trên thời gian
+            return 0;
+        }
+
+        public int TuDongHuyDatBanTreGio()
+        {
+            try
+            {
+                // Tự động hủy các đặt bàn trễ giờ quá 2 tiếng (120 phút) kể từ giờ đặt
+                // Dựa vào thời gian trực tiếp, không dựa vào ghi chú
+                string query = @"
+                    UPDATE dat_ban 
+                    SET trang_thai = N'ĐÃ HỦY',
+                        ghi_chu = CASE 
+                            WHEN ghi_chu IS NULL OR ghi_chu = '' THEN N'Đã tự động hủy do khách không đến sau 2 tiếng kể từ giờ đặt.'
+                            ELSE ghi_chu + N' (Đã tự động hủy do khách không đến sau 2 tiếng kể từ giờ đặt.)'
+                        END
+                    WHERE trang_thai = N'ĐÃ XÁC NHẬN'
+                    AND ngay_gio < GETDATE()  -- Đã quá giờ đặt
+                    AND DATEDIFF(MINUTE, ngay_gio, GETDATE()) >= 120;  -- Quá 2 tiếng
+                    
+                    UPDATE ban 
+                    SET trang_thai = N'TRỐNG' 
+                    WHERE ban_id IN (
+                        SELECT ban_id 
+                        FROM dat_ban 
+                        WHERE trang_thai = N'ĐÃ HỦY'
+                        AND DATEDIFF(MINUTE, ngay_gio, GETDATE()) >= 120
+                        AND ghi_chu LIKE N'%tự động hủy%'
+                    )";
+                
+                return _dbHelper.ExecuteNonQuery(query);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi tự động hủy đặt bàn trễ giờ: {ex.Message}");
             }
         }
     }

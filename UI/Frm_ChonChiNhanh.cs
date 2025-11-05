@@ -88,6 +88,7 @@ namespace UI
 
             if (result == DialogResult.Yes)
             {
+                this.DialogResult = DialogResult.Cancel;
                 this.Close();
             }
         }
