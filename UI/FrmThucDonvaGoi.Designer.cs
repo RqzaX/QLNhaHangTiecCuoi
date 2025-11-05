@@ -38,6 +38,8 @@
             roundedButton2 = new UI.Controls.RoundedButton();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             dgvThucDonVaGoi = new DataGridView();
+            btnGoiTiecCuoi = new Button();
+            MaMon = new DataGridViewTextBoxColumn();
             TenMon = new DataGridViewTextBoxColumn();
             DanhMuc = new DataGridViewTextBoxColumn();
             GiaBan = new DataGridViewTextBoxColumn();
@@ -45,7 +47,6 @@
             LoiNhuan = new DataGridViewTextBoxColumn();
             TrangThai = new DataGridViewTextBoxColumn();
             ThaoTac = new DataGridViewTextBoxColumn();
-            btnGoiTiecCuoi = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvThucDonVaGoi).BeginInit();
             SuspendLayout();
             // 
@@ -83,6 +84,7 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
+            roundedButton2.BorderThickness = 0;
             roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
@@ -114,7 +116,6 @@
             dgvThucDonVaGoi.AllowUserToAddRows = false;
             dgvThucDonVaGoi.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvThucDonVaGoi.BackgroundColor = SystemColors.ControlLightLight;
-            dgvThucDonVaGoi.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
@@ -125,7 +126,7 @@
             dgvThucDonVaGoi.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvThucDonVaGoi.ColumnHeadersHeight = 50;
             dgvThucDonVaGoi.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvThucDonVaGoi.Columns.AddRange(new DataGridViewColumn[] { TenMon, DanhMuc, GiaBan, GiaVon, LoiNhuan, TrangThai, ThaoTac });
+            dgvThucDonVaGoi.Columns.AddRange(new DataGridViewColumn[] { MaMon, TenMon, DanhMuc, GiaBan, GiaVon, LoiNhuan, TrangThai, ThaoTac });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -143,6 +144,24 @@
             dgvThucDonVaGoi.Size = new Size(1148, 592);
             dgvThucDonVaGoi.TabIndex = 15;
             dgvThucDonVaGoi.CellContentClick += dgvThucDonVaGoi_CellContentClick;
+            // 
+            // btnGoiTiecCuoi
+            // 
+            btnGoiTiecCuoi.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnGoiTiecCuoi.Location = new Point(167, 109);
+            btnGoiTiecCuoi.Name = "btnGoiTiecCuoi";
+            btnGoiTiecCuoi.Size = new Size(129, 55);
+            btnGoiTiecCuoi.TabIndex = 16;
+            btnGoiTiecCuoi.Text = "Gói Tiêc Cưới";
+            btnGoiTiecCuoi.UseVisualStyleBackColor = true;
+            btnGoiTiecCuoi.Click += btnGoiTiecCuoi_Click;
+            // 
+            // MaMon
+            // 
+            MaMon.HeaderText = "Mã Món";
+            MaMon.MinimumWidth = 6;
+            MaMon.Name = "MaMon";
+            MaMon.Width = 125;
             // 
             // TenMon
             // 
@@ -193,17 +212,6 @@
             ThaoTac.Name = "ThaoTac";
             ThaoTac.Width = 6;
             // 
-            // btnGoiTiecCuoi
-            // 
-            btnGoiTiecCuoi.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnGoiTiecCuoi.Location = new Point(167, 109);
-            btnGoiTiecCuoi.Name = "btnGoiTiecCuoi";
-            btnGoiTiecCuoi.Size = new Size(129, 55);
-            btnGoiTiecCuoi.TabIndex = 16;
-            btnGoiTiecCuoi.Text = "Gói Tiêc Cưới";
-            btnGoiTiecCuoi.UseVisualStyleBackColor = true;
-            btnGoiTiecCuoi.Click += btnGoiTiecCuoi_Click;
-            // 
             // FrmThucDonvaGoi
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -233,6 +241,7 @@
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private DataGridView dgvThucDonVaGoi;
         private Button btnGoiTiecCuoi;
+        private DataGridViewTextBoxColumn MaMon;
         private DataGridViewTextBoxColumn TenMon;
         private DataGridViewTextBoxColumn DanhMuc;
         private DataGridViewTextBoxColumn GiaBan;

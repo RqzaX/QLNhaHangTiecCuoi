@@ -31,23 +31,21 @@
             label1 = new Label();
             label2 = new Label();
             label8 = new Label();
-            borderComboBox1 = new UiControls.BorderComboBox();
-            label3 = new Label();
+            CBBLoaiKM = new UiControls.BorderComboBox();
             label4 = new Label();
-            roundedTextBox1 = new UI.Controls.RoundedTextBox();
-            roundedTextBox2 = new UI.Controls.RoundedTextBox();
-            label5 = new Label();
-            roundedTextBox3 = new UI.Controls.RoundedTextBox();
+            txtTenCT = new UI.Controls.RoundedTextBox();
             label6 = new Label();
-            roundedTextBox4 = new UI.Controls.RoundedTextBox();
+            txtGiamTD = new UI.Controls.RoundedTextBox();
             label7 = new Label();
-            roundedTextBox5 = new UI.Controls.RoundedTextBox();
+            txtMaKM = new UI.Controls.RoundedTextBox();
             label9 = new Label();
             label10 = new Label();
-            dateTimePicker1 = new DateTimePicker();
-            dateTimePicker2 = new DateTimePicker();
-            roundedButton1 = new UI.Controls.RoundedButton();
-            roundedButton2 = new UI.Controls.RoundedButton();
+            dateNgayBatDau = new DateTimePicker();
+            dateNgayKetThuc = new DateTimePicker();
+            btnHuy = new UI.Controls.RoundedButton();
+            btnTao = new UI.Controls.RoundedButton();
+            cbbLoaiApDung = new UiControls.BorderComboBox();
+            label3 = new Label();
             SuspendLayout();
             // 
             // label1
@@ -56,9 +54,9 @@
             label1.Font = new Font("Segoe UI", 12F);
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(170, 28);
+            label1.Size = new Size(224, 28);
             label1.TabIndex = 4;
-            label1.Text = "Phiếu Chuyển Kho";
+            label1.Text = "Chương trìn Khuyến mãi";
             // 
             // label2
             // 
@@ -75,32 +73,23 @@
             label8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label8.Location = new Point(12, 87);
             label8.Name = "label8";
-            label8.Size = new Size(60, 20);
+            label8.Size = new Size(131, 20);
             label8.TabIndex = 10;
-            label8.Text = "Từ Kho";
+            label8.Text = "Tên Chương trình";
             // 
-            // borderComboBox1
+            // CBBLoaiKM
             // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền", "Tặng Quà" });
-            borderComboBox1.Location = new Point(12, 288);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(237, 32);
-            borderComboBox1.TabIndex = 13;
-            borderComboBox1.Text = "Chọn Loại";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(352, 265);
-            label3.Name = "label3";
-            label3.Size = new Size(91, 20);
-            label3.TabIndex = 11;
-            label3.Text = "Giá trị giảm";
+            CBBLoaiKM.DrawMode = DrawMode.OwnerDrawFixed;
+            CBBLoaiKM.FormattingEnabled = true;
+            CBBLoaiKM.IntegralHeight = false;
+            CBBLoaiKM.ItemHeight = 26;
+            CBBLoaiKM.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền", "Tặng quà" });
+            CBBLoaiKM.Location = new Point(12, 288);
+            CBBLoaiKM.Name = "CBBLoaiKM";
+            CBBLoaiKM.Size = new Size(207, 32);
+            CBBLoaiKM.TabIndex = 13;
+            CBBLoaiKM.Text = "Chọn Loại";
+            
             // 
             // label4
             // 
@@ -111,70 +100,39 @@
             label4.Size = new Size(125, 20);
             label4.TabIndex = 12;
             label4.Text = "Loại Khuyến Mãi";
+          
             // 
-            // roundedTextBox1
+            // txtTenCT
             // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.Font = new Font("Segoe UI", 10F);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(12, 110);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox1.Size = new Size(577, 51);
-            roundedTextBox1.TabIndex = 14;
-            // 
-            // roundedTextBox2
-            // 
-            roundedTextBox2.BackColor = Color.White;
-            roundedTextBox2.Font = new Font("Segoe UI", 10F);
-            roundedTextBox2.ForeColor = Color.Black;
-            roundedTextBox2.Location = new Point(352, 288);
-            roundedTextBox2.Name = "roundedTextBox2";
-            roundedTextBox2.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox2.Size = new Size(237, 51);
-            roundedTextBox2.TabIndex = 15;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(352, 346);
-            label5.Name = "label5";
-            label5.Size = new Size(90, 20);
-            label5.TabIndex = 11;
-            label5.Text = "Giảm tối đa";
-            // 
-            // roundedTextBox3
-            // 
-            roundedTextBox3.BackColor = Color.White;
-            roundedTextBox3.Font = new Font("Segoe UI", 10F);
-            roundedTextBox3.ForeColor = Color.Black;
-            roundedTextBox3.Location = new Point(352, 369);
-            roundedTextBox3.Name = "roundedTextBox3";
-            roundedTextBox3.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox3.Size = new Size(237, 51);
-            roundedTextBox3.TabIndex = 15;
+            txtTenCT.BackColor = Color.White;
+            txtTenCT.Font = new Font("Segoe UI", 10F);
+            txtTenCT.ForeColor = Color.Black;
+            txtTenCT.Location = new Point(12, 110);
+            txtTenCT.Name = "txtTenCT";
+            txtTenCT.Padding = new Padding(10, 8, 10, 8);
+            txtTenCT.Size = new Size(577, 51);
+            txtTenCT.TabIndex = 14;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(12, 346);
+            label6.Location = new Point(352, 265);
             label6.Name = "label6";
             label6.Size = new Size(90, 20);
             label6.TabIndex = 11;
             label6.Text = "Giảm tối đa";
             // 
-            // roundedTextBox4
+            // txtGiamTD
             // 
-            roundedTextBox4.BackColor = Color.White;
-            roundedTextBox4.Font = new Font("Segoe UI", 10F);
-            roundedTextBox4.ForeColor = Color.Black;
-            roundedTextBox4.Location = new Point(12, 369);
-            roundedTextBox4.Name = "roundedTextBox4";
-            roundedTextBox4.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox4.Size = new Size(237, 51);
-            roundedTextBox4.TabIndex = 15;
+            txtGiamTD.BackColor = Color.White;
+            txtGiamTD.Font = new Font("Segoe UI", 10F);
+            txtGiamTD.ForeColor = Color.Black;
+            txtGiamTD.Location = new Point(352, 288);
+            txtGiamTD.Name = "txtGiamTD";
+            txtGiamTD.Padding = new Padding(10, 8, 10, 8);
+            txtGiamTD.Size = new Size(237, 51);
+            txtGiamTD.TabIndex = 15;
             // 
             // label7
             // 
@@ -186,22 +144,22 @@
             label7.TabIndex = 10;
             label7.Text = "Mã Khuyến Mãi";
             // 
-            // roundedTextBox5
+            // txtMaKM
             // 
-            roundedTextBox5.BackColor = Color.White;
-            roundedTextBox5.Font = new Font("Segoe UI", 10F);
-            roundedTextBox5.ForeColor = Color.Black;
-            roundedTextBox5.Location = new Point(12, 199);
-            roundedTextBox5.Name = "roundedTextBox5";
-            roundedTextBox5.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox5.Size = new Size(577, 51);
-            roundedTextBox5.TabIndex = 14;
+            txtMaKM.BackColor = Color.White;
+            txtMaKM.Font = new Font("Segoe UI", 10F);
+            txtMaKM.ForeColor = Color.Black;
+            txtMaKM.Location = new Point(12, 199);
+            txtMaKM.Name = "txtMaKM";
+            txtMaKM.Padding = new Padding(10, 8, 10, 8);
+            txtMaKM.Size = new Size(577, 51);
+            txtMaKM.TabIndex = 14;
             // 
             // label9
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label9.Location = new Point(352, 423);
+            label9.Location = new Point(352, 342);
             label9.Name = "label9";
             label9.Size = new Size(107, 20);
             label9.TabIndex = 11;
@@ -211,76 +169,98 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(12, 423);
+            label10.Location = new Point(12, 342);
             label10.Name = "label10";
             label10.Size = new Size(103, 20);
             label10.TabIndex = 11;
             label10.Text = "Ngày bắt đầu";
             // 
-            // dateTimePicker1
+            // dateNgayBatDau
             // 
-            dateTimePicker1.Location = new Point(12, 446);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(237, 27);
-            dateTimePicker1.TabIndex = 16;
+            dateNgayBatDau.Location = new Point(12, 378);
+            dateNgayBatDau.Name = "dateNgayBatDau";
+            dateNgayBatDau.Size = new Size(237, 27);
+            dateNgayBatDau.TabIndex = 16;
             // 
-            // dateTimePicker2
+            // dateNgayKetThuc
             // 
-            dateTimePicker2.Location = new Point(352, 446);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(237, 27);
-            dateTimePicker2.TabIndex = 17;
+            dateNgayKetThuc.Location = new Point(352, 378);
+            dateNgayKetThuc.Name = "dateNgayKetThuc";
+            dateNgayKetThuc.Size = new Size(237, 27);
+            dateNgayKetThuc.TabIndex = 17;
             // 
-            // roundedButton1
+            // btnHuy
             // 
-            roundedButton1.BackColor = Color.White;
-            roundedButton1.BackgroundImageLayout = ImageLayout.Stretch;
-            roundedButton1.FlatAppearance.BorderSize = 0;
-            roundedButton1.FlatStyle = FlatStyle.Flat;
-            roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton1.ForeColor = Color.Black;
-            roundedButton1.Location = new Point(332, 530);
-            roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(94, 29);
-            roundedButton1.TabIndex = 18;
-            roundedButton1.Text = "Hủy";
-            roundedButton1.UseVisualStyleBackColor = false;
+            btnHuy.BackColor = Color.White;
+            btnHuy.BackgroundImageLayout = ImageLayout.Stretch;
+            btnHuy.BorderThickness = 0;
+            btnHuy.FlatAppearance.BorderSize = 0;
+            btnHuy.FlatStyle = FlatStyle.Flat;
+            btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnHuy.ForeColor = Color.Black;
+            btnHuy.Location = new Point(332, 510);
+            btnHuy.Name = "btnHuy";
+            btnHuy.Padding = new Padding(10, 6, 10, 6);
+            btnHuy.Size = new Size(94, 49);
+            btnHuy.TabIndex = 18;
+            btnHuy.Text = "Hủy";
+            btnHuy.UseVisualStyleBackColor = false;
             // 
-            // roundedButton2
+            // btnTao
             // 
-            roundedButton2.BackColor = Color.FromArgb(31, 111, 235);
-            roundedButton2.FlatAppearance.BorderSize = 0;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(432, 530);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(157, 29);
-            roundedButton2.TabIndex = 19;
-            roundedButton2.Text = "Tạo CTKM";
-            roundedButton2.UseVisualStyleBackColor = false;
+            btnTao.BackColor = Color.FromArgb(31, 111, 235);
+            btnTao.BorderThickness = 0;
+            btnTao.FlatAppearance.BorderSize = 0;
+            btnTao.FlatStyle = FlatStyle.Flat;
+            btnTao.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnTao.ForeColor = Color.White;
+            btnTao.Location = new Point(432, 510);
+            btnTao.Name = "btnTao";
+            btnTao.Padding = new Padding(10, 6, 10, 6);
+            btnTao.Size = new Size(157, 49);
+            btnTao.TabIndex = 19;
+            btnTao.Text = "Tạo CTKM";
+            btnTao.UseVisualStyleBackColor = false;
+            // 
+            // cbbLoaiApDung
+            // 
+            cbbLoaiApDung.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbLoaiApDung.FormattingEnabled = true;
+            cbbLoaiApDung.IntegralHeight = false;
+            cbbLoaiApDung.ItemHeight = 26;
+            cbbLoaiApDung.Location = new Point(12, 443);
+            cbbLoaiApDung.Name = "cbbLoaiApDung";
+            cbbLoaiApDung.Size = new Size(207, 32);
+            cbbLoaiApDung.TabIndex = 13;
+            cbbLoaiApDung.Text = "Chọn Loại";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.Location = new Point(12, 420);
+            label3.Name = "label3";
+            label3.Size = new Size(104, 20);
+            label3.TabIndex = 12;
+            label3.Text = "Loại Áp Dụng";
             // 
             // Frm_TaoCTKM
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(619, 600);
-            Controls.Add(roundedButton2);
-            Controls.Add(roundedButton1);
-            Controls.Add(dateTimePicker2);
-            Controls.Add(dateTimePicker1);
-            Controls.Add(roundedTextBox4);
-            Controls.Add(roundedTextBox3);
-            Controls.Add(roundedTextBox2);
+            Controls.Add(btnTao);
+            Controls.Add(btnHuy);
+            Controls.Add(dateNgayKetThuc);
+            Controls.Add(dateNgayBatDau);
+            Controls.Add(txtGiamTD);
             Controls.Add(label10);
             Controls.Add(label6);
-            Controls.Add(roundedTextBox5);
-            Controls.Add(roundedTextBox1);
+            Controls.Add(txtMaKM);
+            Controls.Add(txtTenCT);
             Controls.Add(label9);
-            Controls.Add(label5);
-            Controls.Add(borderComboBox1);
+            Controls.Add(cbbLoaiApDung);
+            Controls.Add(CBBLoaiKM);
             Controls.Add(label3);
             Controls.Add(label4);
             Controls.Add(label7);
@@ -298,22 +278,20 @@
         private Label label1;
         private Label label2;
         private Label label8;
-        private UiControls.BorderComboBox borderComboBox1;
-        private Label label3;
+        private UiControls.BorderComboBox CBBLoaiKM;
         private Label label4;
-        private Controls.RoundedTextBox roundedTextBox1;
-        private Controls.RoundedTextBox roundedTextBox2;
-        private Label label5;
-        private Controls.RoundedTextBox roundedTextBox3;
+        private Controls.RoundedTextBox txtTenCT;
         private Label label6;
-        private Controls.RoundedTextBox roundedTextBox4;
+        private Controls.RoundedTextBox txtGiamTD;
         private Label label7;
-        private Controls.RoundedTextBox roundedTextBox5;
+        private Controls.RoundedTextBox txtMaKM;
         private Label label9;
         private Label label10;
-        private DateTimePicker dateTimePicker1;
-        private DateTimePicker dateTimePicker2;
-        private Controls.RoundedButton roundedButton1;
-        private Controls.RoundedButton roundedButton2;
+        private DateTimePicker dateNgayBatDau;
+        private DateTimePicker dateNgayKetThuc;
+        private Controls.RoundedButton btnHuy;
+        private Controls.RoundedButton btnTao;
+        private UiControls.BorderComboBox cbbLoaiApDung;
+        private Label label3;
     }
 }

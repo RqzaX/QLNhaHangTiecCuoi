@@ -1,4 +1,5 @@
 ﻿using BLL;
+using NLog.Filters;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.Share;
 using System;
@@ -30,8 +31,9 @@ namespace UI
         private readonly Timer _debounceTimer = new Timer();
         private const int DebounceMs = 300;
         private const decimal NguongCanhBaoMacDinh = 30;
+        List<string> filters = new List<string>();
         private int _selectedBranchId = Session.ChiNhanhId;
-
+        private string _currentSearchText = string.Empty;
 
         public FrmKho(DatabaseHelper dbHelper)
         {
@@ -95,7 +97,7 @@ namespace UI
                 DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
 
-            // === CỘT GIÁ TRỊ ===
+      
            
 
             if (dgvKho.Columns["colChiTiet"] == null)
@@ -120,8 +122,7 @@ namespace UI
            this.Load += FrmKho_Load;
     cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
     txtSearch.TextChanged += txtSearch_TextChanged;
-
-    // THÊM:
+          
 
         }
         private void LoadBranchCombo()
@@ -143,14 +144,14 @@ namespace UI
             }
         }
 
-        // Helper method để lấy chi nhánh có dữ liệu tồn kho
+    
         private List<(int BranchId, string BranchName)> GetBranchesWithInventoryData()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
                 
-                // Sử dụng BLL để lấy danh sách chi nhánh có dữ liệu tồn kho
+               
                 var branchesData = _bll.LayChiNhanhCoDuLieuTonKho();
                 
                 if (branchesData != null)
@@ -175,14 +176,13 @@ namespace UI
             }
         }
 
-        // Helper method để lấy tất cả chi nhánh
+     
         private List<(int BranchId, string BranchName)> GetAllBranches()
         {
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
-                
-                // Sử dụng BLL để lấy tất cả chi nhánh
+           
                 var allBranches = _bll.LayTatCaChiNhanh();
                 
                 if (allBranches != null)
@@ -228,46 +228,51 @@ namespace UI
                 ? Convert.ToDecimal(r[col])
                 : 0m;
         }
+        private static string BuildRowFilter(int tinhTrang, string searchText, decimal nguongSapHet)
+        {
+            var parts = new List<string>();
+
+            // điều kiện theo tình trạng
+            switch (tinhTrang)
+            {
+                case 1: parts.Add("sl_ton > 0"); break;
+                case 2: parts.Add("sl_ton = 0"); break;
+                case 3: parts.Add($"sl_ton > 0 AND sl_ton <= {nguongSapHet.ToString(System.Globalization.CultureInfo.InvariantCulture)}"); break;
+                default: break; // tất cả
+            }
+
+            // điều kiện theo ô tìm kiếm
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                string esc = searchText.Trim().Replace("'", "''");
+                // tìm theo mã hoặc tên nguyên liệu
+                parts.Add($"(ma_nl LIKE '%{esc}%' OR ten_nl LIKE '%{esc}%')");
+            }
+
+            return string.Join(" AND ", parts);
+        }
 
         public void ReloadGrid()
         {
-            // 1) Lấy tất cả (có lọc theo chi nhánh)
             DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
             if (tb == null) { dgvKho.DataSource = null; return; }
 
-            // 2) Lọc tại UI theo combobox
-            var stt = GetTinhTrang();
             var dv = tb.DefaultView;
 
-            string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
-            // RowFilter dùng InvariantCulture cho số thập phân
-            switch (stt)
-            {
-                case 1: // Còn hàng
-                    dv.RowFilter = "sl_ton > 0";
-                    break;
-                case 2: // Hết hàng
-                    dv.RowFilter = "sl_ton = 0";
-                    break;
-                case 3: // Sắp hết: 0 < sl_ton <= ngưỡng
-                    dv.RowFilter = $"sl_ton > 0 AND sl_ton <= {canhBao}";
-                    break;
-                default: // Tất cả
-                    dv.RowFilter = string.Empty;
-                    break;
-            }
+            // lấy trạng thái hiện tại + text đang gõ
+            int stt = GetTinhTrang();
+            _currentSearchText = txtSearch?.Text?.Trim() ?? string.Empty;
 
-            // 3) (tuỳ chọn) tính cột Giá trị nếu dataset chưa có
+            // gộp filter
+            dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
+
+            // (giữ nguyên phần tính cột GiaTri nếu bạn cần)
             if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
             foreach (DataRow r in tb.Rows)
             {
-                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value
-                    ? Convert.ToDecimal(r["sl_ton"])
-                    : 0m;
-
+                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value ? Convert.ToDecimal(r["sl_ton"]) : 0m;
                 decimal giaTri = 0m;
-                if (tb.Columns.Contains("gia_tri"))
-                    giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
+                if (tb.Columns.Contains("gia_tri")) giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
                 else
                 {
                     decimal donGia = 0m;
@@ -278,9 +283,8 @@ namespace UI
                 r["GiaTri"] = giaTri;
             }
 
-            // 4) Bind
             dgvKho.DataSource = null;
-            dgvKho.DataSource = dv.ToTable();     // lấy bảng sau khi đã lọc
+            dgvKho.DataSource = dv.ToTable();
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -307,16 +311,7 @@ namespace UI
         {
 
         }
-        private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
-        {
-            int d = radius * 2;
-            var p = new System.Drawing.Drawing2D.GraphicsPath();
-            p.AddArc(r.X, r.Y, d, d, 180, 90);
-            p.AddArc(r.Right - d, r.Y, d, d, 270, 90);
-            p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
-            p.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
-            p.CloseFigure(); return p;
-        }
+       
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -359,8 +354,8 @@ namespace UI
         {
             using (var f = new UI.FrmNguyenLieuChiTiet(
         nlId,
-        CurrentBranchId,                           // id chi nhánh hiện tại
-        _bll                                        // truyền thẳng BLL đang dùng
+        CurrentBranchId,                           
+        _bll                                     
     ))
             {
                 f.StartPosition = FormStartPosition.CenterParent;
@@ -405,12 +400,12 @@ namespace UI
         {
             try
             {
-                // Lấy toàn bộ tồn kho theo chi nhánh
+              
                 var all = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
 
                 int tongMatHang = all?.Rows.Count ?? 0;
 
-                // Đếm hết hàng (=0) và sắp hết (0 < sl_ton ≤ ngưỡng)
+                
                 int hetHang = 0, sapHet = 0;
                 decimal tongGiaTri = 0m;
 
@@ -439,15 +434,25 @@ namespace UI
                         else if (slTon <= NguongCanhBaoMacDinh) sapHet++;
                     }
                 }
+                _currentSearchText = txtSearch.Text.Trim();
+                if (!string.IsNullOrEmpty(_currentSearchText))
+                {
+                    // Escape single quotes để tránh lỗi với RowFilter
+                    string searchEscaped = _currentSearchText.Replace("'", "''");
 
-               
-                label8.Text = tongMatHang.ToString();     // Tổng mặt hàng
-                label9.Text = sapHet.ToString();          // Sắp hết hàng
-                label10.Text = hetHang.ToString();         // Hết hàng
+                    // Tìm kiếm trong cả mã NL và tên NL
+                    string searchFilter = $"(ma_nl LIKE '%{searchEscaped}%' OR ten_nl LIKE '%{searchEscaped}%')";
+                    filters.Add(searchFilter);
+                }
+
+
+                label8.Text = tongMatHang.ToString();     
+                label9.Text = sapHet.ToString();         
+                label10.Text = hetHang.ToString();        
             }
             catch
             {
-                // Nếu có lỗi dữ liệu, vẫn an toàn gán về 0 để không vỡ UI
+               
               
                 label8.Text = "0";
                 label9.Text = "0";
@@ -460,21 +465,27 @@ namespace UI
 
         }
 
-        // Public method to set branch ID from outside
+        
         public void SetBranchId(int branchId)
         {
             _selectedBranchId = branchId;
             ReloadGrid();
             UpdateSummaryPanels();
         }
+        public void ClearSearch()
+        {
+            txtSearch.Text = string.Empty;
+            _currentSearchText = string.Empty;
+            ReloadGrid();
+        }
 
-        // Method to get current branch ID
+
         public int GetCurrentBranchId()
         {
             return _selectedBranchId;
         }
 
-        // Method to show branch selection dialog (simplified)
+       
         public void ShowBranchSelection()
         {
             try

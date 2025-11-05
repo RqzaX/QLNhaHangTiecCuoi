@@ -20,6 +20,7 @@ namespace DAL
             string query = @"
                 SELECT 
                     mon_id AS [ID],
+                    ma_mon AS [MaMon],
                     ten_mon AS [TenMon],
                     ISNULL(nhom, N'Chưa phân loại') AS [DanhMuc],
                     don_gia AS [GiaBan],

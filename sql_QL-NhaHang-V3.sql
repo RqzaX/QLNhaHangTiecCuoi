@@ -16,7 +16,7 @@ CREATE TABLE dbo.chi_nhanh(
   sdt          NVARCHAR(30)  NULL,
   trang_thai   TINYINT NOT NULL DEFAULT 1
 );
-
+select * from chi_nhanh
 IF OBJECT_ID('dbo.ca','U') IS NULL
 CREATE TABLE dbo.ca(
   ca_id  INT IDENTITY(1,1) PRIMARY KEY,
@@ -79,6 +79,7 @@ CREATE TABLE dbo.mon_an(
   dang_ban    TINYINT NOT NULL DEFAULT 1
 );
 
+
 IF OBJECT_ID('dbo.dich_vu','U') IS NULL
 CREATE TABLE dbo.dich_vu(
   dv_id       INT IDENTITY(1,1) PRIMARY KEY,
@@ -116,7 +117,7 @@ CREATE TABLE dbo.goi_tiec_dv(
   PRIMARY KEY (goi_id, dv_id),
   FOREIGN KEY (goi_id) REFERENCES dbo.goi_tiec(goi_id),
   FOREIGN KEY (dv_id)  REFERENCES dbo.dich_vu(dv_id)
-);
+);	
 
 GO
 /* ======================================================================
@@ -545,4 +546,316 @@ BEGIN
     -- Gói tiệc KẾT HỢP
     ('GT-KH04', N'Gói Tiệc  Trọn Gói', 7250000.00);
 END
-select * from mon_an
+
+select * from goi_tiec
+
+DECLARE @map TABLE(
+  tai_khoan NVARCHAR(80),
+  ten_cn    NVARCHAR(150)
+);
+
+INSERT INTO @map(tai_khoan, ten_cn) VALUES
+ (N'admin',     N'Chi nhánh Hồ Chí Minh'),
+ (N'admin',     N'Chi nhánh Hà Nội'),
+ (N'ql_hcm',    N'Chi nhánh Hồ Chí Minh'),
+ (N'ql_hn',     N'Chi nhánh Hà Nội'),
+ (N'nhanvien',  N'Chi nhánh Hồ Chí Minh');
+
+INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, cn.chi_nhanh_id
+FROM @map m
+JOIN dbo.nguoi_dung nd ON nd.tai_khoan = m.tai_khoan
+JOIN dbo.chi_nhanh  cn ON cn.ten       = m.ten_cn
+WHERE NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh x
+  WHERE x.nguoi_dung_id = nd.nguoi_dung_id
+    AND x.chi_nhanh_id  = cn.chi_nhanh_id
+);
+
+/* Kiểm tra nhanh */
+SELECT nd.tai_khoan, nd.ho_ten, cn.ten AS ten_chi_nhanh
+FROM dbo.nguoi_dung nd
+JOIN dbo.nguoi_dung_chi_nhanh ncn ON ncn.nguoi_dung_id = nd.nguoi_dung_id
+JOIN dbo.chi_nhanh cn ON cn.chi_nhanh_id = ncn.chi_nhanh_id
+ORDER BY nd.tai_khoan, cn.ten;
+
+--Gói tiệc món 
+select * from goi_tiec_mon
+
+
+ INSERT INTO dbo.goi_tiec_mon (goi_id, mon_id, so_luong)
+  SELECT g.goi_id, m.mon_id, v.so_luong
+  FROM dbo.goi_tiec g
+  JOIN (VALUES
+      (N'MA001', 10.0), -- Phở bò
+      (N'MA002', 10.0), -- Cơm gà
+      (N'MA003', 10.0), -- Bún chả
+      (N'MA004', 10.0), -- Bánh mì (phụ)
+      (N'MA005', 30.0)  -- Trà đá
+  ) v(ma_mon, so_luong) ON 1=1
+  JOIN dbo.mon_an m ON m.ma_mon = v.ma_mon
+  WHERE g.ma_goi = N'GT-CB01'
+    AND NOT EXISTS (
+      SELECT 1 FROM dbo.goi_tiec_mon x
+      WHERE x.goi_id = g.goi_id AND x.mon_id = m.mon_id
+    );
+
+	INSERT INTO dbo.goi_tiec_mon (goi_id, mon_id, so_luong)
+  SELECT g.goi_id, m.mon_id, v.so_luong
+  FROM dbo.goi_tiec g
+  JOIN (VALUES
+      (N'MA001', 8),
+      (N'MA002', 8),
+      (N'MA003', 8),
+      (N'MA004', 12),
+      (N'MA005', 40)
+  ) v(ma_mon, so_luong) ON 1=1
+  JOIN dbo.mon_an m ON m.ma_mon = v.ma_mon
+  WHERE g.ma_goi = N'GT-TC02'
+    AND NOT EXISTS (
+      SELECT 1 FROM dbo.goi_tiec_mon x
+      WHERE x.goi_id = g.goi_id AND x.mon_id = m.mon_id
+    );
+	
+	 INSERT INTO dbo.goi_tiec_mon (goi_id, mon_id, so_luong)
+  SELECT g.goi_id, m.mon_id, v.so_luong
+  FROM dbo.goi_tiec g
+  JOIN (VALUES
+      (N'MA001', 12),
+      (N'MA002', 12),
+      (N'MA003', 12),
+      (N'MA004', 12),
+      (N'MA005', 60),
+      (N'MA006', 4)
+  ) v(ma_mon, so_luong) ON 1=1
+  JOIN dbo.mon_an m ON m.ma_mon = v.ma_mon
+  WHERE g.ma_goi = N'GT003'
+    AND NOT EXISTS (
+      SELECT 1 FROM dbo.goi_tiec_mon x
+      WHERE x.goi_id = g.goi_id AND x.mon_id = m.mon_id
+    );
+		 INSERT INTO dbo.goi_tiec_mon (goi_id, mon_id, so_luong)
+  SELECT g.goi_id, m.mon_id, v.so_luong
+  FROM dbo.goi_tiec g
+  JOIN (VALUES
+      (N'MA001', 12),
+      (N'MA002', 12),
+      (N'MA003', 12),
+      (N'MA004', 12),
+      (N'MA005', 12),
+      (N'MA006', 12)
+  ) v(ma_mon, so_luong) ON 1=1
+  JOIN dbo.mon_an m ON m.ma_mon = v.ma_mon
+  WHERE g.ma_goi = N'GT001'
+    AND NOT EXISTS (
+      SELECT 1 FROM dbo.goi_tiec_mon x
+      WHERE x.goi_id = g.goi_id AND x.mon_id = m.mon_id
+    );
+
+	  SELECT g.ma_goi, m.ma_mon, m.ten_mon, gtm.so_luong
+  FROM dbo.goi_tiec_mon gtm
+  JOIN dbo.goi_tiec g ON g.goi_id = gtm.goi_id
+  JOIN dbo.mon_an m ON m.mon_id = gtm.mon_id
+  ORDER BY g.ma_goi, m.ma_mon;	
+-- Thêm dữ liệu mới vào dbo.goi_tiec (idempotent)
+INSERT INTO dbo.goi_tiec (ma_goi, ten_goi, gia_co_ban)
+VALUES (N'GT001', N'Gói tiệc cưới Ngon', 35000000.00);
+
+--Thêm dữ liệu vào sảnh
+INSERT INTO dbo.sanh (chi_nhanh_id, ten_sanh, suc_chua, phi_thue_cb)
+SELECT v.chi_nhanh_id, v.ten_sanh, v.suc_chua, v.phi_thue_cb
+FROM (VALUES
+  (1, N'Sảnh Ruby',           300, 15000000.00),
+  (1, N'Sảnh Sapphire',       100, 25000000.00),
+  (1, N'Sảnh Emerald',        200,  8000000.00),
+
+  (2, N'Sảnh Diamond',        350, 30000000.00),
+  (2, N'Sảnh Pearl',          250, 12000000.00),
+  (2, N'Sảnh Topaz',          400, 18000000.00)
+
+) AS v(chi_nhanh_id, ten_sanh, suc_chua, phi_thue_cb)
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM dbo.sanh s
+  WHERE s.chi_nhanh_id = v.chi_nhanh_id
+    AND s.ten_sanh     = v.ten_sanh
+);
+-- Kiểm tra sảnh
+SELECT sanh_id, chi_nhanh_id, ten_sanh, suc_chua, phi_thue_cb
+FROM dbo.sanh
+ORDER BY chi_nhanh_id, ten_sanh;
+-----------------------------------------
+-- ===============================
+-- SEED: CHUONG TRINH KHUYEN MAI
+-- ===============================
+BEGIN TRAN;
+
+-- 1) KM toàn hệ thống: Black Friday 2025, giảm 20%
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMALL_BLACKFRIDAY_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMALL_BLACKFRIDAY_2025', N'Black Friday 2025 - Giảm 20%', N'PERCENT', 20.00,
+        '2025-11-25T00:00:00', '2025-11-30T23:59:59', N'ALL');
+
+-- 2) KM nhà hàng: Trưa ngày thường Q4/2025, giảm 10%
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMNH_LUNCH_Q4_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMNH_LUNCH_Q4_2025', N'Lunch Weekday Q4/2025 - Giảm 10%', N'PERCENT', 10.00,
+        '2025-10-01T00:00:00', '2025-12-31T23:59:59', N'NHAHANG');
+
+-- 3) KM tiệc cưới: Tháng 12/2025 giảm thẳng 500,000đ
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMTIEC_T12_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMTIEC_T12_2025', N'Tiệc cưới 12/2025 - Giảm 500K', N'AMOUNT', 500000.00,
+        '2025-12-01T00:00:00', '2025-12-31T23:59:59', N'TIECCUOI');
+
+-- 4) KM nhà hàng: Happy Hour Q4/2025 giảm thẳng 100,000đ
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMNH_HAPPYHOUR_Q4_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMNH_HAPPYHOUR_Q4_2025', N'Happy Hour Q4/2025 - Giảm 100K', N'AMOUNT', 100000.00,
+        '2025-10-01T00:00:00', '2025-12-31T23:59:59', N'NHAHANG');
+
+COMMIT;
+GO
+
+BEGIN TRAN;
+
+-- 1) KM toàn hệ thống: Black Friday 2025, giảm 20%
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMALL_BLACKFRIDAY_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMALL_BLACKFRIDAY_2025', N'Black Friday 2025 - Giảm 20%', N'PERCENT', 20.00,
+        '2025-11-25T00:00:00', '2025-11-30T23:59:59', N'ALL');
+
+-- 2) KM nhà hàng: Trưa ngày thường Q4/2025, giảm 10%
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMNH_LUNCH_Q4_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMNH_LUNCH_Q4_2025', N'Lunch Weekday Q4/2025 - Giảm 10%', N'PERCENT', 10.00,
+        '2025-10-01T00:00:00', '2025-12-31T23:59:59', N'NHAHANG');
+
+-- 3) KM tiệc cưới: Tháng 12/2025 giảm thẳng 500,000đ
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMTIEC_T12_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMTIEC_T12_2025', N'Tiệc cưới 12/2025 - Giảm 500K', N'AMOUNT', 500000.00,
+        '2025-12-01T00:00:00', '2025-12-31T23:59:59', N'TIECCUOI');
+
+-- 4) KM nhà hàng: Happy Hour Q4/2025 giảm thẳng 100,000đ
+IF NOT EXISTS (SELECT 1 FROM dbo.chuong_trinh_km WHERE ma_km = N'KMNH_HAPPYHOUR_Q4_2025')
+INSERT INTO dbo.chuong_trinh_km (ma_km, ten, hinh_thuc, gia_tri, tg_bat_dau, tg_ket_thuc, ap_dung_loai)
+VALUES (N'KMNH_HAPPYHOUR_Q4_2025', N'Happy Hour Q4/2025 - Giảm 100K', N'AMOUNT', 100000.00,
+        '2025-10-01T00:00:00', '2025-12-31T23:59:59', N'NHAHANG');
+
+
+IF NOT EXISTS (
+    SELECT 1 
+    FROM sys.columns 
+    WHERE object_id = OBJECT_ID(N'dbo.goi_tiec') 
+    AND name = 'suc_chua'
+)
+BEGIN
+    ALTER TABLE dbo.goi_tiec
+    ADD suc_chua INT NULL;
+    
+    PRINT 'Đã thêm cột suc_chua vào bảng goi_tiec';
+END
+ELSE
+BEGIN
+    PRINT 'Cột suc_chua đã tồn tại trong bảng goi_tiec';
+END
+GO
+---cập nhật
+UPDATE gt
+SET gt.suc_chua = sub.suc_chua
+FROM dbo.goi_tiec gt
+INNER JOIN (
+    SELECT 
+        ds.goi_id,
+        s.suc_chua,
+        ROW_NUMBER() OVER (PARTITION BY ds.goi_id ORDER BY COUNT(*) DESC, s.suc_chua DESC) AS rn
+    FROM dbo.dat_sanh ds
+    INNER JOIN dbo.sanh s ON s.sanh_id = ds.sanh_id
+    WHERE ds.goi_id IS NOT NULL
+    GROUP BY ds.goi_id, s.suc_chua
+) sub ON sub.goi_id = gt.goi_id AND sub.rn = 1
+WHERE gt.suc_chua IS NULL;
+
+-- Dựa trên giá trị gói tiệc để chọn sảnh phù hợp
+UPDATE gt
+SET gt.suc_chua = CASE
+    -- Gói cơ bản (giá thấp): lấy sức chứa từ sảnh nhỏ nhất
+    WHEN gt.gia_co_ban <= 7000000 THEN (
+        SELECT MIN(s.suc_chua) 
+        FROM dbo.sanh s
+    )
+    -- Gói trung cấp (giá trung bình): lấy sức chứa trung bình
+    WHEN gt.gia_co_ban <= 15000000 THEN (
+        SELECT AVG(s.suc_chua) 
+        FROM dbo.sanh s
+    )
+    -- Gói cao cấp (giá cao): lấy sức chứa từ sảnh lớn nhất
+    ELSE (
+        SELECT MAX(s.suc_chua) 
+        FROM dbo.sanh s
+    )
+END
+FROM dbo.goi_tiec gt
+WHERE gt.suc_chua IS NULL;
+
+PRINT 'Đã cập nhật sức chứa cho các gói tiệc';
+
+SELECT 
+    ma_goi AS [Mã gói],
+    ten_goi AS [Tên gói],
+    gia_co_ban AS [Giá cơ bản],
+    suc_chua AS [Sức chứa]
+FROM dbo.goi_tiec
+ORDER BY ma_goi;
+GO
+ select * from chuong_trinh_km
+IF EXISTS (
+    SELECT * FROM sys.check_constraints 
+    WHERE name = 'CK_chuong_trinh_km_hinh_thuc' 
+    OR name LIKE '%hinh_thuc%'
+)
+BEGIN
+    DECLARE @sql NVARCHAR(MAX);
+    SELECT @sql = 'ALTER TABLE dbo.chuong_trinh_km DROP CONSTRAINT ' + name
+    FROM sys.check_constraints 
+    WHERE parent_object_id = OBJECT_ID('dbo.chuong_trinh_km')
+    AND definition LIKE '%hinh_thuc%';
+    
+    IF @sql IS NOT NULL
+        EXEC sp_executesql @sql;
+END
+GO
+
+-- Thêm lại CHECK constraint với GIFT
+ALTER TABLE dbo.chuong_trinh_km
+ADD CONSTRAINT CK_chuong_trinh_km_hinh_thuc 
+CHECK (hinh_thuc IN (N'PERCENT', N'AMOUNT', N'GIFT'));
+GO
+
+PRINT 'Đã cập nhật hỗ trợ loại khuyến mãi GIFT (Tặng Quà)';
+
+-- TẠO 5 VOUCHER / MỖI CHƯƠNG TRÌNH KHUYẾN MÃI
+;WITH nums(n) AS (
+    SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+)
+INSERT INTO dbo.voucher(km_id, code, so_lan, da_dung, han_dung)
+SELECT
+    km.km_id,
+    CONCAT(km.ma_km, '-', FORMAT(SYSDATETIME(), 'yyyyMMdd'), '-', RIGHT('000' + CAST(nums.n AS varchar(3)), 3)) AS code,
+    1 AS so_lan,               -- cơ bản: 1 lần dùng / mã
+    0 AS da_dung,              -- chưa sử dụng
+    CAST(km.tg_ket_thuc AS date) AS han_dung
+FROM dbo.chuong_trinh_km AS km
+CROSS JOIN nums;
+-- Nếu bạn chỉ muốn tạo cho các CTKM còn hiệu lực, thêm:
+-- WHERE km.tg_ket_thuc >= SYSDATETIME();
+
+-- KIỂM TRA NHANH
+SELECT * FROM dbo.voucher ORDER BY voucher_id;
+
+
+
+drop table Voucher
+
+select* from chuong_trinh_km

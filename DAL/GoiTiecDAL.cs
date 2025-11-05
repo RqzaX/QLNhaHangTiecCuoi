@@ -13,19 +13,158 @@ namespace DAL
         {
             _dbHelper = new DatabaseHelper();
         }
+        // Lấy chi tiết gói theo goi_id
+        public DataTable GetChiTietGoiTiec(int goiId)
+        {
+            const string sql = @"
+        SELECT 
+            m.ma_mon,
+            m.ten_mon,
+            gtm.so_luong
+        FROM dbo.goi_tiec_mon gtm
+        JOIN dbo.mon_an m   ON m.mon_id  = gtm.mon_id
+        WHERE gtm.goi_id = @goi_id
+        ORDER BY m.ten_mon;";
+
+            var prms = new[]
+            {
+        new SqlParameter("@goi_id", goiId)
+    };
+
+            try
+            {
+                return _dbHelper.GetDataTable(sql, prms);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetChiTietGoiTiec: {ex.Message}", ex);
+            }
+        }
+        public int GetMonIdByMaMon(string maMon)
+        {
+            const string sql = "SELECT mon_id FROM dbo.mon_an WHERE ma_mon = @ma";
+            var dt = _dbHelper.GetDataTable(sql, new[] { new SqlParameter("@ma", maMon) });
+            if (dt.Rows.Count == 0) return 0;
+            return Convert.ToInt32(dt.Rows[0]["mon_id"]);
+        }
+
+        // Thêm/Upsert món vào gói (nếu đã có thì cập nhật số lượng)
+        public int UpsertMonVaoGoi(int goiId, int monId, decimal soLuong)
+        {
+            const string sql = @"
+IF EXISTS (SELECT 1 FROM dbo.goi_tiec_mon WHERE goi_id = @goi_id AND mon_id = @mon_id)
+    UPDATE dbo.goi_tiec_mon SET so_luong = @so_luong
+    WHERE goi_id = @goi_id AND mon_id = @mon_id;
+ELSE
+    INSERT INTO dbo.goi_tiec_mon(goi_id, mon_id, so_luong)
+    VALUES(@goi_id, @mon_id, @so_luong);";
+            return _dbHelper.ExecuteNonQuery(sql, new[]
+            {
+        new SqlParameter("@goi_id", goiId),
+        new SqlParameter("@mon_id", monId),
+        new SqlParameter("@so_luong", soLuong)
+    });
+        }
+
+        // Cập nhật số lượng (và có thể đổi món: xóa cũ → thêm mới)
+        public int UpdateMonTrongGoi(int goiId, int oldMonId, int newMonId, decimal newSoLuong)
+        {
+            // nếu không đổi món, chỉ update số lượng
+            if (oldMonId == newMonId)
+            {
+                const string sql1 = @"UPDATE dbo.goi_tiec_mon
+                              SET so_luong = @so_luong
+                              WHERE goi_id = @goi_id AND mon_id = @mon_id;";
+                return _dbHelper.ExecuteNonQuery(sql1, new[]
+                {
+            new SqlParameter("@goi_id", goiId),
+            new SqlParameter("@mon_id", newMonId),
+            new SqlParameter("@so_luong", newSoLuong)
+        });
+            }
+
+            // đổi sang món khác: xóa cũ → upsert mới (đơn giản, an toàn)
+            const string del = @"DELETE FROM dbo.goi_tiec_mon WHERE goi_id=@goi_id AND mon_id=@old_id;";
+            _dbHelper.ExecuteNonQuery(del, new[]
+            {
+        new SqlParameter("@goi_id", goiId),
+        new SqlParameter("@old_id", oldMonId)
+    });
+
+            return UpsertMonVaoGoi(goiId, newMonId, newSoLuong);
+        }
+
+        // Xóa món khỏi gói
+        public int DeleteMonKhoiGoi(int goiId, int monId)
+        {
+            const string sql = @"DELETE FROM dbo.goi_tiec_mon WHERE goi_id=@goi_id AND mon_id=@mon_id;";
+            return _dbHelper.ExecuteNonQuery(sql, new[]
+            {
+        new SqlParameter("@goi_id", goiId),
+        new SqlParameter("@mon_id", monId)
+    });
+        }
+        public DataTable GetMonTrongGoi(int goiId)
+        {
+            // alias cho đồng nhất tên hàm giữa các lớp
+            return GetChiTietGoiTiec(goiId);
+        }
+        public int GetGoiIdByTenGoi(string tenGoi)
+        {
+            const string sql = "SELECT TOP(1) goi_id FROM dbo.goi_tiec WHERE ten_goi = @ten";
+            var dt = _dbHelper.GetDataTable(sql, new[] { new SqlParameter("@ten", tenGoi) });
+            if (dt.Rows.Count == 0) return 0;
+            return Convert.ToInt32(dt.Rows[0]["goi_id"]);
+        }
+        public int GetGoiIdByMaGoi(string maGoi)
+        {
+            const string sql = "SELECT goi_id FROM dbo.goi_tiec WHERE ma_goi = @ma";
+            var prms = new[] { new SqlParameter("@ma", maGoi) };
+            var dt = _dbHelper.GetDataTable(sql, prms);
+            if (dt.Rows.Count == 0) return 0;
+            return Convert.ToInt32(dt.Rows[0]["goi_id"]);
+        }
+        // (Tùy chọn) Lấy chi tiết gói theo ma_goi
+        public DataTable GetChiTietGoiTiec_ByMa(string maGoi)
+        {
+            const string sql = @"
+        SELECT 
+            m.ma_mon,
+            m.ten_mon,
+            gtm.so_luong
+        FROM dbo.goi_tiec_mon gtm
+        JOIN dbo.goi_tiec g ON g.goi_id = gtm.goi_id
+        JOIN dbo.mon_an m   ON m.mon_id = gtm.mon_id
+        WHERE g.ma_goi = @ma_goi
+        ORDER BY m.ten_mon;";
+
+            var prms = new[]
+            {
+        new SqlParameter("@ma_goi", maGoi)
+    };
+
+            try
+            {
+                return _dbHelper.GetDataTable(sql, prms);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetChiTietGoiTiec_ByMa: {ex.Message}", ex);
+            }
+        }
 
         // Lấy tất cả gói tiệc
         public DataTable GetAllGoiTiec()
         {
-            string query = @"
-                SELECT 
-                    goi_id AS [ID],
-                    ma_goi AS [Mã Gói],
-                    ten_goi AS [Tên Gói],
-                    gia_co_ban AS [Giá Cơ Bản]
-                FROM dbo.goi_tiec
-                ORDER BY goi_id DESC";
-
+            const string query = @"
+        SELECT 
+            goi_id,        -- GIỮ NGUYÊN TÊN CỘT
+            ma_goi,
+            ten_goi,
+            gia_co_ban,
+            suc_chua
+        FROM dbo.goi_tiec
+        ORDER BY goi_id DESC";
             try
             {
                 return _dbHelper.GetDataTable(query);
@@ -40,7 +179,7 @@ namespace DAL
         public DataRow GetGoiTiecById(int goiId)
         {
             string query = @"
-                SELECT goi_id, ma_goi, ten_goi, gia_co_ban
+                SELECT goi_id, ma_goi, ten_goi, gia_co_ban, suc_chua
                 FROM dbo.goi_tiec
                 WHERE goi_id = @goiId";
 
@@ -56,6 +195,63 @@ namespace DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi khi lấy thông tin gói tiệc: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy sức chứa của gói tiệc theo ID
+        public int GetSucChuaGoiTiec(int goiId)
+        {
+            const string sql = @"
+                SELECT ISNULL(suc_chua, 0) AS suc_chua
+                FROM dbo.goi_tiec
+                WHERE goi_id = @goi_id";
+            
+            var prms = new[]
+            {
+                new SqlParameter("@goi_id", goiId)
+            };
+
+            try
+            {
+                var dt = _dbHelper.GetDataTable(sql, prms);
+                if (dt.Rows.Count > 0 && dt.Rows[0]["suc_chua"] != DBNull.Value)
+                {
+                    return Convert.ToInt32(dt.Rows[0]["suc_chua"]);
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetSucChuaGoiTiec: {ex.Message}", ex);
+            }
+        }
+
+        // Tính tổng giá các món trong gói tiệc
+        public decimal TinhTongGiaCacMon(int goiId)
+        {
+            const string sql = @"
+                SELECT ISNULL(SUM(gtm.so_luong * m.don_gia), 0) AS tong_gia
+                FROM dbo.goi_tiec_mon gtm
+                INNER JOIN dbo.mon_an m ON m.mon_id = gtm.mon_id
+                WHERE gtm.goi_id = @goi_id";
+            
+            var prms = new[]
+            {
+                new SqlParameter("@goi_id", goiId)
+            };
+
+            try
+            {
+                var result = _dbHelper.ExecuteScalar(sql, prms);
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToDecimal(result);
+                }
+                return 0m;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - TinhTongGiaCacMon: {ex.Message}", ex);
             }
         }
 
@@ -188,6 +384,28 @@ namespace DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi khi tìm kiếm gói tiệc: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy sức chứa tối đa từ tất cả sảnh
+        public int GetSucChuaToiDaTuSanh()
+        {
+            const string sql = @"
+                SELECT ISNULL(MAX(suc_chua), 0) AS suc_chua_toi_da
+                FROM dbo.sanh";
+            
+            try
+            {
+                var dt = _dbHelper.GetDataTable(sql);
+                if (dt.Rows.Count > 0 && dt.Rows[0]["suc_chua_toi_da"] != DBNull.Value)
+                {
+                    return Convert.ToInt32(dt.Rows[0]["suc_chua_toi_da"]);
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetSucChuaToiDaTuSanh: {ex.Message}", ex);
             }
         }
     }

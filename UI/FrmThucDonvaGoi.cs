@@ -24,6 +24,7 @@ namespace UI
         private Rectangle _hoverDeleteButton = Rectangle.Empty;
 
         private const string COL_ID = "ID";
+        private const string COL_MA = "MaMon";
         private const string COL_TEN = "TenMon";
         private const string COL_DM = "DanhMuc";
         private const string COL_GB = "GiaBan";
@@ -31,6 +32,7 @@ namespace UI
         private const string COL_LN = "LoiNhuan";
         private const string COL_TT = "TrangThai";
         private const string COL_TTAC = "ThaoTac";
+
 
         public FrmThucDonvaGoi()
         {
@@ -87,8 +89,7 @@ namespace UI
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
-
+                // Tạo cột ID nếu chưa có
                 if (!dgvThucDonVaGoi.Columns.Contains(COL_ID))
                 {
                     DataGridViewTextBoxColumn colId = new DataGridViewTextBoxColumn();
@@ -96,6 +97,28 @@ namespace UI
                     colId.HeaderText = "ID";
                     colId.Visible = false;
                     dgvThucDonVaGoi.Columns.Insert(0, colId);
+                }
+
+                // Tạo cột Mã món nếu chưa có
+                if (!dgvThucDonVaGoi.Columns.Contains(COL_MA))
+                {
+                    DataGridViewTextBoxColumn colMa = new DataGridViewTextBoxColumn();
+                    colMa.Name = COL_MA;
+                    colMa.HeaderText = "Mã món";
+                    colMa.Width = 120;
+                    colMa.ReadOnly = true;
+                    colMa.DisplayIndex = 1; // Đặt sau cột ID
+                    dgvThucDonVaGoi.Columns.Add(colMa);
+                }
+                else
+                {
+                    // Nếu đã có, đảm bảo hiển thị đúng
+                    var col = dgvThucDonVaGoi.Columns[COL_MA];
+                    col.Visible = true;
+                    col.DisplayIndex = 1;
+                    col.HeaderText = "Mã món";
+                    col.Width = 120;
+                    col.ReadOnly = true;
                 }
 
                 ConfigureDataGridView();
@@ -143,13 +166,14 @@ namespace UI
                     foreach (DataRow row in dt.Rows)
                     {
                         int id = Convert.ToInt32(row["ID"]);
+                        string maMon = dt.Columns.Contains("MaMon") ? (row["MaMon"]?.ToString() ?? "") : "";
                         string ten = row["TenMon"].ToString();
                         string dm = row["DanhMuc"].ToString();
                         decimal gb = Convert.ToDecimal(row["GiaBan"]);
                         decimal gv = Convert.ToDecimal(row["GiaVon"]);
                         bool conHang = row["TrangThai"].ToString() == "Còn hàng";
 
-                        AddTDRow(id, ten, dm, gb, gv, conHang);
+                        AddTDRow(id, maMon, ten, dm, gb, gv, conHang);
                     }
                 }
                 else
@@ -196,12 +220,16 @@ namespace UI
             }
         }
 
-        private void AddTDRow(int id, string ten, string dm, decimal gb, decimal gv, bool conHang)
+        private void AddTDRow(int id, string maMon, string ten, string dm, decimal gb, decimal gv, bool conHang)
         {
             int idx = dgvThucDonVaGoi.Rows.Add();
             var row = dgvThucDonVaGoi.Rows[idx];
 
             row.Cells[COL_ID].Value = id;
+            if (dgvThucDonVaGoi.Columns.Contains(COL_MA))
+            {
+                row.Cells[COL_MA].Value = maMon;
+            }
             row.Cells[COL_TEN].Value = ten;
             row.Cells[COL_DM].Value = dm;
             row.Cells[COL_GB].Value = Money(gb);
@@ -380,6 +408,8 @@ namespace UI
             foreach (DataGridViewRow r in dgvThucDonVaGoi.Rows)
             {
                 bool match =
+                   MatchCell(r, COL_ID, normQ) ||
+                    MatchCell(r, COL_MA, normQ) ||
                     MatchCell(r, COL_TEN, normQ) ||
                     MatchCell(r, COL_DM, normQ) ||
                     MatchCell(r, COL_GB, normQ) ||
