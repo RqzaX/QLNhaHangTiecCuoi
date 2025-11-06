@@ -12,95 +12,93 @@ namespace UI
     {
         private readonly BanBLL _banBLL;
         private readonly int _banId;
-        private readonly string _soBan;
-        private readonly string _trangThai;
+        private bool _isEditMode = false;
+        private bool _allowEdit = true;
 
-        public Frm_ThongTinBan(int banId, string soBan, string trangThai, BanBLL banBLL)
+        public Frm_ThongTinBan(int banId, string soBan, string trangThai, BanBLL banBLL, bool allowEdit = true)
         {
             InitializeComponent();
             _banId = banId;
-            _soBan = soBan;
-            _trangThai = trangThai;
             _banBLL = banBLL;
+            _allowEdit = allowEdit;
             
-            this.Text = $"Thông tin bàn {soBan}";
-            
-            // Hiển thị nút theo trạng thái bàn
-            btnTiepNhanKhach.Visible = (trangThai.ToUpper() == "ĐÃ ĐẶT");
-            btnOrderThemMon.Visible = (trangThai.ToUpper() == "PHỤC VỤ");
+            this.Text = $"Chi tiết bàn";
+            lblTitle.Text = "Chi tiết bàn";
+            lblSubtitle.Text = "Thông tin chi tiết về bàn";
             
             LoadData();
+            SetEditMode(false);
+            
+            // Ẩn nút Sửa và Xóa nếu không cho phép chỉnh sửa
+            if (!_allowEdit)
+            {
+                btnSua.Visible = false;
+                btnXoa.Visible = false;
+                // Điều chỉnh vị trí nút Đóng
+                btnDong.Location = new Point((this.Width - btnDong.Width) / 2, btnDong.Location.Y);
+            }
+            else
+            {
+                // Hiển thị nút Xóa khi cho phép chỉnh sửa
+                btnXoa.Visible = true;
+            }
         }
 
         private void LoadData()
         {
             try
             {
-                // Load thông tin đặt bàn
-                var dtDatBan = _banBLL.LayThongTinDatBan(_banId);
-                if (dtDatBan != null && dtDatBan.Rows.Count > 0)
+                // Load thông tin bàn
+                var dtBan = _banBLL.LayThongTinBan(_banId);
+                if (dtBan != null && dtBan.Rows.Count > 0)
                 {
-                    var datBan = dtDatBan.Rows[0];
-                    lblKhachHang.Text = datBan["ho_ten"].ToString();
-                    lblSDT.Text = datBan["sdt"].ToString();
-                    lblSoKhach.Text = datBan["so_khach"].ToString();
-                    lblGhiChu.Text = datBan["ghi_chu"].ToString();
-                    lblThoiGianDat.Text = Convert.ToDateTime(datBan["ngay_gio"]).ToString("dd/MM/yyyy HH:mm");
-                }
-                else
-                {
-                    lblKhachHang.Text = "Không có thông tin";
-                    lblSDT.Text = "Không có thông tin";
-                    lblSoKhach.Text = "0";
-                    lblGhiChu.Text = "Không có ghi chú";
-                    lblThoiGianDat.Text = "Không có thông tin";
-                }
-
-                // Load order hiện tại
-                var dtOrder = _banBLL.LayOrderHienTai(_banId);
-                if (dtOrder != null && dtOrder.Rows.Count > 0)
-                {
-                    dgvOrder.DataSource = dtOrder;
-                    dgvOrder.Columns["mon_id"].Visible = false;
-                    dgvOrder.Columns["phieu_order_id"].Visible = false;
-                    dgvOrder.Columns["ngay_gio"].Visible = false;
-                    dgvOrder.Columns["trang_thai"].Visible = false;
-                    dgvOrder.Columns["don_gia"].Visible = false;
+                    var ban = dtBan.Rows[0];
                     
-                    // Format columns
-                    dgvOrder.Columns["ten_mon"].HeaderText = "Tên món";
-                    dgvOrder.Columns["so_luong"].HeaderText = "Số lượng";
-                    dgvOrder.Columns["thanh_tien"].HeaderText = "Thành tiền";
-                    dgvOrder.Columns["ghi_chu_bep"].HeaderText = "Ghi chú bếp";
+                    txtSoBan.Text = ban["so_ban"]?.ToString() ?? "";
+                    txtSucChua.Text = ban["suc_chua"]?.ToString() ?? "0";
                     
-                    dgvOrder.Columns["so_luong"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    dgvOrder.Columns["thanh_tien"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    dgvOrder.Columns["thanh_tien"].DefaultCellStyle.Format = "N0";
+                    // Load khu vực
+                    LoadKhuVuc();
+                    int? khuVucId = ban["khu_vuc_id"] == DBNull.Value ? (int?)null : Convert.ToInt32(ban["khu_vuc_id"]);
+                    if (khuVucId.HasValue)
+                    {
+                        for (int i = 0; i < cbbKhuVuc.Items.Count; i++)
+                        {
+                            DataRowView drv = (DataRowView)cbbKhuVuc.Items[i];
+                            if (Convert.ToInt32(drv["khu_vuc_id"]) == khuVucId.Value)
+                            {
+                                cbbKhuVuc.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
                     
-                    // Styling DataGridView
-                    dgvOrder.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
-                    dgvOrder.DefaultCellStyle.BackColor = Color.White;
-                    dgvOrder.DefaultCellStyle.ForeColor = Color.FromArgb(31, 41, 55);
-                    dgvOrder.DefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 246, 255);
-                    dgvOrder.DefaultCellStyle.SelectionForeColor = Color.FromArgb(31, 41, 55);
+                    // Load trạng thái
+                    string trangThai = ban["trang_thai"]?.ToString() ?? "TRỐNG";
+                    cbbTrangThai.Items.Clear();
+                    cbbTrangThai.Items.Add("Trống");
+                    cbbTrangThai.Items.Add("Phục vụ");
+                    cbbTrangThai.Items.Add("Đã đặt");
+                    cbbTrangThai.Items.Add("Vệ sinh");
                     
-                    // Header styling
-                    dgvOrder.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(249, 250, 251);
-                    dgvOrder.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(31, 41, 55);
-                    dgvOrder.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-                    dgvOrder.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    
-                    // Alternating rows
-                    dgvOrder.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(249, 250, 251);
-                    
-                    // Disable editing
-                    dgvOrder.ReadOnly = true;
-                    dgvOrder.AllowUserToAddRows = false;
-                    dgvOrder.AllowUserToDeleteRows = false;
-                }
-                else
-                {
-                    dgvOrder.DataSource = null;
+                    switch (trangThai.ToUpper())
+                    {
+                        case "TRỐNG":
+                            cbbTrangThai.SelectedIndex = 0;
+                            break;
+                        case "PHỤC VỤ":
+                            cbbTrangThai.SelectedIndex = 1;
+                            break;
+                        case "ĐÃ ĐẶT":
+                            cbbTrangThai.SelectedIndex = 2;
+                            break;
+                        case "VỆ SINH":
+                            cbbTrangThai.SelectedIndex = 3;
+                            break;
+                        default:
+                            cbbTrangThai.SelectedIndex = 0;
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -109,51 +107,210 @@ namespace UI
             }
         }
 
-        private void btnTiepNhanKhach_Click(object sender, EventArgs e)
+        private void LoadKhuVuc()
         {
             try
             {
-                if (_trangThai == "ĐÃ ĐẶT")
-                {
-                    var result = MessageBox.Show(
-                        $"Xác nhận tiếp nhận khách cho bàn {_soBan}?\nBàn sẽ chuyển sang trạng thái 'Đang sử dụng' và có thể order món.",
-                        "Xác nhận",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
+                var dtKhuVuc = _banBLL.LayDanhSachKhuVucTheoChiNhanh(UI.Common.Session.ChiNhanhId);
+                cbbKhuVuc.DisplayMember = "ten_khu_vuc";
+                cbbKhuVuc.ValueMember = "khu_vuc_id";
+                cbbKhuVuc.DataSource = dtKhuVuc;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load khu vực: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-                    if (result == DialogResult.Yes)
+        private void SetEditMode(bool isEdit)
+        {
+            _isEditMode = isEdit;
+            
+            txtSoBan.ReadOnly = !isEdit;
+            txtSucChua.ReadOnly = !isEdit;
+            cbbKhuVuc.Enabled = isEdit;
+            cbbTrangThai.Enabled = isEdit;
+            
+            if (isEdit)
+            {
+                btnSua.Text = "Lưu";
+                btnSua.BackColor = Color.FromArgb(34, 197, 94);
+                btnSua.HoverBackColor = Color.FromArgb(22, 163, 74);
+                btnSua.PressedBackColor = Color.FromArgb(21, 128, 61);
+            }
+            else
+            {
+                btnSua.Text = "Sửa";
+                btnSua.BackColor = Color.FromArgb(59, 130, 246);
+                btnSua.HoverBackColor = Color.FromArgb(37, 99, 235);
+                btnSua.PressedBackColor = Color.FromArgb(29, 78, 216);
+            }
+        }
+
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            if (!_allowEdit)
+            {
+                return; // Không cho phép sửa
+            }
+
+            if (!_isEditMode)
+            {
+                // Chuyển sang chế độ sửa
+                SetEditMode(true);
+            }
+            else
+            {
+                // Lưu dữ liệu
+                SaveData();
+            }
+        }
+
+        private void SaveData()
+        {
+            try
+            {
+                // Validate
+                if (string.IsNullOrWhiteSpace(txtSoBan.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập số bàn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtSoBan.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtSucChua.Text) || !int.TryParse(txtSucChua.Text, out int sucChua) || sucChua <= 0)
+                {
+                    MessageBox.Show("Vui lòng nhập sức chứa hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtSucChua.Focus();
+                    return;
+                }
+
+                if (cbbKhuVuc.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Vui lòng chọn khu vực!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbbKhuVuc.Focus();
+                    return;
+                }
+
+                if (cbbTrangThai.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Vui lòng chọn trạng thái!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbbTrangThai.Focus();
+                    return;
+                }
+
+                // Lấy dữ liệu
+                string soBan = txtSoBan.Text.Trim();
+                int? khuVucId = null;
+                
+                // Lấy khu_vuc_id từ ComboBox
+                if (cbbKhuVuc.SelectedIndex >= 0 && cbbKhuVuc.DataSource is DataTable dtKhuVucSource)
+                {
+                    khuVucId = Convert.ToInt32(dtKhuVucSource.Rows[cbbKhuVuc.SelectedIndex]["khu_vuc_id"]);
+                }
+                else if (cbbKhuVuc.SelectedItem is DataRowView drv)
+                {
+                    khuVucId = Convert.ToInt32(drv["khu_vuc_id"]);
+                }
+                else if (cbbKhuVuc.SelectedValue != null)
+                {
+                    khuVucId = Convert.ToInt32(cbbKhuVuc.SelectedValue);
+                }
+
+                string trangThai = "";
+                switch (cbbTrangThai.SelectedIndex)
+                {
+                    case 0:
+                        trangThai = "TRỐNG";
+                        break;
+                    case 1:
+                        trangThai = "PHỤC VỤ";
+                        break;
+                    case 2:
+                        trangThai = "ĐÃ ĐẶT";
+                        break;
+                    case 3:
+                        trangThai = "VỆ SINH";
+                        break;
+                }
+
+                // Validate khu vực có thuộc chi nhánh hiện tại không
+                if (khuVucId.HasValue)
+                {
+                    var dtKhuVucCheck = _banBLL.LayDanhSachKhuVucTheoChiNhanh(UI.Common.Session.ChiNhanhId);
+                    bool khuVucHopLe = false;
+                    foreach (DataRow row in dtKhuVucCheck.Rows)
                     {
-                        bool success = _banBLL.CapNhatTrangThaiBan(_banId, "PHỤC VỤ");
-                        if (success)
+                        if (Convert.ToInt32(row["khu_vuc_id"]) == khuVucId.Value)
                         {
-                            MessageBox.Show("Đã tiếp nhận khách thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            this.DialogResult = DialogResult.OK;
-                            this.Close();
+                            khuVucHopLe = true;
+                            break;
                         }
-                        else
-                        {
-                            MessageBox.Show("Không thể cập nhật trạng thái bàn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                    }
+                    
+                    if (!khuVucHopLe)
+                    {
+                        MessageBox.Show("Khu vực được chọn không thuộc chi nhánh hiện tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
+                // Cập nhật
+                bool success = _banBLL.CapNhatBan(_banId, soBan, sucChua, khuVucId, trangThai);
+                if (success)
+                {
+                    MessageBox.Show("Cập nhật thông tin bàn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    SetEditMode(false);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể cập nhật thông tin bàn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = $"Lỗi khi lưu dữ liệu: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nChi tiết: {ex.InnerException.Message}";
+                }
+                MessageBox.Show(errorMessage, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Xác nhận xóa
+                DialogResult result = MessageBox.Show(
+                    $"Bạn có chắc chắn muốn xóa bàn '{txtSoBan.Text}'?\n\nLưu ý: Tất cả các đặt bàn liên quan cũng sẽ bị xóa.",
+                    "Xác nhận xóa bàn",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Thực hiện xóa
+                    bool success = _banBLL.XoaBan(_banId);
+                    if (success)
+                    {
+                        MessageBox.Show("Xóa bàn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể xóa bàn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnOrderThemMon_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Đóng form thông tin bàn và trả về kết quả để mở form order
-                this.DialogResult = DialogResult.Yes; // Sử dụng DialogResult.Yes để phân biệt với OK
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi xóa bàn: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

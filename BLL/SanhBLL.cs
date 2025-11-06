@@ -1,0 +1,75 @@
+using System;
+using System.Data;
+using QLNhaHangTiecCuoi.DAL;
+using QLNhaHangTiecCuoi.Share;
+
+namespace QLNhaHangTiecCuoi.BLL
+{
+    public class SanhBLL
+    {
+        private readonly SanhDAL _sanhDAL;
+
+        public SanhBLL(DatabaseHelper dbHelper)
+        {
+            _sanhDAL = new SanhDAL(dbHelper);
+        }
+
+        public DataTable LayDanhSachSanhTheoChiNhanh(int chiNhanhId)
+        {
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _sanhDAL.LayDanhSachSanhTheoChiNhanh(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy danh sách sảnh: {ex.Message}");
+            }
+        }
+
+        public DataTable LayThongTinSanh(int sanhId)
+        {
+            if (sanhId <= 0)
+                throw new Exception("ID sảnh không hợp lệ!");
+
+            try
+            {
+                return _sanhDAL.LayThongTinSanh(sanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy thông tin sảnh: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin sảnh
+        /// </summary>
+        public bool CapNhatSanh(int sanhId, string tenSanh, int sucChua, decimal phiThueCb)
+        {
+            if (sanhId <= 0)
+                throw new Exception("ID sảnh không hợp lệ!");
+
+            if (string.IsNullOrWhiteSpace(tenSanh))
+                throw new Exception("Tên sảnh không được để trống!");
+
+            if (sucChua <= 0)
+                throw new Exception("Sức chứa phải lớn hơn 0!");
+
+            if (phiThueCb < 0)
+                throw new Exception("Phí thuê cơ bản không được âm!");
+
+            try
+            {
+                return _sanhDAL.CapNhatSanh(sanhId, tenSanh, sucChua, phiThueCb);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Cập nhật sảnh: {ex.Message}");
+            }
+        }
+    }
+}
+

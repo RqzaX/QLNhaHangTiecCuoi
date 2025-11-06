@@ -39,6 +39,9 @@
             txtGiaGoi = new TextBox();
             label4 = new Label();
             roundedButton1 = new UI.Controls.RoundedButton();
+            btnThemGoi = new UI.Controls.RoundedButton();
+            btnMoi = new UI.Controls.RoundedButton();
+            btnChiTietGoi = new UI.Controls.RoundedButton();
             ((System.ComponentModel.ISupportInitialize)dgvGoiTiec).BeginInit();
             SuspendLayout();
             // 
@@ -50,10 +53,10 @@
             btnCapNhat.FlatStyle = FlatStyle.Flat;
             btnCapNhat.Font = new Font("Segoe UI Semibold", 10.5F);
             btnCapNhat.ForeColor = Color.White;
-            btnCapNhat.Location = new Point(869, 162);
+            btnCapNhat.Location = new Point(869, 163);
             btnCapNhat.Name = "btnCapNhat";
             btnCapNhat.Padding = new Padding(10, 6, 10, 6);
-            btnCapNhat.Size = new Size(123, 52);
+            btnCapNhat.Size = new Size(123, 51);
             btnCapNhat.TabIndex = 0;
             btnCapNhat.Text = "Cập nhật";
             btnCapNhat.UseVisualStyleBackColor = false;
@@ -69,6 +72,7 @@
             dgvGoiTiec.TabIndex = 1;
             dgvGoiTiec.CellClick += dgvGoiTiec_CellClick;
             dgvGoiTiec.CellContentClick += dgvGoiTiec_CellContentClick;
+            dgvGoiTiec.CellDoubleClick += dgvGoiTiec_CellDoubleClick;
             // 
             // btnXoa
             // 
@@ -78,10 +82,10 @@
             btnXoa.FlatStyle = FlatStyle.Flat;
             btnXoa.Font = new Font("Segoe UI Semibold", 10.5F);
             btnXoa.ForeColor = Color.WhiteSmoke;
-            btnXoa.Location = new Point(751, 162);
+            btnXoa.Location = new Point(751, 163);
             btnXoa.Name = "btnXoa";
             btnXoa.Padding = new Padding(10, 6, 10, 6);
-            btnXoa.Size = new Size(112, 52);
+            btnXoa.Size = new Size(112, 51);
             btnXoa.TabIndex = 3;
             btnXoa.Text = "Xóa Gói";
             btnXoa.UseVisualStyleBackColor = false;
@@ -155,14 +159,67 @@
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
-            roundedButton1.Location = new Point(604, 162);
+            roundedButton1.Location = new Point(629, 163);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(141, 52);
+            roundedButton1.Size = new Size(116, 51);
             roundedButton1.TabIndex = 9;
             roundedButton1.Text = "Chọn Gói";
             roundedButton1.UseVisualStyleBackColor = false;
             roundedButton1.Click += roundedButton1_Click;
+            // 
+            // btnThemGoi
+            // 
+            btnThemGoi.BackColor = Color.FromArgb(31, 111, 235);
+            btnThemGoi.BorderThickness = 0;
+            btnThemGoi.FlatAppearance.BorderSize = 0;
+            btnThemGoi.FlatStyle = FlatStyle.Flat;
+            btnThemGoi.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Regular, GraphicsUnit.Pixel);
+            btnThemGoi.ForeColor = Color.White;
+            btnThemGoi.Location = new Point(395, 163);
+            btnThemGoi.Name = "btnThemGoi";
+            btnThemGoi.Padding = new Padding(12, 8, 12, 8);
+            btnThemGoi.Size = new Size(94, 44);
+            btnThemGoi.TabIndex = 10;
+            btnThemGoi.Text = "Thêm mới";
+            btnThemGoi.UseVisualStyleBackColor = false;
+            btnThemGoi.Click += btnThemGoi_Click;
+            // 
+            // btnMoi
+            // 
+            btnMoi.BackColor = Color.FromArgb(31, 111, 235);
+            btnMoi.BorderThickness = 0;
+            btnMoi.FlatAppearance.BorderSize = 0;
+            btnMoi.FlatStyle = FlatStyle.Flat;
+            btnMoi.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Regular, GraphicsUnit.Pixel);
+            btnMoi.ForeColor = Color.White;
+            btnMoi.Location = new Point(395, 112);
+            btnMoi.Name = "btnMoi";
+            btnMoi.Padding = new Padding(12, 8, 12, 8);
+            btnMoi.Size = new Size(94, 45);
+            btnMoi.TabIndex = 11;
+            btnMoi.Text = "Load mới";
+            btnMoi.UseVisualStyleBackColor = false;
+            btnMoi.Click += btnMoi_Click;
+            // 
+            // btnChiTietGoi
+            // 
+            btnChiTietGoi.BackColor = SystemColors.ActiveCaption;
+            btnChiTietGoi.BorderColor = Color.White;
+            btnChiTietGoi.BorderThickness = 0;
+            btnChiTietGoi.FlatStyle = FlatStyle.Flat;
+            btnChiTietGoi.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnChiTietGoi.ForeColor = Color.Black;
+            btnChiTietGoi.HoverBackColor = Color.Silver;
+            btnChiTietGoi.Location = new Point(869, 123);
+            btnChiTietGoi.Name = "btnChiTietGoi";
+            btnChiTietGoi.Padding = new Padding(10, 6, 10, 6);
+            btnChiTietGoi.PressedBackColor = Color.Silver;
+            btnChiTietGoi.Size = new Size(123, 37);
+            btnChiTietGoi.TabIndex = 14;
+            btnChiTietGoi.Text = "Chi Tiết";
+            btnChiTietGoi.UseVisualStyleBackColor = false;
+            btnChiTietGoi.Click += btnChiTietGoi_Click;
             // 
             // FrmGoiTiec
             // 
@@ -170,6 +227,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.MistyRose;
             ClientSize = new Size(1004, 620);
+            Controls.Add(btnChiTietGoi);
+            Controls.Add(btnMoi);
+            Controls.Add(btnThemGoi);
             Controls.Add(roundedButton1);
             Controls.Add(label4);
             Controls.Add(txtGiaGoi);
@@ -201,5 +261,8 @@
         private TextBox txtGiaGoi;
         private Label label4;
         private Controls.RoundedButton roundedButton1;
+        private Controls.RoundedButton btnThemGoi;
+        private Controls.RoundedButton btnMoi;
+        private Controls.RoundedButton btnChiTietGoi;
     }
 }

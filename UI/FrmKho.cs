@@ -1,4 +1,5 @@
 ﻿using BLL;
+using NLog.Filters;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.Share;
 using System;
@@ -30,8 +31,9 @@ namespace UI
         private readonly Timer _debounceTimer = new Timer();
         private const int DebounceMs = 300;
         private const decimal NguongCanhBaoMacDinh = 30;
+        List<string> filters = new List<string>();
         private int _selectedBranchId = Session.ChiNhanhId;
-
+        private string _currentSearchText = string.Empty;
 
         public FrmKho(DatabaseHelper dbHelper)
         {
@@ -95,6 +97,7 @@ namespace UI
                 DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
 
+
            
 
             if (dgvKho.Columns["colChiTiet"] == null)
@@ -140,7 +143,6 @@ namespace UI
                 _selectedBranchId = 1;
             }
         }
-
         private List<(int BranchId, string BranchName)> GetBranchesWithInventoryData()
         {
             try
@@ -176,7 +178,6 @@ namespace UI
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
-                
                 var allBranches = _bll.LayTatCaChiNhanh();
                 
                 if (allBranches != null)
@@ -222,14 +223,45 @@ namespace UI
                 ? Convert.ToDecimal(r[col])
                 : 0m;
         }
+        private static string BuildRowFilter(int tinhTrang, string searchText, decimal nguongSapHet)
+        {
+            var parts = new List<string>();
+
+            // điều kiện theo tình trạng
+            switch (tinhTrang)
+            {
+                case 1: parts.Add("sl_ton > 0"); break;
+                case 2: parts.Add("sl_ton = 0"); break;
+                case 3: parts.Add($"sl_ton > 0 AND sl_ton <= {nguongSapHet.ToString(System.Globalization.CultureInfo.InvariantCulture)}"); break;
+                default: break; // tất cả
+            }
+
+            // điều kiện theo ô tìm kiếm
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                string esc = searchText.Trim().Replace("'", "''");
+                // tìm theo mã hoặc tên nguyên liệu
+                parts.Add($"(ma_nl LIKE '%{esc}%' OR ten_nl LIKE '%{esc}%')");
+            }
+
+            return string.Join(" AND ", parts);
+        }
 
         public void ReloadGrid()
         {
             DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
             if (tb == null) { dgvKho.DataSource = null; return; }
 
-            var stt = GetTinhTrang();
+
             var dv = tb.DefaultView;
+
+            // lấy trạng thái hiện tại + text đang gõ
+            int stt = GetTinhTrang();
+            _currentSearchText = txtSearch?.Text?.Trim() ?? string.Empty;
+
+            // gộp filter
+            dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
+
 
             string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
             
@@ -250,16 +282,13 @@ namespace UI
             }
 
         
+
             if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
             foreach (DataRow r in tb.Rows)
             {
-                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value
-                    ? Convert.ToDecimal(r["sl_ton"])
-                    : 0m;
-
+                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value ? Convert.ToDecimal(r["sl_ton"]) : 0m;
                 decimal giaTri = 0m;
-                if (tb.Columns.Contains("gia_tri"))
-                    giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
+                if (tb.Columns.Contains("gia_tri")) giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
                 else
                 {
                     decimal donGia = 0m;
@@ -270,9 +299,14 @@ namespace UI
                 r["GiaTri"] = giaTri;
             }
 
+
+            dgvKho.DataSource = null;
+            dgvKho.DataSource = dv.ToTable();
+
           
             dgvKho.DataSource = null;
             dgvKho.DataSource = dv.ToTable();  
+
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -299,16 +333,7 @@ namespace UI
         {
 
         }
-        private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
-        {
-            int d = radius * 2;
-            var p = new System.Drawing.Drawing2D.GraphicsPath();
-            p.AddArc(r.X, r.Y, d, d, 180, 90);
-            p.AddArc(r.Right - d, r.Y, d, d, 270, 90);
-            p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
-            p.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
-            p.CloseFigure(); return p;
-        }
+       
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -351,8 +376,10 @@ namespace UI
         {
             using (var f = new UI.FrmNguyenLieuChiTiet(
         nlId,
-        CurrentBranchId,                         
-        _bll                                       
+
+        CurrentBranchId,                           
+        _bll                                        
+
     ))
             {
                 f.StartPosition = FormStartPosition.CenterParent;
@@ -397,12 +424,10 @@ namespace UI
         {
             try
             {
-                
                 var all = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
 
                 int tongMatHang = all?.Rows.Count ?? 0;
 
-               
                 int hetHang = 0, sapHet = 0;
                 decimal tongGiaTri = 0m;
 
@@ -431,11 +456,21 @@ namespace UI
                         else if (slTon <= NguongCanhBaoMacDinh) sapHet++;
                     }
                 }
+                _currentSearchText = txtSearch.Text.Trim();
+                if (!string.IsNullOrEmpty(_currentSearchText))
+                {
+                    // Escape single quotes để tránh lỗi với RowFilter
+                    string searchEscaped = _currentSearchText.Replace("'", "''");
 
-               
+                    // Tìm kiếm trong cả mã NL và tên NL
+                    string searchFilter = $"(ma_nl LIKE '%{searchEscaped}%' OR ten_nl LIKE '%{searchEscaped}%')";
+                    filters.Add(searchFilter);
+                }
+
+
                 label8.Text = tongMatHang.ToString();     
-                label9.Text = sapHet.ToString();          
-                label10.Text = hetHang.ToString();         
+                label9.Text = sapHet.ToString();         
+                label10.Text = hetHang.ToString();        
             }
             catch
             {
@@ -452,21 +487,25 @@ namespace UI
 
         }
 
-      
         public void SetBranchId(int branchId)
         {
             _selectedBranchId = branchId;
             ReloadGrid();
             UpdateSummaryPanels();
         }
+        public void ClearSearch()
+        {
+            txtSearch.Text = string.Empty;
+            _currentSearchText = string.Empty;
+            ReloadGrid();
+        }
 
-       
+
         public int GetCurrentBranchId()
         {
             return _selectedBranchId;
         }
 
-        
         public void ShowBranchSelection()
         {
             try

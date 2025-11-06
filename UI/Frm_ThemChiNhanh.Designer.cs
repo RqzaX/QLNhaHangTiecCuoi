@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label1 = new Label();
             label2 = new Label();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
@@ -38,6 +40,8 @@
             roundedTextBox3 = new UI.Controls.RoundedTextBox();
             roundedButton1 = new UI.Controls.RoundedButton();
             roundedButton2 = new UI.Controls.RoundedButton();
+            cbbTrangThai = new Guna.UI2.WinForms.Guna2ComboBox();
+            label6 = new Label();
             SuspendLayout();
             // 
             // label1
@@ -124,44 +128,75 @@
             // 
             // roundedButton1
             // 
-            roundedButton1.BackColor = Color.FromArgb(31, 111, 235);
+            roundedButton1.BackColor = Color.Red;
+            roundedButton1.BorderThickness = 0;
             roundedButton1.FlatAppearance.BorderSize = 0;
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
-            roundedButton1.Location = new Point(392, 361);
+            roundedButton1.Location = new Point(392, 446);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(94, 29);
+            roundedButton1.Size = new Size(94, 43);
             roundedButton1.TabIndex = 17;
             roundedButton1.Text = "Hủy";
             roundedButton1.UseVisualStyleBackColor = false;
             // 
             // roundedButton2
             // 
-            roundedButton2.BackColor = Color.Black;
+            roundedButton2.BackColor = Color.FromArgb(128, 255, 128);
+            roundedButton2.BorderThickness = 0;
             roundedButton2.FlatAppearance.BorderSize = 0;
             roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(492, 361);
+            roundedButton2.Location = new Point(494, 446);
             roundedButton2.Name = "roundedButton2";
             roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(97, 29);
+            roundedButton2.Size = new Size(97, 43);
             roundedButton2.TabIndex = 17;
             roundedButton2.Text = "Lưu";
             roundedButton2.UseVisualStyleBackColor = false;
+            // 
+            // cbbTrangThai
+            // 
+            cbbTrangThai.BackColor = Color.Transparent;
+            cbbTrangThai.CustomizableEdges = customizableEdges3;
+            cbbTrangThai.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbTrangThai.FocusedColor = Color.FromArgb(94, 148, 255);
+            cbbTrangThai.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            cbbTrangThai.Font = new Font("Segoe UI", 10F);
+            cbbTrangThai.ForeColor = Color.FromArgb(68, 88, 112);
+            cbbTrangThai.ItemHeight = 30;
+            cbbTrangThai.Location = new Point(12, 370);
+            cbbTrangThai.Name = "cbbTrangThai";
+            cbbTrangThai.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            cbbTrangThai.Size = new Size(577, 36);
+            cbbTrangThai.TabIndex = 19;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(12, 347);
+            label6.Name = "label6";
+            label6.Size = new Size(83, 20);
+            label6.TabIndex = 15;
+            label6.Text = "Trạng Thái";
             // 
             // Frm_ThemChiNhanh
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(603, 428);
+            ClientSize = new Size(603, 523);
+            Controls.Add(cbbTrangThai);
             Controls.Add(roundedButton2);
             Controls.Add(roundedButton1);
             Controls.Add(roundedTextBox2);
             Controls.Add(label3);
             Controls.Add(roundedTextBox3);
+            Controls.Add(label6);
             Controls.Add(label4);
             Controls.Add(roundedTextBox1);
             Controls.Add(label8);
@@ -185,5 +220,7 @@
         private Controls.RoundedTextBox roundedTextBox3;
         private Controls.RoundedButton roundedButton1;
         private Controls.RoundedButton roundedButton2;
+        private Guna.UI2.WinForms.Guna2ComboBox cbbTrangThai;
+        private Label label6;
     }
 }

@@ -110,6 +110,56 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        public bool CapNhatBan(int banId, string soBan, int sucChua, int? khuVucId, string trangThai)
+        {
+            try
+            {
+                return _banDAL.CapNhatBan(banId, soBan, sucChua, khuVucId, trangThai);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Cập nhật bàn: {ex.Message}");
+            }
+        }
+
+        public int ThemBan(int chiNhanhId, string soBan, int sucChua, int? khuVucId, string trangThai)
+        {
+            try
+            {
+                // Validate
+                if (string.IsNullOrWhiteSpace(soBan))
+                {
+                    throw new Exception("Số bàn không được để trống!");
+                }
+                if (sucChua <= 0)
+                {
+                    throw new Exception("Sức chứa phải lớn hơn 0!");
+                }
+                if (string.IsNullOrWhiteSpace(trangThai))
+                {
+                    trangThai = "TRỐNG";
+                }
+
+                return _banDAL.ThemBan(chiNhanhId, soBan, sucChua, khuVucId, trangThai);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Thêm bàn: {ex.Message}");
+            }
+        }
+
+        public bool XoaBan(int banId)
+        {
+            try
+            {
+                return _banDAL.XoaBan(banId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Xóa bàn: {ex.Message}");
+            }
+        }
+
         public bool CapNhatTrangThaiBan(int banId, string trangThai)
         {
             try

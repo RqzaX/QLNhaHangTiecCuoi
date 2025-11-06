@@ -13,7 +13,7 @@ namespace UI.Controls
     [SupportedOSPlatform("windows")]
     public class TinhTrangBan : UserControl
     {
-        public enum TableState { Available, InUse, Reserved }
+        public enum TableState { Available, InUse, Reserved, Cleaning }
 
         // ====== Data ======
         private string _tableCode = "A01";
@@ -39,7 +39,7 @@ namespace UI.Controls
             UpdateStyles();
 
             Size = new Size(280, 140);
-            Padding = new Padding(15, 15, 15, 15);
+            Padding = new Padding(10, 10, 10, 10);
             Margin = new Padding(8);
             Font = new Font("Segoe UI", 11f);
             ForeColor = Color.FromArgb(17, 24, 39);
@@ -55,6 +55,9 @@ namespace UI.Controls
 
             MouseEnter += (s, e) => { _hover = true; if (!_anim.Enabled) _anim.Start(); };
             MouseLeave += (s, e) => { _hover = false; if (!_anim.Enabled) _anim.Start(); };
+            
+            // Đảm bảo control có thể nhận click events
+            SetStyle(ControlStyles.Selectable, true);
         }
 
         // ====== Public API ======
@@ -178,20 +181,32 @@ namespace UI.Controls
         // ====== Vẽ nội dung hiện đại ======
         private void DrawModernContent(Graphics g, Color primaryColor, Color backgroundColor, Color accentColor, Color textColor)
         {
-            var fontHeader = new Font("Segoe UI", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
-            var fontSubheader = new Font("Segoe UI", 14f, FontStyle.Regular, GraphicsUnit.Pixel);
-            var fontBody = new Font("Segoe UI", 13f, FontStyle.Regular, GraphicsUnit.Pixel);
-            var fontCaption = new Font("Segoe UI", 12f, FontStyle.Regular, GraphicsUnit.Pixel);
+            // Tính toán scale dựa trên kích thước thực tế
+            float scaleX = Width / 280f;
+            float scaleY = Height / 140f;
+            float scale = Math.Min(scaleX, scaleY);
+            if (scale > 1.0f) scale = 1.0f; // Không scale lên, chỉ scale xuống
+            
+            // Điều chỉnh font size dựa trên scale - tăng cỡ chữ lên một chút
+            var fontHeader = new Font("Segoe UI", Math.Max(14f, 18f * scale), FontStyle.Bold, GraphicsUnit.Pixel);
+            var fontSubheader = new Font("Segoe UI", Math.Max(12f, 15f * scale), FontStyle.Regular, GraphicsUnit.Pixel);
+            var fontBody = new Font("Segoe UI", Math.Max(11f, 14f * scale), FontStyle.Regular, GraphicsUnit.Pixel);
+            var fontCaption = new Font("Segoe UI", Math.Max(10f, 13f * scale), FontStyle.Regular, GraphicsUnit.Pixel);
             
             var colorTextPrimary = Color.FromArgb(31, 41, 55);
             var colorTextSecondary = Color.FromArgb(75, 85, 99);
             var colorTextMuted = Color.FromArgb(156, 163, 175);
             
-            // Header section với table code - điều chỉnh cho chữ lớn hơn
-            var headerRect = new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - Padding.Right, 35);
+            // Tính toán padding và spacing động
+            int dynamicPadding = (int)(15 * scale);
+            int headerHeight = (int)(35 * scale);
+            int contentSpacing = (int)(20 * scale);
+            
+            // Header section với table code - đảm bảo chiều cao cố định
+            var headerRect = new Rectangle(dynamicPadding, dynamicPadding, Width - dynamicPadding * 2, headerHeight);
             
             // Vẽ table code với background
-            using (var headerPath = RoundRect(headerRect, 8))
+            using (var headerPath = RoundRect(headerRect, (int)(8 * scale)))
             {
                 using var headerBrush = new SolidBrush(Color.FromArgb(240, 248, 255));
                 g.FillPath(headerBrush, headerPath);
@@ -200,29 +215,22 @@ namespace UI.Controls
                 g.DrawPath(headerPen, headerPath);
             }
             
-            // Table code text - điều chỉnh cho chữ lớn hơn
-            var tableCodeRect = new RectangleF(headerRect.X + 10, headerRect.Y + 8, headerRect.Width - 20, 20);
-            var tableCodeFormat = new StringFormat 
-            { 
-                Alignment = StringAlignment.Center, 
-                LineAlignment = StringAlignment.Center 
-            };
-            g.DrawString(_tableCode, fontHeader, new SolidBrush(primaryColor), tableCodeRect, tableCodeFormat);
-            
-            // Status indicator (góc phải trên)
+            // Status indicator (góc phải trên) - vẽ trước để không ảnh hưởng layout
             string statusText = _status == TableState.Available ? "Trống" :
-                              _status == TableState.InUse ? "Đang dùng" : "Đã đặt";
+                              _status == TableState.InUse ? "Đang dùng" :
+                              _status == TableState.Reserved ? "Đã đặt" : "Vệ sinh";
             
             var statusSize = g.MeasureString(statusText, fontCaption);
+            int statusBadgeHeight = (int)(24 * scale); // Chiều cao cố định cho badge
             var statusRect = new RectangleF(
-                Width - Padding.Right - statusSize.Width - 16, 
-                Padding.Top + 6, 
-                statusSize.Width + 12, 
-                20
+                Width - dynamicPadding - statusSize.Width - (int)(16 * scale), 
+                dynamicPadding + (int)((headerHeight - statusBadgeHeight) / 2), 
+                statusSize.Width + (int)(12 * scale), 
+                statusBadgeHeight
             );
             
             // Vẽ status chip hiện đại
-            using (var statusPath = RoundRect(Rectangle.Round(statusRect), 10))
+            using (var statusPath = RoundRect(Rectangle.Round(statusRect), (int)(10 * scale)))
             {
                 using var statusBrush = new SolidBrush(accentColor);
                 g.FillPath(statusBrush, statusPath);
@@ -231,9 +239,19 @@ namespace UI.Controls
             g.DrawString(statusText, fontCaption, new SolidBrush(Color.White), statusRect, 
                 new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
             
-            // Content section - điều chỉnh cho chữ lớn hơn
-            int contentY = Padding.Top + 45;
-            int contentX = Padding.Left + 12;
+            // Table code text - căn giữa trong header, không bị ảnh hưởng bởi badge
+            var tableCodeRect = new RectangleF(headerRect.X + 10, headerRect.Y + (int)(8 * scale), headerRect.Width - 20, headerHeight - (int)(16 * scale));
+            var tableCodeFormat = new StringFormat 
+            { 
+                Alignment = StringAlignment.Center, 
+                LineAlignment = StringAlignment.Center 
+            };
+            g.DrawString(_tableCode, fontHeader, new SolidBrush(primaryColor), tableCodeRect, tableCodeFormat);
+            
+            // Content section - luôn bắt đầu từ cùng một vị trí Y cố định
+            int contentY = dynamicPadding + headerHeight + (int)(12 * scale);
+            int contentX = dynamicPadding + (int)(12 * scale);
+            int availableHeight = Height - contentY - dynamicPadding;
             
             // Capacity info với icon
             string capacityText = $"👥 {_capacity} người";
@@ -245,41 +263,41 @@ namespace UI.Controls
                 timeText = $"⏱️ {_minutesUsed} phút";
             else if (_status == TableState.Reserved)
                 timeText = $"📅 {_reservedTime}";
+            else if (_status == TableState.Cleaning)
+                timeText = "🧹 Đang vệ sinh";
             else
                 timeText = "✨ Sẵn sàng";
                 
-            g.DrawString(timeText, fontBody, new SolidBrush(colorTextSecondary), contentX, contentY + 20);
-            
-            // Price info với icon và styling đặc biệt
-            string priceText = _price <= 0 ? "💵 Chưa có đơn" : $"💰 {_price:N0} đ";
-            var priceRect = new RectangleF(contentX, contentY + 45, Width - contentX - Padding.Right, 25);
-            
-            // Background cho price
-            using (var pricePath = RoundRect(Rectangle.Round(priceRect), 6))
+            int timeY = contentY + contentSpacing;
+            if (timeY + (int)(20 * scale) <= Height - dynamicPadding)
             {
-                using var priceBrush = new SolidBrush(Color.FromArgb(245, 245, 245));
-                g.FillPath(priceBrush, pricePath);
+                g.DrawString(timeText, fontBody, new SolidBrush(colorTextSecondary), contentX, timeY);
             }
             
-            g.DrawString(priceText, fontSubheader, new SolidBrush(accentColor), priceRect, 
-                new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-            
-            // Decorative elements
-            DrawDecorativeElements(g, primaryColor, accentColor);
+            // Decorative elements - chỉ vẽ nếu có đủ không gian
+            if (Height >= 100)
+            {
+                DrawDecorativeElements(g, primaryColor, accentColor, scale);
+            }
         }
         
-        private void DrawDecorativeElements(Graphics g, Color primaryColor, Color accentColor)
+        private void DrawDecorativeElements(Graphics g, Color primaryColor, Color accentColor, float scale = 1.0f)
         {
+            int dynamicPadding = (int)(15 * scale);
             // Vẽ các đường trang trí nhẹ
             using var pen = new Pen(Color.FromArgb(30, primaryColor), 1f);
             
             // Đường ngang nhẹ
-            g.DrawLine(pen, Padding.Left + 12, Padding.Top + 40, Width - Padding.Right - 12, Padding.Top + 40);
+            int lineY = dynamicPadding + (int)(40 * scale);
+            if (lineY < Height - dynamicPadding)
+            {
+                g.DrawLine(pen, dynamicPadding + (int)(12 * scale), lineY, Width - dynamicPadding - (int)(12 * scale), lineY);
+            }
             
             // Điểm nhấn góc
-            var cornerSize = 8;
+            var cornerSize = (int)(8 * scale);
             using var cornerBrush = new SolidBrush(accentColor);
-            g.FillEllipse(cornerBrush, Width - Padding.Right - 20, Height - Padding.Bottom - 20, cornerSize, cornerSize);
+            g.FillEllipse(cornerBrush, Width - dynamicPadding - (int)(20 * scale), Height - dynamicPadding - (int)(20 * scale), cornerSize, cornerSize);
         }
         
 
@@ -308,6 +326,13 @@ namespace UI.Controls
                         Color.FromArgb(255, 247, 237),       // Orange-50 - Nền cam nhạt
                         Color.FromArgb(234, 88, 12),         // Orange-600 - Cam đậm
                         Color.FromArgb(154, 52, 18)          // Orange-800 - Chữ cam đậm
+                    );
+                case TableState.Cleaning:
+                    return (
+                        Color.FromArgb(107, 114, 128),       // Gray-500 - Màu xám
+                        Color.FromArgb(243, 244, 246),       // Gray-100 - Nền xám nhạt
+                        Color.FromArgb(75, 85, 99),          // Gray-600 - Xám đậm hơn
+                        Color.FromArgb(55, 65, 81)           // Gray-700 - Chữ xám đậm
                     );
                 default:
                     return (

@@ -124,7 +124,7 @@ namespace UI
 
         private void btnKhuyenMai_Voucher_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmVoucher>();
+            ShowChild<FrmChuongTrinhKM>();
 
         }
 

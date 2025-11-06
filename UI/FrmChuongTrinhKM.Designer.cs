@@ -1,6 +1,6 @@
 ﻿namespace UI
 {
-    partial class FrmVoucher
+    partial class FrmChuongTrinhKM
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,6 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             dgvKhuyenMai = new DataGridView();
             TenCT = new DataGridViewTextBoxColumn();
             MaKM = new DataGridViewTextBoxColumn();
@@ -51,17 +50,14 @@
             roundedPanel2 = new UI.Controls.RoundedPanel();
             label4 = new Label();
             label5 = new Label();
-            roundedPanel3 = new UI.Controls.RoundedPanel();
-            label6 = new Label();
-            label8 = new Label();
             roundedPanel4 = new UI.Controls.RoundedPanel();
             label9 = new Label();
             label10 = new Label();
-            roundedButton2 = new UI.Controls.RoundedButton();
+            btnTaoCTKM = new UI.Controls.RoundedButton();
+            btnVoucher = new UI.Controls.RoundedButton();
             ((System.ComponentModel.ISupportInitialize)dgvKhuyenMai).BeginInit();
             roundedPanel1.SuspendLayout();
             roundedPanel2.SuspendLayout();
-            roundedPanel3.SuspendLayout();
             roundedPanel4.SuspendLayout();
             SuspendLayout();
             // 
@@ -81,7 +77,6 @@
             dgvKhuyenMai.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvKhuyenMai.ColumnHeadersHeight = 60;
             dgvKhuyenMai.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvKhuyenMai.Columns.AddRange(new DataGridViewColumn[] { TenCT, MaKM, Loai, GiaTri, DieuKien, ThoiGian, DaDung, TrangThai });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -93,12 +88,14 @@
             dgvKhuyenMai.DefaultCellStyle = dataGridViewCellStyle2;
             dgvKhuyenMai.Location = new Point(12, 355);
             dgvKhuyenMai.Name = "dgvKhuyenMai";
+            dgvKhuyenMai.ReadOnly = true;
             dgvKhuyenMai.RowHeadersVisible = false;
             dgvKhuyenMai.RowHeadersWidth = 51;
             dgvKhuyenMai.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvKhuyenMai.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvKhuyenMai.Size = new Size(1176, 497);
             dgvKhuyenMai.TabIndex = 0;
+            dgvKhuyenMai.CellDoubleClick += dgvKhuyenMai_CellDoubleClick;
             dgvKhuyenMai.CellPainting += dgvKhuyenMai_CellPainting_1;
             // 
             // TenCT
@@ -106,81 +103,91 @@
             TenCT.HeaderText = "Tên Chương Trình";
             TenCT.MinimumWidth = 6;
             TenCT.Name = "TenCT";
-            TenCT.Width = 146;
+            TenCT.ReadOnly = true;
+            TenCT.Width = 180;
             // 
             // MaKM
             // 
             MaKM.HeaderText = "Mã KM";
             MaKM.MinimumWidth = 6;
             MaKM.Name = "MaKM";
-            MaKM.Width = 145;
+            MaKM.ReadOnly = true;
+            MaKM.Width = 146;
             // 
             // Loai
             // 
             Loai.HeaderText = "Loại";
             Loai.MinimumWidth = 6;
             Loai.Name = "Loai";
-            Loai.Width = 146;
+            Loai.ReadOnly = true;
+            Loai.Width = 147;
             // 
             // GiaTri
             // 
             GiaTri.HeaderText = "Giá Trị";
             GiaTri.MinimumWidth = 6;
             GiaTri.Name = "GiaTri";
-            GiaTri.Width = 146;
+            GiaTri.ReadOnly = true;
+            GiaTri.Width = 147;
             // 
             // DieuKien
             // 
             DieuKien.HeaderText = "Điều Kiện";
             DieuKien.MinimumWidth = 6;
             DieuKien.Name = "DieuKien";
-            DieuKien.Width = 145;
+            DieuKien.ReadOnly = true;
+            DieuKien.Width = 146;
             // 
             // ThoiGian
             // 
             ThoiGian.HeaderText = "Thời Gian";
             ThoiGian.MinimumWidth = 6;
             ThoiGian.Name = "ThoiGian";
-            ThoiGian.Width = 146;
+            ThoiGian.ReadOnly = true;
+            ThoiGian.Width = 147;
             // 
             // DaDung
             // 
             DaDung.HeaderText = "Đã Dùng";
             DaDung.MinimumWidth = 6;
             DaDung.Name = "DaDung";
-            DaDung.Width = 145;
+            DaDung.ReadOnly = true;
+            DaDung.Width = 146;
             // 
             // TrangThai
             // 
             TrangThai.HeaderText = "Trạng Thái";
             TrangThai.MinimumWidth = 6;
             TrangThai.Name = "TrangThai";
-            TrangThai.Width = 146;
+            TrangThai.ReadOnly = true;
+            TrangThai.Width = 147;
             // 
             // segmentedPill1
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             pillItem1.Text = "Khuyễn Mãi";
-            pillItem2.Text = "Voucher";
             segmentedPill1.Items.Add(pillItem1);
-            segmentedPill1.Items.Add(pillItem2);
             segmentedPill1.Location = new Point(12, 237);
             segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(243, 55);
+            segmentedPill1.Size = new Size(140, 55);
             segmentedPill1.TabIndex = 1;
             segmentedPill1.Text = "segmentedPill1";
             // 
             // roundedTextBox1
             // 
+            roundedTextBox1.AccessibleDescription = "";
+            roundedTextBox1.AccessibleName = "";
             roundedTextBox1.BackColor = Color.White;
             roundedTextBox1.Font = new Font("Segoe UI", 10F);
             roundedTextBox1.ForeColor = Color.Black;
             roundedTextBox1.Location = new Point(12, 298);
             roundedTextBox1.Name = "roundedTextBox1";
             roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
+            roundedTextBox1.PlaceholderText = "Tìm Kiếm Chương Trình";
             roundedTextBox1.Size = new Size(509, 51);
             roundedTextBox1.TabIndex = 2;
+            roundedTextBox1.Tag = "";
             // 
             // label1
             // 
@@ -228,9 +235,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(20, 31);
             label3.Name = "label3";
-            label3.Size = new Size(120, 20);
+            label3.Size = new Size(130, 20);
             label3.TabIndex = 17;
-            label3.Text = "CTKM đang chạy";
+            label3.Text = "Tất cả Khuyến Mãi";
             // 
             // roundedPanel2
             // 
@@ -238,7 +245,7 @@
             roundedPanel2.BorderThickness = 5;
             roundedPanel2.Controls.Add(label4);
             roundedPanel2.Controls.Add(label5);
-            roundedPanel2.Location = new Point(307, 90);
+            roundedPanel2.Location = new Point(402, 90);
             roundedPanel2.Name = "roundedPanel2";
             roundedPanel2.Padding = new Padding(12);
             roundedPanel2.Size = new Size(268, 141);
@@ -249,48 +256,18 @@
             label4.AutoSize = true;
             label4.Location = new Point(20, 81);
             label4.Name = "label4";
-            label4.Size = new Size(33, 20);
+            label4.Size = new Size(17, 20);
             label4.TabIndex = 17;
-            label4.Text = "193";
+            label4.Text = "0";
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Location = new Point(20, 31);
             label5.Name = "label5";
-            label5.Size = new Size(96, 20);
+            label5.Size = new Size(110, 20);
             label5.TabIndex = 17;
-            label5.Text = "Lượt sử dụng";
-            // 
-            // roundedPanel3
-            // 
-            roundedPanel3.BackColor = Color.FromArgb(255, 255, 192);
-            roundedPanel3.BorderThickness = 5;
-            roundedPanel3.Controls.Add(label6);
-            roundedPanel3.Controls.Add(label8);
-            roundedPanel3.Location = new Point(601, 90);
-            roundedPanel3.Name = "roundedPanel3";
-            roundedPanel3.Padding = new Padding(12);
-            roundedPanel3.Size = new Size(268, 141);
-            roundedPanel3.TabIndex = 16;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(20, 81);
-            label6.Name = "label6";
-            label6.Size = new Size(17, 20);
-            label6.TabIndex = 17;
-            label6.Text = "3";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(20, 31);
-            label8.Name = "label8";
-            label8.Size = new Size(132, 20);
-            label8.TabIndex = 17;
-            label8.Text = "Voucher phát hành";
+            label5.Text = "Đang Sử Dụng ";
             // 
             // roundedPanel4
             // 
@@ -298,7 +275,7 @@
             roundedPanel4.BorderThickness = 5;
             roundedPanel4.Controls.Add(label9);
             roundedPanel4.Controls.Add(label10);
-            roundedPanel4.Location = new Point(892, 90);
+            roundedPanel4.Location = new Point(829, 90);
             roundedPanel4.Name = "roundedPanel4";
             roundedPanel4.Padding = new Padding(12);
             roundedPanel4.Size = new Size(268, 141);
@@ -309,43 +286,61 @@
             label9.AutoSize = true;
             label9.Location = new Point(20, 81);
             label9.Name = "label9";
-            label9.Size = new Size(49, 20);
+            label9.Size = new Size(17, 20);
             label9.TabIndex = 17;
-            label9.Text = "15.8M";
+            label9.Text = "0";
             // 
             // label10
             // 
             label10.AutoSize = true;
             label10.Location = new Point(20, 31);
             label10.Name = "label10";
-            label10.Size = new Size(106, 20);
+            label10.Size = new Size(87, 20);
             label10.TabIndex = 17;
-            label10.Text = "Tổng giảm giá";
+            label10.Text = "Đã Hết Hạn";
             // 
-            // roundedButton2
+            // btnTaoCTKM
             // 
-            roundedButton2.BackColor = Color.Black;
-            roundedButton2.FlatStyle = FlatStyle.Flat;
-            roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
-            roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(980, 309);
-            roundedButton2.Name = "roundedButton2";
-            roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(180, 40);
-            roundedButton2.TabIndex = 18;
-            roundedButton2.Text = "+ Tạo mới CTKM";
-            roundedButton2.UseVisualStyleBackColor = false;
-            roundedButton2.Click += roundedButton2_Click;
+            btnTaoCTKM.BackColor = Color.Black;
+            btnTaoCTKM.BorderThickness = 0;
+            btnTaoCTKM.FlatStyle = FlatStyle.Flat;
+            btnTaoCTKM.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnTaoCTKM.ForeColor = Color.White;
+            btnTaoCTKM.Location = new Point(980, 309);
+            btnTaoCTKM.Name = "btnTaoCTKM";
+            btnTaoCTKM.Padding = new Padding(10, 6, 10, 6);
+            btnTaoCTKM.Size = new Size(180, 40);
+            btnTaoCTKM.TabIndex = 18;
+            btnTaoCTKM.Text = "+ Tạo mới CTKM";
+            btnTaoCTKM.UseVisualStyleBackColor = false;
+            btnTaoCTKM.Click += roundedButton2_Click;
             // 
-            // FrmVoucher
+            // btnVoucher
+            // 
+            btnVoucher.BackColor = Color.Silver;
+            btnVoucher.BorderThickness = 0;
+            btnVoucher.FlatStyle = FlatStyle.Flat;
+            btnVoucher.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnVoucher.ForeColor = Color.Black;
+            btnVoucher.HoverBackColor = Color.WhiteSmoke;
+            btnVoucher.Location = new Point(158, 237);
+            btnVoucher.Name = "btnVoucher";
+            btnVoucher.Padding = new Padding(10, 6, 10, 6);
+            btnVoucher.Size = new Size(122, 55);
+            btnVoucher.TabIndex = 19;
+            btnVoucher.Text = "Voucher";
+            btnVoucher.UseVisualStyleBackColor = false;
+            btnVoucher.Click += btnVoucher_Click;
+            // 
+            // FrmChuongTrinhKM
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1190, 900);
-            Controls.Add(roundedButton2);
+            Controls.Add(btnVoucher);
+            Controls.Add(btnTaoCTKM);
             Controls.Add(roundedPanel4);
-            Controls.Add(roundedPanel3);
             Controls.Add(roundedPanel2);
             Controls.Add(roundedPanel1);
             Controls.Add(label2);
@@ -354,7 +349,7 @@
             Controls.Add(segmentedPill1);
             Controls.Add(dgvKhuyenMai);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "FrmVoucher";
+            Name = "FrmChuongTrinhKM";
             Text = "FrmVoucher";
             Load += FrmVoucher_Load;
             ((System.ComponentModel.ISupportInitialize)dgvKhuyenMai).EndInit();
@@ -362,8 +357,6 @@
             roundedPanel1.PerformLayout();
             roundedPanel2.ResumeLayout(false);
             roundedPanel2.PerformLayout();
-            roundedPanel3.ResumeLayout(false);
-            roundedPanel3.PerformLayout();
             roundedPanel4.ResumeLayout(false);
             roundedPanel4.PerformLayout();
             ResumeLayout(false);
@@ -383,13 +376,10 @@
         private Controls.RoundedPanel roundedPanel2;
         private Label label4;
         private Label label5;
-        private Controls.RoundedPanel roundedPanel3;
-        private Label label6;
-        private Label label8;
         private Controls.RoundedPanel roundedPanel4;
         private Label label9;
         private Label label10;
-        private Controls.RoundedButton roundedButton2;
+        private Controls.RoundedButton btnTaoCTKM;
         private DataGridViewTextBoxColumn TenCT;
         private DataGridViewTextBoxColumn MaKM;
         private DataGridViewTextBoxColumn Loai;
@@ -398,5 +388,6 @@
         private DataGridViewTextBoxColumn ThoiGian;
         private DataGridViewTextBoxColumn DaDung;
         private DataGridViewTextBoxColumn TrangThai;
+        private Controls.RoundedButton btnVoucher;
     }
 }

@@ -6,7 +6,9 @@ namespace QLNhaHangTiecCuoi.Share
 {
     public class DatabaseHelper
     {
-        private string _connectionString = @"Server=LAPTOP-R1ZAX\SQLEXPRESS;Database=QL_NhaHangTiecCuoi_V3;Integrated Security=true;TrustServerCertificate=true;";
+        private string _connectionString = @"Data Source=LAPTOP-2L5G5GIH\SQLEXPRESS03;Initial Catalog=QL_NhaHangTiecCuoi_V3;Integrated Security=True;Encrypt=True";
+
+        public string ConnectionString => _connectionString;
 
         public DatabaseHelper(string connectionString = null)
         {
@@ -31,6 +33,11 @@ namespace QLNhaHangTiecCuoi.Share
         }
         public DataTable GetDataTable(string query, SqlParameter[] parameters = null)
         {
+            return GetDataTable(query, parameters, 120);
+        }
+
+        public DataTable GetDataTable(string query, SqlParameter[] parameters, int timeoutSeconds)
+        {
             DataTable dt = new DataTable();
             try
             {
@@ -40,7 +47,7 @@ namespace QLNhaHangTiecCuoi.Share
                     
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandTimeout = 30;
+                    cmd.CommandTimeout = timeoutSeconds;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -64,7 +71,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandTimeout = 30;
+                    cmd.CommandTimeout = 120; // Tăng timeout lên 120 giây (2 phút) cho các query phức tạp
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -87,7 +94,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandTimeout = 30;
+                    cmd.CommandTimeout = 120; // Tăng timeout lên 120 giây (2 phút) cho các query phức tạp
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -99,6 +106,25 @@ namespace QLNhaHangTiecCuoi.Share
             catch (Exception ex)
             {
                 throw new Exception("Lỗi ExecuteNonQuery: " + ex.Message);
+            }
+        }
+
+        public int ExecuteNonQueryInTransaction(SqlConnection conn, SqlTransaction transaction, string query, SqlParameter[] parameters = null)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand(query, conn, transaction);
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandTimeout = 120;
+
+                if (parameters != null)
+                    cmd.Parameters.AddRange(parameters);
+
+                return cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi ExecuteNonQueryInTransaction: " + ex.Message);
             }
         }
     }

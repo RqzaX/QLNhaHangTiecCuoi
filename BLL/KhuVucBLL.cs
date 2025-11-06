@@ -24,5 +24,65 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - Lấy danh sách khu vực: {ex.Message}");
             }
         }
+
+        public DataTable LayDanhSachKhuVucVoiSoBan(int? chiNhanhId = null)
+        {
+            try
+            {
+                return _khuVucDAL.LayDanhSachKhuVucVoiSoBan(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy danh sách khu vực với số bàn: {ex.Message}");
+            }
+        }
+
+        public DataRow LayKhuVucById(int khuVucId)
+        {
+            try
+            {
+                if (khuVucId <= 0)
+                    throw new Exception("ID khu vực không hợp lệ");
+
+                return _khuVucDAL.LayKhuVucById(khuVucId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy thông tin khu vực: {ex.Message}");
+            }
+        }
+
+        public bool CapNhatKhuVuc(int khuVucId, string tenKhuVuc, string moTa)
+        {
+            try
+            {
+                if (khuVucId <= 0)
+                    throw new Exception("ID khu vực không hợp lệ");
+                
+                if (string.IsNullOrWhiteSpace(tenKhuVuc))
+                    throw new Exception("Tên khu vực không được để trống");
+
+                return _khuVucDAL.CapNhatKhuVuc(khuVucId, tenKhuVuc.Trim(), moTa?.Trim());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Cập nhật khu vực: {ex.Message}");
+            }
+        }
+
+        public bool XoaKhuVuc(int khuVucId)
+        {
+            try
+            {
+                if (khuVucId <= 0)
+                    throw new Exception("ID khu vực không hợp lệ");
+
+                return _khuVucDAL.XoaKhuVuc(khuVucId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Xóa khu vực: {ex.Message}");
+            }
+        }
     }
 }
