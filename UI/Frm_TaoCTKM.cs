@@ -54,18 +54,7 @@ namespace UI
                 return;
             }
 
-            string loaiText = CBBLoaiKM.Text?.Trim() ?? "";
-
-            if (loaiText.Equals("Tặng Quà", StringComparison.OrdinalIgnoreCase) ||
-                loaiText.Equals("Tặng quà", StringComparison.OrdinalIgnoreCase))
-            {
-                txtGiamTD.Enabled = false;
-                txtGiamTD.Text = "";
-            }
-            else
-            {
-                txtGiamTD.Enabled = true;
-            }
+            txtGiamTD.Enabled = true;
         }
 
         private void TxtGiamTD_TextChanged(object sender, EventArgs e)
@@ -187,11 +176,6 @@ namespace UI
                 {
                     hinhThuc = "AMOUNT";
                 }
-                else if (loaiText.Equals("Tặng Quà", StringComparison.OrdinalIgnoreCase) ||
-                         loaiText.Equals("Tặng quà", StringComparison.OrdinalIgnoreCase))
-                {
-                    hinhThuc = "GIFT";
-                }
                 else
                 {
                     MessageBox.Show($"Loại khuyến mãi không hợp lệ: '{loaiText}'. Vui lòng chọn lại!", "Lỗi",
@@ -200,74 +184,58 @@ namespace UI
                 }
 
                 // Validate và parse giá trị
-                bool isTangQua = loaiText.Equals("Tặng Quà", StringComparison.OrdinalIgnoreCase) ||
-                                loaiText.Equals("Tặng quà", StringComparison.OrdinalIgnoreCase);
-
                 if (string.IsNullOrWhiteSpace(txtGiamTD.Text))
                 {
-                    if (!isTangQua)
+                    MessageBox.Show("Vui lòng nhập giá trị khuyến mãi!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                string giaTriText = txtGiamTD.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
+
+                if (!decimal.TryParse(giaTriText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal giaTri))
+                {
+                    MessageBox.Show("Giá trị khuyến mãi không hợp lệ! Vui lòng nhập số.", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                if (giaTri <= 0)
+                {
+                    MessageBox.Show("Giá trị khuyến mãi phải lớn hơn 0!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                // Ràng buộc theo loại
+                if (hinhThuc == "PERCENT")
+                {
+                    if (giaTri > 50)
                     {
-                        MessageBox.Show("Vui lòng nhập giá trị khuyến mãi!", "Lỗi",
+                        MessageBox.Show("Giá trị giảm theo % không được vượt quá 50%!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;
                     }
                 }
-
-                decimal giaTri = 0;
-
-                // Nếu là "Tặng Quà", không cần giá trị
-                if (isTangQua)
+                else if (hinhThuc == "AMOUNT")
                 {
-                    giaTri = 0; // Giá trị mặc định cho "Tặng Quà"
-                }
-                else
-                {
-                    string giaTriText = txtGiamTD.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
-
-                    if (!decimal.TryParse(giaTriText, NumberStyles.Any, CultureInfo.InvariantCulture, out giaTri))
+                    if (giaTri < 100000)
                     {
-                        MessageBox.Show("Giá trị khuyến mãi không hợp lệ! Vui lòng nhập số.", "Lỗi",
+                        MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 100.000 đ!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;
                     }
-
-                    if (giaTri <= 0)
+                    if (giaTri > 10000000)
                     {
-                        MessageBox.Show("Giá trị khuyến mãi phải lớn hơn 0!", "Lỗi",
+                        MessageBox.Show("Giá trị giảm theo số tiền không được vượt quá 10.000.000 đ!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;
-                    }
-
-                    // Ràng buộc theo loại
-                    if (hinhThuc == "PERCENT")
-                    {
-                        if (giaTri > 50)
-                        {
-                            MessageBox.Show("Giá trị giảm theo % không được vượt quá 50%!", "Lỗi",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtGiamTD.Focus();
-                            return;
-                        }
-                    }
-                    else if (hinhThuc == "AMOUNT")
-                    {
-                        if (giaTri < 100000)
-                        {
-                            MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 100.000 đ!", "Lỗi",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtGiamTD.Focus();
-                            return;
-                        }
-                        if (giaTri > 10000000)
-                        {
-                            MessageBox.Show("Giá trị giảm theo số tiền không được vượt quá 10.000.000 đ!", "Lỗi",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtGiamTD.Focus();
-                            return;
-                        }
                     }
                 }
 
@@ -324,5 +292,9 @@ namespace UI
             }
         }
 
+        private void btnDong_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

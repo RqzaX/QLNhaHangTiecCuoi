@@ -163,14 +163,15 @@
             // roundedButton1
             // 
             roundedButton1.BackColor = Color.White;
+            roundedButton1.BorderThickness = 0;
             roundedButton1.FlatAppearance.BorderSize = 0;
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.Black;
-            roundedButton1.Location = new Point(299, 552);
+            roundedButton1.Location = new Point(299, 520);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
-            roundedButton1.Size = new Size(94, 29);
+            roundedButton1.Size = new Size(94, 61);
             roundedButton1.TabIndex = 20;
             roundedButton1.Text = "Hủy";
             roundedButton1.UseVisualStyleBackColor = false;
@@ -178,14 +179,15 @@
             // roundedButton2
             // 
             roundedButton2.BackColor = Color.Black;
+            roundedButton2.BorderThickness = 0;
             roundedButton2.FlatAppearance.BorderSize = 0;
             roundedButton2.FlatStyle = FlatStyle.Flat;
             roundedButton2.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton2.ForeColor = Color.White;
-            roundedButton2.Location = new Point(399, 552);
+            roundedButton2.Location = new Point(399, 520);
             roundedButton2.Name = "roundedButton2";
             roundedButton2.Padding = new Padding(10, 6, 10, 6);
-            roundedButton2.Size = new Size(188, 29);
+            roundedButton2.Size = new Size(188, 61);
             roundedButton2.TabIndex = 21;
             roundedButton2.Text = "Thêm Khách Hàng";
             roundedButton2.UseVisualStyleBackColor = false;

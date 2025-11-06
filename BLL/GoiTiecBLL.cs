@@ -318,5 +318,57 @@ namespace BLL
                 throw new Exception($"Lỗi BLL - TinhGiaMoiBan: {ex.Message}", ex);
             }
         }
+
+        // ========== DỊCH VỤ ==========
+        // Lấy danh sách tất cả dịch vụ
+        public DataTable GetAllDichVu()
+        {
+            try
+            {
+                return _dal.GetAllDichVu();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetAllDichVu: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách dịch vụ trong gói tiệc
+        public DataTable GetDichVuTrongGoi(int goiId)
+        {
+            try
+            {
+                if (goiId <= 0)
+                    throw new ArgumentException("ID gói tiệc không hợp lệ!");
+                
+                return _dal.GetDichVuTrongGoi(goiId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetDichVuTrongGoi: {ex.Message}", ex);
+            }
+        }
+
+        // Thêm dịch vụ vào gói
+        public void ThemDichVuVaoGoi(int goiId, string maDv)
+        {
+            if (goiId <= 0) throw new ArgumentException("goiId không hợp lệ");
+
+            int dvId = _dal.GetDichVuIdByMaDv(maDv);
+            if (dvId <= 0) throw new Exception("Không tìm thấy mã dịch vụ: " + maDv);
+
+            _dal.ThemDichVuVaoGoi(goiId, dvId);
+        }
+
+        // Xóa dịch vụ khỏi gói
+        public void XoaDichVuKhoiGoi(int goiId, string maDv)
+        {
+            if (goiId <= 0) throw new ArgumentException("goiId không hợp lệ");
+
+            int dvId = _dal.GetDichVuIdByMaDv(maDv);
+            if (dvId <= 0) throw new Exception("Không tìm thấy mã dịch vụ: " + maDv);
+
+            _dal.XoaDichVuKhoiGoi(goiId, dvId);
+        }
     }
 }

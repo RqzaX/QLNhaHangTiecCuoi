@@ -30,6 +30,7 @@ CREATE TABLE dbo.khu_vuc(
   khu_vuc_id   INT IDENTITY(1,1) PRIMARY KEY,
   chi_nhanh_id INT NOT NULL,
   ten_khu_vuc  NVARCHAR(100) NOT NULL,
+  mo_ta        NVARCHAR(300) NULL,
   FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id)
 );
 
@@ -859,3 +860,133 @@ SELECT * FROM dbo.voucher ORDER BY voucher_id;
 drop table Voucher
 
 select* from chuong_trinh_km
+
+GO
+/* ======================================================================
+   SEED: KHU VỰC VÀ BÀN
+   Mỗi chi nhánh: 3 khu vực, mỗi khu vực: 10 bàn
+   ====================================================================== */
+
+-- Thêm cột mo_ta vào bảng khu_vuc nếu chưa có
+IF NOT EXISTS (
+    SELECT 1 
+    FROM sys.columns 
+    WHERE object_id = OBJECT_ID(N'dbo.khu_vuc') 
+    AND name = N'mo_ta'
+)
+BEGIN
+    ALTER TABLE dbo.khu_vuc
+    ADD mo_ta NVARCHAR(300) NULL;
+    PRINT N'Đã thêm cột mo_ta vào bảng khu_vuc';
+END
+GO
+
+-- Cập nhật mô tả cho các khu vực đã tồn tại
+UPDATE dbo.khu_vuc
+SET mo_ta = CASE 
+    WHEN ten_khu_vuc = N'Tầng 1' THEN N'Khu vực chính, gần cửa sổ'
+    WHEN ten_khu_vuc = N'Tầng 2' THEN N'Khu vực VIP, yên tĩnh'
+    WHEN ten_khu_vuc = N'Ngoài trời' THEN N'Không gian thoáng mát, view đẹp'
+    ELSE N'Khu vực chính'
+END
+WHERE mo_ta IS NULL;
+
+-- OPTION: Nếu muốn xóa dữ liệu cũ trước khi thêm mới, bỏ comment dòng sau:
+-- DELETE FROM dbo.ban;
+-- DELETE FROM dbo.khu_vuc;
+
+-- 1) Thêm khu vực cho mỗi chi nhánh
+INSERT INTO dbo.khu_vuc (chi_nhanh_id, ten_khu_vuc, mo_ta)
+SELECT 
+    cn.chi_nhanh_id,
+    kv.ten_khu_vuc,
+    kv.mo_ta
+FROM dbo.chi_nhanh cn
+CROSS JOIN (
+    VALUES 
+        (N'Tầng 1', N'Khu vực chính, gần cửa sổ'),
+        (N'Tầng 2', N'Khu vực VIP, yên tĩnh'),
+        (N'Ngoài trời', N'Không gian thoáng mát, view đẹp')
+) AS kv(ten_khu_vuc, mo_ta)
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM dbo.khu_vuc kv_existing
+    WHERE kv_existing.chi_nhanh_id = cn.chi_nhanh_id
+      AND kv_existing.ten_khu_vuc = kv.ten_khu_vuc
+);
+
+-- 2) Thêm bàn cho mỗi khu vực (10 bàn/khu vực)
+-- Số bàn unique trong mỗi chi nhánh: tính từ số bàn hiện có + 1
+-- Sức chứa: 2-6 người (phân bổ đều)
+-- Trạng thái: mặc định TRỐNG
+WITH kv_with_seq AS (
+    -- Đánh số thứ tự khu vực trong mỗi chi nhánh
+    SELECT 
+        kv.khu_vuc_id,
+        kv.chi_nhanh_id,
+        kv.ten_khu_vuc,
+        ROW_NUMBER() OVER (PARTITION BY kv.chi_nhanh_id ORDER BY kv.khu_vuc_id) AS kv_seq
+    FROM dbo.khu_vuc kv
+),
+kv_ban_count AS (
+    -- Đếm số bàn hiện có của mỗi khu vực
+    SELECT 
+        kv.khu_vuc_id,
+        kv.chi_nhanh_id,
+        kv.kv_seq,
+        COUNT(b.ban_id) AS so_ban_hien_co
+    FROM kv_with_seq kv
+    LEFT JOIN dbo.ban b ON b.khu_vuc_id = kv.khu_vuc_id
+    GROUP BY kv.khu_vuc_id, kv.chi_nhanh_id, kv.kv_seq
+),
+kv_can_them_ban AS (
+    -- Chỉ lấy những khu vực chưa đủ 10 bàn
+    SELECT 
+        kv.khu_vuc_id,
+        kv.chi_nhanh_id,
+        kv.kv_seq,
+        kv.so_ban_hien_co,
+        (kv.kv_seq - 1) * 10 AS ban_start_num
+    FROM kv_ban_count kv
+    WHERE kv.so_ban_hien_co < 10
+),
+ban_numbers AS (
+    SELECT 1 AS num UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+    UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+)
+INSERT INTO dbo.ban (chi_nhanh_id, khu_vuc_id, so_ban, suc_chua, trang_thai)
+SELECT 
+    kv.chi_nhanh_id,
+    kv.khu_vuc_id,
+    N'B' + RIGHT('00' + CAST(kv.ban_start_num + bn.num AS NVARCHAR(2)), 2) AS so_ban,
+    CASE 
+        WHEN bn.num % 3 = 0 THEN 2  -- Bàn nhỏ: 2 người
+        WHEN bn.num % 3 = 1 THEN 4  -- Bàn trung: 4 người
+        ELSE 6                       -- Bàn lớn: 6 người
+    END AS suc_chua,
+    N'TRỐNG' AS trang_thai
+FROM kv_can_them_ban kv
+CROSS JOIN ban_numbers bn
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM dbo.ban b_existing
+    WHERE b_existing.chi_nhanh_id = kv.chi_nhanh_id
+      AND b_existing.so_ban = N'B' + RIGHT('00' + CAST(kv.ban_start_num + bn.num AS NVARCHAR(2)), 2)
+)
+  AND bn.num > kv.so_ban_hien_co;  -- Chỉ thêm những bàn còn thiếu
+
+-- Kiểm tra kết quả
+SELECT 
+    cn.ten AS [Chi nhánh],
+    kv.ten_khu_vuc AS [Khu vực],
+    kv.mo_ta AS [Mô tả],
+    COUNT(b.ban_id) AS [Số bàn],
+    STRING_AGG(b.so_ban + N'(' + CAST(b.suc_chua AS NVARCHAR) + N' người)', N', ') WITHIN GROUP (ORDER BY b.so_ban) AS [Danh sách bàn]
+FROM dbo.chi_nhanh cn
+LEFT JOIN dbo.khu_vuc kv ON kv.chi_nhanh_id = cn.chi_nhanh_id
+LEFT JOIN dbo.ban b ON b.khu_vuc_id = kv.khu_vuc_id
+GROUP BY cn.chi_nhanh_id, cn.ten, kv.khu_vuc_id, kv.ten_khu_vuc, kv.mo_ta
+ORDER BY cn.ten, kv.ten_khu_vuc;
+
+PRINT N'Đã thêm dữ liệu khu vực và bàn cho tất cả chi nhánh';
+

@@ -311,6 +311,59 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        public bool CapNhatBan(int banId, string soBan, int sucChua, int? khuVucId, string trangThai)
+        {
+            try
+            {
+                // Kiểm tra khu vực có thuộc cùng chi nhánh với bàn không
+                if (khuVucId.HasValue)
+                {
+                    string checkQuery = @"
+                        SELECT COUNT(*) 
+                        FROM ban b
+                        INNER JOIN khu_vuc kv ON kv.khu_vuc_id = @khuVucId
+                        WHERE b.ban_id = @banId 
+                        AND b.chi_nhanh_id = kv.chi_nhanh_id";
+                    
+                    SqlParameter[] checkParams = new SqlParameter[]
+                    {
+                        new SqlParameter("@banId", banId),
+                        new SqlParameter("@khuVucId", khuVucId.Value)
+                    };
+                    
+                    var checkResult = _dbHelper.GetDataTable(checkQuery, checkParams);
+                    if (checkResult != null && checkResult.Rows.Count > 0 && Convert.ToInt32(checkResult.Rows[0][0]) == 0)
+                    {
+                        throw new Exception("Khu vực được chọn không thuộc cùng chi nhánh với bàn này!");
+                    }
+                }
+
+                string query = @"
+                    UPDATE ban 
+                    SET so_ban = @soBan, 
+                        suc_chua = @sucChua, 
+                        khu_vuc_id = @khuVucId, 
+                        trang_thai = @trangThai
+                    WHERE ban_id = @banId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@banId", banId),
+                    new SqlParameter("@soBan", soBan),
+                    new SqlParameter("@sucChua", sucChua),
+                    new SqlParameter("@khuVucId", khuVucId.HasValue ? (object)khuVucId.Value : DBNull.Value),
+                    new SqlParameter("@trangThai", trangThai)
+                };
+
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi cập nhật bàn: {ex.Message}");
+            }
+        }
+
         public bool CapNhatTrangThaiBan(int banId, string trangThai)
         {
             try
@@ -327,6 +380,128 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi cập nhật trạng thái bàn: {ex.Message}");
+            }
+        }
+
+        public int ThemBan(int chiNhanhId, string soBan, int sucChua, int? khuVucId, string trangThai)
+        {
+            try
+            {
+                // Kiểm tra khu vực có thuộc cùng chi nhánh không
+                if (khuVucId.HasValue)
+                {
+                    string checkQuery = @"
+                        SELECT COUNT(*) 
+                        FROM khu_vuc kv
+                        WHERE kv.khu_vuc_id = @khuVucId 
+                        AND kv.chi_nhanh_id = @chiNhanhId";
+                    
+                    SqlParameter[] checkParams = new SqlParameter[]
+                    {
+                        new SqlParameter("@khuVucId", khuVucId.Value),
+                        new SqlParameter("@chiNhanhId", chiNhanhId)
+                    };
+                    
+                    var checkResult = _dbHelper.GetDataTable(checkQuery, checkParams);
+                    if (checkResult == null || checkResult.Rows.Count == 0 || Convert.ToInt32(checkResult.Rows[0][0]) == 0)
+                    {
+                        throw new Exception("Khu vực được chọn không thuộc chi nhánh này!");
+                    }
+                }
+
+                // Kiểm tra số bàn đã tồn tại trong chi nhánh chưa
+                string checkSoBanQuery = @"
+                    SELECT COUNT(*) 
+                    FROM ban 
+                    WHERE chi_nhanh_id = @chiNhanhId 
+                    AND so_ban = @soBan";
+                
+                SqlParameter[] checkSoBanParams = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@soBan", soBan)
+                };
+                
+                var checkSoBanResult = _dbHelper.GetDataTable(checkSoBanQuery, checkSoBanParams);
+                if (checkSoBanResult != null && checkSoBanResult.Rows.Count > 0 && Convert.ToInt32(checkSoBanResult.Rows[0][0]) > 0)
+                {
+                    throw new Exception($"Số bàn '{soBan}' đã tồn tại trong chi nhánh này!");
+                }
+
+                string query = @"
+                    INSERT INTO ban (chi_nhanh_id, khu_vuc_id, so_ban, suc_chua, trang_thai)
+                    OUTPUT INSERTED.ban_id
+                    VALUES (@chiNhanhId, @khuVucId, @soBan, @sucChua, @trangThai)";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@soBan", soBan),
+                    new SqlParameter("@sucChua", sucChua),
+                    new SqlParameter("@khuVucId", khuVucId.HasValue ? (object)khuVucId.Value : DBNull.Value),
+                    new SqlParameter("@trangThai", trangThai)
+                };
+
+                var result = _dbHelper.GetDataTable(query, parameters);
+                if (result != null && result.Rows.Count > 0)
+                {
+                    return Convert.ToInt32(result.Rows[0][0]);
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi thêm bàn: {ex.Message}");
+            }
+        }
+
+        public bool XoaBan(int banId)
+        {
+            try
+            {
+                // Kiểm tra xem bàn có đang được sử dụng không (có đặt bàn hoặc phiếu order)
+                string checkQuery = @"
+                    SELECT 
+                        (SELECT COUNT(*) FROM dat_ban WHERE ban_id = @banId AND trang_thai IN (N'ĐÃ XÁC NHẬN', N'ĐÃ PHỤC VỤ')) as dat_ban_count,
+                        (SELECT COUNT(*) FROM phieu_order WHERE ban_id = @banId AND trang_thai IN (N'ĐANG PHỤC VỤ', N'CHỜ THANH TOÁN')) as phieu_order_count";
+                
+                var checkResult = _dbHelper.GetDataTable(checkQuery, new SqlParameter[] { new SqlParameter("@banId", banId) });
+                
+                // Nếu có đặt bàn hoặc phiếu order đang hoạt động, không cho xóa
+                if (checkResult != null && checkResult.Rows.Count > 0)
+                {
+                    int datBanCount = Convert.ToInt32(checkResult.Rows[0]["dat_ban_count"]);
+                    int phieuOrderCount = Convert.ToInt32(checkResult.Rows[0]["phieu_order_count"]);
+                    
+                    if (datBanCount > 0 || phieuOrderCount > 0)
+                    {
+                        throw new Exception("Không thể xóa bàn này vì bàn đang được sử dụng (có đặt bàn hoặc phiếu order đang hoạt động)!");
+                    }
+                }
+
+                // Xóa các chi tiết phiếu order liên quan trước (nếu có)
+                string deletePhieuOrderCTQuery = @"
+                    DELETE FROM phieu_order_ct 
+                    WHERE phieu_order_id IN (SELECT phieu_order_id FROM phieu_order WHERE ban_id = @banId)";
+                _dbHelper.ExecuteNonQuery(deletePhieuOrderCTQuery, new SqlParameter[] { new SqlParameter("@banId", banId) });
+
+                // Xóa các phiếu order liên quan (nếu có)
+                string deletePhieuOrderQuery = "DELETE FROM phieu_order WHERE ban_id = @banId";
+                _dbHelper.ExecuteNonQuery(deletePhieuOrderQuery, new SqlParameter[] { new SqlParameter("@banId", banId) });
+
+                // Xóa các đặt bàn liên quan (nếu có)
+                string deleteDatBanQuery = "DELETE FROM dat_ban WHERE ban_id = @banId";
+                _dbHelper.ExecuteNonQuery(deleteDatBanQuery, new SqlParameter[] { new SqlParameter("@banId", banId) });
+
+                // Xóa bàn
+                string deleteQuery = "DELETE FROM ban WHERE ban_id = @banId";
+                int rowsAffected = _dbHelper.ExecuteNonQuery(deleteQuery, new SqlParameter[] { new SqlParameter("@banId", banId) });
+                
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi xóa bàn: {ex.Message}");
             }
         }
 
@@ -429,9 +604,11 @@ namespace QLNhaHangTiecCuoi.DAL
             try
             {
                 string query = @"
-                    SELECT ban_id, so_ban, suc_chua, trang_thai
-                    FROM ban 
-                    WHERE ban_id = @banId";
+                    SELECT b.ban_id, b.so_ban, b.suc_chua, b.trang_thai, 
+                           b.khu_vuc_id, kv.ten_khu_vuc
+                    FROM ban b
+                    LEFT JOIN khu_vuc kv ON b.khu_vuc_id = kv.khu_vuc_id
+                    WHERE b.ban_id = @banId";
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {

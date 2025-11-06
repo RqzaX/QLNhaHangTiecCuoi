@@ -75,6 +75,21 @@ namespace BLL
             }
         }
 
+        public int CountVouchersByKmId(int kmId)
+        {
+            try
+            {
+                if (kmId <= 0)
+                    throw new Exception("ID khuyến mãi không hợp lệ");
+
+                return _dal.CountVouchersByKmId(kmId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi BLL CountVouchersByKmId: " + ex.Message);
+            }
+        }
+
         public bool Delete(int kmId)
         {
             try

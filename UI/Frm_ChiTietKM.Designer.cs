@@ -133,7 +133,7 @@
             CBBLoaiKM.FormattingEnabled = true;
             CBBLoaiKM.IntegralHeight = false;
             CBBLoaiKM.ItemHeight = 26;
-            CBBLoaiKM.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền", "Tặng quà" });
+            CBBLoaiKM.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền" });
             CBBLoaiKM.Location = new Point(15, 282);
             CBBLoaiKM.Name = "CBBLoaiKM";
             CBBLoaiKM.Size = new Size(207, 32);

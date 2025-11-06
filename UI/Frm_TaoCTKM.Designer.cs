@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label1 = new Label();
             label2 = new Label();
             label8 = new Label();
@@ -46,6 +48,7 @@
             btnTao = new UI.Controls.RoundedButton();
             cbbLoaiApDung = new UiControls.BorderComboBox();
             label3 = new Label();
+            btnDong = new Guna.UI2.WinForms.Guna2Button();
             SuspendLayout();
             // 
             // label1
@@ -83,13 +86,12 @@
             CBBLoaiKM.FormattingEnabled = true;
             CBBLoaiKM.IntegralHeight = false;
             CBBLoaiKM.ItemHeight = 26;
-            CBBLoaiKM.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền", "Tặng quà" });
+            CBBLoaiKM.Items.AddRange(new object[] { "Giảm Theo %", "GIảm Theo Số Tiền" });
             CBBLoaiKM.Location = new Point(12, 288);
             CBBLoaiKM.Name = "CBBLoaiKM";
             CBBLoaiKM.Size = new Size(207, 32);
             CBBLoaiKM.TabIndex = 13;
             CBBLoaiKM.Text = "Chọn Loại";
-            
             // 
             // label4
             // 
@@ -100,7 +102,6 @@
             label4.Size = new Size(125, 20);
             label4.TabIndex = 12;
             label4.Text = "Loại Khuyến Mãi";
-          
             // 
             // txtTenCT
             // 
@@ -244,11 +245,31 @@
             label3.TabIndex = 12;
             label3.Text = "Loại Áp Dụng";
             // 
+            // btnDong
+            // 
+            btnDong.BorderRadius = 20;
+            btnDong.CustomizableEdges = customizableEdges1;
+            btnDong.DisabledState.BorderColor = Color.DarkGray;
+            btnDong.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnDong.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnDong.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnDong.FillColor = Color.Silver;
+            btnDong.Font = new Font("Segoe UI", 9F);
+            btnDong.ForeColor = Color.White;
+            btnDong.Location = new Point(208, 510);
+            btnDong.Name = "btnDong";
+            btnDong.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnDong.Size = new Size(106, 49);
+            btnDong.TabIndex = 20;
+            btnDong.Text = "Đóng";
+            btnDong.Click += btnDong_Click;
+            // 
             // Frm_TaoCTKM
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(619, 600);
+            Controls.Add(btnDong);
             Controls.Add(btnTao);
             Controls.Add(btnHuy);
             Controls.Add(dateNgayKetThuc);
@@ -293,5 +314,6 @@
         private Controls.RoundedButton btnTao;
         private UiControls.BorderComboBox cbbLoaiApDung;
         private Label label3;
+        private Guna.UI2.WinForms.Guna2Button btnDong;
     }
 }

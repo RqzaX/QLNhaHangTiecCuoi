@@ -109,7 +109,7 @@ namespace DAL
             }
         }
 
-        public bool Update(int voucherId, int kmId, string code, int soLan, DateTime? hanDung)
+        public bool Update(int voucherId, int kmId, string code, int soLan, DateTime? hanDung, int? daDung = null)
         {
             try
             {
@@ -119,10 +119,11 @@ namespace DAL
                         km_id = @KmId,
                         code = @Code,
                         so_lan = @SoLan,
-                        han_dung = @HanDung
+                        han_dung = @HanDung" +
+                        (daDung.HasValue ? ",\n                        da_dung = @DaDung" : "") + @"
                     WHERE voucher_id = @VoucherId";
 
-                SqlParameter[] parameters = new SqlParameter[]
+                List<SqlParameter> parameters = new List<SqlParameter>
                 {
                     new SqlParameter("@VoucherId", voucherId),
                     new SqlParameter("@KmId", kmId),
@@ -131,7 +132,12 @@ namespace DAL
                     new SqlParameter("@HanDung", hanDung ?? (object)DBNull.Value)
                 };
 
-                int result = _dbHelper.ExecuteNonQuery(query, parameters);
+                if (daDung.HasValue)
+                {
+                    parameters.Add(new SqlParameter("@DaDung", daDung.Value));
+                }
+
+                int result = _dbHelper.ExecuteNonQuery(query, parameters.ToArray());
                 return result > 0;
             }
             catch (Exception ex)
@@ -181,6 +187,43 @@ namespace DAL
             catch (Exception ex)
             {
                 throw new Exception("Lỗi DAL CodeExists: " + ex.Message);
+            }
+        }
+
+        public DataRow GetById(int voucherId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT 
+                        v.voucher_id AS 'ID',
+                        v.code AS 'Code',
+                        v.km_id AS 'KmId',
+                        k.ten AS 'TenKM',
+                        k.gia_tri AS 'GiaTri',
+                        k.hinh_thuc AS 'HinhThuc',
+                        k.tg_bat_dau AS 'NgayPhatHanh',
+                        ISNULL(v.han_dung, k.tg_ket_thuc) AS 'NgayHetHan',
+                        v.so_lan AS 'SoLan',
+                        v.da_dung AS 'DaDung',
+                        v.han_dung AS 'HanDung',
+                        k.tg_bat_dau AS 'TgBatDau',
+                        k.tg_ket_thuc AS 'TgKetThuc'
+                    FROM dbo.voucher v
+                    INNER JOIN dbo.chuong_trinh_km k ON v.km_id = k.km_id
+                    WHERE v.voucher_id = @VoucherId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@VoucherId", voucherId)
+                };
+
+                DataTable dt = _dbHelper.GetDataTable(query, parameters);
+                return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi DAL GetById: " + ex.Message);
             }
         }
     }

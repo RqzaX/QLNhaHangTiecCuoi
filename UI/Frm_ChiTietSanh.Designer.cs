@@ -1,6 +1,6 @@
 namespace UI
 {
-    partial class Frm_ThongTinBan
+    partial class Frm_ChiTietSanh
     {
         /// <summary>
         /// Required designer variable.
@@ -31,15 +31,14 @@ namespace UI
             lblTitle = new Label();
             lblSubtitle = new Label();
             label1 = new Label();
-            txtSoBan = new TextBox();
+            txtTenSanh = new TextBox();
             label2 = new Label();
             txtSucChua = new TextBox();
             label3 = new Label();
-            cbbKhuVuc = new ComboBox();
+            txtPhiThueCb = new TextBox();
             label4 = new Label();
-            cbbTrangThai = new ComboBox();
+            cbbChiNhanh = new ComboBox();
             btnSua = new UI.Controls.RoundedButton();
-            btnXoa = new UI.Controls.RoundedButton();
             btnDong = new UI.Controls.RoundedButton();
             SuspendLayout();
             // 
@@ -52,7 +51,7 @@ namespace UI
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(165, 37);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "Chi tiết bàn";
+            lblTitle.Text = "Chi tiết sảnh";
             // 
             // lblSubtitle
             // 
@@ -63,7 +62,7 @@ namespace UI
             lblSubtitle.Name = "lblSubtitle";
             lblSubtitle.Size = new Size(197, 23);
             lblSubtitle.TabIndex = 1;
-            lblSubtitle.Text = "Thông tin chi tiết về bàn";
+            lblSubtitle.Text = "Thông tin chi tiết về sảnh";
             // 
             // label1
             // 
@@ -72,19 +71,19 @@ namespace UI
             label1.ForeColor = Color.FromArgb(31, 41, 55);
             label1.Location = new Point(30, 130);
             label1.Name = "label1";
-            label1.Size = new Size(78, 23);
+            label1.Size = new Size(88, 23);
             label1.TabIndex = 2;
-            label1.Text = "Số bàn *";
+            label1.Text = "Tên sảnh *";
             // 
-            // txtSoBan
+            // txtTenSanh
             // 
-            txtSoBan.Font = new Font("Segoe UI", 10F);
-            txtSoBan.Location = new Point(30, 160);
-            txtSoBan.Margin = new Padding(3, 4, 3, 4);
-            txtSoBan.Name = "txtSoBan";
-            txtSoBan.ReadOnly = true;
-            txtSoBan.Size = new Size(250, 30);
-            txtSoBan.TabIndex = 3;
+            txtTenSanh.Font = new Font("Segoe UI", 10F);
+            txtTenSanh.Location = new Point(30, 160);
+            txtTenSanh.Margin = new Padding(3, 4, 3, 4);
+            txtTenSanh.Name = "txtTenSanh";
+            txtTenSanh.ReadOnly = true;
+            txtTenSanh.Size = new Size(250, 30);
+            txtTenSanh.TabIndex = 3;
             // 
             // label2
             // 
@@ -114,21 +113,19 @@ namespace UI
             label3.ForeColor = Color.FromArgb(31, 41, 55);
             label3.Location = new Point(30, 220);
             label3.Name = "label3";
-            label3.Size = new Size(87, 23);
+            label3.Size = new Size(120, 23);
             label3.TabIndex = 6;
-            label3.Text = "Khu vực *";
+            label3.Text = "Phí thuê cơ bản *";
             // 
-            // cbbKhuVuc
+            // txtPhiThueCb
             // 
-            cbbKhuVuc.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbbKhuVuc.Enabled = false;
-            cbbKhuVuc.Font = new Font("Segoe UI", 10F);
-            cbbKhuVuc.FormattingEnabled = true;
-            cbbKhuVuc.Location = new Point(30, 250);
-            cbbKhuVuc.Margin = new Padding(3, 4, 3, 4);
-            cbbKhuVuc.Name = "cbbKhuVuc";
-            cbbKhuVuc.Size = new Size(250, 31);
-            cbbKhuVuc.TabIndex = 7;
+            txtPhiThueCb.Font = new Font("Segoe UI", 10F);
+            txtPhiThueCb.Location = new Point(30, 250);
+            txtPhiThueCb.Margin = new Padding(3, 4, 3, 4);
+            txtPhiThueCb.Name = "txtPhiThueCb";
+            txtPhiThueCb.ReadOnly = true;
+            txtPhiThueCb.Size = new Size(250, 30);
+            txtPhiThueCb.TabIndex = 7;
             // 
             // label4
             // 
@@ -137,21 +134,21 @@ namespace UI
             label4.ForeColor = Color.FromArgb(31, 41, 55);
             label4.Location = new Point(320, 220);
             label4.Name = "label4";
-            label4.Size = new Size(92, 23);
+            label4.Size = new Size(95, 23);
             label4.TabIndex = 8;
-            label4.Text = "Trạng thái";
+            label4.Text = "Chi nhánh";
             // 
-            // cbbTrangThai
+            // cbbChiNhanh
             // 
-            cbbTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbbTrangThai.Enabled = false;
-            cbbTrangThai.Font = new Font("Segoe UI", 10F);
-            cbbTrangThai.FormattingEnabled = true;
-            cbbTrangThai.Location = new Point(320, 250);
-            cbbTrangThai.Margin = new Padding(3, 4, 3, 4);
-            cbbTrangThai.Name = "cbbTrangThai";
-            cbbTrangThai.Size = new Size(250, 31);
-            cbbTrangThai.TabIndex = 9;
+            cbbChiNhanh.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbChiNhanh.Enabled = false;
+            cbbChiNhanh.Font = new Font("Segoe UI", 10F);
+            cbbChiNhanh.FormattingEnabled = true;
+            cbbChiNhanh.Location = new Point(320, 250);
+            cbbChiNhanh.Margin = new Padding(3, 4, 3, 4);
+            cbbChiNhanh.Name = "cbbChiNhanh";
+            cbbChiNhanh.Size = new Size(250, 31);
+            cbbChiNhanh.TabIndex = 9;
             // 
             // btnSua
             // 
@@ -173,26 +170,6 @@ namespace UI
             btnSua.UseVisualStyleBackColor = false;
             btnSua.Click += btnSua_Click;
             // 
-            // btnXoa
-            // 
-            btnXoa.BackColor = Color.FromArgb(239, 68, 68);
-            btnXoa.BorderThickness = 0;
-            btnXoa.CornerRadius = 8;
-            btnXoa.FlatStyle = FlatStyle.Flat;
-            btnXoa.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnXoa.ForeColor = Color.White;
-            btnXoa.HoverBackColor = Color.FromArgb(220, 38, 38);
-            btnXoa.Location = new Point(55, 316);
-            btnXoa.Margin = new Padding(3, 4, 3, 4);
-            btnXoa.Name = "btnXoa";
-            btnXoa.Padding = new Padding(14, 11, 14, 11);
-            btnXoa.PressedBackColor = Color.FromArgb(185, 28, 28);
-            btnXoa.Size = new Size(150, 54);
-            btnXoa.TabIndex = 12;
-            btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = false;
-            btnXoa.Click += btnXoa_Click;
-            // 
             // btnDong
             // 
             btnDong.BackColor = Color.FromArgb(107, 114, 128);
@@ -213,22 +190,21 @@ namespace UI
             btnDong.UseVisualStyleBackColor = false;
             btnDong.Click += btnDong_Click;
             // 
-            // Frm_ThongTinBan
+            // Frm_ChiTietSanh
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             ClientSize = new Size(600, 400);
             Controls.Add(btnDong);
-            Controls.Add(btnXoa);
             Controls.Add(btnSua);
-            Controls.Add(cbbTrangThai);
+            Controls.Add(cbbChiNhanh);
             Controls.Add(label4);
-            Controls.Add(cbbKhuVuc);
+            Controls.Add(txtPhiThueCb);
             Controls.Add(label3);
             Controls.Add(txtSucChua);
             Controls.Add(label2);
-            Controls.Add(txtSoBan);
+            Controls.Add(txtTenSanh);
             Controls.Add(label1);
             Controls.Add(lblSubtitle);
             Controls.Add(lblTitle);
@@ -236,9 +212,9 @@ namespace UI
             Margin = new Padding(3, 4, 3, 4);
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "Frm_ThongTinBan";
+            Name = "Frm_ChiTietSanh";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "Chi tiết bàn";
+            Text = "Chi tiết sảnh";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -248,15 +224,15 @@ namespace UI
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblSubtitle;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtSoBan;
+        private System.Windows.Forms.TextBox txtTenSanh;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtSucChua;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cbbKhuVuc;
+        private System.Windows.Forms.TextBox txtPhiThueCb;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cbbTrangThai;
+        private System.Windows.Forms.ComboBox cbbChiNhanh;
         private UI.Controls.RoundedButton btnSua;
-        private UI.Controls.RoundedButton btnXoa;
         private UI.Controls.RoundedButton btnDong;
     }
 }
+

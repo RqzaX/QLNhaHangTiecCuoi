@@ -61,11 +61,9 @@ namespace UI
 
                 string hinhThuc = row["hinh_thuc"]?.ToString() ?? "";
                 if (hinhThuc == "PERCENT")
-                    CBBLoaiKM.SelectedIndex = 0; // "Giảm Theo %"
+                    CBBLoaiKM.SelectedIndex = 0;
                 else if (hinhThuc == "AMOUNT")
-                    CBBLoaiKM.SelectedIndex = 1; // "GIảm Theo Số Tiền"
-                else if (hinhThuc == "GIFT")
-                    CBBLoaiKM.SelectedIndex = 2; // "Tặng quà"
+                    CBBLoaiKM.SelectedIndex = 1;
 
                 decimal giaTri = row["gia_tri"] == DBNull.Value ? 0 : Convert.ToDecimal(row["gia_tri"]);
                 if (hinhThuc == "PERCENT")
@@ -81,16 +79,13 @@ namespace UI
                 if (row["tg_ket_thuc"] != DBNull.Value)
                     dateNgayKetThuc.Value = Convert.ToDateTime(row["tg_ket_thuc"]);
 
-                // Load loại áp dụng
                 string apDungLoai = row["ap_dung_loai"]?.ToString() ?? "ALL";
                 if (apDungLoai == "ALL")
-                    cbbLoaiApDung.SelectedIndex = 0; // "Tất cả"
+                    cbbLoaiApDung.SelectedIndex = 0;
                 else if (apDungLoai == "NHAHANG")
-                    cbbLoaiApDung.SelectedIndex = 1; // "Nhà hàng"
+                    cbbLoaiApDung.SelectedIndex = 1;
                 else if (apDungLoai == "TIECCUOI")
-                    cbbLoaiApDung.SelectedIndex = 2; // "Tiệc cưới"
-
-                // Kiểm tra trạng thái và set checkbox
+                    cbbLoaiApDung.SelectedIndex = 2;
                 DateTime now = DateTime.Now;
                 DateTime tgBatDau = dateNgayBatDau.Value;
                 DateTime tgKetThuc = dateNgayKetThuc.Value;
@@ -105,9 +100,6 @@ namespace UI
 
         private void CheckSuDung_CheckedChanged(object sender, EventArgs e)
         {
-            // Không tự động thay đổi ngày khi check/uncheck
-            // Chỉ cập nhật ngày khi người dùng bấm Lưu
-            // Logic này sẽ được xử lý trong BtnLuu_Click
         }
 
         private void CBBLoaiKM_SelectedIndexChanged(object sender, EventArgs e)
@@ -123,39 +115,41 @@ namespace UI
                 return;
             }
 
-            string loaiText = CBBLoaiKM.Text?.Trim() ?? "";
-
-            if (loaiText.Equals("Tặng Quà", StringComparison.OrdinalIgnoreCase) ||
-                loaiText.Equals("Tặng quà", StringComparison.OrdinalIgnoreCase))
-            {
-                txtGiamTD.Enabled = false;
-                txtGiamTD.Text = "";
-            }
-            else
-            {
-                txtGiamTD.Enabled = true;
-            }
+            txtGiamTD.Enabled = true;
         }
 
         private void BtnXoa_Click(object sender, EventArgs e)
         {
             try
             {
+                int voucherCount = _bll.CountVouchersByKmId(_kmId);
+                string confirmMessage = "Bạn có chắc chắn muốn xóa chương trình khuyến mãi này?";
+                
+                if (voucherCount > 0)
+                {
+                    confirmMessage += $"\n\nLưu ý: Sẽ xóa luôn {voucherCount} voucher đang sử dụng chương trình khuyến mãi này.";
+                }
+
                 DialogResult result = MessageBox.Show(
-                    "Bạn có chắc chắn muốn xóa chương trình khuyến mãi này?",
+                    confirmMessage,
                     "Xác nhận xóa",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    voucherCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
                     bool success = _bll.Delete(_kmId);
                     if (success)
                     {
-                        MessageBox.Show("Xóa chương trình khuyến mãi thành công!", "Thành công",
+                        string successMessage = "Xóa chương trình khuyến mãi thành công!";
+                        if (voucherCount > 0)
+                        {
+                            successMessage += $"\nĐã xóa {voucherCount} voucher liên quan.";
+                        }
+
+                        MessageBox.Show(successMessage, "Thành công",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        // Reload dữ liệu ở form cha
                         if (_parentForm != null)
                         {
                             _parentForm.ReloadData();
@@ -182,7 +176,6 @@ namespace UI
         {
             try
             {
-                // Validate dữ liệu
                 if (string.IsNullOrWhiteSpace(txtTenCT.Text))
                 {
                     MessageBox.Show("Vui lòng nhập tên chương trình!", "Lỗi",
@@ -199,7 +192,6 @@ namespace UI
                     return;
                 }
 
-                // Kiểm tra mã khuyến mãi trùng (trừ chính nó)
                 if (_bll.MaKmExists(txtMaKM.Text.Trim(), _kmId))
                 {
                     MessageBox.Show("Mã khuyến mãi đã tồn tại! Vui lòng nhập mã khác.", "Lỗi",
@@ -219,7 +211,6 @@ namespace UI
                 string loaiText = CBBLoaiKM.Text.Trim();
                 string hinhThuc = "";
 
-                // Map loại từ UI sang database
                 if (loaiText.Contains("%", StringComparison.OrdinalIgnoreCase) ||
                     loaiText.Equals("Giảm Theo %", StringComparison.OrdinalIgnoreCase))
                 {
@@ -231,11 +222,6 @@ namespace UI
                 {
                     hinhThuc = "AMOUNT";
                 }
-                else if (loaiText.Equals("Tặng Quà", StringComparison.OrdinalIgnoreCase) ||
-                         loaiText.Equals("Tặng quà", StringComparison.OrdinalIgnoreCase))
-                {
-                    hinhThuc = "GIFT";
-                }
                 else
                 {
                     MessageBox.Show($"Loại khuyến mãi không hợp lệ: '{loaiText}'. Vui lòng chọn lại!", "Lỗi",
@@ -243,13 +229,9 @@ namespace UI
                     return;
                 }
 
-                // Validate và parse giá trị
-                bool isTangQua = hinhThuc == "GIFT";
                 decimal giaTri = 0;
 
-                if (!isTangQua)
-                {
-                    if (string.IsNullOrWhiteSpace(txtGiamTD.Text))
+                if (string.IsNullOrWhiteSpace(txtGiamTD.Text))
                     {
                         MessageBox.Show("Vui lòng nhập giá trị khuyến mãi!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -275,7 +257,6 @@ namespace UI
                         return;
                     }
 
-                    // Ràng buộc theo loại
                     if (hinhThuc == "PERCENT" && giaTri > 50)
                     {
                         MessageBox.Show("Giá trị giảm theo % không được vượt quá 50%!", "Lỗi",
@@ -300,24 +281,19 @@ namespace UI
                             return;
                         }
                     }
-                }
 
-                // Xử lý ngày dựa trên checkbox "Sử dụng"
                 DateTime tgBatDau = dateNgayBatDau.Value;
                 DateTime tgKetThuc = dateNgayKetThuc.Value;
-                DateTime now = DateTime.Now.Date; // Chỉ lấy phần ngày, bỏ phần giờ
+                DateTime now = DateTime.Now.Date;
 
                 if (checkSuDung.Checked)
                 {
-                    // Nếu check = "Đang áp dụng", đảm bảo ngày hợp lệ
                     if (tgBatDau > now)
                     {
-                        tgBatDau = now; // Đặt ngày bắt đầu về hôm nay
+                        tgBatDau = now;
                     }
                     if (tgKetThuc < now)
                     {
-                        // Nếu ngày kết thúc < hôm nay, kéo dài ít nhất đến hôm nay
-                        // Nhưng phải đảm bảo > ngày bắt đầu
                         DateTime newEndDate = now.AddDays(30);
                         if (newEndDate <= tgBatDau)
                         {
@@ -328,10 +304,8 @@ namespace UI
                 }
                 else
                 {
-                    // Nếu uncheck = "Đã hết hạn", đảm bảo ngày kết thúc < hôm nay
                     if (tgKetThuc >= now)
                     {
-                        // Đặt ngày kết thúc về hôm qua, nhưng phải đảm bảo > ngày bắt đầu
                         DateTime yesterday = now.AddDays(-1);
                         if (yesterday > tgBatDau)
                         {
@@ -339,8 +313,6 @@ namespace UI
                         }
                         else
                         {
-                            // Nếu hôm qua <= ngày bắt đầu, đặt ngày kết thúc = ngày bắt đầu + 1 ngày
-                            // nhưng vẫn phải < hôm nay
                             DateTime minEndDate = tgBatDau.AddDays(1);
                             if (minEndDate < now)
                             {
@@ -348,10 +320,7 @@ namespace UI
                             }
                             else
                             {
-                                // Trường hợp đặc biệt: ngày bắt đầu quá gần hôm nay
-                                // Đặt ngày kết thúc = hôm qua
                                 tgKetThuc = now.AddDays(-1);
-                                // Nếu vẫn không hợp lệ, đặt ngày bắt đầu về trước đó
                                 if (tgKetThuc <= tgBatDau)
                                 {
                                     tgBatDau = tgKetThuc.AddDays(-1);
@@ -360,8 +329,6 @@ namespace UI
                         }
                     }
                 }
-
-                // Validate ngày sau khi điều chỉnh
                 if (tgKetThuc <= tgBatDau)
                 {
                     MessageBox.Show("Sau khi điều chỉnh trạng thái, ngày kết thúc phải sau ngày bắt đầu. Vui lòng kiểm tra lại!", "Lỗi",
@@ -370,8 +337,7 @@ namespace UI
                     return;
                 }
 
-                // Lấy loại áp dụng từ ComboBox
-                string apDungLoai = "ALL"; // Mặc định
+                string apDungLoai = "ALL";
                 if (cbbLoaiApDung.SelectedIndex >= 0)
                 {
                     string selectedText = cbbLoaiApDung.Text;
@@ -383,7 +349,6 @@ namespace UI
                         apDungLoai = "TIECCUOI";
                 }
 
-                // Cập nhật với ngày đã điều chỉnh
                 bool result = _bll.Update(
                     _kmId,
                     txtMaKM.Text.Trim(),
@@ -400,7 +365,6 @@ namespace UI
                     MessageBox.Show("Cập nhật chương trình khuyến mãi thành công!", "Thành công",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Reload dữ liệu ở form cha
                     if (_parentForm != null)
                     {
                         _parentForm.ReloadData();

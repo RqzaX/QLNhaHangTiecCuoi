@@ -408,5 +408,96 @@ ELSE
                 throw new Exception($"Lỗi DAL - GetSucChuaToiDaTuSanh: {ex.Message}", ex);
             }
         }
+
+        // ========== DỊCH VỤ ==========
+        // Lấy danh sách tất cả dịch vụ
+        public DataTable GetAllDichVu()
+        {
+            const string sql = @"
+                SELECT 
+                    dv_id,
+                    ma_dv,
+                    ten_dv,
+                    don_vi_tinh,
+                    don_gia,
+                    dang_ban
+                FROM dbo.dich_vu
+                WHERE dang_ban = 1
+                ORDER BY ten_dv";
+            
+            try
+            {
+                return _dbHelper.GetDataTable(sql);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetAllDichVu: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách dịch vụ trong gói tiệc
+        public DataTable GetDichVuTrongGoi(int goiId)
+        {
+            const string sql = @"
+                SELECT 
+                    dv.dv_id,
+                    dv.ma_dv,
+                    dv.ten_dv,
+                    dv.don_vi_tinh,
+                    dv.don_gia
+                FROM dbo.goi_tiec_dv gtd
+                JOIN dbo.dich_vu dv ON dv.dv_id = gtd.dv_id
+                WHERE gtd.goi_id = @goi_id
+                ORDER BY dv.ten_dv";
+            
+            var prms = new[]
+            {
+                new SqlParameter("@goi_id", goiId)
+            };
+            
+            try
+            {
+                return _dbHelper.GetDataTable(sql, prms);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetDichVuTrongGoi: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy dv_id từ ma_dv
+        public int GetDichVuIdByMaDv(string maDv)
+        {
+            const string sql = "SELECT dv_id FROM dbo.dich_vu WHERE ma_dv = @ma";
+            var dt = _dbHelper.GetDataTable(sql, new[] { new SqlParameter("@ma", maDv) });
+            if (dt.Rows.Count == 0) return 0;
+            return Convert.ToInt32(dt.Rows[0]["dv_id"]);
+        }
+
+        // Thêm dịch vụ vào gói (nếu chưa có)
+        public int ThemDichVuVaoGoi(int goiId, int dvId)
+        {
+            const string sql = @"
+IF NOT EXISTS (SELECT 1 FROM dbo.goi_tiec_dv WHERE goi_id = @goi_id AND dv_id = @dv_id)
+    INSERT INTO dbo.goi_tiec_dv(goi_id, dv_id)
+    VALUES(@goi_id, @dv_id);";
+            
+            return _dbHelper.ExecuteNonQuery(sql, new[]
+            {
+                new SqlParameter("@goi_id", goiId),
+                new SqlParameter("@dv_id", dvId)
+            });
+        }
+
+        // Xóa dịch vụ khỏi gói
+        public int XoaDichVuKhoiGoi(int goiId, int dvId)
+        {
+            const string sql = @"DELETE FROM dbo.goi_tiec_dv WHERE goi_id = @goi_id AND dv_id = @dv_id;";
+            return _dbHelper.ExecuteNonQuery(sql, new[]
+            {
+                new SqlParameter("@goi_id", goiId),
+                new SqlParameter("@dv_id", dvId)
+            });
+        }
     }
 }

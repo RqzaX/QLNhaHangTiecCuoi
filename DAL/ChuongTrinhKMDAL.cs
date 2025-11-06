@@ -22,6 +22,7 @@ namespace DAL
         {
             try
             {
+                
                 string query = @"
                     SELECT 
                         km.km_id AS 'ID',
@@ -32,18 +33,53 @@ namespace DAL
                         km.tg_bat_dau AS 'TgBatDau',
                         km.tg_ket_thuc AS 'TgKetThuc',
                         km.ap_dung_loai AS 'ApDungLoai',
-                        ISNULL(SUM(v.da_dung), 0) AS 'DaDung',
-                        ISNULL(SUM(v.so_lan), 0) AS 'TongSoLan'
+                        ISNULL(SUM(CAST(v.da_dung AS BIGINT)), 0) AS 'DaDung',
+                        ISNULL(SUM(CAST(v.so_lan AS BIGINT)), 0) AS 'TongSoLan'
                     FROM dbo.chuong_trinh_km km
                     LEFT JOIN dbo.voucher v ON v.km_id = km.km_id
-                    GROUP BY km.km_id, km.ma_km, km.ten, km.hinh_thuc, km.gia_tri, 
-                             km.tg_bat_dau, km.tg_ket_thuc, km.ap_dung_loai
+                    GROUP BY 
+                        km.km_id, 
+                        km.ma_km, 
+                        km.ten, 
+                        km.hinh_thuc, 
+                        km.gia_tri, 
+                        km.tg_bat_dau, 
+                        km.tg_ket_thuc, 
+                        km.ap_dung_loai
                     ORDER BY km.tg_bat_dau DESC";
 
-                return _dbHelper.GetDataTable(query);
+                
+                return _dbHelper.GetDataTable(query, null, 300);
             }
             catch (Exception ex)
             {
+                
+                if (ex.Message.Contains("Timeout") || ex.Message.Contains("timeout"))
+                {
+                    try
+                    {
+                        string queryBasic = @"
+                            SELECT 
+                                km.km_id AS 'ID',
+                                km.ma_km AS 'MaKM',
+                                km.ten AS 'TenCT',
+                                km.hinh_thuc AS 'HinhThuc',
+                                km.gia_tri AS 'GiaTri',
+                                km.tg_bat_dau AS 'TgBatDau',
+                                km.tg_ket_thuc AS 'TgKetThuc',
+                                km.ap_dung_loai AS 'ApDungLoai',
+                                0 AS 'DaDung',
+                                0 AS 'TongSoLan'
+                            FROM dbo.chuong_trinh_km km
+                            ORDER BY km.tg_bat_dau DESC";
+                        
+                        return _dbHelper.GetDataTable(queryBasic, null, 60);
+                    }
+                    catch (Exception ex2)
+                    {
+                        throw new Exception("Lỗi DAL GetAll: " + ex2.Message);
+                    }
+                }
                 throw new Exception("Lỗi DAL GetAll: " + ex.Message);
             }
         }
@@ -117,23 +153,77 @@ namespace DAL
             }
         }
 
-        public bool Delete(int kmId)
+        public int CountVouchersByKmId(int kmId)
         {
             try
             {
-                string query = @"DELETE FROM dbo.chuong_trinh_km WHERE km_id = @KmId";
+                string query = @"SELECT COUNT(*) FROM dbo.voucher WHERE km_id = @KmId";
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {
                     new SqlParameter("@KmId", kmId)
                 };
 
-                int result = _dbHelper.ExecuteNonQuery(query, parameters);
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi DAL CountVouchersByKmId: " + ex.Message);
+            }
+        }
+
+        public bool Delete(int kmId)
+        {
+            SqlConnection conn = null;
+            SqlTransaction transaction = null;
+            try
+            {
+                conn = new SqlConnection(_dbHelper.ConnectionString);
+                conn.Open();
+                transaction = conn.BeginTransaction();
+
+                string deleteHoaDonKmQuery = @"
+                    DELETE FROM dbo.hoa_don_km 
+                    WHERE voucher_id IN (SELECT voucher_id FROM dbo.voucher WHERE km_id = @KmId)";
+                SqlParameter[] param1 = new SqlParameter[] { new SqlParameter("@KmId", kmId) };
+                _dbHelper.ExecuteNonQueryInTransaction(conn, transaction, deleteHoaDonKmQuery, param1);
+
+                string deleteVouchersQuery = @"DELETE FROM dbo.voucher WHERE km_id = @KmId";
+                SqlParameter[] param2 = new SqlParameter[] { new SqlParameter("@KmId", kmId) };
+                _dbHelper.ExecuteNonQueryInTransaction(conn, transaction, deleteVouchersQuery, param2);
+
+                string deleteHoaDonKmByKmIdQuery = @"DELETE FROM dbo.hoa_don_km WHERE km_id = @KmId";
+                SqlParameter[] param3 = new SqlParameter[] { new SqlParameter("@KmId", kmId) };
+                _dbHelper.ExecuteNonQueryInTransaction(conn, transaction, deleteHoaDonKmByKmIdQuery, param3);
+
+                string deleteKmQuery = @"DELETE FROM dbo.chuong_trinh_km WHERE km_id = @KmId";
+                SqlParameter[] param4 = new SqlParameter[] { new SqlParameter("@KmId", kmId) };
+                int result = _dbHelper.ExecuteNonQueryInTransaction(conn, transaction, deleteKmQuery, param4);
+
+                transaction.Commit();
                 return result > 0;
             }
             catch (Exception ex)
             {
+                if (transaction != null)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch { }
+                }
                 throw new Exception("Lỗi DAL Delete: " + ex.Message);
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+                transaction?.Dispose();
+                conn?.Dispose();
             }
         }
 

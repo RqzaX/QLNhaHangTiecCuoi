@@ -65,18 +65,20 @@
             // label8
             // 
             label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 10.2F);
             label8.Location = new Point(15, 12);
             label8.Name = "label8";
-            label8.Size = new Size(102, 20);
+            label8.Size = new Size(95, 23);
             label8.TabIndex = 2;
-            label8.Text = "Chưa áp dụng";
+            label8.Text = "Đã hết hạn";
             // 
             // label7
             // 
             label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 10.2F);
             label7.Location = new Point(80, 49);
             label7.Name = "label7";
-            label7.Size = new Size(17, 20);
+            label7.Size = new Size(19, 23);
             label7.TabIndex = 1;
             label7.Text = "0";
             // 
@@ -95,18 +97,20 @@
             // label6
             // 
             label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 10.2F);
             label6.Location = new Point(86, 49);
             label6.Name = "label6";
-            label6.Size = new Size(17, 20);
+            label6.Size = new Size(19, 23);
             label6.TabIndex = 1;
             label6.Text = "0";
             // 
             // label3
             // 
             label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 10.2F);
             label3.Location = new Point(15, 12);
             label3.Name = "label3";
-            label3.Size = new Size(104, 20);
+            label3.Size = new Size(120, 23);
             label3.TabIndex = 0;
             label3.Text = "Đang áp dụng";
             // 
@@ -125,18 +129,20 @@
             // label5
             // 
             label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 10.2F);
             label5.Location = new Point(85, 49);
             label5.Name = "label5";
-            label5.Size = new Size(17, 20);
+            label5.Size = new Size(19, 23);
             label5.TabIndex = 1;
             label5.Text = "0";
             // 
             // label2
             // 
             label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 10.2F);
             label2.Location = new Point(15, 12);
             label2.Name = "label2";
-            label2.Size = new Size(106, 20);
+            label2.Size = new Size(124, 23);
             label2.TabIndex = 0;
             label2.Text = "Tất cả Voucher";
             // 
@@ -184,7 +190,7 @@
             dgvVoucher.Name = "dgvVoucher";
             dgvVoucher.ReadOnly = true;
             dgvVoucher.RowHeadersWidth = 51;
-            dgvVoucher.Size = new Size(1142, 309);
+            dgvVoucher.Size = new Size(1142, 457);
             dgvVoucher.TabIndex = 37;
             // 
             // cbbLoc

@@ -76,12 +76,14 @@ namespace UI
             var btnThem = new Button { Text = "Thêm món", AutoSize = true, Padding = new Padding(12, 6, 12, 6) };
             var btnSua = new Button { Text = "Sửa món", AutoSize = true, Padding = new Padding(12, 6, 12, 6) };
             var btnXoa = new Button { Text = "Xóa món", AutoSize = true, Padding = new Padding(12, 6, 12, 6) };
+            var btnChonDichVu = new Button { Text = "Chọn dịch vụ", AutoSize = true, Padding = new Padding(12, 6, 12, 6) };
 
             btnThem.Click += btnThem_Click;
             btnSua.Click += btnSua_Click;
             btnXoa.Click += btnXoa_Click;
+            btnChonDichVu.Click += btnChonDichVu_Click;
 
-            pnlActions.Controls.AddRange(new Control[] { btnThem, btnSua, btnXoa });
+            pnlActions.Controls.AddRange(new Control[] { btnThem, btnSua, btnXoa, btnChonDichVu });
             root.Controls.Add(pnlActions);
 
             dgvChiTiet = new DataGridView
@@ -320,6 +322,25 @@ namespace UI
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi xóa món: " + ex.Message, "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnChonDichVu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frmChonDichVu = new Frm_ChonDichVu(_goiId, _bll);
+                if (frmChonDichVu.ShowDialog(this) == DialogResult.OK)
+                {
+                    RenderHeader(); // Cập nhật lại giá mỗi bàn nếu cần
+                    MessageBox.Show("Đã cập nhật dịch vụ cho gói tiệc.", "Thành công",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi chọn dịch vụ: " + ex.Message, "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

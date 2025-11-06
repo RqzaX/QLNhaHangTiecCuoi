@@ -64,7 +64,7 @@ namespace BLL
             }
         }
 
-        public bool Update(int voucherId, int kmId, string code, int soLan, DateTime? hanDung)
+        public bool Update(int voucherId, int kmId, string code, int soLan, DateTime? hanDung, int? daDung = null)
         {
             try
             {
@@ -80,8 +80,12 @@ namespace BLL
                     throw new Exception("Số lần phải lớn hơn 0");
                 if (hanDung.HasValue && hanDung.Value < DateTime.Now.Date)
                     throw new Exception("Hạn dùng phải từ hôm nay trở đi");
+                if (daDung.HasValue && daDung.Value < 0)
+                    throw new Exception("Số lượt đã dùng không được nhỏ hơn 0");
+                if (daDung.HasValue && soLan > 0 && daDung.Value > soLan)
+                    throw new Exception("Số lượt đã dùng không được lớn hơn số lượt dùng");
 
-                return _dal.Update(voucherId, kmId, code.Trim().ToUpper(), soLan, hanDung);
+                return _dal.Update(voucherId, kmId, code.Trim().ToUpper(), soLan, hanDung, daDung);
             }
             catch (Exception ex)
             {
@@ -101,6 +105,21 @@ namespace BLL
             catch (Exception ex)
             {
                 throw new Exception("Lỗi BLL Delete: " + ex.Message);
+            }
+        }
+
+        public DataRow GetById(int voucherId)
+        {
+            try
+            {
+                if (voucherId <= 0)
+                    throw new Exception("ID voucher không hợp lệ");
+
+                return _dal.GetById(voucherId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi BLL GetById: " + ex.Message);
             }
         }
     }
