@@ -224,6 +224,7 @@ CREATE TABLE dbo.dat_sanh(
   trang_thai     NVARCHAR(20) NOT NULL DEFAULT N'CHỜ XÁC NHẬN'
                 CHECK (trang_thai IN (N'CHỜ XÁC NHẬN',N'ĐÃ XÁC NHẬN',N'ĐÃ HỦY',N'HOÀN TẤT')),
   ghi_chu        NVARCHAR(300) NULL,
+  gio_to_chuc    TIME(0) NULL,
   UNIQUE (sanh_id, ca_id, ngay_to_chuc),
   FOREIGN KEY (chi_nhanh_id)  REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (sanh_id)       REFERENCES dbo.sanh(sanh_id),
@@ -231,6 +232,15 @@ CREATE TABLE dbo.dat_sanh(
   FOREIGN KEY (khach_hang_id) REFERENCES dbo.khach_hang(khach_hang_id),
   FOREIGN KEY (goi_id)        REFERENCES dbo.goi_tiec(goi_id)
 );
+GO
+
+-- Thêm cột gio_to_chuc nếu bảng đã tồn tại
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'dat_sanh')
+  AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.dat_sanh') AND name = 'gio_to_chuc')
+BEGIN
+  ALTER TABLE dbo.dat_sanh ADD gio_to_chuc TIME(0) NULL;
+END
+GO
 
 -- Bổ sung FK còn thiếu cho phieu_order (order phục vụ trong tiệc)
 IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_po_ds')
@@ -391,6 +401,68 @@ CREATE TABLE dbo.nguoi_dung_chi_nhanh(
 );
 
 GO
+-- Bảng hạng khách hàng
+IF OBJECT_ID('dbo.dm_hang_kh','U') IS NULL
+CREATE TABLE dbo.dm_hang_kh(
+  hang_code     NVARCHAR(10)  NOT NULL PRIMARY KEY,   -- MEM/BAC/VANG/VIP
+  ten_hang      NVARCHAR(50)  NOT NULL,
+  thu_tu        INT           NOT NULL,               -- xếp thứ tự tăng dần theo hạng
+  min_tich_luy  DECIMAL(18,0) NOT NULL                -- ngưỡng chi tiêu để đạt hạng
+);
+
+-- Seed dữ liệu hạng khách hàng
+MERGE dbo.dm_hang_kh AS T
+USING (VALUES
+  (N'MEM',  N'Thành viên', 1, 0),
+  (N'BAC',  N'Bạc',         2, 15000000),
+  (N'VANG', N'Vàng',        3, 30000000),
+  (N'VIP',  N'VIP',         4, 40000000)
+) AS S(hang_code,ten_hang,thu_tu,min_tich_luy)
+ON T.hang_code = S.hang_code
+WHEN NOT MATCHED THEN
+  INSERT(hang_code,ten_hang,thu_tu,min_tich_luy)
+  VALUES(S.hang_code,S.ten_hang,S.thu_tu,S.min_tich_luy)
+WHEN MATCHED THEN
+  UPDATE SET ten_hang=S.ten_hang, thu_tu=S.thu_tu, min_tich_luy=S.min_tich_luy;
+GO
+
+-- Bổ sung thuộc tính khách hàng liên quan Hạng/Điểm/tích lũy
+-- Ngày sinh
+IF COL_LENGTH('dbo.khach_hang','ngay_sinh') IS NULL
+  ALTER TABLE dbo.khach_hang ADD ngay_sinh DATE NULL;
+
+-- Mã hạng (FK tới dm_hang_kh), mặc định Thành viên
+IF COL_LENGTH('dbo.khach_hang','hang_code') IS NULL
+  ALTER TABLE dbo.khach_hang ADD hang_code NVARCHAR(10) NOT NULL CONSTRAINT DF_kh_hang DEFAULT N'MEM';
+
+-- Tổng chi tiêu tích lũy
+IF COL_LENGTH('dbo.khach_hang','tong_chi_tieu') IS NULL
+  ALTER TABLE dbo.khach_hang ADD tong_chi_tieu DECIMAL(18,0) NOT NULL CONSTRAINT DF_kh_chitieu DEFAULT 0 
+  CHECK (tong_chi_tieu >= 0);
+
+-- Số lần đến
+IF COL_LENGTH('dbo.khach_hang','so_lan_den') IS NULL
+  ALTER TABLE dbo.khach_hang ADD so_lan_den INT NOT NULL CONSTRAINT DF_kh_landen DEFAULT 0 
+  CHECK (so_lan_den >= 0);
+
+-- Điểm
+IF COL_LENGTH('dbo.khach_hang','diem') IS NULL
+  ALTER TABLE dbo.khach_hang ADD diem INT NOT NULL CONSTRAINT DF_kh_diem DEFAULT 0
+  CHECK (diem >= 0);
+
+-- Lần cuối đến
+IF COL_LENGTH('dbo.khach_hang','lan_cuoi_den') IS NULL
+  ALTER TABLE dbo.khach_hang ADD lan_cuoi_den DATE NULL;
+
+-- Ràng buộc khóa ngoại hạng
+IF NOT EXISTS (
+  SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_khach_hang_dm_hang'
+)
+
+ALTER TABLE dbo.khach_hang
+ADD CONSTRAINT FK_khach_hang_dm_hang
+FOREIGN KEY (hang_code) REFERENCES dbo.dm_hang_kh(hang_code);
+GO
 /* ======================================================================
    5) INDEXES THIẾT THỰC
    ====================================================================== */
@@ -402,147 +474,3 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_order_head' AND object_
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_hd_lap' AND object_id=OBJECT_ID('dbo.hoa_don'))
   CREATE INDEX IX_hd_lap ON dbo.hoa_don(chi_nhanh_id, loai, ngay_lap);
-
-GO
-/*=======Thêm Dữ liệu vào Nguyên liệu==========*/
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-GAO')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-GAO',      N'Gạo',          N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-THIT-BO')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-THIT-BO',  N'Thịt bò',      N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-THIT-GA')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-THIT-GA',  N'Thịt gà',      N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TOM')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TOM',      N'Tôm',          N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-CA-HOI')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-CA-HOI',   N'Cá hồi',       N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TRUNG')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TRUNG',    N'Trứng',        N'quả');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-BOT-MI',   N'Bột mì',       N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-DUONG')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-DUONG',    N'Đường',        N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-MUOI')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-MUOI',     N'Muối',         N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TIEU')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TIEU',     N'Tiêu',         N'g');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-DAU-AN')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-DAU-AN',   N'Dầu ăn',       N'lít');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-NUOC-MAM')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-NUOC-MAM', N'Nước mắm',     N'chai');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-TOI')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-TOI',      N'Tỏi',          N'kg');
-
-IF NOT EXISTS (SELECT 1 FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-HANH-LA')
-INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi) VALUES (N'NL-HANH-LA',  N'Hành lá',      N'bó');
-
-/* 1) Xác định chi nhánh để seed
-        - Ưu tiên tên 'Chi nhánh Hồ Chí Minh'
-        - Nếu không có, lấy chi nhánh có ID nhỏ nhất
-  */
-  DECLARE @cn_id INT =
-      (SELECT TOP 1 chi_nhanh_id
-       FROM dbo.chi_nhanh
-       WHERE ten = N'Chi nhánh Hồ Chí Minh'
-       ORDER BY chi_nhanh_id);
-
-  IF @cn_id IS NULL
-      SELECT @cn_id = MIN(chi_nhanh_id) FROM dbo.chi_nhanh;
-	  /* 2) Chèn tồn kho cho TẤT CẢ nguyên liệu chưa có trong tồn kho của chi nhánh @cn_id,
-        gán số lượng khởi tạo theo ma_nl (có thể chỉnh sửa các giá trị bên dưới) */
-  INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
-  SELECT
-      @cn_id,
-      nl.nl_id,
-      CAST(CASE nl.ma_nl
-            WHEN N'NL-GAO'       THEN 100
-            WHEN N'NL-THIT-BO'   THEN 40
-            WHEN N'NL-THIT-GA'   THEN 60
-            WHEN N'NL-TOM'       THEN 30
-            WHEN N'NL-CA-HOI'    THEN 20
-            WHEN N'NL-TRUNG'     THEN 200
-            WHEN N'NL-BOT-MI'    THEN 100
-            WHEN N'NL-DUONG'     THEN 80
-            WHEN N'NL-MUOI'      THEN 50
-            WHEN N'NL-TIEU'      THEN 10
-            WHEN N'NL-DAU-AN'    THEN 30
-            WHEN N'NL-NUOC-MAM'  THEN 25
-            WHEN N'NL-TOI'       THEN 40
-            WHEN N'NL-HANH-LA'   THEN 50
-            ELSE 0
-          END AS DECIMAL(18,3)) AS sl_ton
-  FROM dbo.nguyen_lieu AS nl
-  WHERE NOT EXISTS (
-      SELECT 1
-      FROM dbo.ton_kho tk
-      WHERE tk.chi_nhanh_id = @cn_id
-        AND tk.nl_id = nl.nl_id
-  );
-  select * from mon_an
-  
-/*----Nếu muốn tạo đủ dòng ton_kho cho mọi chi nhánh trước, để sau này mới cập nhật số lượng:
-INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
-SELECT cn.chi_nhanh_id, nl.nl_id, 0
-FROM dbo.chi_nhanh cn
-CROSS JOIN dbo.nguyen_lieu nl
-WHERE NOT EXISTS (
-  SELECT 1 FROM dbo.ton_kho tk
-  WHERE tk.chi_nhanh_id = cn.chi_nhanh_id
-    AND tk.nl_id = nl.nl_id
-);
----*/
--- Lấy nl_id nhanh theo mã NL (ví dụ: 'NL-BOT-MI')
-DECLARE @nl_id INT =
-(
-    SELECT nl_id FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI'
-);
--- CHÈN các dòng ton_kho = 0 cho mọi chi nhánh còn thiếu của nguyên liệu này
-INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
-SELECT cn.chi_nhanh_id, @nl_id, 0
-FROM dbo.chi_nhanh AS cn
-WHERE NOT EXISTS
-(
-    SELECT 1
-    FROM dbo.ton_kho AS tk
-    WHERE tk.chi_nhanh_id = cn.chi_nhanh_id
-      AND tk.nl_id        = @nl_id
-);
---kiem tra
-SELECT tk.chi_nhanh_id, cn.ten AS ten_chi_nhanh, tk.sl_ton
-FROM dbo.ton_kho tk
-LEFT JOIN dbo.chi_nhanh cn ON cn.chi_nhanh_id = tk.chi_nhanh_id
-WHERE tk.nl_id = (SELECT nl_id FROM dbo.nguyen_lieu WHERE ma_nl = N'NL-BOT-MI')
-ORDER BY cn.ten;
-
-
-	select * from ton_kho
---- Thêm Dữ Liệu Gói Tiệc
-IF OBJECT_ID('dbo.goi_tiec','U') IS NOT NULL
-BEGIN
-    -- Lệnh INSERT INTO để thêm dữ liệu
-    INSERT INTO dbo.goi_tiec (ma_goi, ten_goi, gia_co_ban)
-    VALUES
-    -- Gói tiệc CƠ BẢN
-    ('GT-CB01', N'Gói Tiệc Cưới Cơ Bản', 5000000.00),
-    
-    -- Gói tiệc TRUNG CẤP
-    ('GT-TC02', N'Gói Tiệc Sinh Nhật Thịnh Vượng', 8500000.00),
-    
-    -- Gói tiệc CAO CẤP
-    ('GT-CC03', N'Gói Tiệc Cưới Cao Cấp', 12000000.00),
-    
-    -- Gói tiệc KẾT HỢP
-    ('GT-KH04', N'Gói Tiệc  Trọn Gói', 7250000.00);
-END
-select * from mon_an

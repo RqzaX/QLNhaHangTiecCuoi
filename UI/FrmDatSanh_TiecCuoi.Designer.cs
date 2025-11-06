@@ -29,23 +29,20 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDatSanh_TiecCuoi));
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle17 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle18 = new DataGridViewCellStyle();
-            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem5 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem6 = new VanThuan.UI.PillItem();
-            DataGridViewCellStyle dataGridViewCellStyle19 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle20 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle24 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle25 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle26 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle27 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle28 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
             label2 = new Label();
             label1 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -66,7 +63,6 @@
             label10 = new Label();
             roundedPanel5 = new UI.Controls.RoundedPanel();
             dgvDatSanh = new UI.Controls.DataGripView_DatSanh();
-            segmentedPill1 = new VanThuan.UI.SegmentedPill();
             label11 = new Label();
             dataGridViewLinkColumn1 = new DataGridViewLinkColumn();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
@@ -155,7 +151,7 @@
             roundedPanel1.Controls.Add(label3);
             roundedPanel1.Location = new Point(12, 73);
             roundedPanel1.Name = "roundedPanel1";
-            roundedPanel1.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel1.Padding = new Padding(12);
             roundedPanel1.Size = new Size(243, 100);
             roundedPanel1.TabIndex = 14;
             // 
@@ -199,7 +195,7 @@
             roundedPanel2.Controls.Add(label5);
             roundedPanel2.Location = new Point(261, 73);
             roundedPanel2.Name = "roundedPanel2";
-            roundedPanel2.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel2.Padding = new Padding(12);
             roundedPanel2.Size = new Size(243, 100);
             roundedPanel2.TabIndex = 15;
             // 
@@ -243,7 +239,7 @@
             roundedPanel3.Controls.Add(label8);
             roundedPanel3.Location = new Point(510, 73);
             roundedPanel3.Name = "roundedPanel3";
-            roundedPanel3.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel3.Padding = new Padding(12);
             roundedPanel3.Size = new Size(243, 100);
             roundedPanel3.TabIndex = 15;
             // 
@@ -287,7 +283,7 @@
             roundedPanel4.Controls.Add(label10);
             roundedPanel4.Location = new Point(759, 73);
             roundedPanel4.Name = "roundedPanel4";
-            roundedPanel4.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel4.Padding = new Padding(12);
             roundedPanel4.Size = new Size(243, 100);
             roundedPanel4.TabIndex = 15;
             // 
@@ -327,11 +323,10 @@
             roundedPanel5.BackColor = Color.White;
             roundedPanel5.BorderThickness = 5;
             roundedPanel5.Controls.Add(dgvDatSanh);
-            roundedPanel5.Controls.Add(segmentedPill1);
             roundedPanel5.Controls.Add(label11);
             roundedPanel5.Location = new Point(12, 190);
             roundedPanel5.Name = "roundedPanel5";
-            roundedPanel5.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel5.Padding = new Padding(12);
             roundedPanel5.Size = new Size(990, 482);
             roundedPanel5.TabIndex = 16;
             // 
@@ -340,8 +335,8 @@
             dgvDatSanh.AllowUserToAddRows = false;
             dgvDatSanh.AllowUserToDeleteRows = false;
             dgvDatSanh.AllowUserToResizeRows = false;
-            dataGridViewCellStyle15.BackColor = Color.FromArgb(250, 251, 252);
-            dgvDatSanh.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(250, 251, 252);
+            dgvDatSanh.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvDatSanh.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvDatSanh.BackgroundColor = Color.White;
             dgvDatSanh.BorderStyle = BorderStyle.None;
@@ -350,55 +345,39 @@
             dgvDatSanh.ColThaoTacIndex = -1;
             dgvDatSanh.ColTrangThaiIndex = -1;
             dgvDatSanh.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.BackColor = Color.White;
-            dataGridViewCellStyle16.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dataGridViewCellStyle16.ForeColor = Color.Black;
-            dataGridViewCellStyle16.SelectionBackColor = Color.White;
-            dataGridViewCellStyle16.SelectionForeColor = Color.Black;
-            dataGridViewCellStyle16.WrapMode = DataGridViewTriState.True;
-            dgvDatSanh.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvDatSanh.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvDatSanh.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = SystemColors.Window;
-            dataGridViewCellStyle17.Font = new Font("Segoe UI", 10F);
-            dataGridViewCellStyle17.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle17.SelectionBackColor = Color.FromArgb(240, 245, 255);
-            dataGridViewCellStyle17.SelectionForeColor = Color.Black;
-            dataGridViewCellStyle17.WrapMode = DataGridViewTriState.False;
-            dgvDatSanh.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Window;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(240, 245, 255);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvDatSanh.DefaultCellStyle = dataGridViewCellStyle3;
             dgvDatSanh.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvDatSanh.EnableHeadersVisualStyles = false;
             dgvDatSanh.GridColor = Color.FromArgb(240, 242, 245);
-            dgvDatSanh.Location = new Point(15, 79);
+            dgvDatSanh.Location = new Point(15, 36);
             dgvDatSanh.MultiSelect = false;
             dgvDatSanh.Name = "dgvDatSanh";
             dgvDatSanh.ReadOnly = true;
             dgvDatSanh.RowHeadersVisible = false;
             dgvDatSanh.RowHeadersWidth = 51;
-            dataGridViewCellStyle18.WrapMode = DataGridViewTriState.True;
-            dgvDatSanh.RowsDefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvDatSanh.RowsDefaultCellStyle = dataGridViewCellStyle4;
             dgvDatSanh.RowTemplate.Height = 64;
             dgvDatSanh.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDatSanh.Size = new Size(960, 394);
+            dgvDatSanh.Size = new Size(960, 437);
             dgvDatSanh.TabIndex = 21;
             dgvDatSanh.TabStop = false;
-            // 
-            // segmentedPill1
-            // 
-            segmentedPill1.BackColor = Color.Transparent;
-            segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem4.Text = "Tất cả";
-            pillItem5.Text = "Chờ xác nhận";
-            pillItem6.Text = "Đã xác nhận";
-            segmentedPill1.Items.Add(pillItem4);
-            segmentedPill1.Items.Add(pillItem5);
-            segmentedPill1.Items.Add(pillItem6);
-            segmentedPill1.Location = new Point(15, 36);
-            segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(344, 37);
-            segmentedPill1.TabIndex = 20;
-            segmentedPill1.Text = "segmentedPill1";
             // 
             // label11
             // 
@@ -462,9 +441,9 @@
             // dataGridViewTextBoxColumn5
             // 
             dataGridViewTextBoxColumn5.DataPropertyName = "DuKien";
-            dataGridViewCellStyle19.Format = "c0";
-            dataGridViewCellStyle19.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle5.Format = "c0";
+            dataGridViewCellStyle5.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle5;
             dataGridViewTextBoxColumn5.HeaderText = "Dự kiến";
             dataGridViewTextBoxColumn5.MinimumWidth = 6;
             dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
@@ -474,10 +453,10 @@
             // dataGridViewTextBoxColumn6
             // 
             dataGridViewTextBoxColumn6.DataPropertyName = "DaCoc";
-            dataGridViewCellStyle20.ForeColor = Color.FromArgb(16, 185, 129);
-            dataGridViewCellStyle20.Format = "c0";
-            dataGridViewCellStyle20.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle6.ForeColor = Color.FromArgb(16, 185, 129);
+            dataGridViewCellStyle6.Format = "c0";
+            dataGridViewCellStyle6.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle6;
             dataGridViewTextBoxColumn6.HeaderText = "Đã cọc";
             dataGridViewTextBoxColumn6.MinimumWidth = 6;
             dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
@@ -554,9 +533,9 @@
             // dataGridViewTextBoxColumn13
             // 
             dataGridViewTextBoxColumn13.DataPropertyName = "DuKien";
-            dataGridViewCellStyle21.Format = "c0";
-            dataGridViewCellStyle21.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn13.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle7.Format = "c0";
+            dataGridViewCellStyle7.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn13.DefaultCellStyle = dataGridViewCellStyle7;
             dataGridViewTextBoxColumn13.HeaderText = "Dự kiến";
             dataGridViewTextBoxColumn13.MinimumWidth = 6;
             dataGridViewTextBoxColumn13.Name = "dataGridViewTextBoxColumn13";
@@ -566,10 +545,10 @@
             // dataGridViewTextBoxColumn14
             // 
             dataGridViewTextBoxColumn14.DataPropertyName = "DaCoc";
-            dataGridViewCellStyle22.ForeColor = Color.FromArgb(16, 185, 129);
-            dataGridViewCellStyle22.Format = "c0";
-            dataGridViewCellStyle22.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn14.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle8.ForeColor = Color.FromArgb(16, 185, 129);
+            dataGridViewCellStyle8.Format = "c0";
+            dataGridViewCellStyle8.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn14.DefaultCellStyle = dataGridViewCellStyle8;
             dataGridViewTextBoxColumn14.HeaderText = "Đã cọc";
             dataGridViewTextBoxColumn14.MinimumWidth = 6;
             dataGridViewTextBoxColumn14.Name = "dataGridViewTextBoxColumn14";
@@ -646,9 +625,9 @@
             // dataGridViewTextBoxColumn21
             // 
             dataGridViewTextBoxColumn21.DataPropertyName = "DuKien";
-            dataGridViewCellStyle23.Format = "c0";
-            dataGridViewCellStyle23.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn21.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle9.Format = "c0";
+            dataGridViewCellStyle9.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn21.DefaultCellStyle = dataGridViewCellStyle9;
             dataGridViewTextBoxColumn21.HeaderText = "Dự kiến";
             dataGridViewTextBoxColumn21.MinimumWidth = 6;
             dataGridViewTextBoxColumn21.Name = "dataGridViewTextBoxColumn21";
@@ -658,10 +637,10 @@
             // dataGridViewTextBoxColumn22
             // 
             dataGridViewTextBoxColumn22.DataPropertyName = "DaCoc";
-            dataGridViewCellStyle24.ForeColor = Color.FromArgb(16, 185, 129);
-            dataGridViewCellStyle24.Format = "c0";
-            dataGridViewCellStyle24.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn22.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle10.ForeColor = Color.FromArgb(16, 185, 129);
+            dataGridViewCellStyle10.Format = "c0";
+            dataGridViewCellStyle10.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn22.DefaultCellStyle = dataGridViewCellStyle10;
             dataGridViewTextBoxColumn22.HeaderText = "Đã cọc";
             dataGridViewTextBoxColumn22.MinimumWidth = 6;
             dataGridViewTextBoxColumn22.Name = "dataGridViewTextBoxColumn22";
@@ -738,9 +717,9 @@
             // dataGridViewTextBoxColumn29
             // 
             dataGridViewTextBoxColumn29.DataPropertyName = "DuKien";
-            dataGridViewCellStyle25.Format = "c0";
-            dataGridViewCellStyle25.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn29.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle11.Format = "c0";
+            dataGridViewCellStyle11.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn29.DefaultCellStyle = dataGridViewCellStyle11;
             dataGridViewTextBoxColumn29.HeaderText = "Dự kiến";
             dataGridViewTextBoxColumn29.MinimumWidth = 6;
             dataGridViewTextBoxColumn29.Name = "dataGridViewTextBoxColumn29";
@@ -750,10 +729,10 @@
             // dataGridViewTextBoxColumn30
             // 
             dataGridViewTextBoxColumn30.DataPropertyName = "DaCoc";
-            dataGridViewCellStyle26.ForeColor = Color.FromArgb(16, 185, 129);
-            dataGridViewCellStyle26.Format = "c0";
-            dataGridViewCellStyle26.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn30.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle12.ForeColor = Color.FromArgb(16, 185, 129);
+            dataGridViewCellStyle12.Format = "c0";
+            dataGridViewCellStyle12.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn30.DefaultCellStyle = dataGridViewCellStyle12;
             dataGridViewTextBoxColumn30.HeaderText = "Đã cọc";
             dataGridViewTextBoxColumn30.MinimumWidth = 6;
             dataGridViewTextBoxColumn30.Name = "dataGridViewTextBoxColumn30";
@@ -830,9 +809,9 @@
             // dataGridViewTextBoxColumn37
             // 
             dataGridViewTextBoxColumn37.DataPropertyName = "DuKien";
-            dataGridViewCellStyle27.Format = "c0";
-            dataGridViewCellStyle27.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn37.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle13.Format = "c0";
+            dataGridViewCellStyle13.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn37.DefaultCellStyle = dataGridViewCellStyle13;
             dataGridViewTextBoxColumn37.HeaderText = "Dự kiến";
             dataGridViewTextBoxColumn37.MinimumWidth = 6;
             dataGridViewTextBoxColumn37.Name = "dataGridViewTextBoxColumn37";
@@ -842,10 +821,10 @@
             // dataGridViewTextBoxColumn38
             // 
             dataGridViewTextBoxColumn38.DataPropertyName = "DaCoc";
-            dataGridViewCellStyle28.ForeColor = Color.FromArgb(16, 185, 129);
-            dataGridViewCellStyle28.Format = "c0";
-            dataGridViewCellStyle28.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
-            dataGridViewTextBoxColumn38.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle14.ForeColor = Color.FromArgb(16, 185, 129);
+            dataGridViewCellStyle14.Format = "c0";
+            dataGridViewCellStyle14.FormatProvider = new System.Globalization.CultureInfo("vi-VN");
+            dataGridViewTextBoxColumn38.DefaultCellStyle = dataGridViewCellStyle14;
             dataGridViewTextBoxColumn38.HeaderText = "Đã cọc";
             dataGridViewTextBoxColumn38.MinimumWidth = 6;
             dataGridViewTextBoxColumn38.Name = "dataGridViewTextBoxColumn38";
@@ -874,6 +853,7 @@
             // 
             btnTaoDonDatSanh.BackColor = Color.Black;
             btnTaoDonDatSanh.BorderColor = Color.Black;
+            btnTaoDonDatSanh.BorderThickness = 0;
             btnTaoDonDatSanh.FlatAppearance.BorderSize = 0;
             btnTaoDonDatSanh.FlatStyle = FlatStyle.Flat;
             btnTaoDonDatSanh.Font = new Font("Segoe UI Semibold", 10.5F);
@@ -947,7 +927,6 @@
         private Label label9;
         private Label label10;
         private Controls.RoundedPanel roundedPanel5;
-        private VanThuan.UI.SegmentedPill segmentedPill1;
         private Label label11;
         private Controls.DataGripView_DatSanh dgvDatSanh;
         private DataGridViewLinkColumn dataGridViewLinkColumn1;

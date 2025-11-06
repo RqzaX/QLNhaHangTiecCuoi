@@ -177,5 +177,35 @@ namespace BLL
 
             return 0;
         }
+
+        public DataTable GetMonAnByGoiId(int goiId)
+        {
+            try
+            {
+                if (goiId <= 0)
+                    throw new ArgumentException("ID gói tiệc không hợp lệ!");
+
+                return _dal.GetMonAnByGoiId(goiId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetMonAnByGoiId: {ex.Message}", ex);
+            }
+        }
+
+        public DataTable GetDichVuByGoiId(int goiId)
+        {
+            try
+            {
+                if (goiId <= 0)
+                    throw new ArgumentException("ID gói tiệc không hợp lệ!");
+
+                return _dal.GetDichVuByGoiId(goiId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetDichVuByGoiId: {ex.Message}", ex);
+            }
+        }
     }
 }

@@ -198,7 +198,7 @@ namespace UI
                 }
 
                 _isLoggingOut = true;
-                
+
                 Session.NguoiDungId = 0;
                 Session.TaiKhoan = "";
                 Session.HoTen = "";
@@ -207,7 +207,7 @@ namespace UI
 
                 FrmLogin frmLogin = new FrmLogin();
                 frmLogin.Show();
-                
+
                 this.Hide();
                 this.Close();
             }
@@ -235,7 +235,7 @@ namespace UI
             panelChinh.Controls.Add(form);
             form.BringToFront();
             form.Show();
-            
+
             // Nếu form implement IFormRefreshable thì refresh dữ liệu
             if (form is IFormRefreshable refreshable)
             {
@@ -249,22 +249,22 @@ namespace UI
             {
                 // Tạo form bán hàng mới với thông tin bàn
                 var frmBanHang = new FrmBanHang(soBan, tenKhachHang, soKhach);
-                
+
                 // Set properties để hiển thị trong panel chính
                 frmBanHang.TopLevel = false;
                 frmBanHang.FormBorderStyle = FormBorderStyle.None;
                 frmBanHang.Dock = DockStyle.Fill;
-                
+
                 // Clear panel và add form mới
                 foreach (Control c in panelChinh.Controls) c.Hide();
                 panelChinh.Controls.Clear();
                 panelChinh.Controls.Add(frmBanHang);
                 frmBanHang.BringToFront();
                 frmBanHang.Show();
-                
+
                 // Cập nhật cache
                 _cache[typeof(FrmBanHang)] = frmBanHang;
-                
+
                 // Set selected button
                 SetSelected(btnBanHang);
             }
@@ -374,7 +374,7 @@ namespace UI
                     ResetAllChildForms();
 
                     ShowChild<FrmDashboard>();
-                    
+
                     SetSelected(btnDashboard);
 
                     GunaToast.Show(this, $"Đã chuyển sang chi nhánh: {tenChiNhanh}", UI.Controls.ToastType.Success, 2500, UI.Controls.ToastPos.TopRight);
@@ -384,6 +384,11 @@ namespace UI
             {
                 GunaToast.Show(this, "Lỗi khi chuyển chi nhánh: " + ex.Message, UI.Controls.ToastType.Error, 2500, UI.Controls.ToastPos.TopRight);
             }
+        }
+
+        private void btnFormTest_Click(object sender, EventArgs e)
+        {
+            ShowChild<test>();
         }
     }
 }

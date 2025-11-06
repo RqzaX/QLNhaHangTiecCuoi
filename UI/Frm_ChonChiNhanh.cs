@@ -12,6 +12,7 @@ using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
 using QLNhaHangTiecCuoi.Share;
 using UI.Common;
+using Microsoft.Win32;
 
 namespace UI
 {
@@ -62,14 +63,30 @@ namespace UI
                     return;
                 }
 
+                // Sắp xếp theo chi_nhanh_id tăng dần
+                var dv = dt.DefaultView;
+                dv.Sort = "chi_nhanh_id ASC";
+                var sorted = dv.ToTable();
+
                 if (cbbChonChiNhanh.DataSource != null)
                 {
                     cbbChonChiNhanh.DataSource = null;
                 }
 
-                cbbChonChiNhanh.DataSource = dt;
+                cbbChonChiNhanh.DataSource = sorted;
                 cbbChonChiNhanh.DisplayMember = "ten";           // Hiển thị tên chi nhánh
                 cbbChonChiNhanh.ValueMember = "chi_nhanh_id";    // Lưu ID chi nhánh
+
+                // Chọn lại chi nhánh gần nhất nếu có
+                int lastId = LoadLastBranchId();
+                if (lastId > 0)
+                {
+                    var found = sorted.AsEnumerable().Any(r => r.Field<int>("chi_nhanh_id") == lastId);
+                    if (found)
+                    {
+                        cbbChonChiNhanh.SelectedValue = lastId;
+                    }
+                }
 
                 btnTiepTuc.Enabled = true;
             }
@@ -110,6 +127,9 @@ namespace UI
                 Session.ChiNhanhId = chiNhanhId;
                 Session.TenChiNhanh = tenChiNhanh;
 
+                // Lưu lại lựa chọn gần nhất
+                SaveLastBranchId(chiNhanhId);
+
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -118,6 +138,35 @@ namespace UI
                 MessageBox.Show("Lỗi: " + ex.Message, "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        
+        private const string RegistryKeyPath = @"Software\\QLNhaHangTiecCuoi";
+        private const string RegistryBranchValue = "LastBranchId";
+        // Lấy ID chi nhánh gần nhất
+        private static int LoadLastBranchId()
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath))
+                {
+                    if (key == null) return 0;
+                    object v = key.GetValue(RegistryBranchValue);
+                    return v == null ? 0 : Convert.ToInt32(v);
+                }
+            }
+            catch { return 0; }
+        }
+        // Lưu ID chi nhánh gần nhất
+        private static void SaveLastBranchId(int chiNhanhId)
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.CreateSubKey(RegistryKeyPath))
+                {
+                    key?.SetValue(RegistryBranchValue, chiNhanhId, RegistryValueKind.DWord);
+                }
+            }
+            catch { /* ignore */ }
         }
     }
 }

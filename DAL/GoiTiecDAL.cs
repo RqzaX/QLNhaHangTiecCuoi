@@ -19,9 +19,13 @@ namespace DAL
         {
             string query = @"
                 SELECT 
+                    goi_id,
                     goi_id AS [ID],
+                    ma_goi,
                     ma_goi AS [Mã Gói],
+                    ten_goi,
                     ten_goi AS [Tên Gói],
+                    gia_co_ban,
                     gia_co_ban AS [Giá Cơ Bản]
                 FROM dbo.goi_tiec
                 ORDER BY goi_id DESC";
@@ -187,6 +191,65 @@ namespace DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi khi tìm kiếm gói tiệc: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết món ăn của gói tiệc
+        public DataTable GetMonAnByGoiId(int goiId)
+        {
+            string query = @"
+                SELECT 
+                    m.mon_id,
+                    m.ma_mon,
+                    m.ten_mon,
+                    m.nhom,
+                    m.don_gia,
+                    gtm.so_luong
+                FROM dbo.goi_tiec_mon gtm
+                INNER JOIN dbo.mon_an m ON gtm.mon_id = m.mon_id
+                WHERE gtm.goi_id = @goiId
+                ORDER BY m.nhom, m.ten_mon";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@goiId", goiId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy danh sách món ăn: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết dịch vụ của gói tiệc
+        public DataTable GetDichVuByGoiId(int goiId)
+        {
+            string query = @"
+                SELECT 
+                    dv.dv_id,
+                    dv.ma_dv,
+                    dv.ten_dv,
+                    dv.don_gia,
+                    gtd.so_luong
+                FROM dbo.goi_tiec_dv gtd
+                INNER JOIN dbo.dich_vu dv ON gtd.dv_id = dv.dv_id
+                WHERE gtd.goi_id = @goiId
+                ORDER BY dv.ten_dv";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@goiId", goiId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy danh sách dịch vụ: {ex.Message}", ex);
             }
         }
     }

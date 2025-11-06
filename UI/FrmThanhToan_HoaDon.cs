@@ -22,6 +22,9 @@ namespace UI
         private FlowLayoutPanel? invoicesFlowPanel;
         private readonly DatabaseHelper _db = new DatabaseHelper();
         private readonly HoaDonBLL _hoaDonBLL;
+        private System.Windows.Forms.Timer? _autoRefreshTimer;
+        private bool _isRefreshing;
+        private DateTime _lastInvoicesInteractionUtc;
 
         public FrmThanhToan_HoaDon()
         {
@@ -29,16 +32,15 @@ namespace UI
             _hoaDonBLL = new HoaDonBLL(_db);
             Activated += FrmThanhToan_HoaDon_Activated; // tự làm mới khi trở lại màn hình
             segmentedPill1.SelectedIndexChanged += SegmentedPill1_SelectedIndexChanged;
-            // Event handlers cho filter lịch sử thanh toán
+            // Event handlers lịch sử thanh toán
             dateTuNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
             dateDenNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
             guna2ComboBox1.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
             guna2ComboBox2.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
-            // Event handlers cho DataGridView
-            if (dgvHoaDon != null)
+            if (dgvLichSuHoaDon != null)
             {
-                dgvHoaDon.CellClick += DgvHoaDon_CellClick;
-                dgvHoaDon.CellPainting += DgvHoaDon_CellPainting;
+                dgvLichSuHoaDon.CellClick += DgvHoaDon_CellClick;
+                dgvLichSuHoaDon.CellPainting += DgvTrangThai_CellPainting;
             }
         }
 
@@ -49,14 +51,161 @@ namespace UI
             lbTongThuHomNay.Text = "0 đ";
             lbSoTienTrungBinh.Text = "0 đ";
             lbSoSanhPhanTram.Text = "0 % vs hôm qua";
+            SetupHistoryGrid();
             SetupInvoiceListContainer();
             LoadInvoicesFromDb();
             RefreshTopStats();
-            // Khởi tạo visibility ban đầu
             SegmentedPill1_SelectedIndexChanged(null, EventArgs.Empty);
-            // Mặc định không filter theo ngày để hiển thị tất cả hóa đơn
             dateTuNgay.Checked = false;
             dateDenNgay.Checked = false;
+
+            SetupAutoRefresh();
+        }
+
+        private void SetupAutoRefresh()
+        {
+            _autoRefreshTimer = new System.Windows.Forms.Timer();
+            _autoRefreshTimer.Interval = 3000; // 3s
+            _autoRefreshTimer.Tick += (s, e) =>
+            {
+                if (_isRefreshing) return;
+                try
+                {
+                    _isRefreshing = true;
+                    if (segmentedPill1.SelectedIndex == 0)
+                    {
+                        if ((DateTime.UtcNow - _lastInvoicesInteractionUtc) < TimeSpan.FromSeconds(4)) return;
+                        LoadInvoicesFromDb();
+                        RefreshTopStats();
+                    }
+                    else if (segmentedPill1.SelectedIndex == 1)
+                    {
+                        LoadPaymentHistoryToDataGridView();
+                    }
+                }
+                finally
+                {
+                    _isRefreshing = false;
+                }
+            };
+            _autoRefreshTimer.Start();
+        }
+
+        // Cấu hình DataGridView lịch sử thanh toán theo mẫu ở test.cs
+        private void SetupHistoryGrid()
+        {
+            if (dgvLichSuHoaDon == null) return;
+
+            // Bỏ đóng băng nếu có để dùng Fill an toàn
+            foreach (DataGridViewColumn col in dgvLichSuHoaDon.Columns)
+            {
+                col.Frozen = false;
+            }
+
+            dgvLichSuHoaDon.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
+            dgvLichSuHoaDon.AutoGenerateColumns = false;
+            dgvLichSuHoaDon.AllowUserToAddRows = false;
+            dgvLichSuHoaDon.ReadOnly = true;
+            dgvLichSuHoaDon.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvLichSuHoaDon.MultiSelect = false;
+            dgvLichSuHoaDon.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvLichSuHoaDon.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvLichSuHoaDon.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 247, 250);
+            dgvLichSuHoaDon.EnableHeadersVisualStyles = false;
+            dgvLichSuHoaDon.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(80, 160, 255);
+            dgvLichSuHoaDon.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvLichSuHoaDon.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvLichSuHoaDon.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvLichSuHoaDon.GridColor = Color.FromArgb(80, 160, 255);
+            EnsureHistoryColumns();
+            SetHistoryGridHeaders();
+            if (dgvLichSuHoaDon.Columns.Contains("Ngay") && dgvLichSuHoaDon.Columns.Contains("ThoiGian"))
+            {
+                int dateIdx = dgvLichSuHoaDon.Columns["Ngay"].DisplayIndex;
+                dgvLichSuHoaDon.Columns["ThoiGian"].DisplayIndex = dateIdx;
+                dgvLichSuHoaDon.Columns["Ngay"].DisplayIndex = dateIdx + 1;
+            }
+        }
+
+        // Đặt tiêu đề cột
+        private void SetHistoryGridHeaders()
+        {
+            if (dgvLichSuHoaDon == null) return;
+            var headers = new Dictionary<string, string>
+            {
+                ["MaHD"] = "Mã HĐ",
+                ["BanSanh"] = "Bàn/Sảnh",
+                ["SoTien"] = "Số tiền",
+                ["KhuyenMai"] = "Khuyến mãi",
+                ["PhuongThuc"] = "Phương thức",
+                ["Ngay"] = "Ngày",
+                ["ThoiGian"] = "Thời gian",
+                ["ThuNgan"] = "Thu ngân",
+                ["TrangThai"] = "Trạng thái",
+                ["ColPrint"] = "In hóa đơn",
+                ["ColRefund"] = "Hoàn tiền"
+            };
+
+            foreach (var kv in headers)
+            {
+                if (dgvLichSuHoaDon.Columns.Contains(kv.Key))
+                {
+                    dgvLichSuHoaDon.Columns[kv.Key].HeaderText = kv.Value;
+                }
+            }
+        }
+        private void EnsureHistoryColumns()
+        {
+            if (dgvLichSuHoaDon == null) return;
+            string[] names = new[] { "MaHD","BanSanh","SoTien","KhuyenMai","PhuongThuc","Ngay","ThoiGian","ThuNgan","TrangThai" };
+            foreach (var n in names)
+            {
+                if (!dgvLichSuHoaDon.Columns.Contains(n))
+                {
+                    var col = new DataGridViewTextBoxColumn
+                    {
+                        Name = n,
+                        ReadOnly = true,
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                    };
+                    dgvLichSuHoaDon.Columns.Add(col);
+                }
+            }
+
+            // Ẩn cột thao tác cũ nếu có
+            if (dgvLichSuHoaDon.Columns.Contains("Column10"))
+            {
+                dgvLichSuHoaDon.Columns["Column10"].Visible = false;
+            }
+
+            // Thêm 2 cột nút hành động nếu chưa có
+            if (!dgvLichSuHoaDon.Columns.Contains("ColPrint"))
+            {
+                var btnPrint = new DataGridViewButtonColumn
+                {
+                    Name = "ColPrint",
+                    HeaderText = "In hóa đơn",
+                    Text = "In hóa đơn",
+                    UseColumnTextForButtonValue = true,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    ReadOnly = true
+                };
+                dgvLichSuHoaDon.Columns.Add(btnPrint);
+            }
+
+            if (!dgvLichSuHoaDon.Columns.Contains("ColRefund"))
+            {
+                var btnRefund = new DataGridViewButtonColumn
+                {
+                    Name = "ColRefund",
+                    HeaderText = "Hoàn tiền",
+                    Text = "Hoàn tiền",
+                    UseColumnTextForButtonValue = true,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    ReadOnly = true
+                };
+                dgvLichSuHoaDon.Columns.Add(btnRefund);
+            }
         }
         // Thiết lập container cho danh sách hóa đơn
         private void SetupInvoiceListContainer()
@@ -71,6 +220,14 @@ namespace UI
             };
             panelDanhSachHoaDon.Controls.Clear();
             panelDanhSachHoaDon.Controls.Add(invoicesFlowPanel);
+
+            invoicesFlowPanel.Scroll += (s, e) => { _lastInvoicesInteractionUtc = DateTime.UtcNow; };
+            invoicesFlowPanel.MouseWheel += (s, e) => { _lastInvoicesInteractionUtc = DateTime.UtcNow; };
+            invoicesFlowPanel.MouseMove += (s, e) =>
+            {
+                if (System.Windows.Forms.Control.MouseButtons != MouseButtons.None)
+                    _lastInvoicesInteractionUtc = DateTime.UtcNow;
+            };
         }
         // Load hóa đơn từ database
         private void LoadInvoicesFromDb()
@@ -80,6 +237,9 @@ namespace UI
                 SetupInvoiceListContainer();
             }
 
+            int prevScroll = invoicesFlowPanel.VerticalScroll.Value;
+
+            invoicesFlowPanel.SuspendLayout();
             invoicesFlowPanel.Controls.Clear();
 
             var dt = _hoaDonBLL.GetHoaDonList(Session.ChiNhanhId, "CHỜ TT", 100);
@@ -114,6 +274,16 @@ namespace UI
                 invoiceItem.Selected += (_, __) => OnInvoiceSelected(invoiceItem);
                 invoicesFlowPanel.Controls.Add(invoiceItem);
             }
+            invoicesFlowPanel.ResumeLayout(false);
+            invoicesFlowPanel.PerformLayout();
+
+            try
+            {
+                prevScroll = Math.Max(0, Math.Min(prevScroll, invoicesFlowPanel.VerticalScroll.Maximum));
+                invoicesFlowPanel.VerticalScroll.Value = prevScroll;
+                invoicesFlowPanel.PerformLayout();
+            }
+            catch { }
         }
         
         // Khi quay lại form (từ màn hình bán hàng), tự reload danh sách hóa đơn
@@ -121,6 +291,23 @@ namespace UI
         {
             LoadInvoicesFromDb();
             RefreshTopStats();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            try
+            {
+                if (_autoRefreshTimer != null)
+                {
+                    _autoRefreshTimer.Stop();
+                    _autoRefreshTimer.Dispose();
+                    _autoRefreshTimer = null;
+                }
+            }
+            finally
+            {
+                base.OnFormClosed(e);
+            }
         }
         // Khi chọn hóa đơn, hiển thị chi tiết thanh toán
         private void OnInvoiceSelected(Controls.HoaDonPanel selected)
@@ -249,24 +436,22 @@ namespace UI
         {
             try
             {
-                if (dgvHoaDon == null)
+                if (dgvLichSuHoaDon == null)
                 {
                     MessageBox.Show("dgvHoaDon is null!");
                     return;
                 }
 
-                // Xóa dữ liệu cũ
-                dgvHoaDon.Rows.Clear();
-                
-                // Tăng row height để hiển thị 2 buttons dọc
-                dgvHoaDon.RowTemplate.Height = 70;
+                dgvLichSuHoaDon.Rows.Clear();
+                dgvLichSuHoaDon.RowTemplate.Height = 70;
+                // Cập nhật lại tiêu đề cột nếu dùng grid lịch sử
+                SetHistoryGridHeaders();
 
-                // Lấy filter từ UI
                 DateTime? fromDate = dateTuNgay.Checked ? dateTuNgay.Value.Date : null;
                 DateTime? toDate = dateDenNgay.Checked ? dateDenNgay.Value.Date : null;
                 string? phuongThuc = guna2ComboBox1.SelectedItem?.ToString();
                 if (phuongThuc == "Tất cả phương thức") phuongThuc = null;
-                // Lấy dữ liệu từ database
+                // lấy dữ liệu từ database
                 var dt = _hoaDonBLL.GetPaidInvoicesHistory(
                     Session.ChiNhanhId,
                     fromDate,
@@ -274,7 +459,7 @@ namespace UI
                     phuongThuc,
                     100
                 );
-                // Thêm dữ liệu vào DataGridView
+                // thêm dữ liệu vào DataGridView
                 foreach (DataRow row in dt.Rows)
                 {
                     try
@@ -324,18 +509,17 @@ namespace UI
                         }
 
                         // Thêm row vào DataGridView - map vào đúng các cột theo tên
-                        int rowIndex = dgvHoaDon.Rows.Add();
-                        dgvHoaDon.Rows[rowIndex].Cells["Column1"].Value = id.ToString("D2"); // Mã HĐ
-                        dgvHoaDon.Rows[rowIndex].Cells["Column2"].Value = banSanh ?? "-"; // Bàn/Sảnh
-                        dgvHoaDon.Rows[rowIndex].Cells["Column3"].Value = FormatCurrency(total); // Số tiền
-                        dgvHoaDon.Rows[rowIndex].Cells["Column4"].Value = kmText; // Khuyến mãi
-                        dgvHoaDon.Rows[rowIndex].Cells["Column5"].Value = phuongThucText; // Phương thức
-                        dgvHoaDon.Rows[rowIndex].Cells["Column6"].Value = ngayLap.ToLocalTime().ToString("yyyy-MM-dd"); // Ngày
-                        dgvHoaDon.Rows[rowIndex].Cells["Column7"].Value = ngayLap.ToLocalTime().ToString("HH:mm"); // Thời gian
-                        dgvHoaDon.Rows[rowIndex].Cells["Column8"].Value = thuNgan ?? "-"; // Thu ngân
-                        dgvHoaDon.Rows[rowIndex].Cells["Column9"].Value = trangThaiText; // Trạng thái
-                        dgvHoaDon.Rows[rowIndex].Cells["Column10"].Value = ""; // Thao tác - để trống, sẽ vẽ buttons
-                        dgvHoaDon.Rows[rowIndex].Tag = id; // Lưu HoaDonId vào Tag để dùng cho buttons
+                        int rowIndex = dgvLichSuHoaDon.Rows.Add();
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["MaHD"].Value = id.ToString("D2"); // Mã HĐ
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["BanSanh"].Value = banSanh ?? "-"; // Bàn/Sảnh
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["SoTien"].Value = FormatCurrency(total); // Số tiền
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["KhuyenMai"].Value = kmText; // Khuyến mãi
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["PhuongThuc"].Value = phuongThucText; // Phương thức
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["Ngay"].Value = ngayLap.ToLocalTime().ToString("dd/MM/yyyy"); // Ngày
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["ThoiGian"].Value = ngayLap.ToLocalTime().ToString("HH:mm"); // Thời gian
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["ThuNgan"].Value = thuNgan ?? "-"; // Thu ngân
+                        dgvLichSuHoaDon.Rows[rowIndex].Cells["TrangThai"].Value = trangThaiText; // Trạng thái
+                        dgvLichSuHoaDon.Rows[rowIndex].Tag = id; // Lưu HoaDonId vào Tag để dùng cho buttons
                     }
                     catch (Exception rowEx)
                     {
@@ -355,106 +539,104 @@ namespace UI
         private void DgvHoaDon_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-            if (dgvHoaDon == null) return;
+            if (dgvLichSuHoaDon == null) return;
 
-            if (dgvHoaDon.Columns[e.ColumnIndex].Name == "Column10")
+            var colName = dgvLichSuHoaDon.Columns[e.ColumnIndex].Name;
+            if (colName == "ColPrint" || colName == "ColRefund")
             {
-                int hoaDonId = dgvHoaDon.Rows[e.RowIndex].Tag != null ? (int)dgvHoaDon.Rows[e.RowIndex].Tag : 0;
-                string trangThai = dgvHoaDon.Rows[e.RowIndex].Cells["Column9"].Value?.ToString() ?? "";
-
-                var cellRect = dgvHoaDon.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-                Point mousePos = dgvHoaDon.PointToClient(Cursor.Position);
-                int yInCell = mousePos.Y - cellRect.Y;
-
-                int buttonHeight = 30;
-                int spacing = 8;
-                int totalHeight = buttonHeight * 2 + spacing;
-                int startY = Math.Max(4, (cellRect.Height - totalHeight) / 2);
-
-                // Kiểm tra click vào nút In (nút trên)
-                if (yInCell >= startY && yInCell < startY + buttonHeight)
+                int hoaDonId = dgvLichSuHoaDon.Rows[e.RowIndex].Tag != null ? (int)dgvLichSuHoaDon.Rows[e.RowIndex].Tag : 0;
+                string trangThai = dgvLichSuHoaDon.Rows[e.RowIndex].Cells["TrangThai"].Value?.ToString() ?? "";
+                if (colName == "ColPrint")
                 {
                     PrintInvoice(hoaDonId);
                 }
-                // Kiểm tra click vào nút Hoàn tiền (nút dưới, chỉ nếu trạng thái là "Hoàn thành")
-                else if (yInCell >= startY + buttonHeight + spacing && 
-                         yInCell < startY + buttonHeight + spacing + buttonHeight && 
-                         trangThai == "Hoàn thành")
+                else if (colName == "ColRefund" && trangThai == "Hoàn thành")
                 {
                     RefundPayment(hoaDonId);
                 }
             }
         }
 
-        // Vẽ buttons In và Hoàn tiền trong cột Thao tác (style Guna2Button bo tròn, 2 nút nằm dọc)
-        private void DgvHoaDon_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+        // Vẽ trạng thái bằng kiểu badge bo tròn (mô phỏng UIPanel SunnyUI)
+        private void DgvTrangThai_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-            if (dgvHoaDon == null) return;
+            if (dgvLichSuHoaDon == null) return;
 
-            if (dgvHoaDon.Columns[e.ColumnIndex].Name == "Column10")
+            if (dgvLichSuHoaDon.Columns[e.ColumnIndex].Name != "TrangThai") return;
+
+            e.Paint(e.CellBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.Border);
+            e.Handled = true;
+
+            string text = dgvLichSuHoaDon.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString() ?? string.Empty;
+
+            // Chọn màu theo trạng thái
+            Color backColor;      // màu nền nhạt
+            Color borderColor;    // viền & text đậm
+            Color foreColor;      // màu chữ
+            switch (text)
             {
-                e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.ContentForeground);
-                e.Handled = true;
-
-                if (e.CellBounds.Width <= 0 || e.CellBounds.Height <= 0) return;
-
-                string trangThai = dgvHoaDon.Rows[e.RowIndex].Cells["Column9"].Value?.ToString() ?? "";
-                bool canRefund = trangThai == "Hoàn thành";
-
-                int buttonWidth = 75;
-                int buttonHeight = 30;
-                int spacing = 8; // Khoảng cách giữa 2 nút
-                int totalHeight = canRefund ? (buttonHeight * 2 + spacing) : buttonHeight;
-                int startY = e.CellBounds.Y + Math.Max(4, (e.CellBounds.Height - totalHeight) / 2);
-                int centerX = e.CellBounds.X + (e.CellBounds.Width - buttonWidth) / 2;
-                
-                // Vẽ nút In (nút trên) - luôn hiển thị
-                Rectangle printRect = new Rectangle(centerX, startY, buttonWidth, buttonHeight);
-                DrawGuna2Button(e.Graphics, printRect, "In", Color.FromArgb(100, 100, 100));
-
-                // Vẽ nút Hoàn tiền (nút dưới, chỉ nếu trạng thái là "Hoàn thành")
-                if (canRefund)
-                {
-                    Rectangle refundRect = new Rectangle(centerX, startY + buttonHeight + spacing, buttonWidth, buttonHeight);
-                    DrawGuna2Button(e.Graphics, refundRect, "Hoàn tiền", Color.FromArgb(244, 67, 54));
-                }
+                case "Hoàn thành":
+                    backColor = Color.FromArgb(214, 245, 227);    // xanh lá nhạt
+                    borderColor = Color.FromArgb(46, 204, 113);   // xanh lá đậm
+                    foreColor = borderColor;
+                    break;
+                case "Chờ thanh toán":
+                    backColor = Color.FromArgb(214, 234, 248);  // xanh dương nhạt
+                    borderColor = Color.FromArgb(52, 152, 219); // xanh dương đậm
+                    foreColor = borderColor;
+                    break;
+                case "Hoàn tiền":
+                    backColor = Color.FromArgb(252, 233, 231);  // đỏ nhạt
+                    borderColor = Color.FromArgb(231, 76, 60);  // đỏ đậm
+                    foreColor = borderColor;
+                    break;
+                case "Nháp":
+                    backColor = Color.FromArgb(236, 240, 241);  // xám nhạt
+                    borderColor = Color.FromArgb(127, 140, 141); // xám đậm
+                    foreColor = Color.FromArgb(96, 106, 108);
+                    break;
+                default:
+                    backColor = Color.FromArgb(236, 240, 241);
+                    borderColor = Color.FromArgb(127, 140, 141);
+                    foreColor = Color.FromArgb(96, 106, 108);
+                    break;
             }
+
+            // Tính khung vẽ badge
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            var paddingH = 8;
+            var paddingV = 6;
+            var font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            var size = g.MeasureString(text, font);
+            int w = (int)Math.Min(size.Width + paddingH * 2, Math.Max(28, e.CellBounds.Width - 8));
+            int h = (int)Math.Min(size.Height + paddingV, e.CellBounds.Height - 8);
+            int x = e.CellBounds.X + (e.CellBounds.Width - w) / 2;
+            int y = e.CellBounds.Y + (e.CellBounds.Height - h) / 2;
+
+            DrawRoundedBadge(g, new Rectangle(x, y, w, h), backColor, borderColor);
+            using (var tb = new SolidBrush(foreColor))
+            {
+                g.DrawString(text, font, tb, x + (w - size.Width) / 2, y + (h - size.Height) / 2);
+            }
+            font.Dispose();
         }
 
-        // Vẽ button với style Guna2Button bo tròn
-        private void DrawGuna2Button(Graphics g, Rectangle rect, string text, Color fillColor)
+        private static void DrawRoundedBadge(Graphics g, Rectangle rect, Color fill, Color border)
         {
-            int radius = 12; 
+            int radius = 10;
             using (var path = new GraphicsPath())
             {
-                path.AddArc(rect.X, rect.Y, radius * 2, radius * 2, 180, 90); // Top-left
-                path.AddArc(rect.Right - radius * 2, rect.Y, radius * 2, radius * 2, 270, 90); // Top-right
-                path.AddArc(rect.Right - radius * 2, rect.Bottom - radius * 2, radius * 2, radius * 2, 0, 90); // Bottom-right
-                path.AddArc(rect.X, rect.Bottom - radius * 2, radius * 2, radius * 2, 90, 90); // Bottom-left
+                path.AddArc(rect.X, rect.Y, radius * 2, radius * 2, 180, 90);
+                path.AddArc(rect.Right - radius * 2, rect.Y, radius * 2, radius * 2, 270, 90);
+                path.AddArc(rect.Right - radius * 2, rect.Bottom - radius * 2, radius * 2, radius * 2, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - radius * 2, radius * 2, radius * 2, 90, 90);
                 path.CloseFigure();
-
-                // Fill background với màu
-                using (var brush = new SolidBrush(fillColor))
-                {
-                    g.FillPath(brush, path);
-                }
-
-                // Draw border
-                using (var pen = new Pen(fillColor, 1))
-                {
-                    g.DrawPath(pen, path);
-                }
-            }
-
-            // Vẽ text
-            using (var font = new Font("Segoe UI", 9F, FontStyle.Bold))
-            using (var textBrush = new SolidBrush(Color.White))
-            {
-                var textSize = g.MeasureString(text, font);
-                g.DrawString(text, font, textBrush,
-                    rect.X + (rect.Width - textSize.Width) / 2,
-                    rect.Y + (rect.Height - textSize.Height) / 2);
+                using (var brush = new SolidBrush(fill)) g.FillPath(brush, path);
+                using (var pen = new Pen(border, 1F)) g.DrawPath(pen, path);
             }
         }
 

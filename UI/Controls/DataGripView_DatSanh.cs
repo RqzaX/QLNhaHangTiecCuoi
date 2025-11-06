@@ -206,13 +206,16 @@ namespace UI.Controls
                 rDetail = new Rectangle(cell.Right - BtnWDetail - PadRight, y, BtnWDetail, BtnH);
             }
 
-            // Lấy tọa độ client của chuột so với DataGridView
-            Point p = PointToClient(Control.MousePosition);
+            Point mousePos = PointToClient(Cursor.Position);
 
-            if (rDetail.Contains(p))
+            if (rDetail.Contains(mousePos))
+            {
                 DetailClicked?.Invoke(this, new RowActionEventArgs(e.RowIndex));
-            else if (showConfirm && rConfirm.Contains(p))
+            }
+            else if (showConfirm && !rConfirm.IsEmpty && rConfirm.Contains(mousePos))
+            {
                 ConfirmClicked?.Invoke(this, new RowActionEventArgs(e.RowIndex));
+            }
         }
 
         private void OnCellMouseMove_Custom(object? sender, DataGridViewCellMouseEventArgs e)
@@ -239,7 +242,7 @@ namespace UI.Controls
                     rDetail = new Rectangle(cell.Right - BtnWDetail - PadRight, y, BtnWDetail, BtnH);
                 }
 
-                Point p = PointToClient(Control.MousePosition);
+                Point p = PointToClient(Cursor.Position);
                 Cursor = (rDetail.Contains(p) || (!rConfirm.IsEmpty && rConfirm.Contains(p)))
                     ? Cursors.Hand : Cursors.Default;
             }

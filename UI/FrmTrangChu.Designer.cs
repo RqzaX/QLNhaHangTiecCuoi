@@ -30,10 +30,10 @@ namespace UI
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTrangChu));
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panel3 = new Panel();
             btnPhanQuyen = new UiControls.NavButton();
             btnCauHinh = new UiControls.NavButton();
@@ -59,6 +59,7 @@ namespace UI
             panel4 = new Panel();
             pictureBox1 = new PictureBox();
             panel5 = new Panel();
+            txtTimKiem = new Guna2TextBox();
             cbbChonChiNhanh = new Guna2ComboBox();
             btnDangXuat = new Button();
             pictureBox3 = new PictureBox();
@@ -66,7 +67,7 @@ namespace UI
             digitalClockControl1 = new UI.Controls.DigitalClockControl();
             pictureBox2 = new PictureBox();
             panelChinh = new Panel();
-            txtTimKiem = new Guna2TextBox();
+            btnFormTest = new UiControls.NavButton();
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -79,6 +80,7 @@ namespace UI
             // 
             panel3.AutoScroll = true;
             panel3.BackColor = Color.White;
+            panel3.Controls.Add(btnFormTest);
             panel3.Controls.Add(btnPhanQuyen);
             panel3.Controls.Add(btnCauHinh);
             panel3.Controls.Add(label21);
@@ -150,7 +152,7 @@ namespace UI
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(12, 827);
             label21.Name = "label21";
-            label21.Size = new Size(86, 24);
+            label21.Size = new Size(68, 19);
             label21.TabIndex = 27;
             label21.Text = "Hệ thống";
             // 
@@ -217,7 +219,7 @@ namespace UI
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.Location = new Point(12, 667);
             label20.Name = "label20";
-            label20.Size = new Size(74, 24);
+            label20.Size = new Size(59, 19);
             label20.TabIndex = 23;
             label20.Text = "Quản lý";
             // 
@@ -303,7 +305,7 @@ namespace UI
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label19.Location = new Point(12, 476);
             label19.Name = "label19";
-            label19.Size = new Size(94, 24);
+            label19.Size = new Size(74, 19);
             label19.TabIndex = 18;
             label19.Text = "Danh mục";
             // 
@@ -427,7 +429,7 @@ namespace UI
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.Location = new Point(12, 205);
             label18.Name = "label18";
-            label18.Size = new Size(89, 24);
+            label18.Size = new Size(69, 19);
             label18.TabIndex = 11;
             label18.Text = "Vận hành";
             // 
@@ -456,7 +458,7 @@ namespace UI
             label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label17.Location = new Point(12, 128);
             label17.Name = "label17";
-            label17.Size = new Size(97, 24);
+            label17.Size = new Size(76, 19);
             label17.TabIndex = 9;
             label17.Text = "Tổng quan";
             // 
@@ -492,6 +494,27 @@ namespace UI
             panel5.Name = "panel5";
             panel5.Size = new Size(1025, 82);
             panel5.TabIndex = 1;
+            // 
+            // txtTimKiem
+            // 
+            txtTimKiem.BorderRadius = 15;
+            txtTimKiem.CustomizableEdges = customizableEdges1;
+            txtTimKiem.DefaultText = "";
+            txtTimKiem.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtTimKiem.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtTimKiem.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtTimKiem.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtTimKiem.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtTimKiem.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtTimKiem.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtTimKiem.Location = new Point(295, 22);
+            txtTimKiem.Margin = new Padding(3, 4, 3, 4);
+            txtTimKiem.Name = "txtTimKiem";
+            txtTimKiem.PlaceholderText = "Tìm kiếm mọi thứ . . . ";
+            txtTimKiem.SelectedText = "";
+            txtTimKiem.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            txtTimKiem.Size = new Size(395, 40);
+            txtTimKiem.TabIndex = 7;
             // 
             // cbbChonChiNhanh
             // 
@@ -577,26 +600,24 @@ namespace UI
             panelChinh.Size = new Size(1025, 665);
             panelChinh.TabIndex = 2;
             // 
-            // txtTimKiem
+            // btnFormTest
             // 
-            txtTimKiem.BorderRadius = 15;
-            txtTimKiem.CustomizableEdges = customizableEdges1;
-            txtTimKiem.DefaultText = "";
-            txtTimKiem.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            txtTimKiem.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            txtTimKiem.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            txtTimKiem.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            txtTimKiem.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtTimKiem.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtTimKiem.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtTimKiem.Location = new Point(295, 22);
-            txtTimKiem.Margin = new Padding(3, 4, 3, 4);
-            txtTimKiem.Name = "txtTimKiem";
-            txtTimKiem.PlaceholderText = "Tìm kiếm mọi thứ . . . ";
-            txtTimKiem.SelectedText = "";
-            txtTimKiem.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            txtTimKiem.Size = new Size(395, 40);
-            txtTimKiem.TabIndex = 7;
+            btnFormTest.AccessibleRole = AccessibleRole.PushButton;
+            btnFormTest.BackgroundHover = Color.FromArgb(245, 247, 250);
+            btnFormTest.BackgroundPressed = Color.FromArgb(225, 232, 255);
+            btnFormTest.BackgroundSelected = Color.FromArgb(235, 240, 255);
+            btnFormTest.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnFormTest.ForeColor = Color.FromArgb(31, 41, 55);
+            btnFormTest.Location = new Point(3, 924);
+            btnFormTest.Name = "btnFormTest";
+            btnFormTest.Padding = new Padding(14, 8, 14, 8);
+            btnFormTest.Size = new Size(244, 29);
+            btnFormTest.TabIndex = 30;
+            btnFormTest.Text = "Form Test";
+            btnFormTest.TextColor = Color.FromArgb(31, 41, 55);
+            btnFormTest.TextColorDisabled = Color.FromArgb(156, 163, 175);
+            btnFormTest.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnFormTest.Click += btnFormTest_Click;
             // 
             // FrmTrangChu
             // 
@@ -659,5 +680,6 @@ namespace UI
         private Button btnDangXuat;
         private Guna2ComboBox cbbChonChiNhanh;
         private Guna2TextBox txtTimKiem;
+        private UiControls.NavButton btnFormTest;
     }
 }
