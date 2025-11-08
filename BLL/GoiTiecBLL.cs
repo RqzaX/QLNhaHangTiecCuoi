@@ -265,9 +265,38 @@ namespace BLL
             return 0;
         }
 
-<<<<<<< HEAD
+        // Lấy chi tiết món ăn của gói tiệc
         public DataTable GetMonAnByGoiId(int goiId)
-=======
+        {
+            try
+            {
+                if (goiId <= 0)
+                    throw new ArgumentException("ID gói tiệc không hợp lệ!");
+
+                return _dal.GetMonAnByGoiId(goiId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetMonAnByGoiId: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết dịch vụ của gói tiệc
+        public DataTable GetDichVuByGoiId(int goiId)
+        {
+            try
+            {
+                if (goiId <= 0)
+                    throw new ArgumentException("ID gói tiệc không hợp lệ!");
+
+                return _dal.GetDichVuByGoiId(goiId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - GetDichVuByGoiId: {ex.Message}", ex);
+            }
+        }
+
         // Lấy sức chứa tối đa từ sảnh
         public int GetSucChuaToiDaTuSanh()
         {
@@ -299,24 +328,12 @@ namespace BLL
 
         // Tính giá mỗi bàn = tổng giá các món + 10% phí dịch vụ
         public decimal TinhGiaMoiBan(int goiId)
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
         {
             try
             {
                 if (goiId <= 0)
                     throw new ArgumentException("ID gói tiệc không hợp lệ!");
 
-<<<<<<< HEAD
-                return _dal.GetMonAnByGoiId(goiId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Lỗi BLL - GetMonAnByGoiId: {ex.Message}", ex);
-            }
-        }
-
-        public DataTable GetDichVuByGoiId(int goiId)
-=======
                 // Tính tổng giá các món
                 decimal tongGiaMon = _dal.TinhTongGiaCacMon(goiId);
                 
@@ -350,22 +367,11 @@ namespace BLL
 
         // Lấy danh sách dịch vụ trong gói tiệc
         public DataTable GetDichVuTrongGoi(int goiId)
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
         {
             try
             {
                 if (goiId <= 0)
                     throw new ArgumentException("ID gói tiệc không hợp lệ!");
-<<<<<<< HEAD
-
-                return _dal.GetDichVuByGoiId(goiId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Lỗi BLL - GetDichVuByGoiId: {ex.Message}", ex);
-            }
-        }
-=======
                 
                 return _dal.GetDichVuTrongGoi(goiId);
             }
@@ -396,6 +402,5 @@ namespace BLL
 
             _dal.XoaDichVuKhoiGoi(goiId, dvId);
         }
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
     }
 }

@@ -156,31 +156,14 @@ ELSE
        
         public DataTable GetAllGoiTiec()
         {
-<<<<<<< HEAD
-            string query = @"
-                SELECT 
-                    goi_id,
-                    goi_id AS [ID],
-                    ma_goi,
-                    ma_goi AS [Mã Gói],
-                    ten_goi,
-                    ten_goi AS [Tên Gói],
-                    gia_co_ban,
-                    gia_co_ban AS [Giá Cơ Bản]
-                FROM dbo.goi_tiec
-                ORDER BY goi_id DESC";
-
-=======
             const string query = @"
         SELECT 
-            goi_id,        -- GIỮ NGUYÊN TÊN CỘT
+            goi_id,
             ma_goi,
             ten_goi,
-            gia_co_ban,
-            suc_chua
+            gia_co_ban
         FROM dbo.goi_tiec
         ORDER BY goi_id DESC";
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
             try
             {
                 return _dbHelper.GetDataTable(query);
@@ -195,7 +178,7 @@ ELSE
         public DataRow GetGoiTiecById(int goiId)
         {
             string query = @"
-                SELECT goi_id, ma_goi, ten_goi, gia_co_ban, suc_chua
+                SELECT goi_id, ma_goi, ten_goi, gia_co_ban
                 FROM dbo.goi_tiec
                 WHERE goi_id = @goiId";
 
@@ -217,29 +200,10 @@ ELSE
         // Lấy sức chứa của gói tiệc theo ID
         public int GetSucChuaGoiTiec(int goiId)
         {
-            const string sql = @"
-                SELECT ISNULL(suc_chua, 0) AS suc_chua
-                FROM dbo.goi_tiec
-                WHERE goi_id = @goi_id";
-            
-            var prms = new[]
-            {
-                new SqlParameter("@goi_id", goiId)
-            };
-
-            try
-            {
-                var dt = _dbHelper.GetDataTable(sql, prms);
-                if (dt.Rows.Count > 0 && dt.Rows[0]["suc_chua"] != DBNull.Value)
-                {
-                    return Convert.ToInt32(dt.Rows[0]["suc_chua"]);
-                }
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Lỗi DAL - GetSucChuaGoiTiec: {ex.Message}", ex);
-            }
+            // Lưu ý: Bảng goi_tiec không có cột suc_chua
+            // Sức chứa được xác định bởi sảnh được chọn khi đặt tiệc
+            // Trả về 0 vì không có thông tin sức chứa trực tiếp trong gói tiệc
+            return 0;
         }
 
         // Tính tổng giá các món trong gói tiệc
@@ -403,7 +367,6 @@ ELSE
             }
         }
 
-<<<<<<< HEAD
         // Lấy chi tiết món ăn của gói tiệc
         public DataTable GetMonAnByGoiId(int goiId)
         {
@@ -438,7 +401,30 @@ ELSE
         public DataTable GetDichVuByGoiId(int goiId)
         {
             string query = @"
-=======
+                SELECT 
+                    dv.dv_id,
+                    dv.ma_dv,
+                    dv.ten_dv,
+                    dv.don_gia
+                FROM dbo.goi_tiec_dv gtd
+                INNER JOIN dbo.dich_vu dv ON gtd.dv_id = dv.dv_id
+                WHERE gtd.goi_id = @goiId
+                ORDER BY dv.ten_dv";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@goiId", goiId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy danh sách dịch vụ: {ex.Message}", ex);
+            }
+        }
+
         // Lấy sức chứa tối đa từ tất cả sảnh
         public int GetSucChuaToiDaTuSanh()
         {
@@ -491,33 +477,10 @@ ELSE
         public DataTable GetDichVuTrongGoi(int goiId)
         {
             const string sql = @"
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
                 SELECT 
                     dv.dv_id,
                     dv.ma_dv,
                     dv.ten_dv,
-<<<<<<< HEAD
-                    dv.don_gia,
-                    gtd.so_luong
-                FROM dbo.goi_tiec_dv gtd
-                INNER JOIN dbo.dich_vu dv ON gtd.dv_id = dv.dv_id
-                WHERE gtd.goi_id = @goiId
-                ORDER BY dv.ten_dv";
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@goiId", goiId)
-            };
-
-            try
-            {
-                return _dbHelper.GetDataTable(query, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Lỗi khi lấy danh sách dịch vụ: {ex.Message}", ex);
-            }
-        }
-=======
                     dv.don_vi_tinh,
                     dv.don_gia
                 FROM dbo.goi_tiec_dv gtd
@@ -574,6 +537,5 @@ IF NOT EXISTS (SELECT 1 FROM dbo.goi_tiec_dv WHERE goi_id = @goi_id AND dv_id = 
                 new SqlParameter("@dv_id", dvId)
             });
         }
->>>>>>> 71469642dd5593dd81835bcec3d7c5e4ae8f2724
     }
 }

@@ -6,7 +6,7 @@ namespace QLNhaHangTiecCuoi.Share
 {
     public class DatabaseHelper
     {
-        private string _connectionString = @"Data Source=LAPTOP-2L5G5GIH\SQLEXPRESS03;Initial Catalog=QL_NhaHangTiecCuoi_V3;Integrated Security=True;Encrypt=True";
+        private string _connectionString = @"Server=LAPTOP-R1ZAX\SQLEXPRESS;Database=QL_NhaHangTiecCuoi_V3;Integrated Security=true;TrustServerCertificate=true;";
 
         public string ConnectionString => _connectionString;
 
@@ -71,7 +71,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandTimeout = 120; // Tăng timeout lên 120 giây (2 phút) cho các query phức tạp
+                    cmd.CommandTimeout = 120;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);
@@ -94,7 +94,7 @@ namespace QLNhaHangTiecCuoi.Share
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandTimeout = 120; // Tăng timeout lên 120 giây (2 phút) cho các query phức tạp
+                    cmd.CommandTimeout = 120;
 
                     if (parameters != null)
                         cmd.Parameters.AddRange(parameters);

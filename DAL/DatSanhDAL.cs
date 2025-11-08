@@ -333,6 +333,109 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        // Hủy đặt sảnh - cập nhật trạng thái và ghi chú vào các bảng liên quan
+        public bool HuyDatSanh(int datSanhId)
+        {
+            string ghiChu = "Khách hàng hủy đặt sảnh";
+            
+            try
+            {
+                using (var connection = new SqlConnection(_dbHelper.ConnectionString))
+                {
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 1. Cập nhật trạng thái và ghi chú trong dat_sanh
+                            string queryDatSanh = @"
+                                UPDATE dbo.dat_sanh
+                                SET trang_thai = N'ĐÃ HỦY',
+                                    ghi_chu = @ghiChu
+                                WHERE dat_sanh_id = @datSanhId;";
+
+                            SqlParameter[] paramsDatSanh = {
+                                new SqlParameter("@datSanhId", datSanhId),
+                                new SqlParameter("@ghiChu", ghiChu)
+                            };
+
+                            using (var cmd = new SqlCommand(queryDatSanh, connection, transaction))
+                            {
+                                cmd.Parameters.AddRange(paramsDatSanh);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // 2. Lấy hop_dong_id từ dat_sanh_id
+                            string queryHopDongId = @"
+                                SELECT hop_dong_id
+                                FROM dbo.hop_dong
+                                WHERE dat_sanh_id = @datSanhId;";
+
+                            int? hopDongId = null;
+                            using (var cmd = new SqlCommand(queryHopDongId, connection, transaction))
+                            {
+                                cmd.Parameters.Add(new SqlParameter("@datSanhId", datSanhId));
+                                object result = cmd.ExecuteScalar();
+                                if (result != null && result != DBNull.Value)
+                                {
+                                    hopDongId = Convert.ToInt32(result);
+                                }
+                            }
+
+                            // 3. Cập nhật ghi chú trong hop_dong_coc (nếu có)
+                            if (hopDongId.HasValue)
+                            {
+                                string queryCoc = @"
+                                    UPDATE dbo.hop_dong_coc
+                                    SET ghi_chu = @ghiChu
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                SqlParameter[] paramsCoc = {
+                                    new SqlParameter("@hopDongId", hopDongId.Value),
+                                    new SqlParameter("@ghiChu", ghiChu)
+                                };
+
+                                using (var cmd = new SqlCommand(queryCoc, connection, transaction))
+                                {
+                                    cmd.Parameters.AddRange(paramsCoc);
+                                    cmd.ExecuteNonQuery();
+                                }
+
+                                // 4. Cập nhật ghi chú trong hop_dong_tt (nếu có)
+                                string queryTT = @"
+                                    UPDATE dbo.hop_dong_tt
+                                    SET noi_dung = @ghiChu
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                SqlParameter[] paramsTT = {
+                                    new SqlParameter("@hopDongId", hopDongId.Value),
+                                    new SqlParameter("@ghiChu", ghiChu)
+                                };
+
+                                using (var cmd = new SqlCommand(queryTT, connection, transaction))
+                                {
+                                    cmd.Parameters.AddRange(paramsTT);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi hủy đặt sảnh: {ex.Message}", ex);
+            }
+        }
+
         // Lấy thông tin đơn đặt sảnh
         public DataRow LayThongTinDatSanh(int datSanhId)
         {
@@ -349,6 +452,7 @@ namespace QLNhaHangTiecCuoi.DAL
                     c.ten_ca,
                     c.gio_bd,
                     c.gio_kt,
+                    ds.gio_to_chuc,
                     ds.ngay_to_chuc,
                     ds.khach_hang_id,
                     kh.ho_ten AS ten_khach_hang,
@@ -358,13 +462,17 @@ namespace QLNhaHangTiecCuoi.DAL
                     g.ten_goi,
                     g.gia_co_ban,
                     ds.trang_thai,
-                    ds.ghi_chu
+                    ds.ghi_chu,
+                    hd.so_hop_dong,
+                    hd.ngay_ky,
+                    hd.dieu_khoan
                 FROM dbo.dat_sanh ds
                 INNER JOIN dbo.chi_nhanh cn ON ds.chi_nhanh_id = cn.chi_nhanh_id
                 INNER JOIN dbo.sanh s ON ds.sanh_id = s.sanh_id
                 INNER JOIN dbo.ca c ON ds.ca_id = c.ca_id
                 INNER JOIN dbo.khach_hang kh ON ds.khach_hang_id = kh.khach_hang_id
                 LEFT JOIN dbo.goi_tiec g ON ds.goi_id = g.goi_id
+                LEFT JOIN dbo.hop_dong hd ON ds.dat_sanh_id = hd.dat_sanh_id
                 WHERE ds.dat_sanh_id = @datSanhId";
 
             SqlParameter[] parameters = {
@@ -389,6 +497,7 @@ namespace QLNhaHangTiecCuoi.DAL
                 SELECT 
                     ds.dat_sanh_id,
                     ds.ngay_to_chuc,
+                    ds.gio_to_chuc,
                     kh.ho_ten AS ten_khach_hang,
                     kh.sdt,
                     s.ten_sanh,
@@ -400,11 +509,9 @@ namespace QLNhaHangTiecCuoi.DAL
                     ds.trang_thai,
                     ISNULL(hd.tong_du_kien, 0) AS tong_tien,
                     ISNULL((
-                        SELECT SUM(tt.so_tien)
-                        FROM dbo.thanh_toan tt
-                        INNER JOIN dbo.hoa_don hd_tt ON tt.hoa_don_id = hd_tt.hoa_don_id
-                        WHERE hd_tt.loai = N'TIECCUOI' 
-                          AND hd_tt.tham_chieu_id = hd.hop_dong_id
+                        SELECT SUM(hdc.so_tien)
+                        FROM dbo.hop_dong_coc hdc
+                        WHERE hdc.hop_dong_id = hd.hop_dong_id
                           AND hd.hop_dong_id IS NOT NULL
                     ), 0) AS tien_coc
                 FROM dbo.dat_sanh ds
@@ -420,6 +527,84 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy danh sách đơn đặt sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng số đơn đặt sảnh
+        public int LayTongSoDon()
+        {
+            string query = @"
+                SELECT COUNT(*) 
+                FROM dbo.dat_sanh";
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy tổng số đơn: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số đơn đã xác nhận (ĐÃ CỌC hoặc ĐÃ THANH TOÁN)
+        public int LaySoDonXacNhan()
+        {
+            string query = @"
+                SELECT COUNT(*) 
+                FROM dbo.dat_sanh
+                WHERE trang_thai IN (N'ĐÃ CỌC', N'ĐÃ THANH TOÁN', N'HOÀN TẤT')";
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy số đơn xác nhận: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng số sảnh
+        public int LayTongSoSanh()
+        {
+            string query = @"
+                SELECT COUNT(DISTINCT sanh_id) 
+                FROM dbo.dat_sanh
+                WHERE trang_thai NOT IN (N'ĐÃ HỦY')";
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy tổng số sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy doanh thu tháng (tổng tiền từ các hợp đồng trong tháng hiện tại)
+        public decimal LayDoanhThuThang()
+        {
+            string query = @"
+                SELECT ISNULL(SUM(hd.tong_du_kien), 0)
+                FROM dbo.hop_dong hd
+                INNER JOIN dbo.dat_sanh ds ON hd.dat_sanh_id = ds.dat_sanh_id
+                WHERE YEAR(ds.ngay_to_chuc) = YEAR(GETDATE())
+                  AND MONTH(ds.ngay_to_chuc) = MONTH(GETDATE())
+                  AND ds.trang_thai NOT IN (N'ĐÃ HỦY')";
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query);
+                return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy doanh thu tháng: {ex.Message}", ex);
             }
         }
     }

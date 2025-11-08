@@ -40,7 +40,6 @@ namespace UI.Controls
         
         private void SetupPanel()
         {
-            // Cấu hình bo tròn và viền
             this.BackColor = _defaultBackColor;
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true);
             

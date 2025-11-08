@@ -209,8 +209,8 @@ WHERE NOT EXISTS (
   -- Gói VIP: đầy đủ dịch vụ cao cấp nhất
   UNION ALL SELECT @goi_vip, ma FROM (VALUES(N'DV-01'),(N'DV-02'),(N'DV-03'),(N'DV-05'),(N'DV-07'),(N'DV-10'),(N'DV-11'),(N'DV-13'),(N'DV-15'),(N'DV-16'),(N'DV-17'),(N'DV-18'),(N'DV-19')) x(ma)
 )
-INSERT dbo.goi_tiec_dv(goi_id, dv_id, so_luong)
-SELECT d.goi, v.dv_id, 1
+INSERT dbo.goi_tiec_dv(goi_id, dv_id)
+SELECT d.goi, v.dv_id
 FROM dvs d
 JOIN dbo.dich_vu v ON v.ma_dv=d.ma
 WHERE NOT EXISTS (
@@ -410,13 +410,29 @@ GO
 DECLARE @cn_tt INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Trung tâm');
 DECLARE @goi_cc INT = (SELECT goi_id FROM dbo.goi_tiec WHERE ma_goi=N'GT-CC03');
 DECLARE @sanh1 INT = (SELECT sanh_id FROM dbo.sanh WHERE ten_sanh=N'Sảnh Ruby 1' AND chi_nhanh_id=@cn_tt);
-DECLARE @ca_toi INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca=N'Ca tối');
+DECLARE @ca_toi INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca=N'Tối');
 DECLARE @kh_vip INT = (SELECT TOP 1 khach_hang_id FROM dbo.khach_hang WHERE hang_code=N'VIP');
+
+-- Kiểm tra và sửa CHECK constraint nếu cần
+IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('dbo.dat_sanh') AND name LIKE 'CK__dat_sanh__trang%')
+BEGIN
+  DECLARE @constraint_name NVARCHAR(200) = (SELECT TOP 1 name FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('dbo.dat_sanh') AND name LIKE 'CK__dat_sanh__trang%');
+  DECLARE @sql NVARCHAR(MAX) = N'ALTER TABLE dbo.dat_sanh DROP CONSTRAINT ' + QUOTENAME(@constraint_name);
+  EXEC sp_executesql @sql;
+  ALTER TABLE dbo.dat_sanh ADD CONSTRAINT CK_dat_sanh_trang_thai CHECK (trang_thai IN (N'CHỜ XÁC NHẬN',N'ĐÃ CỌC',N'ĐÃ HỦY',N'ĐÃ THANH TOÁN',N'HOÀN TẤT'));
+END
 
 IF NOT EXISTS (SELECT 1 FROM dbo.dat_sanh WHERE sanh_id=@sanh1 AND ngay_to_chuc = DATEADD(day, 14, CAST(GETDATE() AS date)))
 BEGIN
-  INSERT dbo.dat_sanh(chi_nhanh_id, sanh_id, ca_id, ngay_to_chuc, khach_hang_id, so_ban_du_kien, goi_id, trang_thai, ghi_chu)
-  VALUES(@cn_tt, @sanh1, @ca_toi, DATEADD(day, 14, CAST(GETDATE() AS date)), @kh_vip, 30, @goi_cc, N'ĐÃ XÁC NHẬN', NULL);
+  -- Kiểm tra xem ca_id có tồn tại không
+  IF @ca_toi IS NULL
+  BEGIN
+    PRINT N'Lỗi: Không tìm thấy ca "Tối"';
+    RETURN;
+  END
+  
+  INSERT dbo.dat_sanh(chi_nhanh_id, sanh_id, ca_id, gio_to_chuc, ngay_to_chuc, khach_hang_id, so_ban_du_kien, goi_id, trang_thai, ghi_chu)
+  VALUES(@cn_tt, @sanh1, @ca_toi, CAST('17:30:00' AS TIME(0)), DATEADD(day, 14, CAST(GETDATE() AS date)), @kh_vip, 30, @goi_cc, N'ĐÃ CỌC', NULL);
   DECLARE @ds_id INT = SCOPE_IDENTITY();
   INSERT dbo.hop_dong(so_hop_dong, dat_sanh_id, ngay_ky, tong_du_kien, dieu_khoan, file_url)
   VALUES(N'HD-TC-0001', @ds_id, CAST(GETDATE() AS date), 12000000, N'Thanh toán 2 đợt.', NULL);

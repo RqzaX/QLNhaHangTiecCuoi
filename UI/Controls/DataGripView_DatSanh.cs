@@ -16,7 +16,6 @@ namespace UI.Controls
     [ToolboxItem(true)]
     public class DataGripView_DatSanh : DataGridView
     {
-        // Chỉ số cột – gán trong Form sau khi tạo cột xong
         [Browsable(true), Category("Columns")]
         public int ColMaDonIndex { get; set; } = -1;
 
@@ -26,12 +25,11 @@ namespace UI.Controls
         [Browsable(true), Category("Columns")]
         public int ColThaoTacIndex { get; set; } = -1;
 
-        // Sự kiện click
         public event EventHandler<RowActionEventArgs>? DetailClicked;
         public event EventHandler<RowActionEventArgs>? ConfirmClicked;
+        public event EventHandler<RowActionEventArgs>? HuyDatClicked;
         public event EventHandler<RowActionEventArgs>? OrderCodeClicked;
 
-        // Style cho nút
         private const int BtnH = 30;
         private const int BtnWDetail = 88;
         private const int BtnWConfirm = 96;
@@ -43,7 +41,6 @@ namespace UI.Controls
         [SupportedOSPlatform("windows")]
         public DataGripView_DatSanh()
         {
-            // Chống flicker + cấu hình phù hợp vẽ custom
             DoubleBuffered = true;
             ReadOnly = true;
             EditMode = DataGridViewEditMode.EditProgrammatically;
@@ -56,12 +53,10 @@ namespace UI.Controls
             CellMouseMove += OnCellMouseMove_Custom;
         }
 
-        // ======= VẼ NÚT & PILL TRẠNG THÁI =======
         private void OnCellPainting_Custom(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            // Vẽ pill trạng thái (nếu là cột trạng thái)
             if (ColTrangThaiIndex >= 0 && e.ColumnIndex == ColTrangThaiIndex)
             {
                 e.Handled = true;
@@ -74,7 +69,6 @@ namespace UI.Controls
                 return;
             }
 
-            // Vẽ cột Thao tác
             if (ColThaoTacIndex >= 0 && e.ColumnIndex == ColThaoTacIndex)
             {
                 e.Handled = true;
@@ -87,22 +81,12 @@ namespace UI.Controls
                     ? (Rows[e.RowIndex].Cells[ColTrangThaiIndex].Value ?? "").ToString()
                     : "");
 
-                bool showConfirm = status == "Chờ xác nhận";
+                bool showHuyDat = status == "Chờ xác nhận" || status == "Đã cọc";
 
-                Rectangle rConfirm = Rectangle.Empty;
-                Rectangle rDetail;
-
-                if (showConfirm)
+                if (showHuyDat)
                 {
-                    rConfirm = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
-                    rDetail = new Rectangle(rConfirm.Left - Gap - BtnWDetail, y, BtnWDetail, BtnH);
-                    DrawButton(e.Graphics, rDetail, "Chi tiết", false);
-                    DrawButton(e.Graphics, rConfirm, "Xác nhận", true);
-                }
-                else
-                {
-                    rDetail = new Rectangle(cell.Right - BtnWDetail - PadRight, y, BtnWDetail, BtnH);
-                    DrawButton(e.Graphics, rDetail, "Chi tiết", false);
+                    Rectangle rHuyDat = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
+                    DrawButton(e.Graphics, rHuyDat, "Hủy đặt", true);
                 }
 
                 e.Paint(e.CellBounds, DataGridViewPaintParts.Border);
@@ -127,32 +111,57 @@ namespace UI.Controls
             using (var sm = new SmoothingContext(g))
             {
                 using var path = RoundRect(rect, 14);
-                using var bg = new SolidBrush(primary ? Color.FromArgb(36, 142, 255) : Color.White);
-                using var brd = new Pen(primary ? Color.FromArgb(36, 142, 255) : Color.FromArgb(216, 223, 230), 1.5f);
+                
+                bool isHuyDat = text == "Hủy đặt";
+                Color btnColor = isHuyDat ? Color.FromArgb(220, 38, 38) : (primary ? Color.FromArgb(36, 142, 255) : Color.White);
+                
+                using var bg = new SolidBrush(btnColor);
+                using var brd = new Pen(btnColor, 1.5f);
                 g.FillPath(bg, path);
                 g.DrawPath(brd, path);
 
                 var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-                using var ft = new SolidBrush(primary ? Color.White : Color.Black);
+                using var ft = new SolidBrush(isHuyDat || primary ? Color.White : Color.Black);
                 g.DrawString(text, _btnFont, ft, rect, sf);
             }
         }
 
         private void DrawStatusPill(Graphics g, Rectangle cellBounds, string status)
         {
-            // mặc định pill xanh lá cho "Đã xác nhận"
-            bool success = status == "Đã xác nhận";
+            bool success = status == "Đã xác nhận" || status == "Hoàn tất";
             bool warning = status == "Chờ xác nhận";
+            bool info = status == "Đã cọc" || status == "Đã thanh toán";
+            bool error = status == "Đã hủy";
 
-            Color bg = success ? Color.FromArgb(214, 243, 228)
-                               : warning ? Color.FromArgb(255, 244, 219)
-                                         : Color.FromArgb(230, 234, 240);
+            Color bg;
+            Color fg;
 
-            Color fg = success ? Color.FromArgb(24, 128, 84)
-                               : warning ? Color.FromArgb(173, 101, 0)
-                                         : Color.FromArgb(64, 72, 82);
+            if (success)
+            {
+                bg = Color.FromArgb(214, 243, 228);
+                fg = Color.FromArgb(24, 128, 84);
+            }
+            else if (warning)
+            {
+                bg = Color.FromArgb(255, 244, 219);
+                fg = Color.FromArgb(173, 101, 0);
+            }
+            else if (info)
+            {
+                bg = Color.FromArgb(219, 234, 254);
+                fg = Color.FromArgb(30, 64, 175);
+            }
+            else if (error)
+            {
+                bg = Color.FromArgb(254, 226, 226);
+                fg = Color.FromArgb(153, 27, 27);
+            }
+            else
+            {
+                bg = Color.FromArgb(230, 234, 240);
+                fg = Color.FromArgb(64, 72, 82);
+            }
 
-            // pill căn giữa trái (có thể chỉnh)
             var sz = TextRenderer.MeasureText(status, _pillFont);
             var w = sz.Width + 20;
             var h = 26;
@@ -171,7 +180,6 @@ namespace UI.Controls
             }
         }
 
-        // ======= HIT-TEST CHUẨN (không lệch) =======
         private void OnCellMouseClick_Custom(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex < 0 || e.Button != MouseButtons.Left) return;
@@ -184,7 +192,6 @@ namespace UI.Controls
 
             if (ColThaoTacIndex < 0 || e.ColumnIndex != ColThaoTacIndex) return;
 
-            // Tính lại hình học nút theo ô hiển thị
             var cell = GetCellDisplayRectangle(ColThaoTacIndex, e.RowIndex, true);
             int y = cell.Y + (cell.Height - BtnH) / 2;
 
@@ -192,29 +199,17 @@ namespace UI.Controls
                 ? (Rows[e.RowIndex].Cells[ColTrangThaiIndex].Value ?? "").ToString()
                 : "");
 
-            bool showConfirm = status == "Chờ xác nhận";
+            bool showHuyDat = status == "Chờ xác nhận" || status == "Đã cọc";
 
-            Rectangle rDetail, rConfirm = Rectangle.Empty;
+            if (showHuyDat)
+            {
+                Rectangle rHuyDat = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
+                Point mousePos = PointToClient(Cursor.Position);
 
-            if (showConfirm)
-            {
-                rConfirm = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
-                rDetail = new Rectangle(rConfirm.Left - Gap - BtnWDetail, y, BtnWDetail, BtnH);
-            }
-            else
-            {
-                rDetail = new Rectangle(cell.Right - BtnWDetail - PadRight, y, BtnWDetail, BtnH);
-            }
-
-            Point mousePos = PointToClient(Cursor.Position);
-
-            if (rDetail.Contains(mousePos))
-            {
-                DetailClicked?.Invoke(this, new RowActionEventArgs(e.RowIndex));
-            }
-            else if (showConfirm && !rConfirm.IsEmpty && rConfirm.Contains(mousePos))
-            {
-                ConfirmClicked?.Invoke(this, new RowActionEventArgs(e.RowIndex));
+                if (rHuyDat.Contains(mousePos))
+                {
+                    HuyDatClicked?.Invoke(this, new RowActionEventArgs(e.RowIndex));
+                }
             }
         }
 
@@ -229,21 +224,16 @@ namespace UI.Controls
                     ? (Rows[e.RowIndex].Cells[ColTrangThaiIndex].Value ?? "").ToString()
                     : "";
 
-                bool showConfirm = status == "Chờ xác nhận";
+                bool showHuyDat = status == "Chờ xác nhận" || status == "Đã cọc";
 
-                Rectangle rDetail, rConfirm = Rectangle.Empty;
-                if (showConfirm)
+                Rectangle rHuyDat = Rectangle.Empty;
+                if (showHuyDat)
                 {
-                    rConfirm = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
-                    rDetail = new Rectangle(rConfirm.Left - Gap - BtnWDetail, y, BtnWDetail, BtnH);
-                }
-                else
-                {
-                    rDetail = new Rectangle(cell.Right - BtnWDetail - PadRight, y, BtnWDetail, BtnH);
+                    rHuyDat = new Rectangle(cell.Right - BtnWConfirm - PadRight, y, BtnWConfirm, BtnH);
                 }
 
                 Point p = PointToClient(Cursor.Position);
-                Cursor = (rDetail.Contains(p) || (!rConfirm.IsEmpty && rConfirm.Contains(p)))
+                Cursor = (!rHuyDat.IsEmpty && rHuyDat.Contains(p))
                     ? Cursors.Hand : Cursors.Default;
             }
             else
@@ -252,7 +242,6 @@ namespace UI.Controls
             }
         }
 
-        // ======= Helpers =======
         private sealed class SmoothingContext : IDisposable
         {
             private readonly Graphics _g;

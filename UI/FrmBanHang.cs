@@ -17,7 +17,6 @@ using UI.Common;
 using Sunny.UI;
 using Tulpep.NotificationWindow;
 using Windows.UI.Notifications;
-using BLL; // OrderBLL
 
 namespace UI
 {

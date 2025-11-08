@@ -22,7 +22,6 @@ namespace UI
             InitializeComponent();
             _datSanhBLL = new DatSanhBLL();
             
-            // Gắn sự kiện resize để tự động điều chỉnh độ rộng cột
             this.Resize += (s, e) => DieuChinhDoRongCot();
             if (dgvDatSanh != null)
             {
@@ -32,7 +31,8 @@ namespace UI
 
         private void FrmDatSanh_TiecCuoi_Load(object sender, EventArgs e)
         {
-            // Tạo cột nếu chưa có
+            CapNhatThongKe();
+            
             if (dgvDatSanh.Columns.Count == 0)
             {
                 dgvDatSanh.AutoGenerateColumns = false;
@@ -41,7 +41,7 @@ namespace UI
                 dgvDatSanh.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 dgvDatSanh.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
                 var colMaDon = new DataGridViewTextBoxColumn { Name = "MaDon", HeaderText = "Mã đơn", Width = 100, MinimumWidth = 90 };
-                var colNgayTiec = new DataGridViewTextBoxColumn { Name = "NgayTiec", HeaderText = "Ngày tiệc", Width = 100, MinimumWidth = 90 };
+                var colNgayTiec = new DataGridViewTextBoxColumn { Name = "NgayTiec", HeaderText = "Ngày tiệc", Width = 150, MinimumWidth = 130 };
                 var colKhachHang = new DataGridViewTextBoxColumn { Name = "KhachHang", HeaderText = "Khách hàng", Width = 200, MinimumWidth = 150 };
                 var colSanh = new DataGridViewTextBoxColumn { Name = "Sanh", HeaderText = "Sảnh", Width = 120, MinimumWidth = 100 };
                 var colSoBan = new DataGridViewTextBoxColumn { Name = "SoBan", HeaderText = "Số bàn/khách", Width = 150, MinimumWidth = 130 };
@@ -74,19 +74,42 @@ namespace UI
                 dgvDatSanh.Columns.Add(colTrangThai);
                 dgvDatSanh.Columns.Add(colThaoTac);
 
-                // Điều chỉnh cột ThaoTac để fill phần còn lại
                 colThaoTac.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dgvDatSanh.ColMaDonIndex = dgvDatSanh.Columns["MaDon"].Index;
                 dgvDatSanh.ColTrangThaiIndex = dgvDatSanh.Columns["TrangThai"].Index;
                 dgvDatSanh.ColThaoTacIndex = dgvDatSanh.Columns["ThaoTac"].Index;
             }
 
-            // Load dữ liệu từ database
             LoadDanhSachDatSanh();
+            dgvDatSanh.HuyDatClicked += DgvDatSanh_HuyDatClicked;
+            dgvDatSanh.OrderCodeClicked += DgvDatSanh_OrderCodeClicked;
+            dgvDatSanh.CellDoubleClick += DgvDatSanh_CellDoubleClick;
+        }
 
-            // Gắn sự kiện click nút
-            dgvDatSanh.DetailClicked += DgvDatSanh_DetailClicked;
-            dgvDatSanh.ConfirmClicked += DgvDatSanh_ConfirmClicked;
+        private void CapNhatThongKe()
+        {
+            try
+            {
+                int tongSoDon = _datSanhBLL.LayTongSoDon();
+                lbSoDon.Text = $"{tongSoDon:N0} đơn";
+
+                int soDonXacNhan = _datSanhBLL.LaySoDonXacNhan();
+                lbSoDonXacNhan.Text = $"{soDonXacNhan:N0} đơn";
+
+                int tongSoSanh = _datSanhBLL.LayTongSoSanh();
+                lbTongSanh.Text = $"{tongSoSanh:N0} sảnh";
+
+                decimal doanhThuThang = _datSanhBLL.LayDoanhThuThang();
+                lbDoanhThuThang.Text = doanhThuThang > 0 ? doanhThuThang.ToString("#,##0") + " ₫" : "0 ₫";
+            }
+            catch (Exception ex)
+            {
+                lbSoDon.Text = "0 đơn";
+                lbSoDonXacNhan.Text = "0 đơn";
+                lbTongSanh.Text = "0 sảnh";
+                lbDoanhThuThang.Text = "0 ₫";
+                System.Diagnostics.Debug.WriteLine($"Lỗi cập nhật thống kê: {ex.Message}");
+            }
         }
 
         private void btnTaoDonDatSanh_Click(object sender, EventArgs e)
@@ -97,54 +120,44 @@ namespace UI
                 StartPosition = FormStartPosition.CenterParent
             };
 
-            // Thêm nút đóng
-            // var btnClose = new Button
-            // {
-            //     Text = "✕",
-            //     Size = new Size(35, 35),
-            //     Location = new Point(formCon.ClientSize.Width - 45, 10),
-            //     FlatStyle = FlatStyle.Flat,
-            //     Font = new Font("Segoe UI", 14f),
-            //     ForeColor = Color.Black,
-            //     BackColor = Color.Transparent,
-            //     Cursor = Cursors.Hand
-            // };
-            // btnClose.FlatAppearance.BorderSize = 0;
-            // btnClose.Click += (s, ev) => formCon.Close();
-            // formCon.Controls.Add(btnClose);
-
-            // formCon.Resize += (s, ev) =>
-            // {
-            //     btnClose.Location = new Point(formCon.ClientSize.Width - 45, 10);
-            // };
-
             formCon.ShowDialog(this);
             
-            // Reload dữ liệu sau khi tạo đơn mới
             if (formCon.DialogResult == DialogResult.OK)
             {
                 LoadDanhSachDatSanh();
+                CapNhatThongKe();
             }
         }
 
-        // Load danh sách đơn đặt sảnh từ database
         private void LoadDanhSachDatSanh()
         {
             try
             {
                 dgvDatSanh.Rows.Clear();
-                // Lấy dữ liệu từ database
                 DataTable dt = _datSanhBLL.LayDanhSachDatSanh();
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
                     return;
                 }
-                // Thêm dữ liệu vào DataGridView
                 foreach (DataRow row in dt.Rows)
                 {
                     int datSanhId = Convert.ToInt32(row["dat_sanh_id"]);
                     DateTime ngayToChuc = Convert.ToDateTime(row["ngay_to_chuc"]);
+                    
+                    TimeSpan? gioToChuc = null;
+                    if (row["gio_to_chuc"] != DBNull.Value && row["gio_to_chuc"] != null)
+                    {
+                        if (row["gio_to_chuc"] is TimeSpan ts)
+                        {
+                            gioToChuc = ts;
+                        }
+                        else if (TimeSpan.TryParse(row["gio_to_chuc"].ToString(), out TimeSpan parsedTime))
+                        {
+                            gioToChuc = parsedTime;
+                        }
+                    }
+                    
                     string tenKhachHang = row["ten_khach_hang"].ToString();
                     string sdt = row["sdt"]?.ToString() ?? "";
                     string tenSanh = row["ten_sanh"].ToString();
@@ -154,13 +167,13 @@ namespace UI
                     decimal tongTien = Convert.ToDecimal(row["tong_tien"]);
                     decimal tienCoc = Convert.ToDecimal(row["tien_coc"]);
 
-                    // Format mã đơn: DS + 6 số (VD: DS000001)
                     string maDon = $"DS{datSanhId:D6}";
-                    // Format ngày tiệc
                     string ngayTiec = ngayToChuc.ToString("dd/MM/yyyy");
-                    // Format thông tin khách hàng
+                    if (gioToChuc.HasValue)
+                    {
+                        ngayTiec += $"\n{gioToChuc.Value:hh\\:mm}";
+                    }
                     string khachHang = $"{tenKhachHang}\n{sdt}";
-                    // Format số bàn/khách
                     string soBanKhach = "";
                     if (soBanDuKien.HasValue && soKhachDuKien.HasValue)
                     {
@@ -175,7 +188,6 @@ namespace UI
                         soBanKhach = "Chưa xác định";
                     }
 
-                    // Format trạng thái (chuyển từ database sang hiển thị)
                     string trangThaiHienThi = trangThai;
                     switch (trangThai.ToUpper())
                     {
@@ -185,6 +197,12 @@ namespace UI
                         case "ĐÃ XÁC NHẬN":
                             trangThaiHienThi = "Đã xác nhận";
                             break;
+                        case "ĐÃ CỌC":
+                            trangThaiHienThi = "Đã cọc";
+                            break;
+                        case "ĐÃ THANH TOÁN":
+                            trangThaiHienThi = "Đã thanh toán";
+                            break;
                         case "ĐÃ HỦY":
                             trangThaiHienThi = "Đã hủy";
                             break;
@@ -193,17 +211,15 @@ namespace UI
                             break;
                     }
 
-                    // Format tiền với dấu phẩy ngăn cách hàng nghìn
                     string tongTienFormatted = tongTien > 0 ? tongTien.ToString("#,##0") + " ₫" : "0 ₫";
                     string tienCocFormatted = tienCoc > 0 ? tienCoc.ToString("#,##0") + " ₫" : "0 ₫";
 
-                    // Thêm dòng vào DataGridView
                     dgvDatSanh.Rows.Add(maDon, ngayTiec, khachHang, tenSanh, soBanKhach, 
                                        tongTienFormatted, tienCocFormatted, trangThaiHienThi, "");
                 }
 
-                // Điều chỉnh độ rộng cột sau khi load dữ liệu
                 DieuChinhDoRongCot();
+                CapNhatThongKe();
             }
             catch (Exception ex)
             {
@@ -212,51 +228,38 @@ namespace UI
             }
         }
 
-        // Xử lý sự kiện click nút Chi tiết
-        private void DgvDatSanh_DetailClicked(object sender, Controls.RowActionEventArgs e)
+        private void DgvDatSanh_HuyDatClicked(object sender, Controls.RowActionEventArgs e)
         {
             try
             {
                 if (e.RowIndex < 0 || e.RowIndex >= dgvDatSanh.Rows.Count)
                     return;
 
-                // Lấy mã đơn từ cột đầu tiên
-                string maDon = dgvDatSanh.Rows[e.RowIndex].Cells["MaDon"].Value?.ToString() ?? "";
-                MessageBox.Show($"Chi tiết đơn: {maDon}", "Chi tiết", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi xem chi tiết: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // Xử lý sự kiện click nút Xác nhận
-        private void DgvDatSanh_ConfirmClicked(object sender, Controls.RowActionEventArgs e)
-        {
-            try
-            {
-                if (e.RowIndex < 0 || e.RowIndex >= dgvDatSanh.Rows.Count)
-                    return;
-
-                // Lấy mã đơn
                 string maDon = dgvDatSanh.Rows[e.RowIndex].Cells["MaDon"].Value?.ToString() ?? "";
                 
-                // Lấy dat_sanh_id từ mã đơn (DS000001 -> 1)
+                DialogResult result = MessageBox.Show(
+                    $"Bạn có chắc chắn muốn hủy đặt sảnh cho đơn {maDon}?",
+                    "Xác nhận hủy đặt",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                    return;
+
                 if (maDon.StartsWith("DS") && int.TryParse(maDon.Substring(2), out int datSanhId))
                 {
-                    // Xác nhận đơn đặt sảnh
                     string errorMessage;
-                    bool success = _datSanhBLL.CapNhatTrangThaiDatSanh(datSanhId, "ĐÃ XÁC NHẬN", out errorMessage);
+                    bool success = _datSanhBLL.HuyDatSanh(datSanhId, out errorMessage);
                     
                     if (success)
                     {
-                        MessageBox.Show($"Đã xác nhận đơn {maDon}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        // Reload dữ liệu để đảm bảo đồng bộ
+                        MessageBox.Show($"Đã hủy đặt sảnh cho đơn {maDon}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadDanhSachDatSanh();
+                        CapNhatThongKe();
                     }
                     else
                     {
-                        MessageBox.Show($"Lỗi xác nhận đơn: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Lỗi hủy đặt sảnh: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -266,18 +269,61 @@ namespace UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi xác nhận: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi hủy đặt: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // Điều chỉnh độ rộng cột để hiển thị đầy đủ
+        private void DgvDatSanh_OrderCodeClicked(object sender, Controls.RowActionEventArgs e)
+        {
+            MoFormChiTietDatSanh(e.RowIndex);
+        }
+
+        private void DgvDatSanh_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                MoFormChiTietDatSanh(e.RowIndex);
+            }
+        }
+
+        private void MoFormChiTietDatSanh(int rowIndex)
+        {
+            try
+            {
+                if (rowIndex < 0 || rowIndex >= dgvDatSanh.Rows.Count)
+                    return;
+
+                string maDon = dgvDatSanh.Rows[rowIndex].Cells["MaDon"].Value?.ToString() ?? "";
+                
+                if (maDon.StartsWith("DS") && int.TryParse(maDon.Substring(2), out int datSanhId))
+                {
+                    var formChiTiet = new Frm_ChiTietDatSanh(datSanhId)
+                    {
+                        StartPosition = FormStartPosition.CenterParent
+                    };
+                    formChiTiet.ShowDialog(this);
+                    
+                    // Reload danh sách sau khi đóng form chi tiết (nếu có thay đổi)
+                    LoadDanhSachDatSanh();
+                    CapNhatThongKe();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể lấy mã đơn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form chi tiết: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void DieuChinhDoRongCot()
         {
             try
             {
                 if (dgvDatSanh == null || dgvDatSanh.Columns.Count == 0) return;
 
-                // Tính tổng độ rộng cố định của các cột (trừ cột ThaoTac)
                 int totalFixedWidth = 0;
                 foreach (DataGridViewColumn col in dgvDatSanh.Columns)
                 {
@@ -287,11 +333,10 @@ namespace UI
                     }
                 }
 
-                // Điều chỉnh cột ThaoTac để fill phần còn lại
                 var colThaoTac = dgvDatSanh.Columns["ThaoTac"];
                 if (colThaoTac != null && dgvDatSanh.ClientSize.Width > 0)
                 {
-                    int availableWidth = dgvDatSanh.ClientSize.Width - totalFixedWidth - 20; // Trừ padding và scrollbar
+                    int availableWidth = dgvDatSanh.ClientSize.Width - totalFixedWidth - 20;
                     if (availableWidth > colThaoTac.MinimumWidth)
                     {
                         colThaoTac.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;

@@ -56,6 +56,10 @@ namespace UI
             panelTrangThaiSanh.ForeColor = Color.Gray;
             panelTrangThaiSanh.Style = Sunny.UI.UIStyle.Gray;
 
+            picSuccess1.Visible = false;
+            picSuccess2.Visible = false;
+            picSuccess3.Visible = false;
+
             this.Load += Frm_DatSanh_Load;
             cbbGioToChuc.DrawItem += CbbGioToChuc_DrawItem;
             cbbChiNhanh.SelectedIndexChanged += CbbChiNhanh_SelectedIndexChanged;
@@ -63,6 +67,17 @@ namespace UI
             cbbGioToChuc.SelectedIndexChanged += CbbGioToChuc_SelectedIndexChanged;
             dateNgayToChuc.ValueChanged += DateNgayToChuc_ValueChanged;
             txtSoBanDuKien.TextChanged += TxtSoBanDuKien_TextChanged;
+            
+            // Gắn sự kiện cho checkbox đặt cọc
+            if (cbTienCocDot1 != null)
+            {
+                cbTienCocDot1.CheckedChanged += CbTienCocDot1_CheckedChanged;
+            }
+            
+            if (cbXacNhanKy != null)
+            {
+                cbXacNhanKy.CheckedChanged += CbXacNhanKy_CheckedChanged;
+            }
         }
 
         // Sự kiện load form - khởi tạo dữ liệu ban đầu
@@ -109,60 +124,8 @@ namespace UI
                 int minHeight = maxBottom + padding;
                 panel1.AutoScrollMinSize = new Size(0, minHeight);
             }
-            catch (Exception ex){}
-        }
-
-        // Cập nhật AutoScroll cho panelGoivaMon
-        private void CapNhatAutoScrollPanelGoivaMon()
-        {
-            try
-            {
-                if (panelGoivaMon == null) return;
-
-                int maxBottom = 0;
-                foreach (Control ctrl in panelGoivaMon.Controls)
-                {
-                    if (ctrl.Visible)
-                    {
-                        int bottom = ctrl.Top + ctrl.Height;
-                        if (ctrl == panelDanhSachGoiTiec)
-                        {
-                            foreach (Control innerCtrl in ctrl.Controls)
-                            {
-                                if (innerCtrl is FlowLayoutPanel flPanel && flPanel.Visible)
-                                {
-                                    int flPanelHeight = 0;
-                                    foreach (Control item in flPanel.Controls)
-                                    {
-                                        if (item.Visible)
-                                        {
-                                            flPanelHeight += item.Height + flPanel.Margin.Vertical;
-                                        }
-                                    }
-                                    flPanelHeight += flPanel.Padding.Top + flPanel.Padding.Bottom;
-                                    
-                                    int flPanelBottom = ctrl.Top + Math.Max(ctrl.Height, flPanelHeight);
-                                    if (flPanelBottom > bottom)
-                                    {
-                                        bottom = flPanelBottom;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (bottom > maxBottom)
-                        {
-                            maxBottom = bottom;
-                        }
-                    }
-                }
-
-                int padding = 20;
-                int minHeight = maxBottom + padding;
-
-                panelGoivaMon.AutoScrollMinSize = new Size(0, minHeight);
-            }
-            catch (Exception ex){}
+            catch (Exception)
+            {}
         }
 
         // Load danh sách chi nhánh vào ComboBox
@@ -988,7 +951,8 @@ namespace UI
                 thuTuSanh = 2;
                 
                 lbSoBuocHienTai.Text = "Bước 2/3: Gói tiệc & Thực đơn";
-                
+                picSuccess1.Visible = true;
+
                 panelGoivaMon.Visible = true;
                 if (panelDanhSachGoiTiec != null)
                 {
@@ -1040,7 +1004,8 @@ namespace UI
                 thuTuSanh = 3;
                 
                 lbSoBuocHienTai.Text = "Bước 3/3: Hợp đồng & Thanh toán";
-                
+                picSuccess2.Visible = true;
+
                 // Tính lại giá trước khi cập nhật hợp đồng
                 TinhToanGia();
                 CapNhatThongTinHopDong();
@@ -1076,6 +1041,7 @@ namespace UI
                 if (dateNgayKy != null)
                 {
                     dateNgayKy.Value = DateTime.Now;
+                    dateNgayKy.Enabled = false;
                 }
 
                 // Tính toán số tiền cọc đợt 1 (20% tổng giá trị)
@@ -1103,6 +1069,14 @@ namespace UI
                 {
                     cbTienThanhToanConLai.Checked = false;
                 }
+                
+                if (cbXacNhanKy != null)
+                {
+                    cbXacNhanKy.Checked = false;
+                }
+                
+                // Ẩn phần thanh toán còn lại ban đầu
+                CapNhatHienThiThanhToanConLai();
 
                 // Load điều khoản hợp đồng (nếu chưa có)
                 if (richTxt_DieuKhoanHD != null && string.IsNullOrWhiteSpace(richTxt_DieuKhoanHD.Text))
@@ -1186,6 +1160,12 @@ namespace UI
                 return false;
             }
 
+            if (cbXacNhanKy == null || !cbXacNhanKy.Checked)
+            {
+                errorMessage = "Vui lòng xác nhận đã ký hợp đồng!";
+                return false;
+            }
+
             return true;
         }
 
@@ -1220,7 +1200,32 @@ namespace UI
 
                 DateTime ngayToChuc = dateNgayToChuc.Value;
                 
-                TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
+                // Lấy giờ bắt đầu từ ComboBox đã chọn
+                TimeSpan? gioToChuc = null;
+                if (cbbGioToChuc.SelectedItem is DataRowView rowViewCa)
+                {
+                    string gioBdStr = rowViewCa["gio_bd"]?.ToString() ?? "";
+                    if (!string.IsNullOrWhiteSpace(gioBdStr))
+                    {
+                        string[] parts = gioBdStr.Split(':');
+                        if (parts.Length >= 2)
+                        {
+                            if (int.TryParse(parts[0], out int hours) && int.TryParse(parts[1], out int minutes))
+                            {
+                                gioToChuc = new TimeSpan(hours, minutes, 0);
+                            }
+                        }
+                        if (!gioToChuc.HasValue && TimeSpan.TryParse(gioBdStr, out TimeSpan gioBd))
+                        {
+                            gioToChuc = gioBd;
+                        }
+                    }
+                }
+                
+                if (!gioToChuc.HasValue)
+                {
+                    gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
+                }
                 
                 int? soBanDuKien = null;
                 if (!string.IsNullOrWhiteSpace(txtSoBanDuKien.Text))
@@ -1234,11 +1239,11 @@ namespace UI
 
                 string ghiChu = txtGhiChu.Text?.Trim() ?? "";
 
-                // Xác định trạng thái: nếu có đặt cọc thì "ĐÃ XÁC NHẬN", ngược lại "CHỜ XÁC NHẬN"
+                // Xác định trạng thái: nếu có đặt cọc thì "ĐÃ CỌC", ngược lại "CHỜ XÁC NHẬN"
                 string trangThai = "CHỜ XÁC NHẬN";
                 if (cbTienCocDot1 != null && cbTienCocDot1.Checked)
                 {
-                    trangThai = "ĐÃ XÁC NHẬN";
+                    trangThai = "ĐÃ CỌC";
                 }
 
                 // Tạo đơn đặt sảnh
@@ -1273,53 +1278,83 @@ namespace UI
                     return;
                 }
 
-                // Lưu chi tiết món ăn và dịch vụ từ gói tiệc
+                // Lưu chi tiết món ăn vào hop_dong_ct_mon từ gói tiệc
                 if (_selectedGoiId.HasValue)
                 {
                     DataTable dtMon = _goiTiecBLL.GetMonAnByGoiId(_selectedGoiId.Value);
-                    if (dtMon != null)
+                    if (dtMon != null && dtMon.Rows.Count > 0)
                     {
                         foreach (DataRow monRow in dtMon.Rows)
                         {
-                            int monId = Convert.ToInt32(monRow["mon_id"]);
-                            decimal soLuong = Convert.ToDecimal(monRow["so_luong"]);
-                            
-                            // Tính số lượng theo số bàn
-                            if (soBanDuKien.HasValue && soBanDuKien.Value > 0)
+                            try
                             {
-                                soLuong = soLuong * soBanDuKien.Value;
+                                int monId = Convert.ToInt32(monRow["mon_id"]);
+                                decimal soLuong = Convert.ToDecimal(monRow["so_luong"]);
+                                
+                                // Tính số lượng theo số bàn
+                                if (soBanDuKien.HasValue && soBanDuKien.Value > 0)
+                                {
+                                    soLuong = soLuong * soBanDuKien.Value;
+                                }
+                                
+                                // Lấy đơn giá từ bảng mon_an
+                                decimal donGia = 0;
+                                if (monRow["don_gia"] != DBNull.Value)
+                                {
+                                    donGia = Convert.ToDecimal(monRow["don_gia"]);
+                                }
+                                
+                                bool success = _datSanhBLL.LuuChiTietMon(hopDongId, monId, soLuong, donGia, out errorMessage);
+                                if (!success)
+                                {
+                                    MessageBox.Show($"Lỗi lưu chi tiết món: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
                             }
-                            
-                            // Lấy đơn giá từ bảng mon_an
-                            decimal donGia = 0;
-                            if (monRow["don_gia"] != DBNull.Value)
+                            catch (Exception ex)
                             {
-                                donGia = Convert.ToDecimal(monRow["don_gia"]);
+                                MessageBox.Show($"Lỗi khi xử lý chi tiết món: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
                             }
-                            
-                            _datSanhBLL.LuuChiTietMon(hopDongId, monId, soLuong, donGia, out errorMessage);
-                        }
-                    }
-
-                    DataTable dtDichVu = _goiTiecBLL.GetDichVuByGoiId(_selectedGoiId.Value);
-                    if (dtDichVu != null)
-                    {
-                        foreach (DataRow dvRow in dtDichVu.Rows)
-                        {
-                            int dvId = Convert.ToInt32(dvRow["dv_id"]);
-                            decimal soLuong = Convert.ToDecimal(dvRow["so_luong"]);
-                            decimal donGia = 0;
-                            if (dvRow["don_gia"] != DBNull.Value)
-                            {
-                                donGia = Convert.ToDecimal(dvRow["don_gia"]);
-                            }
-                            
-                            _datSanhBLL.LuuChiTietDichVu(hopDongId, dvId, soLuong, donGia, out errorMessage);
                         }
                     }
                 }
 
-                // Lưu tiền cọc nếu checkbox được check
+                // Lưu chi tiết dịch vụ vào hop_dong_ct_dv từ gói tiệc
+                if (_selectedGoiId.HasValue)
+                {
+                    DataTable dtDichVu = _goiTiecBLL.GetDichVuByGoiId(_selectedGoiId.Value);
+                    if (dtDichVu != null && dtDichVu.Rows.Count > 0)
+                    {
+                        foreach (DataRow dvRow in dtDichVu.Rows)
+                        {
+                            try
+                            {
+                                int dvId = Convert.ToInt32(dvRow["dv_id"]);
+                                decimal soLuong = 1; // Mặc định số lượng là 1 cho dịch vụ
+                                decimal donGia = 0;
+                                if (dvRow["don_gia"] != DBNull.Value)
+                                {
+                                    donGia = Convert.ToDecimal(dvRow["don_gia"]);
+                                }
+                                
+                                bool success = _datSanhBLL.LuuChiTietDichVu(hopDongId, dvId, soLuong, donGia, out errorMessage);
+                                if (!success)
+                                {
+                                    MessageBox.Show($"Lỗi lưu chi tiết dịch vụ: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Lỗi khi xử lý chi tiết dịch vụ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Lưu tiền cọc vào hop_dong_coc nếu checkbox được check
                 if (cbTienCocDot1 != null && cbTienCocDot1.Checked)
                 {
                     decimal tienCoc = _tongTien * 0.20m;
@@ -1329,10 +1364,16 @@ namespace UI
                         tienCoc = tienCocParsed;
                     }
                     
-                    _datSanhBLL.LuuTienCoc(hopDongId, tienCoc, DateTime.Now, "Tiền mặt", "Cọc đợt 1", out errorMessage);
+                    // Lưu vào bảng hop_dong_coc với hình thức mặc định là "Chuyển khoản"
+                    int cocId = _datSanhBLL.LuuTienCoc(hopDongId, tienCoc, DateTime.Now, "Chuyển khoản", "Cọc đợt 1", out errorMessage);
+                    if (cocId <= 0)
+                    {
+                        MessageBox.Show($"Lỗi lưu tiền cọc: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
 
-                // Lưu thanh toán còn lại nếu checkbox được check
+                // Lưu thanh toán còn lại vào hop_dong_tt nếu checkbox được check
                 if (cbTienThanhToanConLai != null && cbTienThanhToanConLai.Checked)
                 {
                     decimal tienConLai = _tongTien * 0.70m;
@@ -1342,7 +1383,13 @@ namespace UI
                         tienConLai = tienConLaiParsed;
                     }
                     
-                    _datSanhBLL.LuuThanhToan(hopDongId, tienConLai, DateTime.Now, "Tiền mặt", "Thanh toán còn lại", out errorMessage);
+                    // Lưu vào bảng hop_dong_tt với hình thức mặc định là "Chuyển khoản"
+                    int ttId = _datSanhBLL.LuuThanhToan(hopDongId, tienConLai, DateTime.Now, "Chuyển khoản", "Thanh toán còn lại", out errorMessage);
+                    if (ttId <= 0)
+                    {
+                        MessageBox.Show($"Lỗi lưu thanh toán: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
 
                 MessageBox.Show($"Đơn đặt sảnh và hợp đồng đã được tạo thành công!\nMã đơn: DS{datSanhId:D6}\nSố hợp đồng: {soHopDong}", 
@@ -1354,6 +1401,33 @@ namespace UI
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi lưu đơn đặt sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Xử lý sự kiện thay đổi checkbox đặt cọc
+        private void CbTienCocDot1_CheckedChanged(object sender, EventArgs e)
+        {
+            CapNhatHienThiThanhToanConLai();
+        }
+
+        private void CbXacNhanKy_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbXacNhanKy != null && cbXacNhanKy.Checked)
+            {
+                if (dateNgayKy != null)
+                {
+                    dateNgayKy.Value = DateTime.Now;
+                }
+            }
+        }
+
+        // Cập nhật hiển thị phần thanh toán còn lại dựa trên trạng thái checkbox đặt cọc
+        private void CapNhatHienThiThanhToanConLai()
+        {
+            // Nếu checkbox đặt cọc không được check, uncheck checkbox thanh toán còn lại
+            if (cbTienCocDot1 != null && !cbTienCocDot1.Checked && cbTienThanhToanConLai != null)
+            {
+                cbTienThanhToanConLai.Checked = false;
             }
         }
 
@@ -1374,7 +1448,8 @@ namespace UI
                 thuTuSanh = 2;
 
                 lbSoBuocHienTai.Text = "Bước 2/3: Gói tiệc & Thực đơn";
-                
+                picSuccess2.Visible = false;
+
                 this.BeginInvoke(new Action(() => CapNhatAutoScrollPanel1()));
             }
             else if (thuTuSanh == 2)
@@ -1391,7 +1466,8 @@ namespace UI
                 thuTuSanh = 1;
  
                 lbSoBuocHienTai.Text = "Bước 1/3: Thông tin đặt sảnh";
-                
+                picSuccess1.Visible = false;
+
                 this.BeginInvoke(new Action(() => CapNhatAutoScrollPanel1()));
             }
         }

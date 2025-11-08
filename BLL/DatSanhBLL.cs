@@ -338,6 +338,27 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        // Hủy đặt sảnh - cập nhật trạng thái và ghi chú vào các bảng liên quan
+        public bool HuyDatSanh(int datSanhId, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            try
+            {
+                if (datSanhId <= 0)
+                {
+                    errorMessage = "ID đơn đặt sảnh không hợp lệ!";
+                    return false;
+                }
+
+                return _dal.HuyDatSanh(datSanhId);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Lỗi hủy đặt sảnh: {ex.Message}";
+                return false;
+            }
+        }
+
         // Lấy giờ bắt đầu từ ca_id
         public TimeSpan? LayGioBatDauCa(int caId)
         {
@@ -394,6 +415,58 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Lấy danh sách đơn đặt sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng số đơn đặt sảnh
+        public int LayTongSoDon()
+        {
+            try
+            {
+                return _dal.LayTongSoDon();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy tổng số đơn: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số đơn đã xác nhận
+        public int LaySoDonXacNhan()
+        {
+            try
+            {
+                return _dal.LaySoDonXacNhan();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy số đơn xác nhận: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng số sảnh
+        public int LayTongSoSanh()
+        {
+            try
+            {
+                return _dal.LayTongSoSanh();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy tổng số sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy doanh thu tháng
+        public decimal LayDoanhThuThang()
+        {
+            try
+            {
+                return _dal.LayDoanhThuThang();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy doanh thu tháng: {ex.Message}", ex);
             }
         }
     }

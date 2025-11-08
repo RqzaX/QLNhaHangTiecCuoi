@@ -62,6 +62,35 @@ namespace QLNhaHangTiecCuoi.DAL
                 throw new Exception($"Lỗi lấy thông tin sảnh: {ex.Message}");
             }
         }
+
+        // Cập nhật thông tin sảnh
+        public bool CapNhatSanh(int sanhId, string tenSanh, int sucChua, decimal phiThueCb)
+        {
+            try
+            {
+                string query = @"
+                    UPDATE dbo.sanh
+                    SET ten_sanh = @tenSanh,
+                        suc_chua = @sucChua,
+                        phi_thue_cb = @phiThueCb
+                    WHERE sanh_id = @sanhId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@sanhId", sanhId),
+                    new SqlParameter("@tenSanh", tenSanh),
+                    new SqlParameter("@sucChua", sucChua),
+                    new SqlParameter("@phiThueCb", phiThueCb)
+                };
+
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi cập nhật sảnh: {ex.Message}");
+            }
+        }
     }
 }
 
