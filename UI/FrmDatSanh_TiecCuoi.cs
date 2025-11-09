@@ -9,11 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
+using UI.Common;
 
 namespace UI
 {
     [SupportedOSPlatform("windows")]
-    public partial class FrmDatSanh_TiecCuoi : Form
+    public partial class FrmDatSanh_TiecCuoi : Form, IFormRefreshable
     {
         private DatSanhBLL _datSanhBLL;
 
@@ -31,8 +32,12 @@ namespace UI
 
         private void FrmDatSanh_TiecCuoi_Load(object sender, EventArgs e)
         {
-            CapNhatThongKe();
-            
+            InitializeDataGridView();
+            RefreshData();
+        }
+
+        private void InitializeDataGridView()
+        {
             if (dgvDatSanh.Columns.Count == 0)
             {
                 dgvDatSanh.AutoGenerateColumns = false;
@@ -62,7 +67,6 @@ namespace UI
                     DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
                 };
                 var colTrangThai = new DataGridViewTextBoxColumn { Name = "TrangThai", HeaderText = "Trạng thái", Width = 130, MinimumWidth = 120 };
-                var colThaoTac = new DataGridViewTextBoxColumn { Name = "ThaoTac", HeaderText = "Thao tác", Width = 120, MinimumWidth = 100 };
 
                 dgvDatSanh.Columns.Add(colMaDon);
                 dgvDatSanh.Columns.Add(colNgayTiec);
@@ -72,18 +76,27 @@ namespace UI
                 dgvDatSanh.Columns.Add(colTongTien);
                 dgvDatSanh.Columns.Add(colTienCoc);
                 dgvDatSanh.Columns.Add(colTrangThai);
-                dgvDatSanh.Columns.Add(colThaoTac);
 
-                colThaoTac.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dgvDatSanh.ColMaDonIndex = dgvDatSanh.Columns["MaDon"].Index;
                 dgvDatSanh.ColTrangThaiIndex = dgvDatSanh.Columns["TrangThai"].Index;
-                dgvDatSanh.ColThaoTacIndex = dgvDatSanh.Columns["ThaoTac"].Index;
-            }
 
-            LoadDanhSachDatSanh();
-            dgvDatSanh.HuyDatClicked += DgvDatSanh_HuyDatClicked;
-            dgvDatSanh.OrderCodeClicked += DgvDatSanh_OrderCodeClicked;
-            dgvDatSanh.CellDoubleClick += DgvDatSanh_CellDoubleClick;
+                dgvDatSanh.HuyDatClicked += DgvDatSanh_HuyDatClicked;
+                dgvDatSanh.OrderCodeClicked += DgvDatSanh_OrderCodeClicked;
+                dgvDatSanh.CellDoubleClick += DgvDatSanh_CellDoubleClick;
+            }
+        }
+
+        public void RefreshData()
+        {
+            try
+            {
+                LoadDanhSachDatSanh();
+                CapNhatThongKe();
+            }
+            catch (Exception ex)
+            {
+                
+            }
         }
 
         private void CapNhatThongKe()
@@ -215,7 +228,7 @@ namespace UI
                     string tienCocFormatted = tienCoc > 0 ? tienCoc.ToString("#,##0") + " ₫" : "0 ₫";
 
                     dgvDatSanh.Rows.Add(maDon, ngayTiec, khachHang, tenSanh, soBanKhach, 
-                                       tongTienFormatted, tienCocFormatted, trangThaiHienThi, "");
+                                       tongTienFormatted, tienCocFormatted, trangThaiHienThi);
                 }
 
                 DieuChinhDoRongCot();
@@ -237,29 +250,28 @@ namespace UI
 
                 string maDon = dgvDatSanh.Rows[e.RowIndex].Cells["MaDon"].Value?.ToString() ?? "";
                 
-                DialogResult result = MessageBox.Show(
-                    $"Bạn có chắc chắn muốn hủy đặt sảnh cho đơn {maDon}?",
-                    "Xác nhận hủy đặt",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                // DialogResult result = MessageBox.Show(
+                //     $"Bạn có chắc chắn muốn hủy đặt sảnh cho đơn {maDon}?",
+                //     "Xác nhận hủy đặt",
+                //     MessageBoxButtons.YesNo,
+                //     MessageBoxIcon.Question);
 
-                if (result != DialogResult.Yes)
-                    return;
+                // if (result != DialogResult.Yes)
+                //     return;
 
                 if (maDon.StartsWith("DS") && int.TryParse(maDon.Substring(2), out int datSanhId))
                 {
-                    string errorMessage;
-                    bool success = _datSanhBLL.HuyDatSanh(datSanhId, out errorMessage);
+                    // Mở form hủy đặt sảnh
+                    var formHuy = new Frm_HuyDatSanh(datSanhId)
+                    {
+                        StartPosition = FormStartPosition.CenterParent
+                    };
                     
-                    if (success)
+                    if (formHuy.ShowDialog(this) == DialogResult.OK)
                     {
                         MessageBox.Show($"Đã hủy đặt sảnh cho đơn {maDon}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadDanhSachDatSanh();
                         CapNhatThongKe();
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Lỗi hủy đặt sảnh: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -323,30 +335,6 @@ namespace UI
             try
             {
                 if (dgvDatSanh == null || dgvDatSanh.Columns.Count == 0) return;
-
-                int totalFixedWidth = 0;
-                foreach (DataGridViewColumn col in dgvDatSanh.Columns)
-                {
-                    if (col.Name != "ThaoTac" && col.AutoSizeMode != DataGridViewAutoSizeColumnMode.Fill)
-                    {
-                        totalFixedWidth += col.Width;
-                    }
-                }
-
-                var colThaoTac = dgvDatSanh.Columns["ThaoTac"];
-                if (colThaoTac != null && dgvDatSanh.ClientSize.Width > 0)
-                {
-                    int availableWidth = dgvDatSanh.ClientSize.Width - totalFixedWidth - 20;
-                    if (availableWidth > colThaoTac.MinimumWidth)
-                    {
-                        colThaoTac.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                        colThaoTac.Width = availableWidth;
-                    }
-                    else
-                    {
-                        colThaoTac.Width = colThaoTac.MinimumWidth;
-                    }
-                }
             }
             catch (Exception ex)
             {

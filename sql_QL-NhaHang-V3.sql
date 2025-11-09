@@ -64,7 +64,7 @@ CREATE TABLE dbo.khach_hang(
   ho_ten        NVARCHAR(150) NOT NULL,
   sdt           NVARCHAR(30)  NULL,
   email         NVARCHAR(150) NULL,
-  ghi_chu       NVARCHAR(300) NULL
+  ghi_chu       NVARCHAR(max) NULL
 );
 
 -- Thực đơn & Dịch vụ (đơn giản)
@@ -131,7 +131,7 @@ CREATE TABLE dbo.dat_ban(
   so_khach      INT NOT NULL CHECK (so_khach > 0),
   trang_thai    NVARCHAR(20) NOT NULL DEFAULT N'CHỜ XÁC NHẬN'
                CHECK (trang_thai IN (N'CHỜ XÁC NHẬN',N'ĐÃ XÁC NHẬN',N'ĐÃ HỦY',N'ĐÃ PHỤC VỤ')),
-  ghi_chu       NVARCHAR(300) NULL,
+  ghi_chu       NVARCHAR(max) NULL,
   FOREIGN KEY (chi_nhanh_id)  REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (ban_id)        REFERENCES dbo.ban(ban_id),
   FOREIGN KEY (khach_hang_id) REFERENCES dbo.khach_hang(khach_hang_id)
@@ -160,7 +160,7 @@ CREATE TABLE dbo.phieu_order_ct(
   so_luong       DECIMAL(18,3) NOT NULL CHECK (so_luong > 0),
   don_gia        DECIMAL(18,2) NOT NULL CHECK (don_gia >= 0),
   thanh_tien     AS (ROUND(so_luong * don_gia, 0)) PERSISTED,
-  ghi_chu_bep    NVARCHAR(200) NULL,
+  ghi_chu_bep    NVARCHAR(max) NULL,
   FOREIGN KEY (phieu_order_id) REFERENCES dbo.phieu_order(phieu_order_id),
   FOREIGN KEY (mon_id)         REFERENCES dbo.mon_an(mon_id)
 );
@@ -225,7 +225,7 @@ CREATE TABLE dbo.dat_sanh(
   goi_id         INT NULL,
   trang_thai     NVARCHAR(20) NOT NULL DEFAULT N'CHỜ XÁC NHẬN'
                 CHECK (trang_thai IN (N'CHỜ XÁC NHẬN',N'ĐÃ CỌC',N'ĐÃ HỦY',N'ĐÃ THANH TOÁN', N'HOÀN TẤT')),
-  ghi_chu        NVARCHAR(300) NULL,
+  ghi_chu        NVARCHAR(max) NULL,
   UNIQUE (sanh_id, ca_id, ngay_to_chuc),
   FOREIGN KEY (chi_nhanh_id)  REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (sanh_id)       REFERENCES dbo.sanh(sanh_id),
@@ -290,7 +290,7 @@ CREATE TABLE dbo.hop_dong_coc(
   so_tien     DECIMAL(18,2) NOT NULL CHECK (so_tien > 0),
   ngay_nop    DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
   hinh_thuc   NVARCHAR(30)  NULL,
-  ghi_chu     NVARCHAR(300) NULL,
+  ghi_chu     NVARCHAR(max) NULL,
   FOREIGN KEY (hop_dong_id) REFERENCES dbo.hop_dong(hop_dong_id)
 );
 
@@ -301,7 +301,7 @@ CREATE TABLE dbo.hop_dong_tt(
   so_tien     DECIMAL(18,2) NOT NULL CHECK (so_tien > 0),
   ngay_tt     DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
   hinh_thuc   NVARCHAR(30)  NULL,
-  noi_dung    NVARCHAR(200) NULL,
+  noi_dung    NVARCHAR(max) NULL,
   FOREIGN KEY (hop_dong_id) REFERENCES dbo.hop_dong(hop_dong_id)
 );
 

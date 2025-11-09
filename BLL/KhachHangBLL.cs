@@ -60,5 +60,17 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - Lấy thông tin khách hàng: {ex.Message}");
             }
         }
+
+        public bool CapNhatKhachHang(int khachHangId, string hoTen, string email, string ghiChu)
+        {
+            try
+            {
+                return _khachHangDAL.CapNhatKhachHang(khachHangId, hoTen, email, ghiChu);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Cập nhật khách hàng: {ex.Message}");
+            }
+        }
     }
 }

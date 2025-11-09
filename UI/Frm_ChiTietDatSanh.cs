@@ -16,6 +16,7 @@ namespace UI
         private int _datSanhId;
         private DatSanhBLL _datSanhBLL;
         private GoiTiecBLL _goiTiecBLL;
+        private string _trangThai = "";
 
         public Frm_ChiTietDatSanh(int datSanhId)
         {
@@ -33,8 +34,18 @@ namespace UI
             panelTongQuan.Location = new Point(7, 168);
 
             this.Load += Frm_ChiTietDatSanh_Load;
+
+            if (dgvDanhSachCoc != null)
+            {
+                dgvDanhSachCoc.CellClick += DgvDanhSachCoc_CellClick;
+            }
+
+            if (dgvDanhSachThanhToan != null)
+            {
+                dgvDanhSachThanhToan.CellClick += DgvDanhSachThanhToan_CellClick;
+            }
         }
-    
+
         private void Frm_ChiTietDatSanh_Load(object sender, EventArgs e)
         {
             this.Size = new Size(1036, 695);
@@ -60,14 +71,18 @@ namespace UI
                     return;
                 }
 
+                _trangThai = datSanhInfo["trang_thai"]?.ToString() ?? "";
+
                 HienThiThongTinTongQuan(datSanhInfo);
+                CapNhatTrangThaiChucNang();
+                KiemTraVaCapNhatTrangThaiTheoTienCoc();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tải thông tin chi tiết: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+
         private void HienThiThongTinGoiVaThucDon(DataRow datSanhInfo)
         {
             if (datSanhInfo == null) return;
@@ -147,7 +162,7 @@ namespace UI
                         dgvDanhSachMonAn.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
                         dgvDanhSachMonAn.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                         dgvDanhSachMonAn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-                        
+
                         Font cellFont = new Font("Segoe UI", 10F, FontStyle.Regular);
                         Font headerFont = new Font("Segoe UI", 10F, FontStyle.Bold);
                         dgvDanhSachMonAn.DefaultCellStyle.Font = cellFont;
@@ -161,8 +176,8 @@ namespace UI
                             Width = 200,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                             MinimumWidth = 150,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
                                 Font = cellFont,
                                 WrapMode = DataGridViewTriState.True
                             }
@@ -175,8 +190,8 @@ namespace UI
                             DataPropertyName = "so_luong",
                             Width = 100,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight,
                                 Format = "0"
@@ -190,9 +205,9 @@ namespace UI
                             DataPropertyName = "don_gia",
                             Width = 120,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
-                                Format = "N0", 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
+                                Format = "N0",
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight
                             }
@@ -205,9 +220,9 @@ namespace UI
                             DataPropertyName = "thanh_tien",
                             Width = 120,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
-                                Format = "N0", 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
+                                Format = "N0",
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight
                             }
@@ -257,7 +272,7 @@ namespace UI
                         dgvDanhSachDichVu.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
                         dgvDanhSachDichVu.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                         dgvDanhSachDichVu.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-                        
+
                         Font cellFont = new Font("Segoe UI", 10F, FontStyle.Regular);
                         Font headerFont = new Font("Segoe UI", 10F, FontStyle.Bold);
                         dgvDanhSachDichVu.DefaultCellStyle.Font = cellFont;
@@ -271,8 +286,8 @@ namespace UI
                             Width = 200,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                             MinimumWidth = 150,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
                                 Font = cellFont,
                                 WrapMode = DataGridViewTriState.True
                             }
@@ -285,8 +300,8 @@ namespace UI
                             DataPropertyName = "so_luong",
                             Width = 100,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight,
                                 Format = "0"
@@ -300,9 +315,9 @@ namespace UI
                             DataPropertyName = "don_gia",
                             Width = 120,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
-                                Format = "N0", 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
+                                Format = "N0",
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight
                             }
@@ -315,9 +330,9 @@ namespace UI
                             DataPropertyName = "thanh_tien",
                             Width = 120,
                             AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                            DefaultCellStyle = new DataGridViewCellStyle 
-                            { 
-                                Format = "N0", 
+                            DefaultCellStyle = new DataGridViewCellStyle
+                            {
+                                Format = "N0",
                                 Font = cellFont,
                                 Alignment = DataGridViewContentAlignment.MiddleRight
                             }
@@ -426,7 +441,7 @@ namespace UI
                 if (lbSanh != null)
                     lbSanh.Text = datSanhInfo["ten_sanh"]?.ToString() ?? "";
             }
-            catch (Exception ex){}
+            catch (Exception ex) { }
 
             if (lbGiovaNgayToChuc != null)
             {
@@ -460,7 +475,7 @@ namespace UI
                 {
                     TimeSpan gio10_30 = new TimeSpan(10, 30, 0);
                     TimeSpan gio17_30 = new TimeSpan(17, 30, 0);
-                    
+
                     if (Math.Abs((gioToChucTimeSpan.Value - gio10_30).TotalMinutes) <= 5)
                     {
                         gioKt = "13:30";
@@ -640,6 +655,8 @@ namespace UI
             {
                 case "CHỜ XÁC NHẬN":
                     return "Chờ xác nhận";
+                case "XÁC NHẬN":
+                    return "Xác nhận";
                 case "ĐÃ CỌC":
                     return "Đã cọc";
                 case "ĐÃ HỦY":
@@ -672,6 +689,9 @@ namespace UI
                     case "CHỜ XÁC NHẬN":
                         panel.Style = Sunny.UI.UIStyle.Orange;
                         break;
+                    case "XÁC NHẬN":
+                        panel.Style = Sunny.UI.UIStyle.Blue;
+                        break;
                     case "ĐÃ CỌC":
                         panel.Style = Sunny.UI.UIStyle.Blue;
                         break;
@@ -698,7 +718,466 @@ namespace UI
 
         private void btnQuayLai_Click(object sender, EventArgs e)
         {
+            KiemTraVaCapNhatTrangThaiTheoTienCoc();
+            this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        // Load thông tin thanh toán và cọc
+        private void LoadThongTinThanhToan()
+        {
+            try
+            {
+                int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                if (!hopDongId.HasValue || hopDongId.Value <= 0)
+                {
+                    ClearThanhToanData();
+                    return;
+                }
+
+                LoadDanhSachCoc(hopDongId.Value);
+                LoadDanhSachThanhToan(hopDongId.Value);
+                TinhToanTongTien(hopDongId.Value);
+                CapNhatTrangThaiChucNang();
+                KiemTraVaCapNhatTrangThaiTheoTienCoc();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải thông tin thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Load danh sách cọc vào DataGridView
+        private void LoadDanhSachCoc(int hopDongId)
+        {
+            try
+            {
+                DataTable dtCoc = _datSanhBLL.LayDanhSachCoc(hopDongId);
+
+                dgvDanhSachCoc.DataSource = null;
+                dgvDanhSachCoc.Columns.Clear();
+                dgvDanhSachCoc.Rows.Clear();
+
+                if (dtCoc == null || dtCoc.Rows.Count == 0)
+                {
+                    SetupCocColumns();
+                    return;
+                }
+
+                SetupCocColumns();
+
+                foreach (DataRow row in dtCoc.Rows)
+                {
+                    DateTime ngayNop = row["ngay_nop"] != DBNull.Value ? Convert.ToDateTime(row["ngay_nop"]).ToLocalTime() : DateTime.Now;
+                    string hinhThuc = row["hinh_thuc"] != DBNull.Value ? row["hinh_thuc"].ToString() : "";
+                    decimal soTien = row["so_tien"] != DBNull.Value ? Convert.ToDecimal(row["so_tien"]) : 0;
+                    string ghiChu = row["ghi_chu"] != DBNull.Value ? row["ghi_chu"].ToString() : "";
+                    int cocId = row["coc_id"] != DBNull.Value ? Convert.ToInt32(row["coc_id"]) : 0;
+
+                    int rowIndex = dgvDanhSachCoc.Rows.Add();
+                    dgvDanhSachCoc.Rows[rowIndex].Cells["NgayNop"].Value = ngayNop.ToString("d/M/yyyy");
+                    dgvDanhSachCoc.Rows[rowIndex].Cells["HinhThuc"].Value = hinhThuc;
+                    dgvDanhSachCoc.Rows[rowIndex].Cells["SoTien"].Value = FormatCurrency(soTien);
+                    dgvDanhSachCoc.Rows[rowIndex].Cells["GhiChu"].Value = ghiChu;
+                    dgvDanhSachCoc.Rows[rowIndex].Tag = cocId; // Lưu ID
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách cọc: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupCocColumns()
+        {
+            dgvDanhSachCoc.AutoGenerateColumns = false;
+            dgvDanhSachCoc.AllowUserToAddRows = false;
+            dgvDanhSachCoc.ColumnHeadersHeight = 35;
+            dgvDanhSachCoc.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            Font cellFont = new Font("Segoe UI", 12F, FontStyle.Regular);
+            DataGridViewCellStyle cellStyle = new DataGridViewCellStyle
+            {
+                Font = cellFont,
+                ForeColor = Color.Black
+            };
+
+            // Ngày nộp
+            if (!dgvDanhSachCoc.Columns.Contains("NgayNop"))
+            {
+                dgvDanhSachCoc.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "NgayNop",
+                    HeaderText = "Ngày nộp",
+                    Width = 120,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Hình thức
+            if (!dgvDanhSachCoc.Columns.Contains("HinhThuc"))
+            {
+                dgvDanhSachCoc.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "HinhThuc",
+                    HeaderText = "Hình thức",
+                    Width = 150,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Số tiền
+            if (!dgvDanhSachCoc.Columns.Contains("SoTien"))
+            {
+                dgvDanhSachCoc.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "SoTien",
+                    HeaderText = "Số tiền",
+                    Width = 150,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black,
+                        Alignment = DataGridViewContentAlignment.MiddleRight
+                    }
+                });
+            }
+
+            // Ghi chú
+            if (!dgvDanhSachCoc.Columns.Contains("GhiChu"))
+            {
+                dgvDanhSachCoc.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "GhiChu",
+                    HeaderText = "Ghi chú",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    MinimumWidth = 200,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Thao tác - Edit
+            if (!dgvDanhSachCoc.Columns.Contains("ColEdit"))
+            {
+                var colEdit = new DataGridViewButtonColumn
+                {
+                    Name = "ColEdit",
+                    HeaderText = "Thao tác",
+                    Text = "Edit",
+                    UseColumnTextForButtonValue = true,
+                    Width = 80,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black
+                    }
+                };
+                dgvDanhSachCoc.Columns.Add(colEdit);
+            }
+
+            // Thao tác - Delete
+            if (!dgvDanhSachCoc.Columns.Contains("ColDelete"))
+            {
+                var colDelete = new DataGridViewButtonColumn
+                {
+                    Name = "ColDelete",
+                    HeaderText = "",
+                    Text = "Delete",
+                    UseColumnTextForButtonValue = true,
+                    Width = 75,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black
+                    }
+                };
+                dgvDanhSachCoc.Columns.Add(colDelete);
+            }
+        }
+
+        // Load danh sách thanh toán vào DataGridView
+        private void LoadDanhSachThanhToan(int hopDongId)
+        {
+            try
+            {
+                DataTable dtThanhToan = _datSanhBLL.LayDanhSachThanhToan(hopDongId);
+
+                dgvDanhSachThanhToan.DataSource = null;
+                dgvDanhSachThanhToan.Columns.Clear();
+                dgvDanhSachThanhToan.Rows.Clear();
+
+                if (dtThanhToan == null || dtThanhToan.Rows.Count == 0)
+                {
+                    SetupThanhToanColumns();
+                    return;
+                }
+                SetupThanhToanColumns();
+                foreach (DataRow row in dtThanhToan.Rows)
+                {
+                    DateTime ngayTT = row["ngay_tt"] != DBNull.Value ? Convert.ToDateTime(row["ngay_tt"]).ToLocalTime() : DateTime.Now;
+                    string hinhThuc = row["hinh_thuc"] != DBNull.Value ? row["hinh_thuc"].ToString() : "";
+                    decimal soTien = row["so_tien"] != DBNull.Value ? Convert.ToDecimal(row["so_tien"]) : 0;
+                    string noiDung = row["noi_dung"] != DBNull.Value ? row["noi_dung"].ToString() : "";
+                    int ttId = row["tt_id"] != DBNull.Value ? Convert.ToInt32(row["tt_id"]) : 0;
+
+                    int rowIndex = dgvDanhSachThanhToan.Rows.Add();
+                    dgvDanhSachThanhToan.Rows[rowIndex].Cells["NgayThanhToan"].Value = ngayTT.ToString("d/M/yyyy");
+                    dgvDanhSachThanhToan.Rows[rowIndex].Cells["HinhThucTT"].Value = hinhThuc;
+                    dgvDanhSachThanhToan.Rows[rowIndex].Cells["SoTienTT"].Value = FormatCurrency(soTien);
+                    dgvDanhSachThanhToan.Rows[rowIndex].Cells["NoiDung"].Value = noiDung;
+                    dgvDanhSachThanhToan.Rows[rowIndex].Tag = ttId; // Lưu ID
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupThanhToanColumns()
+        {
+            dgvDanhSachThanhToan.AutoGenerateColumns = false;
+            dgvDanhSachThanhToan.AllowUserToAddRows = false;
+            dgvDanhSachThanhToan.ColumnHeadersHeight = 35;
+            dgvDanhSachThanhToan.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            Font cellFont = new Font("Segoe UI", 12F, FontStyle.Regular);
+            DataGridViewCellStyle cellStyle = new DataGridViewCellStyle
+            {
+                Font = cellFont,
+                ForeColor = Color.Black
+            };
+
+            // Ngày thanh toán
+            if (!dgvDanhSachThanhToan.Columns.Contains("NgayThanhToan"))
+            {
+                dgvDanhSachThanhToan.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "NgayThanhToan",
+                    HeaderText = "Ngày thanh toán",
+                    Width = 120,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Hình thức
+            if (!dgvDanhSachThanhToan.Columns.Contains("HinhThucTT"))
+            {
+                dgvDanhSachThanhToan.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "HinhThucTT",
+                    HeaderText = "Hình thức",
+                    Width = 150,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Số tiền
+            if (!dgvDanhSachThanhToan.Columns.Contains("SoTienTT"))
+            {
+                dgvDanhSachThanhToan.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "SoTienTT",
+                    HeaderText = "Số tiền",
+                    Width = 150,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black,
+                        Alignment = DataGridViewContentAlignment.MiddleRight
+                    }
+                });
+            }
+
+            // Nội dung
+            if (!dgvDanhSachThanhToan.Columns.Contains("NoiDung"))
+            {
+                dgvDanhSachThanhToan.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "NoiDung",
+                    HeaderText = "Nội dung",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    MinimumWidth = 200,
+                    DefaultCellStyle = cellStyle
+                });
+            }
+
+            // Thao tác - Edit
+            if (!dgvDanhSachThanhToan.Columns.Contains("ColEditTT"))
+            {
+                var colEdit = new DataGridViewButtonColumn
+                {
+                    Name = "ColEditTT",
+                    HeaderText = "Thao tác",
+                    Text = "Edit",
+                    UseColumnTextForButtonValue = true,
+                    Width = 80,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black
+                    }
+                };
+                dgvDanhSachThanhToan.Columns.Add(colEdit);
+            }
+
+            // Thao tác - Delete
+            if (!dgvDanhSachThanhToan.Columns.Contains("ColDeleteTT"))
+            {
+                var colDelete = new DataGridViewButtonColumn
+                {
+                    Name = "ColDeleteTT",
+                    HeaderText = "",
+                    Text = "Delete",
+                    UseColumnTextForButtonValue = true,
+                    Width = 75,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Font = cellFont,
+                        ForeColor = Color.Black
+                    }
+                };
+                dgvDanhSachThanhToan.Columns.Add(colDelete);
+            }
+        }
+
+        // Tính toán và hiển thị tổng tiền
+        private void TinhToanTongTien(int hopDongId)
+        {
+            try
+            {
+                decimal tongDuKien = _datSanhBLL.LayTongDuKien(hopDongId);
+                if (lbTongDuKien != null)
+                    lbTongDuKien.Text = FormatCurrency(tongDuKien);
+
+                decimal tongCoc = 0;
+                DataTable dtCoc = _datSanhBLL.LayDanhSachCoc(hopDongId);
+                if (dtCoc != null)
+                {
+                    foreach (DataRow row in dtCoc.Rows)
+                    {
+                        if (row["so_tien"] != DBNull.Value)
+                            tongCoc += Convert.ToDecimal(row["so_tien"]);
+                    }
+                }
+                if (lbTongCocDaThu != null)
+                    lbTongCocDaThu.Text = FormatCurrency(tongCoc);
+
+                decimal tongThanhToan = 0;
+                DataTable dtThanhToan = _datSanhBLL.LayDanhSachThanhToan(hopDongId);
+                if (dtThanhToan != null)
+                {
+                    foreach (DataRow row in dtThanhToan.Rows)
+                    {
+                        if (row["so_tien"] != DBNull.Value)
+                            tongThanhToan += Convert.ToDecimal(row["so_tien"]);
+                    }
+                }
+                if (lbTongDaThanhToan != null)
+                    lbTongDaThanhToan.Text = FormatCurrency(tongThanhToan);
+
+                decimal tongConLai = tongDuKien - tongCoc - tongThanhToan;
+                if (lbTongConLai != null)
+                    lbTongConLai.Text = FormatCurrency(tongConLai);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tính toán tổng tiền: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Clear dữ liệu thanh toán khi chưa có hợp đồng
+        private void ClearThanhToanData()
+        {
+            dgvDanhSachCoc.DataSource = null;
+            dgvDanhSachCoc.Columns.Clear();
+            dgvDanhSachCoc.Rows.Clear();
+            SetupCocColumns();
+
+            dgvDanhSachThanhToan.DataSource = null;
+            dgvDanhSachThanhToan.Columns.Clear();
+            dgvDanhSachThanhToan.Rows.Clear();
+            SetupThanhToanColumns();
+
+            if (lbTongDuKien != null) lbTongDuKien.Text = "0 đ";
+            if (lbTongCocDaThu != null) lbTongCocDaThu.Text = "0 đ";
+            if (lbTongDaThanhToan != null) lbTongDaThanhToan.Text = "0 đ";
+            if (lbTongConLai != null) lbTongConLai.Text = "0 đ";
+        }
+
+        private string FormatCurrency(decimal amount)
+        {
+            return amount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + " ₫";
+        }
+
+        private void KiemTraVaCapNhatTrangThaiTheoTienCoc()
+        {
+            try
+            {
+                int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                if (!hopDongId.HasValue || hopDongId.Value <= 0)
+                    return;
+
+                DataRow datSanhInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
+                if (datSanhInfo == null)
+                    return;
+
+                string trangThaiHienTai = datSanhInfo["trang_thai"]?.ToString() ?? "";
+                
+                if (trangThaiHienTai.ToUpper() == "ĐÃ HỦY" || trangThaiHienTai.ToUpper() == "HOÀN TẤT")
+                {
+                    return;
+                }
+
+                DataTable dtCoc = _datSanhBLL.LayDanhSachCoc(hopDongId.Value);
+                bool coCoc = dtCoc != null && dtCoc.Rows.Count > 0;
+
+                string trangThaiMoi;
+                if (coCoc)
+                {
+                    trangThaiMoi = "ĐÃ CỌC";
+                }
+                else
+                {
+                    trangThaiMoi = "CHỜ XÁC NHẬN";
+                }
+
+                if (trangThaiHienTai.ToUpper() != trangThaiMoi.ToUpper())
+                {
+                    bool success = _datSanhBLL.CapNhatTrangThaiDatSanh(_datSanhId, trangThaiMoi, out string errorMessage);
+                    if (success)
+                    {
+                        _trangThai = trangThaiMoi;
+                        
+                        if (trangThaiMoi.ToUpper() == "ĐÃ CỌC")
+                        {
+                            int hoaDonId = _datSanhBLL.TaoHoaDonKhiDaCoc(_datSanhId, out string errorHoaDon);
+                            if (!string.IsNullOrEmpty(errorHoaDon))
+                            {
+                                MessageBox.Show($"Lỗi tạo hóa đơn: {errorHoaDon}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        
+                        DataRow updatedInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
+                        if (updatedInfo != null)
+                        {
+                            HienThiThongTinTongQuan(updatedInfo);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi khi kiểm tra và cập nhật trạng thái: {ex.Message}");
+            }
         }
 
         private void segmentedPill1_SelectedIndexChanged(object sender, EventArgs e)
@@ -746,7 +1225,377 @@ namespace UI
                     panelTongQuan.Visible = false;
                     panelGoivaThucDon.Visible = false;
                     panelHopDong.Visible = false;
+                    // Load dữ liệu khi chuyển sang tab này
+                    LoadThongTinThanhToan();
                     break;
+            }
+        }
+
+        private void btnThemDotCoc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var formThemCoc = new Frm_ThemCocMoi(_datSanhId)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+
+                if (formThemCoc.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Thêm cọc thành công, load lại thông tin thanh toán
+                    if (panelThanhToan.Visible)
+                    {
+                        LoadThongTinThanhToan();
+                    }
+                    DataRow updatedInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
+                    if (updatedInfo != null)
+                    {
+                        HienThiThongTinTongQuan(updatedInfo);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm đợt cọc: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnThemPhieuThanhToan_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var formThemThanhToan = new Frm_ThemPhieuThanhToan(_datSanhId)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+
+                if (formThemThanhToan.ShowDialog(this) == DialogResult.OK)
+                {
+                    // thêm thanh toán thành công, load lại thông tin thanh toán
+                    if (panelThanhToan.Visible)
+                    {
+                        LoadThongTinThanhToan();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm phiếu thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDoiLich_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new Frm_DoiLichDatSanh(_datSanhId)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    MessageBox.Show("Đổi lịch đặt sảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadChiTietDatSanh();
+                    
+                    if (panelThanhToan.Visible)
+                    {
+                        LoadThongTinThanhToan();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi đổi lịch đặt sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnHuyDatSanh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var formHuy = new Frm_HuyDatSanh(_datSanhId)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+
+                if (formHuy.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Hủy thành công
+                    MessageBox.Show("Hủy đặt sảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadChiTietDatSanh();
+                    
+                    if (panelThanhToan.Visible)
+                    {
+                        LoadThongTinThanhToan();
+                    }
+                    else
+                    {
+                        CapNhatTrangThaiChucNang();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi hủy đặt sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnXoaDatDatVinhVien_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Xác nhận xóa vĩnh viễn
+                var confirmResult = MessageBox.Show(
+                    "Bạn có chắc chắn muốn XÓA VĨNH VIỄN đặt sảnh này?\n\n" +
+                    "CẢNH BÁO: Thao tác này không thể hoàn tác!\n" +
+                    "Tất cả dữ liệu liên quan (hợp đồng, cọc, thanh toán) sẽ bị xóa vĩnh viễn.",
+                    "Xác nhận xóa vĩnh viễn",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirmResult != DialogResult.Yes)
+                    return;
+
+                // Xác nhận lần 2
+                var confirmResult2 = MessageBox.Show(
+                    "Bạn thực sự muốn xóa vĩnh viễn?\n\n" +
+                    "Đây là lần xác nhận cuối cùng!",
+                    "Xác nhận lần cuối",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Stop);
+
+                if (confirmResult2 != DialogResult.Yes)
+                    return;
+
+                bool result = _datSanhBLL.XoaDatSanhVinhVien(_datSanhId, out string errorMessage);
+
+                if (result)
+                {
+                    MessageBox.Show("Xóa đặt sảnh vĩnh viễn thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show($"Lỗi khi xóa đặt sảnh: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa đặt sảnh vĩnh viễn: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Vô hiệu hóa các chức năng khi trạng thái là "ĐÃ HỦY"
+        private void CapNhatTrangThaiChucNang()
+        {
+            bool daHuy = _trangThai.ToUpper() == "ĐÃ HỦY";
+
+            if (btnThemDotCoc != null)
+            {
+                btnThemDotCoc.Enabled = !daHuy;
+            }
+
+            if (btnThemPhieuThanhToan != null)
+            {
+                btnThemPhieuThanhToan.Enabled = !daHuy;
+            }
+
+            if (btnDoiLich != null)
+            {
+                btnDoiLich.Enabled = !daHuy;
+            }
+
+            if (btnHuyDatSanh != null)
+            {
+                btnHuyDatSanh.Enabled = !daHuy;
+            }
+
+            if (dgvDanhSachCoc != null)
+            {
+                if (dgvDanhSachCoc.Columns.Contains("ColEdit"))
+                {
+                    dgvDanhSachCoc.Columns["ColEdit"].Visible = !daHuy;
+                }
+                if (dgvDanhSachCoc.Columns.Contains("ColDelete"))
+                {
+                    dgvDanhSachCoc.Columns["ColDelete"].Visible = !daHuy;
+                }
+            }
+
+            if (dgvDanhSachThanhToan != null)
+            {
+                if (dgvDanhSachThanhToan.Columns.Contains("ColEditTT"))
+                {
+                    dgvDanhSachThanhToan.Columns["ColEditTT"].Visible = !daHuy;
+                }
+                if (dgvDanhSachThanhToan.Columns.Contains("ColDeleteTT"))
+                {
+                    dgvDanhSachThanhToan.Columns["ColDeleteTT"].Visible = !daHuy;
+                }
+            }
+        }
+
+        private void DgvDanhSachCoc_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= dgvDanhSachCoc.Rows.Count)
+                return;
+
+            DataGridViewRow row = dgvDanhSachCoc.Rows[e.RowIndex];
+            int? cocId = row.Tag as int?;
+
+            if (!cocId.HasValue || cocId.Value <= 0)
+                return;
+
+            // Xử lý nút Edit
+            if (e.ColumnIndex >= 0 && dgvDanhSachCoc.Columns[e.ColumnIndex].Name == "ColEdit")
+            {
+                try
+                {
+                    var formEdit = new Frm_ThemCocMoi(_datSanhId, cocId.Value)
+                    {
+                        StartPosition = FormStartPosition.CenterParent
+                    };
+
+                    if (formEdit.ShowDialog(this) == DialogResult.OK)
+                    {
+                        int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                        if (hopDongId.HasValue)
+                        {
+                            LoadDanhSachCoc(hopDongId.Value);
+                            TinhToanTongTien(hopDongId.Value);
+                            KiemTraVaCapNhatTrangThaiTheoTienCoc();
+                            DataRow updatedInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
+                            if (updatedInfo != null)
+                            {
+                                HienThiThongTinTongQuan(updatedInfo);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi mở form chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            // Xử lý nút Delete
+            else if (e.ColumnIndex >= 0 && dgvDanhSachCoc.Columns[e.ColumnIndex].Name == "ColDelete")
+            {
+                try
+                {
+                    var confirmResult = MessageBox.Show(
+                        "Bạn có chắc chắn muốn xóa đợt cọc này?",
+                        "Xác nhận xóa",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (confirmResult == DialogResult.Yes)
+                    {
+                        bool success = _datSanhBLL.XoaCoc(cocId.Value, out string errorMessage);
+
+                        if (success)
+                        {
+                            MessageBox.Show("Xóa đợt cọc thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            
+                            int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                            if (hopDongId.HasValue)
+                            {
+                                LoadDanhSachCoc(hopDongId.Value);
+                                TinhToanTongTien(hopDongId.Value);
+                                KiemTraVaCapNhatTrangThaiTheoTienCoc();
+                                DataRow updatedInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
+                                if (updatedInfo != null)
+                                {
+                                    HienThiThongTinTongQuan(updatedInfo);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Lỗi khi xóa đợt cọc: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xóa đợt cọc: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void DgvDanhSachThanhToan_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= dgvDanhSachThanhToan.Rows.Count)
+                return;
+
+            DataGridViewRow row = dgvDanhSachThanhToan.Rows[e.RowIndex];
+            int? ttId = row.Tag as int?;
+
+            if (!ttId.HasValue || ttId.Value <= 0)
+                return;
+
+            // Xử lý nút Edit
+            if (e.ColumnIndex >= 0 && dgvDanhSachThanhToan.Columns[e.ColumnIndex].Name == "ColEditTT")
+            {
+                try
+                {
+                    var formEdit = new Frm_ThemCocMoi(_datSanhId, ttId.Value, true)
+                    {
+                        StartPosition = FormStartPosition.CenterParent
+                    };
+
+                    if (formEdit.ShowDialog(this) == DialogResult.OK)
+                    {
+                        int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                        if (hopDongId.HasValue)
+                        {
+                            LoadDanhSachThanhToan(hopDongId.Value);
+                            TinhToanTongTien(hopDongId.Value);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi mở form chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            // Xử lý nút Delete
+            else if (e.ColumnIndex >= 0 && dgvDanhSachThanhToan.Columns[e.ColumnIndex].Name == "ColDeleteTT")
+            {
+                try
+                {
+                    var confirmResult = MessageBox.Show(
+                        "Bạn có chắc chắn muốn xóa phiếu thanh toán này?",
+                        "Xác nhận xóa",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (confirmResult == DialogResult.Yes)
+                    {
+                        bool success = _datSanhBLL.XoaThanhToan(ttId.Value, out string errorMessage);
+
+                        if (success)
+                        {
+                            MessageBox.Show("Xóa phiếu thanh toán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            
+                            int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                            if (hopDongId.HasValue)
+                            {
+                                LoadDanhSachThanhToan(hopDongId.Value);
+                                TinhToanTongTien(hopDongId.Value);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Lỗi khi xóa phiếu thanh toán: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xóa phiếu thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }

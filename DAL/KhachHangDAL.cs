@@ -92,5 +92,33 @@ namespace QLNhaHangTiecCuoi.DAL
                 throw new Exception($"Lỗi lấy thông tin khách hàng: {ex.Message}");
             }
         }
+
+        public bool CapNhatKhachHang(int khachHangId, string hoTen, string email, string ghiChu)
+        {
+            try
+            {
+                string query = @"
+                    UPDATE khach_hang
+                    SET ho_ten = @hoTen,
+                        email = @email,
+                        ghi_chu = @ghiChu
+                    WHERE khach_hang_id = @khachHangId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@khachHangId", khachHangId),
+                    new SqlParameter("@hoTen", hoTen),
+                    new SqlParameter("@email", email ?? ""),
+                    new SqlParameter("@ghiChu", ghiChu ?? "")
+                };
+
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi cập nhật khách hàng: {ex.Message}");
+            }
+        }
     }
 }

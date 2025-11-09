@@ -107,6 +107,7 @@
             // 
             // btnVoucher
             // 
+            btnVoucher.Animated = true;
             btnVoucher.BorderColor = Color.DimGray;
             btnVoucher.BorderRadius = 15;
             btnVoucher.BorderThickness = 1;
@@ -141,6 +142,7 @@
             // 
             // btnTienMat
             // 
+            btnTienMat.Animated = true;
             btnTienMat.BackColor = Color.Transparent;
             btnTienMat.BorderRadius = 15;
             btnTienMat.BorderThickness = 2;
@@ -164,6 +166,7 @@
             // 
             // btnThe
             // 
+            btnThe.Animated = true;
             btnThe.BorderColor = Color.FromArgb(224, 224, 224);
             btnThe.BorderRadius = 15;
             btnThe.BorderThickness = 1;
@@ -187,6 +190,7 @@
             // 
             // btnChuyenKhoan
             // 
+            btnChuyenKhoan.Animated = true;
             btnChuyenKhoan.BorderColor = Color.FromArgb(224, 224, 224);
             btnChuyenKhoan.BorderRadius = 15;
             btnChuyenKhoan.BorderThickness = 1;
@@ -287,6 +291,7 @@
             // 
             // btnThanhToan
             // 
+            btnThanhToan.Animated = true;
             btnThanhToan.BorderColor = Color.DimGray;
             btnThanhToan.BorderRadius = 15;
             btnThanhToan.BorderThickness = 1;
@@ -307,6 +312,7 @@
             // 
             // btnInHoaDon
             // 
+            btnInHoaDon.Animated = true;
             btnInHoaDon.BorderColor = Color.DimGray;
             btnInHoaDon.BorderRadius = 15;
             btnInHoaDon.BorderThickness = 1;
@@ -327,6 +333,7 @@
             // 
             // btnXemChiTiet
             // 
+            btnXemChiTiet.Animated = true;
             btnXemChiTiet.BorderColor = Color.DimGray;
             btnXemChiTiet.BorderRadius = 15;
             btnXemChiTiet.BorderThickness = 1;
@@ -347,6 +354,7 @@
             // 
             // btnHienThịQR
             // 
+            btnHienThịQR.Animated = true;
             btnHienThịQR.BorderColor = Color.DimGray;
             btnHienThịQR.BorderRadius = 15;
             btnHienThịQR.BorderThickness = 1;
@@ -568,8 +576,8 @@
             Controls.Add(label1);
             Controls.Add(label11);
             Controls.Add(panelThongTinKhuyenMai);
-            Controls.Add(txtTienNhan);
             Controls.Add(btnHienThịQR);
+            Controls.Add(txtTienNhan);
             FormBorderStyle = FormBorderStyle.None;
             Name = "HoaDonThanhToanPanel";
             Text = "HoaDonThanhToanPanel";

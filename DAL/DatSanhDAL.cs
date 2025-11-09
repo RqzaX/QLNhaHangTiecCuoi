@@ -15,21 +15,33 @@ namespace QLNhaHangTiecCuoi.DAL
         }
 
         // Kiểm tra sảnh có còn trống trong thời gian này không
-        public bool KiemTraSanhTrong(int sanhId, int caId, DateTime ngayToChuc)
+        public bool KiemTraSanhTrong(int sanhId, TimeSpan gioToChuc, DateTime ngayToChuc, int? excludeDatSanhId = null)
         {
             string query = @"
                 SELECT COUNT(*) 
                 FROM dbo.dat_sanh 
                 WHERE sanh_id = @sanhId 
-                  AND ca_id = @caId 
+                  AND gio_to_chuc = @gioToChuc
                   AND ngay_to_chuc = @ngayToChuc
                   AND trang_thai NOT IN (N'ĐÃ HỦY', N'HOÀN TẤT')";
 
+            if (excludeDatSanhId.HasValue)
+            {
+                query += " AND dat_sanh_id != @excludeDatSanhId";
+            }
+
             SqlParameter[] parameters = {
                 new SqlParameter("@sanhId", sanhId),
-                new SqlParameter("@caId", caId),
+                new SqlParameter("@gioToChuc", gioToChuc),
                 new SqlParameter("@ngayToChuc", ngayToChuc.Date)
             };
+
+            if (excludeDatSanhId.HasValue)
+            {
+                var paramList = parameters.ToList();
+                paramList.Add(new SqlParameter("@excludeDatSanhId", excludeDatSanhId.Value));
+                parameters = paramList.ToArray();
+            }
 
             try
             {
@@ -284,6 +296,164 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        // Xóa cọc
+        public bool XoaCoc(int cocId)
+        {
+            string query = @"
+                DELETE FROM dbo.hop_dong_coc
+                WHERE coc_id = @cocId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@cocId", cocId)
+            };
+
+            try
+            {
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi xóa cọc: {ex.Message}", ex);
+            }
+        }
+
+        // Cập nhật cọc
+        public bool CapNhatCoc(int cocId, decimal soTien, DateTime ngayNop, string hinhThuc, string ghiChu)
+        {
+            string query = @"
+                UPDATE dbo.hop_dong_coc
+                SET so_tien = @soTien,
+                    ngay_nop = @ngayNop,
+                    hinh_thuc = @hinhThuc,
+                    ghi_chu = @ghiChu
+                WHERE coc_id = @cocId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@cocId", cocId),
+                new SqlParameter("@soTien", soTien),
+                new SqlParameter("@ngayNop", ngayNop),
+                new SqlParameter("@hinhThuc", hinhThuc ?? ""),
+                new SqlParameter("@ghiChu", ghiChu ?? "")
+            };
+
+            try
+            {
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi cập nhật cọc: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin cọc theo ID
+        public DataRow? LayThongTinCoc(int cocId)
+        {
+            string query = @"
+                SELECT coc_id, hop_dong_id, so_tien, ngay_nop, hinh_thuc, ghi_chu
+                FROM dbo.hop_dong_coc
+                WHERE coc_id = @cocId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@cocId", cocId)
+            };
+
+            try
+            {
+                DataTable dt = _dbHelper.GetDataTable(query, parameters);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    return dt.Rows[0];
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy thông tin cọc: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa thanh toán
+        public bool XoaThanhToan(int ttId)
+        {
+            string query = @"
+                DELETE FROM dbo.hop_dong_tt
+                WHERE tt_id = @ttId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@ttId", ttId)
+            };
+
+            try
+            {
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi xóa thanh toán: {ex.Message}", ex);
+            }
+        }
+
+        // Cập nhật thanh toán
+        public bool CapNhatThanhToan(int ttId, decimal soTien, DateTime ngayTT, string hinhThuc, string noiDung)
+        {
+            string query = @"
+                UPDATE dbo.hop_dong_tt
+                SET so_tien = @soTien,
+                    ngay_tt = @ngayTT,
+                    hinh_thuc = @hinhThuc,
+                    noi_dung = @noiDung
+                WHERE tt_id = @ttId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@ttId", ttId),
+                new SqlParameter("@soTien", soTien),
+                new SqlParameter("@ngayTT", ngayTT),
+                new SqlParameter("@hinhThuc", hinhThuc ?? ""),
+                new SqlParameter("@noiDung", noiDung ?? "")
+            };
+
+            try
+            {
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi cập nhật thanh toán: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin thanh toán theo ID
+        public DataRow? LayThongTinThanhToan(int ttId)
+        {
+            string query = @"
+                SELECT tt_id, hop_dong_id, so_tien, ngay_tt, hinh_thuc, noi_dung
+                FROM dbo.hop_dong_tt
+                WHERE tt_id = @ttId;";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@ttId", ttId)
+            };
+
+            try
+            {
+                DataTable dt = _dbHelper.GetDataTable(query, parameters);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    return dt.Rows[0];
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy thông tin thanh toán: {ex.Message}", ex);
+            }
+        }
+
         // Lưu chi tiết dịch vụ vào hợp đồng
         public bool LuuChiTietDichVu(int hopDongId, int dvId, decimal soLuong, decimal donGia)
         {
@@ -334,12 +504,39 @@ namespace QLNhaHangTiecCuoi.DAL
         }
 
         // Hủy đặt sảnh - cập nhật trạng thái và ghi chú vào các bảng liên quan
-        public bool HuyDatSanh(int datSanhId)
+        public bool HuyDatSanh(int datSanhId, DateTime ngayHuy, string lyDoHuy, decimal soTienHoanCoc)
         {
-            string ghiChu = "Khách hàng hủy đặt sảnh";
-            
             try
             {
+                // Lấy ghi chú hiện tại
+                string queryGetGhiChu = @"
+                    SELECT ISNULL(ghi_chu, N'') AS ghi_chu
+                    FROM dbo.dat_sanh
+                    WHERE dat_sanh_id = @datSanhId";
+
+                SqlParameter[] paramsGet = {
+                    new SqlParameter("@datSanhId", datSanhId)
+                };
+
+                string ghiChuHienTai = "";
+                DataTable dt = _dbHelper.GetDataTable(queryGetGhiChu, paramsGet);
+                if (dt != null && dt.Rows.Count > 0 && dt.Rows[0]["ghi_chu"] != DBNull.Value)
+                {
+                    ghiChuHienTai = dt.Rows[0]["ghi_chu"].ToString() ?? "";
+                }
+
+                string ghiChuMoi = "";
+                if (!string.IsNullOrWhiteSpace(ghiChuHienTai))
+                {
+                    ghiChuMoi = ghiChuHienTai + "\n";
+                }
+                
+                ghiChuMoi += $"Ngày hủy: {ngayHuy:dd/MM/yyyy} | Lý do hủy: {lyDoHuy}";
+                if (soTienHoanCoc > 0)
+                {
+                    ghiChuMoi += $" | Số tiền hoàn cọc: {soTienHoanCoc:N0} ₫";
+                }
+
                 using (var connection = new SqlConnection(_dbHelper.ConnectionString))
                 {
                     connection.Open();
@@ -347,7 +544,6 @@ namespace QLNhaHangTiecCuoi.DAL
                     {
                         try
                         {
-                            // 1. Cập nhật trạng thái và ghi chú trong dat_sanh
                             string queryDatSanh = @"
                                 UPDATE dbo.dat_sanh
                                 SET trang_thai = N'ĐÃ HỦY',
@@ -356,7 +552,7 @@ namespace QLNhaHangTiecCuoi.DAL
 
                             SqlParameter[] paramsDatSanh = {
                                 new SqlParameter("@datSanhId", datSanhId),
-                                new SqlParameter("@ghiChu", ghiChu)
+                                new SqlParameter("@ghiChu", ghiChuMoi)
                             };
 
                             using (var cmd = new SqlCommand(queryDatSanh, connection, transaction))
@@ -365,7 +561,6 @@ namespace QLNhaHangTiecCuoi.DAL
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // 2. Lấy hop_dong_id từ dat_sanh_id
                             string queryHopDongId = @"
                                 SELECT hop_dong_id
                                 FROM dbo.hop_dong
@@ -382,7 +577,6 @@ namespace QLNhaHangTiecCuoi.DAL
                                 }
                             }
 
-                            // 3. Cập nhật ghi chú trong hop_dong_coc (nếu có)
                             if (hopDongId.HasValue)
                             {
                                 string queryCoc = @"
@@ -392,7 +586,7 @@ namespace QLNhaHangTiecCuoi.DAL
 
                                 SqlParameter[] paramsCoc = {
                                     new SqlParameter("@hopDongId", hopDongId.Value),
-                                    new SqlParameter("@ghiChu", ghiChu)
+                                    new SqlParameter("@ghiChu", ghiChuMoi)
                                 };
 
                                 using (var cmd = new SqlCommand(queryCoc, connection, transaction))
@@ -401,7 +595,6 @@ namespace QLNhaHangTiecCuoi.DAL
                                     cmd.ExecuteNonQuery();
                                 }
 
-                                // 4. Cập nhật ghi chú trong hop_dong_tt (nếu có)
                                 string queryTT = @"
                                     UPDATE dbo.hop_dong_tt
                                     SET noi_dung = @ghiChu
@@ -409,7 +602,7 @@ namespace QLNhaHangTiecCuoi.DAL
 
                                 SqlParameter[] paramsTT = {
                                     new SqlParameter("@hopDongId", hopDongId.Value),
-                                    new SqlParameter("@ghiChu", ghiChu)
+                                    new SqlParameter("@ghiChu", ghiChuMoi)
                                 };
 
                                 using (var cmd = new SqlCommand(queryTT, connection, transaction))
@@ -530,6 +723,230 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        // Lấy hop_dong_id từ dat_sanh_id
+        public int? LayHopDongId(int datSanhId)
+        {
+            string query = @"
+                SELECT hop_dong_id
+                FROM dbo.hop_dong
+                WHERE dat_sanh_id = @datSanhId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@datSanhId", datSanhId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                if (result != null && result != DBNull.Value)
+                    return Convert.ToInt32(result);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy hop_dong_id: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách cọc từ hop_dong_id
+        public DataTable LayDanhSachCoc(int hopDongId)
+        {
+            string query = @"
+                SELECT 
+                    coc_id,
+                    so_tien,
+                    ngay_nop,
+                    hinh_thuc,
+                    ghi_chu
+                FROM dbo.hop_dong_coc
+                WHERE hop_dong_id = @hopDongId
+                ORDER BY ngay_nop DESC";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách cọc: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách thanh toán từ hop_dong_id
+        public DataTable LayDanhSachThanhToan(int hopDongId)
+        {
+            string query = @"
+                SELECT 
+                    tt_id,
+                    so_tien,
+                    ngay_tt,
+                    hinh_thuc,
+                    noi_dung
+                FROM dbo.hop_dong_tt
+                WHERE hop_dong_id = @hopDongId
+                ORDER BY ngay_tt DESC";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách thanh toán: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng dự kiến từ hop_dong
+        public decimal LayTongDuKien(int hopDongId)
+        {
+            string query = @"
+                SELECT ISNULL(tong_du_kien, 0)
+                FROM dbo.hop_dong
+                WHERE hop_dong_id = @hopDongId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                if (result != null && result != DBNull.Value)
+                    return Convert.ToDecimal(result);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy tổng dự kiến: {ex.Message}", ex);
+            }
+        }
+
+        // Đổi lịch đặt sảnh
+        public bool DoiLichDatSanh(int datSanhId, int chiNhanhId, int sanhId, TimeSpan gioToChuc, DateTime ngayToChuc, string lyDo, string? ghiChuThem)
+        {
+            try
+            {
+                // Lấy ghi chú hiện tại
+                string queryGetGhiChu = @"
+                    SELECT ISNULL(ghi_chu, N'') AS ghi_chu
+                    FROM dbo.dat_sanh
+                    WHERE dat_sanh_id = @datSanhId";
+
+                SqlParameter[] paramsGet = {
+                    new SqlParameter("@datSanhId", datSanhId)
+                };
+
+                string ghiChuHienTai = "";
+                DataTable dt = _dbHelper.GetDataTable(queryGetGhiChu, paramsGet);
+                if (dt != null && dt.Rows.Count > 0 && dt.Rows[0]["ghi_chu"] != DBNull.Value)
+                {
+                    ghiChuHienTai = dt.Rows[0]["ghi_chu"].ToString() ?? "";
+                }
+
+                // Tạo ghi chú mới
+                string ghiChuMoi = "";
+                if (!string.IsNullOrWhiteSpace(ghiChuHienTai))
+                {
+                    ghiChuMoi = ghiChuHienTai + "\n";
+                }
+                
+                ghiChuMoi += $"Lý do đổi sảnh: {lyDo}";
+                if (!string.IsNullOrWhiteSpace(ghiChuThem))
+                {
+                    ghiChuMoi += $" | Ghi chú: {ghiChuThem}";
+                }
+
+                // Tìm ca_id dựa trên giờ tổ chức
+                string queryGetCa = @"
+                    SELECT ca_id
+                    FROM dbo.ca
+                    WHERE gio_bd = @gioToChuc";
+
+                SqlParameter[] paramsCa = {
+                    new SqlParameter("@gioToChuc", gioToChuc)
+                };
+
+                int caId = 0;
+                DataTable dtCa = _dbHelper.GetDataTable(queryGetCa, paramsCa);
+                if (dtCa != null && dtCa.Rows.Count > 0 && dtCa.Rows[0]["ca_id"] != DBNull.Value)
+                {
+                    caId = Convert.ToInt32(dtCa.Rows[0]["ca_id"]);
+                }
+                else
+                {
+                    // Tạm giờ bắt đầu tiệc test
+                    string tenCa = gioToChuc.Hours == 10 ? "Ca sáng" : "Ca tối";
+                    TimeSpan gioKt = gioToChuc.Hours == 10 ? new TimeSpan(13, 30, 0) : new TimeSpan(20, 30, 0);
+                    
+                    string queryInsertCa = @"
+                        INSERT INTO dbo.ca (ten_ca, gio_bd, gio_kt)
+                        OUTPUT INSERTED.ca_id
+                        VALUES (@tenCa, @gioBd, @gioKt)";
+
+                    SqlParameter[] paramsInsertCa = {
+                        new SqlParameter("@tenCa", tenCa),
+                        new SqlParameter("@gioBd", gioToChuc),
+                        new SqlParameter("@gioKt", gioKt)
+                    };
+
+                    object result = _dbHelper.ExecuteScalar(queryInsertCa, paramsInsertCa);
+                    if (result != null && result != DBNull.Value)
+                    {
+                        caId = Convert.ToInt32(result);
+                    }
+                    else
+                    {
+                        string queryGetCaDefault = @"SELECT TOP 1 ca_id FROM dbo.ca ORDER BY ca_id";
+                        object caIdDefault = _dbHelper.ExecuteScalar(queryGetCaDefault);
+                        if (caIdDefault != null && caIdDefault != DBNull.Value)
+                        {
+                            caId = Convert.ToInt32(caIdDefault);
+                        }
+                        else
+                        {
+                            throw new Exception("Không tìm thấy ca nào trong database!");
+                        }
+                    }
+                }
+
+                // Cập nhật dat_sanh
+                string query = @"
+                    UPDATE dbo.dat_sanh
+                    SET chi_nhanh_id = @chiNhanhId,
+                        sanh_id = @sanhId,
+                        ca_id = @caId,
+                        ngay_to_chuc = @ngayToChuc,
+                        gio_to_chuc = @gioToChuc,
+                        ghi_chu = @ghiChu
+                    WHERE dat_sanh_id = @datSanhId";
+
+                SqlParameter[] parameters = {
+                    new SqlParameter("@datSanhId", datSanhId),
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@sanhId", sanhId),
+                    new SqlParameter("@caId", caId),
+                    new SqlParameter("@ngayToChuc", ngayToChuc.Date),
+                    new SqlParameter("@gioToChuc", gioToChuc),
+                    new SqlParameter("@ghiChu", ghiChuMoi)
+                };
+
+                _dbHelper.ExecuteNonQuery(query, parameters);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi đổi lịch đặt sảnh: {ex.Message}", ex);
+            }
+        }
+
         // Lấy tổng số đơn đặt sảnh
         public int LayTongSoDon()
         {
@@ -605,6 +1022,215 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy doanh thu tháng: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa vĩnh viễn đặt sảnh
+        public bool XoaDatSanhVinhVien(int datSanhId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_dbHelper.ConnectionString))
+                {
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Lấy hop_dong_id nếu có
+                            string queryGetHopDongId = @"
+                                SELECT hop_dong_id
+                                FROM dbo.hop_dong
+                                WHERE dat_sanh_id = @datSanhId;";
+
+                            int? hopDongId = null;
+                            using (var cmd = new SqlCommand(queryGetHopDongId, connection, transaction))
+                            {
+                                cmd.Parameters.Add(new SqlParameter("@datSanhId", datSanhId));
+                                object result = cmd.ExecuteScalar();
+                                if (result != null && result != DBNull.Value)
+                                {
+                                    hopDongId = Convert.ToInt32(result);
+                                }
+                            }
+
+                            if (hopDongId.HasValue)
+                            {
+                                // Xóa hop_dong_ct_mon (chi tiết món)
+                                string queryDeleteCTMon = @"
+                                    DELETE FROM dbo.hop_dong_ct_mon
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                using (var cmd = new SqlCommand(queryDeleteCTMon, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    cmd.ExecuteNonQuery();
+                                }
+
+                                // Xóa hop_dong_ct_dv (chi tiết dịch vụ)
+                                string queryDeleteCTDV = @"
+                                    DELETE FROM dbo.hop_dong_ct_dv
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                using (var cmd = new SqlCommand(queryDeleteCTDV, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    cmd.ExecuteNonQuery();
+                                }
+
+                                // Xóa hop_dong_tt
+                                string queryDeleteTT = @"
+                                    DELETE FROM dbo.hop_dong_tt
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                using (var cmd = new SqlCommand(queryDeleteTT, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    cmd.ExecuteNonQuery();
+                                }
+
+                                // Xóa hop_dong_coc
+                                string queryDeleteCoc = @"
+                                    DELETE FROM dbo.hop_dong_coc
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                using (var cmd = new SqlCommand(queryDeleteCoc, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    cmd.ExecuteNonQuery();
+                                }
+
+                                // Xóa hop_dong
+                                string queryDeleteHopDong = @"
+                                    DELETE FROM dbo.hop_dong
+                                    WHERE hop_dong_id = @hopDongId;";
+
+                                using (var cmd = new SqlCommand(queryDeleteHopDong, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // Xóa phieu_order nếu có
+                            string queryDeletePhieuOrder = @"
+                                DELETE FROM dbo.phieu_order
+                                WHERE dat_sanh_id = @datSanhId;";
+
+                            using (var cmd = new SqlCommand(queryDeletePhieuOrder, connection, transaction))
+                            {
+                                cmd.Parameters.Add(new SqlParameter("@datSanhId", datSanhId));
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // Xóa dat_sanh
+                            string queryDeleteDatSanh = @"
+                                DELETE FROM dbo.dat_sanh
+                                WHERE dat_sanh_id = @datSanhId;";
+
+                            using (var cmd = new SqlCommand(queryDeleteDatSanh, connection, transaction))
+                            {
+                                cmd.Parameters.Add(new SqlParameter("@datSanhId", datSanhId));
+                                int rowsAffected = cmd.ExecuteNonQuery();
+                                
+                                if (rowsAffected == 0)
+                                {
+                                    throw new Exception("Không tìm thấy đặt sảnh để xóa!");
+                                }
+                            }
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi xóa đặt sảnh vĩnh viễn: {ex.Message}", ex);
+            }
+        }
+
+        // Kiểm tra xem đã có hóa đơn chưa
+        public bool DaCoHoaDon(int hopDongId)
+        {
+            string query = @"
+                SELECT COUNT(*)
+                FROM dbo.hoa_don
+                WHERE loai = N'TIECCUOI' AND tham_chieu_id = @hopDongId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                int count = Convert.ToInt32(result);
+                return count > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // Lấy chi tiết món từ hợp đồng
+        public DataTable LayChiTietMonHopDong(int hopDongId)
+        {
+            string query = @"
+                SELECT 
+                    hdctm.mon_id,
+                    ma.ten_mon,
+                    hdctm.so_luong,
+                    hdctm.don_gia
+                FROM dbo.hop_dong_ct_mon hdctm
+                INNER JOIN dbo.mon_an ma ON hdctm.mon_id = ma.mon_id
+                WHERE hdctm.hop_dong_id = @hopDongId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy chi tiết món hợp đồng: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết dịch vụ từ hợp đồng
+        public DataTable LayChiTietDichVuHopDong(int hopDongId)
+        {
+            string query = @"
+                SELECT 
+                    hdctdv.dv_id,
+                    dv.ten_dv,
+                    hdctdv.so_luong,
+                    hdctdv.don_gia
+                FROM dbo.hop_dong_ct_dv hdctdv
+                INNER JOIN dbo.dich_vu dv ON hdctdv.dv_id = dv.dv_id
+                WHERE hdctdv.hop_dong_id = @hopDongId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy chi tiết dịch vụ hợp đồng: {ex.Message}", ex);
             }
         }
     }

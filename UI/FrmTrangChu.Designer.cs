@@ -35,6 +35,7 @@ namespace UI
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panel3 = new Panel();
+            btnFormTest = new UiControls.NavButton();
             btnPhanQuyen = new UiControls.NavButton();
             btnCauHinh = new UiControls.NavButton();
             label21 = new Label();
@@ -67,7 +68,6 @@ namespace UI
             digitalClockControl1 = new UI.Controls.DigitalClockControl();
             pictureBox2 = new PictureBox();
             panelChinh = new Panel();
-            btnFormTest = new UiControls.NavButton();
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -109,6 +109,25 @@ namespace UI
             panel3.Size = new Size(250, 766);
             panel3.TabIndex = 0;
             // 
+            // btnFormTest
+            // 
+            btnFormTest.AccessibleRole = AccessibleRole.PushButton;
+            btnFormTest.BackgroundHover = Color.FromArgb(245, 247, 250);
+            btnFormTest.BackgroundPressed = Color.FromArgb(225, 232, 255);
+            btnFormTest.BackgroundSelected = Color.FromArgb(235, 240, 255);
+            btnFormTest.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnFormTest.ForeColor = Color.FromArgb(31, 41, 55);
+            btnFormTest.Location = new Point(3, 887);
+            btnFormTest.Name = "btnFormTest";
+            btnFormTest.Padding = new Padding(14, 8, 14, 8);
+            btnFormTest.Size = new Size(244, 29);
+            btnFormTest.TabIndex = 30;
+            btnFormTest.Text = "Form Test";
+            btnFormTest.TextColor = Color.FromArgb(31, 41, 55);
+            btnFormTest.TextColorDisabled = Color.FromArgb(156, 163, 175);
+            btnFormTest.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnFormTest.Click += btnFormTest_Click;
+            // 
             // btnPhanQuyen
             // 
             btnPhanQuyen.AccessibleRole = AccessibleRole.PushButton;
@@ -117,7 +136,7 @@ namespace UI
             btnPhanQuyen.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnPhanQuyen.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnPhanQuyen.ForeColor = Color.FromArgb(31, 41, 55);
-            btnPhanQuyen.Location = new Point(3, 889);
+            btnPhanQuyen.Location = new Point(3, 852);
             btnPhanQuyen.Name = "btnPhanQuyen";
             btnPhanQuyen.Padding = new Padding(14, 8, 14, 8);
             btnPhanQuyen.Size = new Size(244, 29);
@@ -136,7 +155,7 @@ namespace UI
             btnCauHinh.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnCauHinh.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCauHinh.ForeColor = Color.FromArgb(31, 41, 55);
-            btnCauHinh.Location = new Point(3, 854);
+            btnCauHinh.Location = new Point(3, 817);
             btnCauHinh.Name = "btnCauHinh";
             btnCauHinh.Padding = new Padding(14, 8, 14, 8);
             btnCauHinh.Size = new Size(244, 29);
@@ -150,7 +169,7 @@ namespace UI
             // 
             label21.AutoSize = true;
             label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label21.Location = new Point(12, 827);
+            label21.Location = new Point(12, 790);
             label21.Name = "label21";
             label21.Size = new Size(68, 19);
             label21.TabIndex = 27;
@@ -164,7 +183,7 @@ namespace UI
             btnBaoCao.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnBaoCao.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnBaoCao.ForeColor = Color.FromArgb(31, 41, 55);
-            btnBaoCao.Location = new Point(3, 764);
+            btnBaoCao.Location = new Point(3, 727);
             btnBaoCao.Name = "btnBaoCao";
             btnBaoCao.Padding = new Padding(14, 8, 14, 8);
             btnBaoCao.Size = new Size(244, 29);
@@ -183,7 +202,7 @@ namespace UI
             btnNhanSu_Ca.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnNhanSu_Ca.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnNhanSu_Ca.ForeColor = Color.FromArgb(31, 41, 55);
-            btnNhanSu_Ca.Location = new Point(3, 729);
+            btnNhanSu_Ca.Location = new Point(3, 692);
             btnNhanSu_Ca.Name = "btnNhanSu_Ca";
             btnNhanSu_Ca.Padding = new Padding(14, 8, 14, 8);
             btnNhanSu_Ca.Size = new Size(244, 29);
@@ -202,7 +221,7 @@ namespace UI
             btnKhachHang.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnKhachHang.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnKhachHang.ForeColor = Color.FromArgb(31, 41, 55);
-            btnKhachHang.Location = new Point(3, 694);
+            btnKhachHang.Location = new Point(3, 657);
             btnKhachHang.Name = "btnKhachHang";
             btnKhachHang.Padding = new Padding(14, 8, 14, 8);
             btnKhachHang.Size = new Size(244, 29);
@@ -217,7 +236,7 @@ namespace UI
             // 
             label20.AutoSize = true;
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label20.Location = new Point(12, 667);
+            label20.Location = new Point(12, 630);
             label20.Name = "label20";
             label20.Size = new Size(59, 19);
             label20.TabIndex = 23;
@@ -231,7 +250,7 @@ namespace UI
             btnChiNhanh_Ban_Sanh.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnChiNhanh_Ban_Sanh.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnChiNhanh_Ban_Sanh.ForeColor = Color.FromArgb(31, 41, 55);
-            btnChiNhanh_Ban_Sanh.Location = new Point(3, 608);
+            btnChiNhanh_Ban_Sanh.Location = new Point(3, 571);
             btnChiNhanh_Ban_Sanh.Name = "btnChiNhanh_Ban_Sanh";
             btnChiNhanh_Ban_Sanh.Padding = new Padding(14, 8, 14, 8);
             btnChiNhanh_Ban_Sanh.Size = new Size(244, 29);
@@ -250,7 +269,7 @@ namespace UI
             btnKhuyenMai_Voucher.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnKhuyenMai_Voucher.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnKhuyenMai_Voucher.ForeColor = Color.FromArgb(31, 41, 55);
-            btnKhuyenMai_Voucher.Location = new Point(3, 573);
+            btnKhuyenMai_Voucher.Location = new Point(3, 536);
             btnKhuyenMai_Voucher.Name = "btnKhuyenMai_Voucher";
             btnKhuyenMai_Voucher.Padding = new Padding(14, 8, 14, 8);
             btnKhuyenMai_Voucher.Size = new Size(244, 29);
@@ -269,7 +288,7 @@ namespace UI
             btnKho.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnKho.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnKho.ForeColor = Color.FromArgb(31, 41, 55);
-            btnKho.Location = new Point(3, 538);
+            btnKho.Location = new Point(3, 501);
             btnKho.Name = "btnKho";
             btnKho.Padding = new Padding(14, 8, 14, 8);
             btnKho.Size = new Size(244, 29);
@@ -288,7 +307,7 @@ namespace UI
             btnThucDon_Goi.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnThucDon_Goi.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnThucDon_Goi.ForeColor = Color.FromArgb(31, 41, 55);
-            btnThucDon_Goi.Location = new Point(3, 503);
+            btnThucDon_Goi.Location = new Point(3, 466);
             btnThucDon_Goi.Name = "btnThucDon_Goi";
             btnThucDon_Goi.Padding = new Padding(14, 8, 14, 8);
             btnThucDon_Goi.Size = new Size(244, 29);
@@ -303,7 +322,7 @@ namespace UI
             // 
             label19.AutoSize = true;
             label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label19.Location = new Point(12, 476);
+            label19.Location = new Point(12, 439);
             label19.Name = "label19";
             label19.Size = new Size(74, 19);
             label19.TabIndex = 18;
@@ -317,7 +336,7 @@ namespace UI
             btnThanhToan_HoaDon.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnThanhToan_HoaDon.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnThanhToan_HoaDon.ForeColor = Color.FromArgb(31, 41, 55);
-            btnThanhToan_HoaDon.Location = new Point(3, 410);
+            btnThanhToan_HoaDon.Location = new Point(3, 372);
             btnThanhToan_HoaDon.Name = "btnThanhToan_HoaDon";
             btnThanhToan_HoaDon.Padding = new Padding(14, 8, 14, 8);
             btnThanhToan_HoaDon.Size = new Size(244, 29);
@@ -336,7 +355,7 @@ namespace UI
             btnKOT.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnKOT.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnKOT.ForeColor = Color.FromArgb(31, 41, 55);
-            btnKOT.Location = new Point(3, 375);
+            btnKOT.Location = new Point(3, 337);
             btnKOT.Name = "btnKOT";
             btnKOT.Padding = new Padding(14, 8, 14, 8);
             btnKOT.Size = new Size(244, 29);
@@ -355,7 +374,7 @@ namespace UI
             btnHopDong_Coc.BackgroundSelected = Color.FromArgb(235, 240, 255);
             btnHopDong_Coc.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnHopDong_Coc.ForeColor = Color.FromArgb(31, 41, 55);
-            btnHopDong_Coc.Location = new Point(3, 337);
+            btnHopDong_Coc.Location = new Point(6, 407);
             btnHopDong_Coc.Name = "btnHopDong_Coc";
             btnHopDong_Coc.Padding = new Padding(14, 8, 14, 8);
             btnHopDong_Coc.Size = new Size(244, 29);
@@ -364,6 +383,7 @@ namespace UI
             btnHopDong_Coc.TextColor = Color.FromArgb(31, 41, 55);
             btnHopDong_Coc.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnHopDong_Coc.TextColorSelected = Color.FromArgb(17, 24, 39);
+            btnHopDong_Coc.Visible = false;
             btnHopDong_Coc.Click += btnHopDong_Coc_Click;
             // 
             // btnDatSanh_TiecCuoi
@@ -599,25 +619,6 @@ namespace UI
             panelChinh.Name = "panelChinh";
             panelChinh.Size = new Size(1025, 665);
             panelChinh.TabIndex = 2;
-            // 
-            // btnFormTest
-            // 
-            btnFormTest.AccessibleRole = AccessibleRole.PushButton;
-            btnFormTest.BackgroundHover = Color.FromArgb(245, 247, 250);
-            btnFormTest.BackgroundPressed = Color.FromArgb(225, 232, 255);
-            btnFormTest.BackgroundSelected = Color.FromArgb(235, 240, 255);
-            btnFormTest.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnFormTest.ForeColor = Color.FromArgb(31, 41, 55);
-            btnFormTest.Location = new Point(3, 924);
-            btnFormTest.Name = "btnFormTest";
-            btnFormTest.Padding = new Padding(14, 8, 14, 8);
-            btnFormTest.Size = new Size(244, 29);
-            btnFormTest.TabIndex = 30;
-            btnFormTest.Text = "Form Test";
-            btnFormTest.TextColor = Color.FromArgb(31, 41, 55);
-            btnFormTest.TextColorDisabled = Color.FromArgb(156, 163, 175);
-            btnFormTest.TextColorSelected = Color.FromArgb(17, 24, 39);
-            btnFormTest.Click += btnFormTest_Click;
             // 
             // FrmTrangChu
             // 

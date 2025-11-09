@@ -20,15 +20,11 @@ namespace UI.Controls
         private decimal subtotalValue = 0;
         private decimal vatPercent = 0;
         private decimal discountValue = 0;
-
-        // Thông tin hóa đơn và khuyến mãi
         public int HoaDonId { get; set; }
         private int? _kmId = null;
         private int? _voucherId = null;
         private readonly DatabaseHelper _db = new DatabaseHelper();
         private readonly HoaDonBLL _hoaDonBLL;
-
-        // Event khi thanh toán thành công
         public event EventHandler? PaymentCompleted;
 
         public HoaDonThanhToanPanel()
@@ -38,7 +34,6 @@ namespace UI.Controls
             SetVoucherApplied(false);
             SelectPaymentMethodCash();
 
-            // Events
             btnVoucher.Click += OnApplyVoucherClick;
             btnBoKhuyenMai.Click += (s, e) => SetVoucherApplied(false);
 
@@ -46,13 +41,12 @@ namespace UI.Controls
             btnThe.Click += (s, e) => SelectPaymentMethodCard();
             btnChuyenKhoan.Click += (s, e) => SelectPaymentMethodBankTransfer();
 
-            // Nhập tiền khách đưa: chỉ cho nhập số và tự format VNĐ
             txtTienNhan.KeyPress += TxtTienNhan_KeyPress;
             txtTienNhan.TextChanged += TxtTienNhan_TextChanged;
             btnThanhToan.Click += BtnThanhToan_Click;
+            btnHienThịQR.Click += BtnHienThiQR_Click;
         }
 
-        // Thiết lập tiêu đề hiển thị khu vực thanh toán
         public void SetTitle(string title)
         {
             label1.Text = title;
@@ -244,8 +238,6 @@ namespace UI.Controls
             }
 
             if (!decimal.TryParse(rawDigits, out var received)) received = 0m;
-
-            // format lại theo VNĐ, giữ vị trí con trỏ tương đối
             var oldLen = txtTienNhan.Text.Length;
             var sel = txtTienNhan.SelectionStart;
             var formatted = string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:N0}", received);
@@ -394,6 +386,45 @@ namespace UI.Controls
         private void HoaDonThanhToanPanel_Load(object sender, EventArgs e)
         {
 
+        }
+
+        // Event handler cho button Hiển thị QR
+        private void BtnHienThiQR_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                decimal soTien = ParseCurrency(lbTongCong.Text);
+                if (soTien <= 0)
+                {
+                    GunaToast.Show(this, "Số tiền thanh toán không hợp lệ!", ToastType.Error);
+                    return;
+                }
+
+                // Lấy thông tin bàn từ database
+                string noiDung = "Thanh toán bàn";
+                if (HoaDonId > 0)
+                {
+                    var hoaDon = _hoaDonBLL.GetHoaDonById(HoaDonId);
+                    if (hoaDon != null && hoaDon["ban_sanh"] != DBNull.Value)
+                    {
+                        string banSanh = hoaDon["ban_sanh"].ToString() ?? "";
+                        if (!string.IsNullOrWhiteSpace(banSanh))
+                        {
+                            noiDung = $"Thanh toán bàn {banSanh}";
+                        }
+                    }
+                }
+
+                var formQR = new Frm_QRThanhToan(soTien, noiDung)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+                formQR.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                GunaToast.Show(this, $"Lỗi hiển thị QR thanh toán: {ex.Message}", ToastType.Error);
+            }
         }
     }
 }

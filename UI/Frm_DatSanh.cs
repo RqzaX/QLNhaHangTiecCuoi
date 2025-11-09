@@ -29,6 +29,7 @@ namespace UI
         private decimal _giaGoi = 0;
         private decimal _tongTien = 0;
         private int? _datSanhId = null;
+        private string _phuongThucThanhToan = null;
 
         public Frm_DatSanh()
         {
@@ -67,17 +68,10 @@ namespace UI
             cbbGioToChuc.SelectedIndexChanged += CbbGioToChuc_SelectedIndexChanged;
             dateNgayToChuc.ValueChanged += DateNgayToChuc_ValueChanged;
             txtSoBanDuKien.TextChanged += TxtSoBanDuKien_TextChanged;
-            
-            // Gắn sự kiện cho checkbox đặt cọc
-            if (cbTienCocDot1 != null)
-            {
-                cbTienCocDot1.CheckedChanged += CbTienCocDot1_CheckedChanged;
-            }
-            
-            if (cbXacNhanKy != null)
-            {
-                cbXacNhanKy.CheckedChanged += CbXacNhanKy_CheckedChanged;
-            }
+            btnTienMat.Click += BtnTienMat_Click;
+            btnThe.Click += BtnThe_Click;
+            btnChuyenKhoan.Click += BtnChuyenKhoan_Click;
+            btnHienThiQR.Click += BtnHienThiQR_Click;
         }
 
         // Sự kiện load form - khởi tạo dữ liệu ban đầu
@@ -517,24 +511,44 @@ namespace UI
 
                 if (caId.HasValue)
                 {
-                    isTrong = _datSanhBLL.KiemTraSanhTrong(
-                        sanhId.Value,
-                        caId.Value,
-                        ngayToChuc,
-                        out errorMessage
-                    );
+                    // Lấy giờ bắt đầu từ ca_id
+                    TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
+                    if (gioToChuc.HasValue)
+                    {
+                        isTrong = _datSanhBLL.KiemTraSanhTrong(
+                            sanhId.Value,
+                            gioToChuc.Value,
+                            ngayToChuc,
+                            out errorMessage
+                        );
+                    }
+                    else
+                    {
+                        errorMessage = "Không tìm thấy thông tin ca!";
+                        isTrong = false;
+                    }
                 }
                 else
                 {
                     int? caIdDefault = GetCaIdDefault();
                     if (caIdDefault.HasValue)
                     {
-                        isTrong = _datSanhBLL.KiemTraSanhTrong(
-                            sanhId.Value,
-                            caIdDefault.Value,
-                            ngayToChuc,
-                            out errorMessage
-                        );
+                        // Lấy giờ bắt đầu từ ca_id
+                        TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caIdDefault.Value);
+                        if (gioToChuc.HasValue)
+                        {
+                            isTrong = _datSanhBLL.KiemTraSanhTrong(
+                                sanhId.Value,
+                                gioToChuc.Value,
+                                ngayToChuc,
+                                out errorMessage
+                            );
+                        }
+                        else
+                        {
+                            errorMessage = "Không tìm thấy thông tin ca!";
+                            isTrong = false;
+                        }
                     }
                 }
 
@@ -718,13 +732,6 @@ namespace UI
                     {
                         txtSoTienCoc_Dot1.Text = FormatTien(tienCocDot1);
                     }
-
-                    // Tính toán số tiền còn lại (70% tổng giá trị)
-                    decimal tienConLai = tongCong * 0.70m;
-                    if (txtSoTienConLai != null)
-                    {
-                        txtSoTienConLai.Text = FormatTien(tienConLai);
-                    }
                 }
             }
             catch (Exception ex)
@@ -792,10 +799,20 @@ namespace UI
 
             if (caId.HasValue)
             {
-                string checkError;
-                if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, caId.Value, ngayToChuc, out checkError))
+                // Lấy giờ bắt đầu từ ca_id
+                TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
+                if (gioToChuc.HasValue)
                 {
-                    errorMessage = checkError;
+                    string checkError;
+                    if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChuc.Value, ngayToChuc, out checkError))
+                    {
+                        errorMessage = checkError;
+                        return false;
+                    }
+                }
+                else
+                {
+                    errorMessage = "Không tìm thấy thông tin ca!";
                     return false;
                 }
             }
@@ -804,10 +821,20 @@ namespace UI
                 int? caIdDefault = GetCaIdDefault();
                 if (caIdDefault.HasValue)
                 {
-                    string checkError;
-                    if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, caIdDefault.Value, ngayToChuc, out checkError))
+                    // Lấy giờ bắt đầu từ ca_id
+                    TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caIdDefault.Value);
+                    if (gioToChuc.HasValue)
                     {
-                        errorMessage = checkError;
+                        string checkError;
+                        if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChuc.Value, ngayToChuc, out checkError))
+                        {
+                            errorMessage = checkError;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "Không tìm thấy thông tin ca!";
                         return false;
                     }
                 }
@@ -870,7 +897,7 @@ namespace UI
             return true;
         }
 
-        // Lưu thông tin khách hàng vào database (tạo mới hoặc lấy ID nếu đã tồn tại)
+        // Lưu thông tin khách hàng
         private int LuuThongTinKhachHang()
         {
             try
@@ -878,15 +905,24 @@ namespace UI
                 string hoTen = txtTenKH.Text.Trim();
                 string sdt = txtSDT.Text.Trim();
                 string email = txtEmail.Text?.Trim() ?? "";
+                string ghiChu = txtGhiChuKH.Text?.Trim() ?? "";
 
                 DataTable dt = _khachHangBLL.TimKhachHangTheoSdt(sdt);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     int khachHangId = Convert.ToInt32(dt.Rows[0]["khach_hang_id"]);
+                    
+                    bool updated = _khachHangBLL.CapNhatKhachHang(khachHangId, hoTen, email, ghiChu);
+                    if (!updated)
+                    {
+                        throw new Exception("Không thể cập nhật thông tin khách hàng!");
+                    }
+                    
                     return khachHangId;
                 }
 
-                int khachHangIdNew = _khachHangBLL.TaoKhachHang(hoTen, sdt, email, "");
+                // Khách hàng chưa tồn tại, tạo mới
+                int khachHangIdNew = _khachHangBLL.TaoKhachHang(hoTen, sdt, email, ghiChu);
                 
                 if (khachHangIdNew <= 0)
                 {
@@ -1051,29 +1087,15 @@ namespace UI
                     txtSoTienCoc_Dot1.Text = FormatTien(tienCocDot1);
                     txtSoTienCoc_Dot1.ReadOnly = true;
                 }
-
-                // Tính toán số tiền còn lại (70% tổng giá trị)
-                decimal tienConLai = _tongTien * 0.70m;
-                if (txtSoTienConLai != null)
-                {
-                    txtSoTienConLai.Text = FormatTien(tienConLai);
-                    txtSoTienConLai.ReadOnly = true;
-                }
-
-                if (cbTienCocDot1 != null)
-                {
-                    cbTienCocDot1.Checked = false;
-                }
-
-                if (cbTienThanhToanConLai != null)
-                {
-                    cbTienThanhToanConLai.Checked = false;
-                }
                 
                 if (cbXacNhanKy != null)
                 {
                     cbXacNhanKy.Checked = false;
                 }
+                
+                // Reset phương thức thanh toán và ẩn các controls
+                _phuongThucThanhToan = null;
+                CapNhatHienThiPhuongThucThanhToan();
                 
                 // Ẩn phần thanh toán còn lại ban đầu
                 CapNhatHienThiThanhToanConLai();
@@ -1108,9 +1130,9 @@ namespace UI
 - 10% còn lại thanh toán sau khi hoàn tất sự kiện
 
 3. CHÍNH SÁCH HỦY & HOÀN TRẢ
-- Hủy trước 30 ngày: Hoàn 100% tiền cọc
-- Hủy trước 15 ngày: Hoàn 50% tiền cọc
-- Hủy trước 7 ngày: Không hoàn tiền cọc
+- Hủy trước 15 ngày: Hoàn 100% tiền cọc
+- Hủy trước 7 ngày: Hoàn 50% tiền cọc
+- Hủy trước 3 ngày: Không hoàn tiền cọc
 
 4. ĐIỀU KHOẢN KHÁC
 - Khách hàng có trách nhiệm bảo vệ tài sản của nhà hàng
@@ -1166,6 +1188,10 @@ namespace UI
                 return false;
             }
 
+            // Không bắt buộc chọn phương thức thanh toán
+            // Nếu không chọn = không cọc, trạng thái sẽ là "CHỜ XÁC NHẬN"
+            // Nếu có chọn = có cọc, trạng thái sẽ là "ĐÃ CỌC"
+            
             return true;
         }
 
@@ -1239,9 +1265,8 @@ namespace UI
 
                 string ghiChu = txtGhiChu.Text?.Trim() ?? "";
 
-                // Xác định trạng thái: nếu có đặt cọc thì "ĐÃ CỌC", ngược lại "CHỜ XÁC NHẬN"
                 string trangThai = "CHỜ XÁC NHẬN";
-                if (cbTienCocDot1 != null && cbTienCocDot1.Checked)
+                if (!string.IsNullOrEmpty(_phuongThucThanhToan))
                 {
                     trangThai = "ĐÃ CỌC";
                 }
@@ -1354,18 +1379,20 @@ namespace UI
                     }
                 }
 
-                // Lưu tiền cọc vào hop_dong_coc nếu checkbox được check
-                if (cbTienCocDot1 != null && cbTienCocDot1.Checked)
+                // Lưu tiền cọc vào hop_dong_coc nếu đã chọn phương thức thanh toán
+                if (!string.IsNullOrEmpty(_phuongThucThanhToan))
                 {
+                    // Tự động lấy số tiền cọc (20% tổng giá trị)
                     decimal tienCoc = _tongTien * 0.20m;
+                    
                     string tienCocText = txtSoTienCoc_Dot1.Text?.Replace(" ₫", "").Replace(".", "").Replace(",", "") ?? "0";
-                    if (decimal.TryParse(tienCocText, out decimal tienCocParsed))
+                    if (decimal.TryParse(tienCocText, out decimal tienCocParsed) && tienCocParsed > 0)
                     {
                         tienCoc = tienCocParsed;
                     }
                     
-                    // Lưu vào bảng hop_dong_coc với hình thức mặc định là "Chuyển khoản"
-                    int cocId = _datSanhBLL.LuuTienCoc(hopDongId, tienCoc, DateTime.Now, "Chuyển khoản", "Cọc đợt 1", out errorMessage);
+                    // Lưu vào bảng hop_dong_coc với phương thức thanh toán đã chọn
+                    int cocId = _datSanhBLL.LuuTienCoc(hopDongId, tienCoc, DateTime.Now, _phuongThucThanhToan, "Cọc tối thiểu 20% tổng giá trị", out errorMessage);
                     if (cocId <= 0)
                     {
                         MessageBox.Show($"Lỗi lưu tiền cọc: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1374,23 +1401,23 @@ namespace UI
                 }
 
                 // Lưu thanh toán còn lại vào hop_dong_tt nếu checkbox được check
-                if (cbTienThanhToanConLai != null && cbTienThanhToanConLai.Checked)
-                {
-                    decimal tienConLai = _tongTien * 0.70m;
-                    string tienConLaiText = txtSoTienConLai.Text?.Replace(" ₫", "").Replace(".", "").Replace(",", "") ?? "0";
-                    if (decimal.TryParse(tienConLaiText, out decimal tienConLaiParsed))
-                    {
-                        tienConLai = tienConLaiParsed;
-                    }
+                //if (cbTienThanhToanConLai != null && cbTienThanhToanConLai.Checked)
+                //{
+                //    decimal tienConLai = _tongTien * 0.70m;
+                //    string tienConLaiText = txtSoTienConLai.Text?.Replace(" ₫", "").Replace(".", "").Replace(",", "") ?? "0";
+                //    if (decimal.TryParse(tienConLaiText, out decimal tienConLaiParsed))
+                //    {
+                //        tienConLai = tienConLaiParsed;
+                //    }
                     
-                    // Lưu vào bảng hop_dong_tt với hình thức mặc định là "Chuyển khoản"
-                    int ttId = _datSanhBLL.LuuThanhToan(hopDongId, tienConLai, DateTime.Now, "Chuyển khoản", "Thanh toán còn lại", out errorMessage);
-                    if (ttId <= 0)
-                    {
-                        MessageBox.Show($"Lỗi lưu thanh toán: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
+                //    // Lưu vào bảng hop_dong_tt với hình thức mặc định là "Chuyển khoản"
+                //    int ttId = _datSanhBLL.LuuThanhToan(hopDongId, tienConLai, DateTime.Now, "Chuyển khoản", "Thanh toán còn lại", out errorMessage);
+                //    if (ttId <= 0)
+                //    {
+                //        MessageBox.Show($"Lỗi lưu thanh toán: {errorMessage}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //        return;
+                //    }
+                //}
 
                 MessageBox.Show($"Đơn đặt sảnh và hợp đồng đã được tạo thành công!\nMã đơn: DS{datSanhId:D6}\nSố hợp đồng: {soHopDong}", 
                     "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1421,13 +1448,111 @@ namespace UI
             }
         }
 
-        // Cập nhật hiển thị phần thanh toán còn lại dựa trên trạng thái checkbox đặt cọc
+
         private void CapNhatHienThiThanhToanConLai()
         {
-            // Nếu checkbox đặt cọc không được check, uncheck checkbox thanh toán còn lại
-            if (cbTienCocDot1 != null && !cbTienCocDot1.Checked && cbTienThanhToanConLai != null)
+
+        }
+
+        private void CapNhatHienThiPhuongThucThanhToan()
+        {
+            if (btnHienThiQR != null)
+                btnHienThiQR.Visible = false;
+
+            if (_phuongThucThanhToan == "Chuyển khoản")
             {
-                cbTienThanhToanConLai.Checked = false;
+                if (btnHienThiQR != null)
+                {
+                    btnHienThiQR.Visible = true;
+                }
+            }
+        }
+
+        private void BtnTienMat_Click(object sender, EventArgs e)
+        {
+            if (_phuongThucThanhToan == "Tiền mặt")
+            {
+                _phuongThucThanhToan = null;
+                btnTienMat.BorderThickness = 1;
+                btnTienMat.BorderColor = Color.FromArgb(224, 224, 224);
+            }
+            else
+            {
+                _phuongThucThanhToan = "Tiền mặt";
+                btnTienMat.BorderThickness = 2;
+                btnTienMat.BorderColor = Color.FromArgb(94, 148, 255);
+            }
+            
+            btnThe.BorderThickness = 1;
+            btnThe.BorderColor = Color.FromArgb(224, 224, 224);
+            btnChuyenKhoan.BorderThickness = 1;
+            btnChuyenKhoan.BorderColor = Color.FromArgb(224, 224, 224);
+            
+            CapNhatHienThiPhuongThucThanhToan();
+        }
+
+        private void BtnThe_Click(object sender, EventArgs e)
+        {
+            if (_phuongThucThanhToan == "Thẻ")
+            {
+                _phuongThucThanhToan = null;
+                btnThe.BorderThickness = 1;
+                btnThe.BorderColor = Color.FromArgb(224, 224, 224);
+            }
+            else
+            {
+                _phuongThucThanhToan = "Thẻ";
+                btnThe.BorderThickness = 2;
+                btnThe.BorderColor = Color.FromArgb(94, 148, 255);
+            }
+            
+            btnTienMat.BorderThickness = 1;
+            btnTienMat.BorderColor = Color.FromArgb(224, 224, 224);
+            btnChuyenKhoan.BorderThickness = 1;
+            btnChuyenKhoan.BorderColor = Color.FromArgb(224, 224, 224);
+            
+            CapNhatHienThiPhuongThucThanhToan();
+        }
+
+        private void BtnChuyenKhoan_Click(object sender, EventArgs e)
+        {
+            if (_phuongThucThanhToan == "Chuyển khoản")
+            {
+                _phuongThucThanhToan = null;
+                btnChuyenKhoan.BorderThickness = 1;
+                btnChuyenKhoan.BorderColor = Color.FromArgb(224, 224, 224);
+            }
+            else
+            {
+                _phuongThucThanhToan = "Chuyển khoản";
+                btnChuyenKhoan.BorderThickness = 2;
+                btnChuyenKhoan.BorderColor = Color.FromArgb(94, 148, 255);
+            }
+            
+            btnTienMat.BorderThickness = 1;
+            btnTienMat.BorderColor = Color.FromArgb(224, 224, 224);
+            btnThe.BorderThickness = 1;
+            btnThe.BorderColor = Color.FromArgb(224, 224, 224);
+            
+            CapNhatHienThiPhuongThucThanhToan();
+        }
+
+        // Event handler cho button Hiển thị QR
+        private void BtnHienThiQR_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                decimal tienCoc = _tongTien * 0.20m;
+                
+                var formQR = new Frm_QRThanhToan(tienCoc, "Cọc tối thiểu 20% tổng giá trị")
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+                formQR.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi hiển thị QR thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

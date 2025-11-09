@@ -13,15 +13,18 @@ namespace DAL
 
         // Tạo hóa đơn
         public int CreateHoaDon(int chiNhanhId, string loai, decimal vatPercent, decimal phiDv,
-                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue)
+                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue, 
+                                int? khachHangId = null, int? thamChieuId = null)
         {
-            string sql = @"INSERT INTO hoa_don(chi_nhanh_id, loai, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai)
+            string sql = @"INSERT INTO hoa_don(chi_nhanh_id, khach_hang_id, loai, tham_chieu_id, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai)
                            OUTPUT INSERTED.hoa_don_id
-                           VALUES(@cn, @loai, SYSUTCDATETIME(), @vat, @phi, @giam, @truoc, @sau, N'CHỜ TT')";
+                           VALUES(@cn, @kh, @loai, @tc, SYSUTCDATETIME(), @vat, @phi, @giam, @truoc, @sau, N'CHỜ TT')";
             var p = new[]
             {
                 new SqlParameter("@cn", chiNhanhId),
+                new SqlParameter("@kh", (object?)khachHangId ?? DBNull.Value),
                 new SqlParameter("@loai", loai),
+                new SqlParameter("@tc", (object?)thamChieuId ?? DBNull.Value),
                 new SqlParameter("@vat", vatPercent),
                 new SqlParameter("@phi", phiDv),
                 new SqlParameter("@giam", giamGia),
@@ -97,7 +100,6 @@ namespace DAL
         // Lấy lịch sử thanh toán (hóa đơn đã thanh toán) với filter theo ngày
         public DataTable GetPaidInvoicesHistory(int chiNhanhId, DateTime? fromDate = null, DateTime? toDate = null, string? phuongThuc = null, int top = 100)
         {
-            // Lấy đầy đủ thông tin: bàn/sảnh, khuyến mãi, thu ngân, phương thức thanh toán
             string sql = @"SELECT TOP (@top) 
                                 hd.hoa_don_id, 
                                 hd.loai, 
@@ -142,14 +144,12 @@ namespace DAL
 
             if (toDate.HasValue)
             {
-                // So sánh date part trực tiếp, convert UTC về local time (UTC+7)
                 sql += " AND CAST(DATEADD(HOUR, 7, hd.ngay_lap) AS date) <= @toDate";
                 parameters.Add(new SqlParameter("@toDate", toDate.Value.Date));
             }
 
             if (!string.IsNullOrWhiteSpace(phuongThuc) && phuongThuc != "Tất cả phương thức")
             {
-                // Filter theo phương thức thanh toán từ bảng thanh_toan (chỉ áp dụng cho hóa đơn đã thanh toán)
                 sql += @" AND EXISTS (
                     SELECT 1 FROM thanh_toan tt 
                     WHERE tt.hoa_don_id = hd.hoa_don_id 
@@ -168,7 +168,6 @@ namespace DAL
         {
             try
             {
-                // 1. Cập nhật trạng thái hóa đơn thành "ĐÃ THANH TOÁN"
                 string sqlUpdate = @"UPDATE hoa_don 
                                      SET trang_thai = N'ĐÃ THANH TOÁN'
                                      WHERE hoa_don_id = @id AND trang_thai = N'CHỜ TT'";
@@ -180,7 +179,6 @@ namespace DAL
                     return false; // Hóa đơn không tồn tại hoặc đã được thanh toán
                 }
 
-                // 2. Lưu thông tin thanh toán vào bảng thanh_toan
                 string sqlPayment = @"INSERT INTO thanh_toan(hoa_don_id, so_tien, ngay_tt, hinh_thuc)
                                       VALUES(@id, @tien, SYSUTCDATETIME(), @hinh)";
                 var pPayment = new[]
@@ -191,7 +189,6 @@ namespace DAL
                 };
                 _db.ExecuteNonQuery(sqlPayment, pPayment);
 
-                // 3. Lưu thông tin khuyến mãi/voucher nếu có
                 if (soTienKm.HasValue && soTienKm.Value > 0 && (kmId.HasValue || voucherId.HasValue))
                 {
                     string sqlKm = @"INSERT INTO hoa_don_km(hoa_don_id, km_id, voucher_id, so_tien_km)
@@ -205,7 +202,6 @@ namespace DAL
                     };
                     _db.ExecuteNonQuery(sqlKm, pKm);
 
-                    // Cập nhật số lần sử dụng voucher nếu có
                     if (voucherId.HasValue)
                     {
                         string sqlUpdateVoucher = @"UPDATE voucher 
@@ -227,10 +223,25 @@ namespace DAL
         // Lấy thông tin hóa đơn theo ID (để kiểm tra trước khi thanh toán)
         public DataRow? GetHoaDonById(int hoaDonId)
         {
-            string sql = @"SELECT hoa_don_id, chi_nhanh_id, loai, ngay_lap, vat, phi_dv, giam_gia, 
-                                  tong_truoc_thue, tong_sau_thue, trang_thai
-                           FROM hoa_don
-                           WHERE hoa_don_id = @id";
+            string sql = @"SELECT hd.hoa_don_id, hd.chi_nhanh_id, hd.loai, hd.ngay_lap, hd.vat, hd.phi_dv, hd.giam_gia, 
+                                  hd.tong_truoc_thue, hd.tong_sau_thue, hd.trang_thai,
+                                  CASE 
+                                      WHEN hd.loai = N'TIECCUOI' AND ds.dat_sanh_id IS NOT NULL AND ds.sanh_id IS NOT NULL THEN CAST(s.ten_sanh AS NVARCHAR(50))
+                                      WHEN hd.loai = N'NHAHANG' AND db.dat_ban_id IS NOT NULL AND db.ban_id IS NOT NULL THEN 
+                                          CASE 
+                                              WHEN kv.ten_khu_vuc IS NOT NULL AND b.so_ban IS NOT NULL THEN kv.ten_khu_vuc + N'-' + b.so_ban
+                                              WHEN b.so_ban IS NOT NULL THEN b.so_ban
+                                              ELSE N''
+                                          END
+                                      ELSE N''
+                                  END AS ban_sanh
+                           FROM hoa_don hd
+                           LEFT JOIN dat_sanh ds ON ds.dat_sanh_id = hd.tham_chieu_id AND hd.loai = N'TIECCUOI'
+                           LEFT JOIN sanh s ON s.sanh_id = ds.sanh_id
+                           LEFT JOIN dat_ban db ON db.dat_ban_id = hd.tham_chieu_id AND hd.loai = N'NHAHANG'
+                           LEFT JOIN ban b ON b.ban_id = db.ban_id
+                           LEFT JOIN khu_vuc kv ON kv.khu_vuc_id = b.khu_vuc_id
+                           WHERE hd.hoa_don_id = @id";
             var p = new[] { new SqlParameter("@id", hoaDonId) };
             var dt = _db.GetDataTable(sql, p);
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
