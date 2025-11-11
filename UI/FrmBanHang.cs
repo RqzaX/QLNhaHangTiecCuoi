@@ -473,7 +473,7 @@ namespace UI
                     int poId = _orderBLL.SaveOrder(Session.ChiNhanhId, _selectedBanId, Session.HoTen, forPersist);
                     _phieuOrderId = poId;
                     // VAT mặc định 8%
-                    int hdId = _orderBLL.CreateInvoiceFromCart(Session.ChiNhanhId, forPersist, 8m, 0m, 0m);
+                    int hdId = _orderBLL.CreateInvoiceFromCart(Session.ChiNhanhId, forPersist, 8m, 0m, 0m, _selectedBanId, _selectedSoBan, Session.HoTen);
 
                     panelGioHang.Controls.Clear();
                     foreach (var item in _cartItems)

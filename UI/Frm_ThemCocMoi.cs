@@ -404,12 +404,34 @@ namespace UI
             {
                 if (!_isThanhToan)
                 {
-                    decimal soTienConLai = _tongTienDatSanh - _tongCocDaThu;
-                    if (soTien > soTienConLai)
+                    // Tính tổng thanh toán đã có
+                    decimal tongThanhToan = 0;
+                    if (_hopDongId.HasValue)
+                    {
+                        DataTable dtThanhToan = _datSanhBLL.LayDanhSachThanhToan(_hopDongId.Value);
+                        if (dtThanhToan != null)
+                        {
+                            foreach (DataRow row in dtThanhToan.Rows)
+                            {
+                                if (row["so_tien"] != DBNull.Value)
+                                {
+                                    tongThanhToan += Convert.ToDecimal(row["so_tien"]);
+                                }
+                            }
+                        }
+                    }
+
+                    // Tính số tiền còn lại sau khi trừ tổng cọc và tổng thanh toán
+                    decimal soTienConLai = _tongTienDatSanh - _tongCocDaThu - tongThanhToan;
+                    if (soTienConLai < 0)
+                        soTienConLai = 0;
+
+                    if (soTien > soTienConLai && soTienConLai > 0)
                     {
                         txtSoTien.Text = soTienConLai.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"));
                         MessageBox.Show(
-                            $"Số tiền đã được điều chỉnh về số tiền tối đa: {FormatCurrency(soTienConLai)}",
+                            $"Số tiền đã được điều chỉnh về số tiền tối đa: {FormatCurrency(soTienConLai)}\n" +
+                            $"(Tổng cọc + thanh toán không được vượt quá tổng dự kiến)",
                             "Thông báo",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information
@@ -491,6 +513,23 @@ namespace UI
                         }
                     }
 
+                    // Tính tổng thanh toán đã có
+                    decimal tongThanhToan = 0;
+                    if (_hopDongId.HasValue)
+                    {
+                        DataTable dtThanhToan = _datSanhBLL.LayDanhSachThanhToan(_hopDongId.Value);
+                        if (dtThanhToan != null)
+                        {
+                            foreach (DataRow row in dtThanhToan.Rows)
+                            {
+                                if (row["so_tien"] != DBNull.Value)
+                                {
+                                    tongThanhToan += Convert.ToDecimal(row["so_tien"]);
+                                }
+                            }
+                        }
+                    }
+
                     decimal soTienCocToiThieu = _tongTienDatSanh * 0.20m;
                     decimal tongCocSauKhiCapNhat;
 
@@ -501,6 +540,29 @@ namespace UI
                     else
                     {
                         tongCocSauKhiCapNhat = _tongCocDaThu - soTienCocCu + soTien;
+                    }
+
+                    // Kiểm tra tổng cọc + thanh toán không được vượt quá tổng dự kiến
+                    decimal tongCocVaThanhToan = tongCocSauKhiCapNhat + tongThanhToan;
+                    if (tongCocVaThanhToan > _tongTienDatSanh)
+                    {
+                        decimal soTienConLaiToiDa = _tongTienDatSanh - (_tongCocDaThu - soTienCocCu) - tongThanhToan;
+                        if (soTienConLaiToiDa < 0)
+                            soTienConLaiToiDa = 0;
+                        
+                        MessageBox.Show(
+                            $"Tổng cọc và thanh toán không được vượt quá tổng dự kiến!\n" +
+                            $"Tổng dự kiến: {FormatCurrency(_tongTienDatSanh)}\n" +
+                            $"Tổng cọc hiện tại: {FormatCurrency(_tongCocDaThu - soTienCocCu)}\n" +
+                            $"Tổng thanh toán: {FormatCurrency(tongThanhToan)}\n" +
+                            $"Số tiền cọc tối đa có thể thêm: {FormatCurrency(soTienConLaiToiDa)}",
+                            "Thông báo", 
+                            MessageBoxButtons.OK, 
+                            MessageBoxIcon.Warning
+                        );
+                        txtSoTien.Focus();
+                        txtSoTien.SelectAll();
+                        return;
                     }
 
                     if (tongCocSauKhiCapNhat < soTienCocToiThieu)
@@ -519,21 +581,32 @@ namespace UI
                         return;
                     }
 
+                    // Kiểm tra số tiền cọc không vượt quá số tiền còn lại (sau khi trừ tổng thanh toán)
                     decimal soTienConLai;
                     if (!_isEditMode)
                     {
-                        soTienConLai = _tongTienDatSanh - _tongCocDaThu;
+                        soTienConLai = _tongTienDatSanh - _tongCocDaThu - tongThanhToan;
                     }
                     else
                     {
-                        soTienConLai = _tongTienDatSanh - (_tongCocDaThu - soTienCocCu);
+                        soTienConLai = _tongTienDatSanh - (_tongCocDaThu - soTienCocCu) - tongThanhToan;
                     }
+
+                    if (soTienConLai < 0)
+                        soTienConLai = 0;
 
                     if (soTien > soTienConLai)
                     {
-                        MessageBox.Show($"Số tiền cọc không được vượt quá số tiền còn lại: {FormatCurrency(soTienConLai)}", 
-                            "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(
+                            $"Số tiền cọc không được vượt quá số tiền còn lại!\n" +
+                            $"Số tiền còn lại (sau khi trừ tổng thanh toán): {FormatCurrency(soTienConLai)}\n" +
+                            $"Số tiền đã nhập: {FormatCurrency(soTien)}",
+                            "Thông báo", 
+                            MessageBoxButtons.OK, 
+                            MessageBoxIcon.Warning
+                        );
                         txtSoTien.Focus();
+                        txtSoTien.SelectAll();
                         return;
                     }
                 }

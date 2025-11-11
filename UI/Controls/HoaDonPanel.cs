@@ -57,6 +57,24 @@ namespace UI.Controls
             lbThoiGianLap.Text = $"Bắt đầu: {startTime:HH:mm}";
         }
 
+        public void SetNgayToChuc(TimeSpan gioToChuc, DateTime ngayToChuc)
+        {
+            string gioStr = $"{(int)gioToChuc.TotalHours:D2}h{gioToChuc.Minutes:D2}";
+            lbThoiGianLap.Text = $"Ngày tổ chức: {gioStr} - {ngayToChuc:dd/MM/yyyy}";
+        }
+
+        public void SetVatPercent(decimal vatPercent)
+        {
+            foreach (Control ctrl in Controls)
+            {
+                if (ctrl.Name == "label4")
+                {
+                    ctrl.Text = $"VAT ({vatPercent:0}%)";
+                    break;
+                }
+            }
+        }
+
         public HoaDonPanel()
         {
             InitializeComponent();

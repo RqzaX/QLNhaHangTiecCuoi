@@ -30,6 +30,7 @@
         {
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
@@ -296,14 +297,17 @@
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.ContainerPadding = new Padding(3);
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem1.Text = "Chờ thanh toán";
-            pillItem2.Text = "Lịch sử giao dịch";
+            pillItem1.Text = "Nhà hàng";
+            pillItem2.Text = "Tiệc cưới";
+            pillItem3.Text = "Lịch sử giao dịch";
             segmentedPill1.Items.Add(pillItem1);
             segmentedPill1.Items.Add(pillItem2);
+            segmentedPill1.Items.Add(pillItem3);
             segmentedPill1.Location = new Point(12, 148);
             segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(284, 40);
+            segmentedPill1.Size = new Size(343, 40);
             segmentedPill1.TabIndex = 27;
+            segmentedPill1.TabStop = false;
             segmentedPill1.Text = "segmentedPill1";
             // 
             // panelHoaDonThanhToan
@@ -550,7 +554,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1041, 675);
-            Controls.Add(panelLichSuGiaoDich);
             Controls.Add(lbDanhSachHoaDon);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
@@ -561,6 +564,7 @@
             Controls.Add(label1);
             Controls.Add(panelDanhSachHoaDon);
             Controls.Add(panelHoaDonThanhToan);
+            Controls.Add(panelLichSuGiaoDich);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmThanhToan_HoaDon";
             Text = "FrmThanhToan_HoaDon";

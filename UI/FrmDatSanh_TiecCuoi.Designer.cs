@@ -43,6 +43,8 @@
             DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label2 = new Label();
             label1 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
@@ -109,7 +111,7 @@
             dataGridViewTextBoxColumn38 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn39 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn40 = new DataGridViewTextBoxColumn();
-            btnTaoDonDatSanh = new UI.Controls.RoundedButton();
+            btnTaoDonDatSanh = new Guna.UI2.WinForms.Guna2Button();
             roundedPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             roundedPanel2.SuspendLayout();
@@ -126,9 +128,9 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(14, 47);
+            label2.Location = new Point(12, 35);
             label2.Name = "label2";
-            label2.Size = new Size(274, 24);
+            label2.Size = new Size(216, 19);
             label2.TabIndex = 13;
             label2.Text = "Quản lý đặt sảnh và sự kiện lớn";
             // 
@@ -136,9 +138,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(14, 12);
+            label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(250, 35);
+            label1.Size = new Size(196, 27);
             label1.TabIndex = 12;
             label1.Text = "Đặt sảnh / Tiệc cưới";
             // 
@@ -149,20 +151,18 @@
             roundedPanel1.Controls.Add(pictureBox1);
             roundedPanel1.Controls.Add(lbSoDon);
             roundedPanel1.Controls.Add(label3);
-            roundedPanel1.Location = new Point(14, 97);
-            roundedPanel1.Margin = new Padding(3, 4, 3, 4);
+            roundedPanel1.Location = new Point(12, 73);
             roundedPanel1.Name = "roundedPanel1";
-            roundedPanel1.Padding = new Padding(14, 16, 14, 16);
-            roundedPanel1.Size = new Size(278, 133);
+            roundedPanel1.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel1.Size = new Size(243, 100);
             roundedPanel1.TabIndex = 14;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(25, 20);
-            pictureBox1.Margin = new Padding(3, 4, 3, 4);
+            pictureBox1.Location = new Point(22, 15);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(80, 93);
+            pictureBox1.Size = new Size(70, 70);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 18;
             pictureBox1.TabStop = false;
@@ -171,9 +171,9 @@
             // 
             lbSoDon.AutoSize = true;
             lbSoDon.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbSoDon.Location = new Point(123, 61);
+            lbSoDon.Location = new Point(108, 46);
             lbSoDon.Name = "lbSoDon";
-            lbSoDon.Size = new Size(65, 27);
+            lbSoDon.Size = new Size(51, 21);
             lbSoDon.TabIndex = 17;
             lbSoDon.Text = "1 đơn";
             // 
@@ -182,9 +182,9 @@
             label3.AutoSize = true;
             label3.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = SystemColors.ControlDarkDark;
-            label3.Location = new Point(123, 36);
+            label3.Location = new Point(108, 27);
             label3.Name = "label3";
-            label3.Size = new Size(124, 24);
+            label3.Size = new Size(97, 19);
             label3.TabIndex = 16;
             label3.Text = "Chờ xác nhận";
             // 
@@ -195,20 +195,18 @@
             roundedPanel2.Controls.Add(pictureBox2);
             roundedPanel2.Controls.Add(label6);
             roundedPanel2.Controls.Add(lbSoDonXacNhan);
-            roundedPanel2.Location = new Point(298, 97);
-            roundedPanel2.Margin = new Padding(3, 4, 3, 4);
+            roundedPanel2.Location = new Point(261, 73);
             roundedPanel2.Name = "roundedPanel2";
-            roundedPanel2.Padding = new Padding(14, 16, 14, 16);
-            roundedPanel2.Size = new Size(278, 133);
+            roundedPanel2.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel2.Size = new Size(243, 100);
             roundedPanel2.TabIndex = 15;
             // 
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(30, 20);
-            pictureBox2.Margin = new Padding(3, 4, 3, 4);
+            pictureBox2.Location = new Point(26, 15);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(80, 93);
+            pictureBox2.Size = new Size(70, 70);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 21;
             pictureBox2.TabStop = false;
@@ -218,9 +216,9 @@
             label6.AutoSize = true;
             label6.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label6.ForeColor = SystemColors.ControlDarkDark;
-            label6.Location = new Point(128, 36);
+            label6.Location = new Point(112, 27);
             label6.Name = "label6";
-            label6.Size = new Size(112, 24);
+            label6.Size = new Size(89, 19);
             label6.TabIndex = 19;
             label6.Text = "Đã xác nhận";
             // 
@@ -228,9 +226,9 @@
             // 
             lbSoDonXacNhan.AutoSize = true;
             lbSoDonXacNhan.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbSoDonXacNhan.Location = new Point(128, 61);
+            lbSoDonXacNhan.Location = new Point(112, 46);
             lbSoDonXacNhan.Name = "lbSoDonXacNhan";
-            lbSoDonXacNhan.Size = new Size(65, 27);
+            lbSoDonXacNhan.Size = new Size(51, 21);
             lbSoDonXacNhan.TabIndex = 20;
             lbSoDonXacNhan.Text = "2 đơn";
             // 
@@ -241,20 +239,18 @@
             roundedPanel3.Controls.Add(pictureBox3);
             roundedPanel3.Controls.Add(label7);
             roundedPanel3.Controls.Add(lbTongSanh);
-            roundedPanel3.Location = new Point(583, 97);
-            roundedPanel3.Margin = new Padding(3, 4, 3, 4);
+            roundedPanel3.Location = new Point(510, 73);
             roundedPanel3.Name = "roundedPanel3";
-            roundedPanel3.Padding = new Padding(14, 16, 14, 16);
-            roundedPanel3.Size = new Size(278, 133);
+            roundedPanel3.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel3.Size = new Size(243, 100);
             roundedPanel3.TabIndex = 15;
             // 
             // pictureBox3
             // 
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(31, 20);
-            pictureBox3.Margin = new Padding(3, 4, 3, 4);
+            pictureBox3.Location = new Point(27, 15);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(80, 93);
+            pictureBox3.Size = new Size(70, 70);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 24;
             pictureBox3.TabStop = false;
@@ -264,9 +260,9 @@
             label7.AutoSize = true;
             label7.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = SystemColors.ControlDarkDark;
-            label7.Location = new Point(129, 36);
+            label7.Location = new Point(113, 27);
             label7.Name = "label7";
-            label7.Size = new Size(94, 24);
+            label7.Size = new Size(75, 19);
             label7.TabIndex = 22;
             label7.Text = "Tổng sảnh";
             // 
@@ -274,9 +270,9 @@
             // 
             lbTongSanh.AutoSize = true;
             lbTongSanh.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbTongSanh.Location = new Point(129, 61);
+            lbTongSanh.Location = new Point(113, 46);
             lbTongSanh.Name = "lbTongSanh";
-            lbTongSanh.Size = new Size(72, 27);
+            lbTongSanh.Size = new Size(56, 21);
             lbTongSanh.TabIndex = 23;
             lbTongSanh.Text = "3 sảnh";
             // 
@@ -287,20 +283,18 @@
             roundedPanel4.Controls.Add(pictureBox4);
             roundedPanel4.Controls.Add(label9);
             roundedPanel4.Controls.Add(lbDoanhThuThang);
-            roundedPanel4.Location = new Point(867, 97);
-            roundedPanel4.Margin = new Padding(3, 4, 3, 4);
+            roundedPanel4.Location = new Point(759, 73);
             roundedPanel4.Name = "roundedPanel4";
-            roundedPanel4.Padding = new Padding(14, 16, 14, 16);
-            roundedPanel4.Size = new Size(280, 133);
+            roundedPanel4.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel4.Size = new Size(245, 100);
             roundedPanel4.TabIndex = 15;
             // 
             // pictureBox4
             // 
             pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(27, 20);
-            pictureBox4.Margin = new Padding(3, 4, 3, 4);
+            pictureBox4.Location = new Point(24, 15);
             pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(80, 93);
+            pictureBox4.Size = new Size(70, 70);
             pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox4.TabIndex = 27;
             pictureBox4.TabStop = false;
@@ -310,9 +304,9 @@
             label9.AutoSize = true;
             label9.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ControlDarkDark;
-            label9.Location = new Point(126, 36);
+            label9.Location = new Point(110, 27);
             label9.Name = "label9";
-            label9.Size = new Size(152, 24);
+            label9.Size = new Size(117, 19);
             label9.TabIndex = 25;
             label9.Text = "Doanh thu tháng";
             // 
@@ -320,9 +314,9 @@
             // 
             lbDoanhThuThang.AutoSize = true;
             lbDoanhThuThang.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbDoanhThuThang.Location = new Point(126, 61);
+            lbDoanhThuThang.Location = new Point(110, 46);
             lbDoanhThuThang.Name = "lbDoanhThuThang";
-            lbDoanhThuThang.Size = new Size(93, 27);
+            lbDoanhThuThang.Size = new Size(74, 21);
             lbDoanhThuThang.TabIndex = 26;
             lbDoanhThuThang.Text = "450 triệu";
             // 
@@ -332,11 +326,10 @@
             roundedPanel5.BorderThickness = 5;
             roundedPanel5.Controls.Add(dgvDatSanh);
             roundedPanel5.Controls.Add(label11);
-            roundedPanel5.Location = new Point(14, 253);
-            roundedPanel5.Margin = new Padding(3, 4, 3, 4);
+            roundedPanel5.Location = new Point(12, 190);
             roundedPanel5.Name = "roundedPanel5";
-            roundedPanel5.Padding = new Padding(14, 16, 14, 16);
-            roundedPanel5.Size = new Size(1131, 643);
+            roundedPanel5.Padding = new Padding(12, 12, 12, 12);
+            roundedPanel5.Size = new Size(990, 476);
             roundedPanel5.TabIndex = 16;
             // 
             // dgvDatSanh
@@ -346,14 +339,14 @@
             dgvDatSanh.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(250, 251, 252);
             dgvDatSanh.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dgvDatSanh.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvDatSanh.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
+            dgvDatSanh.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dgvDatSanh.BackgroundColor = Color.White;
             dgvDatSanh.BorderStyle = BorderStyle.None;
             dgvDatSanh.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dgvDatSanh.ColMaDonIndex = -1;
             dgvDatSanh.ColThaoTacIndex = -1;
             dgvDatSanh.ColTrangThaiIndex = -1;
-            dgvDatSanh.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.White;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -362,7 +355,7 @@
             dataGridViewCellStyle2.SelectionForeColor = Color.Black;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             dgvDatSanh.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dgvDatSanh.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvDatSanh.ColumnHeadersHeight = 29;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Window;
             dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
@@ -374,8 +367,7 @@
             dgvDatSanh.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvDatSanh.EnableHeadersVisualStyles = false;
             dgvDatSanh.GridColor = Color.FromArgb(240, 242, 245);
-            dgvDatSanh.Location = new Point(17, 48);
-            dgvDatSanh.Margin = new Padding(3, 4, 3, 4);
+            dgvDatSanh.Location = new Point(15, 36);
             dgvDatSanh.MultiSelect = false;
             dgvDatSanh.Name = "dgvDatSanh";
             dgvDatSanh.ReadOnly = true;
@@ -385,7 +377,7 @@
             dgvDatSanh.RowsDefaultCellStyle = dataGridViewCellStyle4;
             dgvDatSanh.RowTemplate.Height = 64;
             dgvDatSanh.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDatSanh.Size = new Size(1097, 583);
+            dgvDatSanh.Size = new Size(960, 431);
             dgvDatSanh.TabIndex = 21;
             dgvDatSanh.TabStop = false;
             // 
@@ -393,9 +385,9 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Calibri", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label11.Location = new Point(17, 16);
+            label11.Location = new Point(15, 12);
             label11.Name = "label11";
-            label11.Size = new Size(191, 27);
+            label11.Size = new Size(145, 21);
             label11.TabIndex = 19;
             label11.Text = "Danh sách đặt sảnh";
             // 
@@ -861,28 +853,31 @@
             // 
             // btnTaoDonDatSanh
             // 
-            btnTaoDonDatSanh.BackColor = Color.Black;
-            btnTaoDonDatSanh.BorderColor = Color.Black;
-            btnTaoDonDatSanh.BorderThickness = 0;
-            btnTaoDonDatSanh.FlatAppearance.BorderSize = 0;
-            btnTaoDonDatSanh.FlatStyle = FlatStyle.Flat;
+            btnTaoDonDatSanh.Animated = true;
+            btnTaoDonDatSanh.BorderRadius = 15;
+            btnTaoDonDatSanh.CustomizableEdges = customizableEdges1;
+            btnTaoDonDatSanh.DisabledState.BorderColor = Color.DarkGray;
+            btnTaoDonDatSanh.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnTaoDonDatSanh.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnTaoDonDatSanh.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnTaoDonDatSanh.FillColor = Color.Black;
             btnTaoDonDatSanh.Font = new Font("Segoe UI Semibold", 10.5F);
             btnTaoDonDatSanh.ForeColor = Color.White;
-            btnTaoDonDatSanh.Location = new Point(919, 27);
+            btnTaoDonDatSanh.Location = new Point(804, 20);
+            btnTaoDonDatSanh.Margin = new Padding(3, 2, 3, 2);
             btnTaoDonDatSanh.Name = "btnTaoDonDatSanh";
-            btnTaoDonDatSanh.Padding = new Padding(10, 5, 10, 5);
-            btnTaoDonDatSanh.Size = new Size(209, 45);
+            btnTaoDonDatSanh.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnTaoDonDatSanh.Size = new Size(183, 34);
             btnTaoDonDatSanh.TabIndex = 24;
             btnTaoDonDatSanh.Text = "+ Tạo đơn đặt sảnh";
-            btnTaoDonDatSanh.UseVisualStyleBackColor = false;
             btnTaoDonDatSanh.Click += btnTaoDonDatSanh_Click;
             // 
             // FrmDatSanh_TiecCuoi
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(1190, 900);
+            ClientSize = new Size(1041, 675);
             Controls.Add(btnTaoDonDatSanh);
             Controls.Add(roundedPanel5);
             Controls.Add(roundedPanel4);
@@ -892,7 +887,6 @@
             Controls.Add(label2);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 4, 3, 4);
             Name = "FrmDatSanh_TiecCuoi";
             StartPosition = FormStartPosition.CenterParent;
             Text = "FrmDatSanh_TiecCuoi";
@@ -984,6 +978,6 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn38;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn39;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn40;
-        private Controls.RoundedButton btnTaoDonDatSanh;
+        private Guna.UI2.WinForms.Guna2Button btnTaoDonDatSanh;
     }
 }

@@ -45,17 +45,19 @@ namespace UI
                 dgvDatSanh.RowHeadersVisible = false;
                 dgvDatSanh.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 dgvDatSanh.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-                var colMaDon = new DataGridViewTextBoxColumn { Name = "MaDon", HeaderText = "Mã đơn", Width = 100, MinimumWidth = 90 };
-                var colNgayTiec = new DataGridViewTextBoxColumn { Name = "NgayTiec", HeaderText = "Ngày tiệc", Width = 150, MinimumWidth = 130 };
-                var colKhachHang = new DataGridViewTextBoxColumn { Name = "KhachHang", HeaderText = "Khách hàng", Width = 200, MinimumWidth = 150 };
-                var colSanh = new DataGridViewTextBoxColumn { Name = "Sanh", HeaderText = "Sảnh", Width = 120, MinimumWidth = 100 };
-                var colSoBan = new DataGridViewTextBoxColumn { Name = "SoBan", HeaderText = "Số bàn/khách", Width = 150, MinimumWidth = 130 };
+                
+                var colMaDon = new DataGridViewTextBoxColumn { Name = "MaDon", HeaderText = "Mã đơn", Width = 100, MinimumWidth = 90, FillWeight = 100 };
+                var colNgayTiec = new DataGridViewTextBoxColumn { Name = "NgayTiec", HeaderText = "Ngày tiệc", Width = 150, MinimumWidth = 130, FillWeight = 150 };
+                var colKhachHang = new DataGridViewTextBoxColumn { Name = "KhachHang", HeaderText = "Khách hàng", Width = 200, MinimumWidth = 150, FillWeight = 200 };
+                var colSanh = new DataGridViewTextBoxColumn { Name = "Sanh", HeaderText = "Sảnh", Width = 120, MinimumWidth = 100, FillWeight = 120 };
+                var colSoBan = new DataGridViewTextBoxColumn { Name = "SoBan", HeaderText = "Số bàn/khách", Width = 150, MinimumWidth = 130, FillWeight = 150 };
                 var colTongTien = new DataGridViewTextBoxColumn
                 {
                     Name = "TongTien",
                     HeaderText = "Tổng tiền",
                     Width = 120,
                     MinimumWidth = 110,
+                    FillWeight = 120,
                     DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
                 };
                 var colTienCoc = new DataGridViewTextBoxColumn
@@ -64,9 +66,10 @@ namespace UI
                     HeaderText = "Tiền cọc",
                     Width = 110,
                     MinimumWidth = 100,
+                    FillWeight = 110,
                     DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight }
                 };
-                var colTrangThai = new DataGridViewTextBoxColumn { Name = "TrangThai", HeaderText = "Trạng thái", Width = 130, MinimumWidth = 120 };
+                var colTrangThai = new DataGridViewTextBoxColumn { Name = "TrangThai", HeaderText = "Trạng thái", Width = 130, MinimumWidth = 120, FillWeight = 130 };
 
                 dgvDatSanh.Columns.Add(colMaDon);
                 dgvDatSanh.Columns.Add(colNgayTiec);
@@ -112,7 +115,33 @@ namespace UI
                 int tongSoSanh = _datSanhBLL.LayTongSoSanh();
                 lbTongSanh.Text = $"{tongSoSanh:N0} sảnh";
 
-                decimal doanhThuThang = _datSanhBLL.LayDoanhThuThang();
+                decimal doanhThuThang = 0;
+                DataTable dt = _datSanhBLL.LayDanhSachDatSanh();
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    int currMonth = DateTime.Now.Month;
+                    int currYear = DateTime.Now.Year;
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        try
+                        {
+                            if (row["trang_thai"] == DBNull.Value) continue;
+                            string trangThai = row["trang_thai"].ToString().Trim().ToUpper();
+                            if (trangThai != "HOÀN TẤT") continue;
+                            
+                            if (row["ngay_to_chuc"] == DBNull.Value) continue;
+                            DateTime ngayToChuc = Convert.ToDateTime(row["ngay_to_chuc"]);
+                            if (ngayToChuc.Month != currMonth || ngayToChuc.Year != currYear) continue;
+                            
+                            if (row["tong_tien"] == DBNull.Value) continue;
+                            doanhThuThang += Convert.ToDecimal(row["tong_tien"]);
+                        }
+                        catch
+                        {
+                            // lỗi dữ liệu
+                        }
+                    }
+                }
                 lbDoanhThuThang.Text = doanhThuThang > 0 ? doanhThuThang.ToString("#,##0") + " ₫" : "0 ₫";
             }
             catch (Exception ex)
@@ -335,6 +364,44 @@ namespace UI
             try
             {
                 if (dgvDatSanh == null || dgvDatSanh.Columns.Count == 0) return;
+
+                // Tính toán chiều rộng có sẵn (trừ đi scrollbar nếu có)
+                int availableWidth = dgvDatSanh.ClientSize.Width;
+                if (dgvDatSanh.Rows.Count > 0 && dgvDatSanh.DisplayedRowCount(false) < dgvDatSanh.Rows.Count)
+                {
+                    availableWidth -= SystemInformation.VerticalScrollBarWidth;
+                }
+
+                // Tổng FillWeight ban đầu = 1080
+                const int totalFillWeight = 1080;
+
+                // Tính width cho từng cột dựa trên tỷ lệ FillWeight
+                var columns = new[]
+                {
+                    new { Name = "MaDon", FillWeight = 100 },
+                    new { Name = "NgayTiec", FillWeight = 150 },
+                    new { Name = "KhachHang", FillWeight = 200 },
+                    new { Name = "Sanh", FillWeight = 120 },
+                    new { Name = "SoBan", FillWeight = 150 },
+                    new { Name = "TongTien", FillWeight = 120 },
+                    new { Name = "TienCoc", FillWeight = 110 },
+                    new { Name = "TrangThai", FillWeight = 130 }
+                };
+
+                foreach (var colInfo in columns)
+                {
+                    var column = dgvDatSanh.Columns[colInfo.Name];
+                    if (column != null)
+                    {
+                        int newWidth = (int)((double)colInfo.FillWeight / totalFillWeight * availableWidth);
+                        // Đảm bảo không nhỏ hơn MinimumWidth
+                        if (newWidth < column.MinimumWidth)
+                        {
+                            newWidth = column.MinimumWidth;
+                        }
+                        column.Width = newWidth;
+                    }
+                }
             }
             catch (Exception ex)
             {

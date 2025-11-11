@@ -14,11 +14,12 @@ namespace DAL
         // Tạo hóa đơn
         public int CreateHoaDon(int chiNhanhId, string loai, decimal vatPercent, decimal phiDv,
                                 decimal giamGia, decimal tongTruocThue, decimal tongSauThue,
-                                int? khachHangId = null, int? thamChieuId = null)
+                                int? khachHangId = null, int? thamChieuId = null,
+                                string? soBanSanh = null, string? tenNguoiBan = null, string? tenNguoiDat = null)
         {
-            string sql = @"INSERT INTO hoa_don(chi_nhanh_id, khach_hang_id, loai, tham_chieu_id, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai)
+            string sql = @"INSERT INTO hoa_don(chi_nhanh_id, khach_hang_id, loai, tham_chieu_id, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai, so_ban_sanh, ten_nguoi_ban, ten_nguoi_dat)
                            OUTPUT INSERTED.hoa_don_id
-                           VALUES(@cn, @kh, @loai, @tc, SYSUTCDATETIME(), @vat, @phi, @giam, @truoc, @sau, N'CHỜ TT')";
+                           VALUES(@cn, @kh, @loai, @tc, SYSUTCDATETIME(), @vat, @phi, @giam, @truoc, @sau, N'CHỜ TT', @soBanSanh, @tenNguoiBan, @tenNguoiDat)";
             var p = new[]
             {
                 new SqlParameter("@cn", chiNhanhId),
@@ -29,7 +30,10 @@ namespace DAL
                 new SqlParameter("@phi", phiDv),
                 new SqlParameter("@giam", giamGia),
                 new SqlParameter("@truoc", tongTruocThue),
-                new SqlParameter("@sau", tongSauThue)
+                new SqlParameter("@sau", tongSauThue),
+                new SqlParameter("@soBanSanh", (object?)soBanSanh ?? DBNull.Value),
+                new SqlParameter("@tenNguoiBan", (object?)tenNguoiBan ?? DBNull.Value),
+                new SqlParameter("@tenNguoiDat", (object?)tenNguoiDat ?? DBNull.Value)
             };
             var id = _db.ExecuteScalar(sql, p);
             return Convert.ToInt32(id);
@@ -53,17 +57,20 @@ namespace DAL
         }
 
         // Lấy danh sách hóa đơn theo chi nhánh và trạng thái (mặc định: CHỜ TT)
-        public DataTable GetHoaDonList(int chiNhanhId, string trangThai = "CHỜ TT", int top = 100)
+        public DataTable GetHoaDonList(int chiNhanhId, string trangThai = "CHỜ TT", int top = 100, string? loai = null)
         {
             string sql = @"SELECT TOP (@top) hoa_don_id, loai, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai
                            FROM hoa_don
-                           WHERE chi_nhanh_id = @cn AND (@tt IS NULL OR trang_thai = @tt)
+                           WHERE chi_nhanh_id = @cn 
+                             AND (@tt IS NULL OR trang_thai = @tt)
+                             AND (@loai IS NULL OR loai = @loai)
                            ORDER BY ngay_lap DESC";
             var p = new[]
             {
                 new SqlParameter("@top", top),
                 new SqlParameter("@cn", chiNhanhId),
-                new SqlParameter("@tt", (object?)trangThai ?? DBNull.Value)
+                new SqlParameter("@tt", (object?)trangThai ?? DBNull.Value),
+                new SqlParameter("@loai", (object?)loai ?? DBNull.Value)
             };
             return _db.GetDataTable(sql, p);
         }
@@ -130,15 +137,20 @@ namespace DAL
                                 hd.trang_thai,
                                 hd.tham_chieu_id,
                                 CASE 
+                                    WHEN hd.so_ban_sanh IS NOT NULL AND hd.so_ban_sanh != N'' THEN hd.so_ban_sanh
                                     WHEN hd.loai = N'NHAHANG' AND db.dat_ban_id IS NOT NULL AND db.ban_id IS NOT NULL THEN CAST(b.so_ban AS NVARCHAR(50))
                                     WHEN hd.loai = N'TIECCUOI' AND ds.dat_sanh_id IS NOT NULL AND ds.sanh_id IS NOT NULL THEN s.ten_sanh
                                     ELSE N'-'
                                 END AS ban_sanh,
+                                CASE 
+                                    WHEN hd.loai = N'NHAHANG' THEN hd.ten_nguoi_ban
+                                    WHEN hd.loai = N'TIECCUOI' THEN hd.ten_nguoi_dat
+                                    ELSE NULL
+                                END AS thu_ngan,
                                 km.ten AS ten_km,
                                 km.ma_km AS ma_km,
                                 hdkm.so_tien_km,
-                                (SELECT TOP 1 hinh_thuc FROM thanh_toan WHERE hoa_don_id = hd.hoa_don_id ORDER BY ngay_tt DESC) AS phuong_thuc_tt,
-                                NULL AS thu_ngan
+                                (SELECT TOP 1 hinh_thuc FROM thanh_toan WHERE hoa_don_id = hd.hoa_don_id ORDER BY ngay_tt DESC) AS phuong_thuc_tt
                            FROM hoa_don hd
                            LEFT JOIN dat_ban db ON db.dat_ban_id = hd.tham_chieu_id AND hd.loai = N'NHAHANG'
                            LEFT JOIN ban b ON b.ban_id = db.ban_id
@@ -146,8 +158,9 @@ namespace DAL
                            LEFT JOIN sanh s ON s.sanh_id = ds.sanh_id
                            LEFT JOIN hoa_don_km hdkm ON hdkm.hoa_don_id = hd.hoa_don_id
                            LEFT JOIN chuong_trinh_km km ON km.km_id = hdkm.km_id
-                           WHERE hd.chi_nhanh_id = @cn";
-
+                           WHERE hd.chi_nhanh_id = @cn 
+                             AND hd.trang_thai IN (N'ĐÃ THANH TOÁN', N'HOÀN TIỀN')";
+            
             var parameters = new List<SqlParameter>
             {
                 new SqlParameter("@top", top),
@@ -222,11 +235,63 @@ namespace DAL
 
                     if (voucherId.HasValue)
                     {
-                        string sqlUpdateVoucher = @"UPDATE voucher 
-                                                     SET da_dung = da_dung + 1
-                                                     WHERE voucher_id = @vid";
-                        var pUpdateVoucher = new[] { new SqlParameter("@vid", voucherId.Value) };
-                        _db.ExecuteNonQuery(sqlUpdateVoucher, pUpdateVoucher);
+                        // Kiểm tra lượt dùng trước khi cập nhật
+                        string sqlCheckVoucher = @"SELECT so_lan, da_dung 
+                                                    FROM voucher 
+                                                    WHERE voucher_id = @vid";
+                        var pCheck = new[] { new SqlParameter("@vid", voucherId.Value) };
+                        var dtCheck = _db.GetDataTable(sqlCheckVoucher, pCheck);
+                        
+                        if (dtCheck.Rows.Count > 0)
+                        {
+                            int soLan = dtCheck.Rows[0]["so_lan"] != DBNull.Value ? Convert.ToInt32(dtCheck.Rows[0]["so_lan"]) : 0;
+                            int daDung = dtCheck.Rows[0]["da_dung"] != DBNull.Value ? Convert.ToInt32(dtCheck.Rows[0]["da_dung"]) : 0;
+                            
+                            if (soLan > 0 && daDung >= soLan)
+                            {
+                                throw new Exception("Voucher đã sử dụng hết số lượt cho phép.");
+                            }
+                            
+                            string sqlUpdateVoucher = @"UPDATE voucher 
+                                                         SET da_dung = da_dung + 1
+                                                         WHERE voucher_id = @vid AND (so_lan = 0 OR da_dung < so_lan)";
+                            var pUpdateVoucher = new[] { new SqlParameter("@vid", voucherId.Value) };
+                            int rowsUpdated = _db.ExecuteNonQuery(sqlUpdateVoucher, pUpdateVoucher);
+                            
+                            if (rowsUpdated == 0)
+                            {
+                                throw new Exception("Voucher đã sử dụng hết số lượt cho phép.");
+                            }
+                        }
+                    }
+                }
+
+                // Cập nhật trạng thái đặt sảnh sang "ĐÃ THANH TOÁN" nếu hóa đơn là tiệc cưới
+                string sqlCheckLoai = @"SELECT loai, tham_chieu_id FROM hoa_don WHERE hoa_don_id = @id";
+                var pCheckLoai = new[] { new SqlParameter("@id", hoaDonId) };
+                var dtCheckLoai = _db.GetDataTable(sqlCheckLoai, pCheckLoai);
+                
+                if (dtCheckLoai.Rows.Count > 0)
+                {
+                    string loai = dtCheckLoai.Rows[0]["loai"]?.ToString() ?? "";
+                    if (loai == "TIECCUOI" && dtCheckLoai.Rows[0]["tham_chieu_id"] != DBNull.Value)
+                    {
+                        int hopDongId = Convert.ToInt32(dtCheckLoai.Rows[0]["tham_chieu_id"]);
+                        
+                        string sqlGetDatSanh = @"SELECT dat_sanh_id FROM hop_dong WHERE hop_dong_id = @hdId";
+                        var pGetDatSanh = new[] { new SqlParameter("@hdId", hopDongId) };
+                        var dtDatSanh = _db.GetDataTable(sqlGetDatSanh, pGetDatSanh);
+                        
+                        if (dtDatSanh.Rows.Count > 0 && dtDatSanh.Rows[0]["dat_sanh_id"] != DBNull.Value)
+                        {
+                            int datSanhId = Convert.ToInt32(dtDatSanh.Rows[0]["dat_sanh_id"]);
+                            
+                            string sqlUpdateDatSanh = @"UPDATE dat_sanh 
+                                                         SET trang_thai = N'ĐÃ THANH TOÁN'
+                                                         WHERE dat_sanh_id = @dsId";
+                            var pUpdateDatSanh = new[] { new SqlParameter("@dsId", datSanhId) };
+                            _db.ExecuteNonQuery(sqlUpdateDatSanh, pUpdateDatSanh);
+                        }
                     }
                 }
 
@@ -238,10 +303,33 @@ namespace DAL
             }
         }
 
+        // Cập nhật trạng thái hóa đơn
+        public bool CapNhatTrangThaiHoaDon(int hoaDonId, string trangThai)
+        {
+            try
+            {
+                string sql = @"UPDATE hoa_don 
+                               SET trang_thai = @trangThai
+                               WHERE hoa_don_id = @id";
+                var p = new[]
+                {
+                    new SqlParameter("@id", hoaDonId),
+                    new SqlParameter("@trangThai", SqlDbType.NVarChar, 50) { Value = trangThai ?? "" }
+                };
+                
+                int rowsAffected = _db.ExecuteNonQuery(sql, p);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         // Lấy thông tin hóa đơn theo ID (để kiểm tra trước khi thanh toán)
         public DataRow? GetHoaDonById(int hoaDonId)
         {
-            string sql = @"SELECT hd.hoa_don_id, hd.chi_nhanh_id, hd.loai, hd.ngay_lap, hd.vat, hd.phi_dv, hd.giam_gia, 
+            string sql = @"SELECT hd.hoa_don_id, hd.chi_nhanh_id, hd.loai, hd.tham_chieu_id, hd.ngay_lap, hd.vat, hd.phi_dv, hd.giam_gia, 
                                   hd.tong_truoc_thue, hd.tong_sau_thue, hd.trang_thai,
                                   CASE 
                                       WHEN hd.loai = N'TIECCUOI' AND ds.dat_sanh_id IS NOT NULL AND ds.sanh_id IS NOT NULL THEN CAST(s.ten_sanh AS NVARCHAR(50))
@@ -263,6 +351,66 @@ namespace DAL
             var p = new[] { new SqlParameter("@id", hoaDonId) };
             var dt = _db.GetDataTable(sql, p);
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+        }
+
+        // Xử lý hoàn tiền hóa đơn nhà hàng
+        public bool ProcessRefund(int hoaDonId, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            try
+            {
+                var hoaDon = GetHoaDonById(hoaDonId);
+                if (hoaDon == null)
+                {
+                    errorMessage = "Không tìm thấy hóa đơn!";
+                    return false;
+                }
+
+                string loai = hoaDon["loai"]?.ToString() ?? "";
+                if (loai != "NHAHANG")
+                {
+                    errorMessage = "Chức năng hoàn tiền chỉ áp dụng cho hóa đơn nhà hàng!";
+                    return false;
+                }
+
+                string trangThai = hoaDon["trang_thai"]?.ToString()?.Trim() ?? "";
+                if (trangThai != "ĐÃ THANH TOÁN")
+                {
+                    errorMessage = $"Chỉ có thể hoàn tiền cho hóa đơn đã thanh toán! Trạng thái hiện tại: '{trangThai}'";
+                    return false;
+                }
+
+                string sql = @"UPDATE hoa_don 
+                               SET trang_thai = N'HOÀN TIỀN'
+                               WHERE hoa_don_id = @id AND trang_thai = N'ĐÃ THANH TOÁN'";
+                var p = new[]
+                {
+                    new SqlParameter("@id", hoaDonId)
+                };
+                
+                int rowsAffected = _db.ExecuteNonQuery(sql, p);
+                if (rowsAffected == 0)
+                {
+                    var checkHoaDon = GetHoaDonById(hoaDonId);
+                    if (checkHoaDon == null)
+                    {
+                        errorMessage = "Không tìm thấy hóa đơn!";
+                    }
+                    else
+                    {
+                        string currentStatus = checkHoaDon["trang_thai"]?.ToString()?.Trim() ?? "";
+                        errorMessage = $"Không thể cập nhật trạng thái hóa đơn! Trạng thái hiện tại: '{currentStatus}'. Chỉ có thể hoàn tiền cho hóa đơn đã thanh toán.";
+                    }
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Lỗi xử lý hoàn tiền: {ex.Message}";
+                return false;
+            }
         }
     }
 }

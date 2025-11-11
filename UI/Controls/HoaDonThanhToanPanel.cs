@@ -20,6 +20,9 @@ namespace UI.Controls
         private decimal subtotalValue = 0;
         private decimal vatPercent = 0;
         private decimal discountValue = 0;
+        private decimal depositValue = 0;
+        private decimal baseTotalForDiscount = 0;
+        private decimal soTienConLaiGoc = 0;
         public int HoaDonId { get; set; }
         private int? _kmId = null;
         private int? _voucherId = null;
@@ -57,6 +60,7 @@ namespace UI.Controls
         {
             subtotalValue = subtotal;
             vatPercent = vatPercentInput;
+            soTienConLaiGoc = total;
             lbTamTinh.Text = FormatCurrency(subtotalValue);
             label6.Text = $"VAT ({vatPercent:0}%)";
 
@@ -65,26 +69,69 @@ namespace UI.Controls
             lbTongCong.Text = FormatCurrency(total);
             btnThanhToan.Text = $"Thanh toán {FormatCurrency(total)}";
         }
+        // Hiển thị tiền cọc (dành cho hóa đơn tiệc cưới)
+        public void SetDeposit(decimal amount)
+        {
+            depositValue = amount < 0 ? -amount : amount;
+            lbKhuyenMai.Visible = true;
+            lbSoTienGiamGia.Visible = true;
+            lbKhuyenMai.Text = "Tiền cọc";
+            lbSoTienGiamGia.Text = FormatCurrency(-depositValue);
+            UpdateTotals(); // Cập nhật tổng sau khi set tiền cọc
+        }
+        // Thiết lập số tiền gốc để tính khuyến mãi (áp dụng cho tổng)
+        public void SetBaseDiscountTotal(decimal total)
+        {
+            baseTotalForDiscount = total < 0 ? 0 : total;
+        }
         // Áp dụng voucher
         private void OnApplyVoucherClick(object? sender, EventArgs e)
         {
-            // Tính tổng hiện tại để hiển thị số tiền giảm chính xác trong dialog
-            ParseMoneyAndVat();
-            var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
-            var billTotal = subtotalValue + vatValue;
-            using (var f = new UI.ApDungVoucher(billTotal))
+            decimal currentTotal = ParseCurrency(lbTongCong.Text);
+            if (currentTotal <= 0)
+            {
+                ParseMoneyAndVat();
+                var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
+                currentTotal = subtotalValue + vatValue;
+            }
+            
+            // Lấy loại hóa đơn từ HoaDonId
+            string invoiceLoai = "";
+            if (HoaDonId > 0)
+            {
+                try
+                {
+                    var hoaDon = _hoaDonBLL.GetHoaDonById(HoaDonId);
+                    if (hoaDon != null)
+                    {
+                        invoiceLoai = hoaDon["loai"]?.ToString() ?? "";
+                    }
+                }
+                catch { }
+            }
+            
+            using (var f = new UI.ApDungVoucher(currentTotal, invoiceLoai))
             {
                 if (f.ShowDialog(this) == DialogResult.OK && f.IsApplied)
                 {
                     lbTenKhuyenMai.Text = f.ProgramName;
                     lbMaKM.Text = string.IsNullOrEmpty(f.ProgramCode) ? "" : f.ProgramCode;
 
-                    ParseMoneyAndVat();
+
+                    decimal currentTotalForDiscount = baseTotalForDiscount > 0
+                        ? baseTotalForDiscount
+                        : ParseCurrency(lbTongCong.Text);
+                    if (currentTotalForDiscount <= 0)
+                    {
+                        ParseMoneyAndVat();
+                        var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
+                        currentTotalForDiscount = subtotalValue + vatValue;
+                    }
 
                     decimal calculatedDiscount = 0;
                     if (f.DiscountType == "PERCENT")
                     {
-                        calculatedDiscount = Math.Round(subtotalValue * f.DiscountValue / 100m, 0);
+                        calculatedDiscount = Math.Round(currentTotalForDiscount * f.DiscountValue / 100m, 0);
                         lbGiam.Text = $"Giảm {f.DiscountValue}%";
                     }
                     else
@@ -93,13 +140,12 @@ namespace UI.Controls
                         lbGiam.Text = "Giảm tiền";
                     }
 
-                    calculatedDiscount = Math.Min(calculatedDiscount, subtotalValue);
+                    calculatedDiscount = Math.Min(calculatedDiscount, currentTotalForDiscount);
 
                     discountValue = calculatedDiscount;
                     lbSoTienGiam.Text = FormatCurrency(-discountValue);
                     SetVoucherApplied(true);
 
-                    // Lưu thông tin khuyến mãi/voucher
                     _kmId = f.ProgramId;
                     _voucherId = f.VoucherId;
 
@@ -112,19 +158,41 @@ namespace UI.Controls
         {
             panelThongTinKhuyenMai.Visible = applied;
             btnVoucher.Visible = !applied;
-            lbKhuyenMai.Visible = applied;
-            lbSoTienGiamGia.Visible = applied;
+            bool showDeposit = depositValue > 0;
+            lbKhuyenMai.Visible = showDeposit || applied;
+            lbSoTienGiamGia.Visible = showDeposit || applied;
 
             if (!applied)
             {
+                // Nếu có tiền cọc, hiển thị tiền cọc
+                if (showDeposit)
+                {
+                    lbKhuyenMai.Text = "Tiền cọc";
+                    lbSoTienGiamGia.Text = FormatCurrency(-depositValue);
+                }
+                else
+                {
+                    lbKhuyenMai.Text = "Khuyến mãi";
+                    lbSoTienGiamGia.Text = "";
+                }
                 lbTenKhuyenMai.Text = "Khuyễn mãi {tên khuyến mãi}";
                 lbMaKM.Text = "{mã khuyễn mãi}";
                 lbGiam.Text = "";
                 lbSoTienGiam.Text = "";
-                lbSoTienGiamGia.Text = "";
             }
             else
             {
+                // Khi có khuyến mãi, vẫn hiển thị tiền cọc nếu có
+                if (showDeposit)
+                {
+                    lbKhuyenMai.Text = "Tiền cọc";
+                    lbSoTienGiamGia.Text = FormatCurrency(-depositValue);
+                }
+                else
+                {
+                    lbKhuyenMai.Text = "Khuyến mãi";
+                    lbSoTienGiamGia.Text = FormatCurrency(-discountValue);
+                }
                 if (string.IsNullOrWhiteSpace(lbGiam.Text)) lbGiam.Text = "Giảm 0%";
                 if (string.IsNullOrWhiteSpace(lbSoTienGiam.Text)) lbSoTienGiam.Text = "-0 đ";
             }
@@ -206,15 +274,45 @@ namespace UI.Controls
         // Cập nhật tổng tiền sau khi áp dụng khuyến mãi
         private void UpdateTotals()
         {
-            ParseMoneyAndVat();
-            var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
-            var total = subtotalValue + vatValue - discountValue;
+
+            decimal currentTotal = soTienConLaiGoc;
+            if (currentTotal <= 0)
+            {
+                ParseMoneyAndVat();
+                var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
+                currentTotal = subtotalValue + vatValue;
+            }
+            else
+            {
+                ParseMoneyAndVat();
+                var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
+            }
+
+            var total = currentTotal - discountValue;
             if (total < 0) total = 0;
 
-            lbVAT.Text = FormatCurrency(vatValue);
+            ParseMoneyAndVat();
+            var vatValueDisplay = Math.Round(subtotalValue * vatPercent / 100m, 0);
+            lbVAT.Text = FormatCurrency(vatValueDisplay);
+            
             lbTongCong.Text = FormatCurrency(total);
-            lbSoTienGiamGia.Text = FormatCurrency(-discountValue);
             btnThanhToan.Text = $"Thanh toán {FormatCurrency(total)}";
+            
+            if (depositValue > 0)
+            {
+                lbKhuyenMai.Text = "Tiền cọc";
+                lbKhuyenMai.Visible = true;
+                lbSoTienGiamGia.Visible = true;
+                lbSoTienGiamGia.Text = FormatCurrency(-depositValue);
+            }
+            else if (discountValue > 0)
+            {
+                // Hiển thị khuyến mãi nếu có (không có tiền cọc)
+                lbKhuyenMai.Text = "Khuyến mãi";
+                lbKhuyenMai.Visible = true;
+                lbSoTienGiamGia.Visible = true;
+                lbSoTienGiamGia.Text = FormatCurrency(-discountValue);
+            }
         }
 
         private bool isFormattingTienNhan = false;
@@ -359,6 +457,7 @@ namespace UI.Controls
                     HoaDonId,
                     totalAmount,
                     hinhThuc,
+                    out string errorMessage,
                     _kmId,
                     _voucherId,
                     discountValue > 0 ? discountValue : null
@@ -366,13 +465,23 @@ namespace UI.Controls
 
                 if (success)
                 {
+                    // Kiểm tra và cập nhật trạng thái hóa đơn nếu số tiền còn lại = 0 hoặc trạng thái đặt sảnh = "ĐÃ THANH TOÁN"
+                    _hoaDonBLL.KiemTraVaCapNhatTrangThaiHoaDon(HoaDonId, out string errorTrangThai);
+                    if (!string.IsNullOrEmpty(errorTrangThai))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Lỗi cập nhật trạng thái hóa đơn: {errorTrangThai}");
+                    }
+
                     GunaToast.Show(ownerForm, $"Thanh toán thành công! Tổng tiền: {FormatCurrency(totalAmount)}", ToastType.Success);
                     // Trigger event để form cha refresh danh sách
                     PaymentCompleted?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    GunaToast.Show(ownerForm, "Thanh toán thất bại! Vui lòng thử lại.", ToastType.Error);
+                    string errorMsg = !string.IsNullOrEmpty(errorMessage) 
+                        ? $"Thanh toán thất bại! {errorMessage}" 
+                        : "Thanh toán thất bại! Vui lòng thử lại.";
+                    GunaToast.Show(ownerForm, errorMsg, ToastType.Error);
                 }
             }
             catch (Exception ex)

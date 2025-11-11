@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using QLNhaHangTiecCuoi.Share;
@@ -21,8 +22,8 @@ namespace QLNhaHangTiecCuoi.DAL
                 SELECT COUNT(*) 
                 FROM dbo.dat_sanh 
                 WHERE sanh_id = @sanhId 
-                  AND gio_to_chuc = @gioToChuc
-                  AND ngay_to_chuc = @ngayToChuc
+                  AND CONVERT(TIME(0), gio_to_chuc) = CONVERT(TIME(0), @gioToChuc)
+                  AND CAST(ngay_to_chuc AS DATE) = CAST(@ngayToChuc AS DATE)
                   AND trang_thai NOT IN (N'ĐÃ HỦY', N'HOÀN TẤT')";
 
             if (excludeDatSanhId.HasValue)
@@ -30,9 +31,14 @@ namespace QLNhaHangTiecCuoi.DAL
                 query += " AND dat_sanh_id != @excludeDatSanhId";
             }
 
+            TimeSpan gioToChucClean = new TimeSpan(gioToChuc.Hours, gioToChuc.Minutes, gioToChuc.Seconds);
+            
+            SqlParameter gioParam = new SqlParameter("@gioToChuc", System.Data.SqlDbType.Time);
+            gioParam.Value = gioToChucClean;
+
             SqlParameter[] parameters = {
                 new SqlParameter("@sanhId", sanhId),
-                new SqlParameter("@gioToChuc", gioToChuc),
+                gioParam,
                 new SqlParameter("@ngayToChuc", ngayToChuc.Date)
             };
 
@@ -46,7 +52,52 @@ namespace QLNhaHangTiecCuoi.DAL
             try
             {
                 object result = _dbHelper.ExecuteScalar(query, parameters);
-                return Convert.ToInt32(result) == 0;
+                int count = Convert.ToInt32(result);
+                
+                return count == 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi kiểm tra trạng thái sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Overload method để kiểm tra dựa trên ca_id (khớp với UNIQUE constraint)
+        public bool KiemTraSanhTrong(int sanhId, int caId, DateTime ngayToChuc, int? excludeDatSanhId = null)
+        {
+            // Kiểm tra dựa trên ca_id để khớp với UNIQUE constraint (sanh_id, ca_id, ngay_to_chuc)
+            string query = @"
+                SELECT COUNT(*) 
+                FROM dbo.dat_sanh 
+                WHERE sanh_id = @sanhId 
+                  AND ca_id = @caId
+                  AND CAST(ngay_to_chuc AS DATE) = CAST(@ngayToChuc AS DATE)
+                  AND trang_thai NOT IN (N'ĐÃ HỦY', N'HOÀN TẤT')";
+
+            if (excludeDatSanhId.HasValue)
+            {
+                query += " AND dat_sanh_id != @excludeDatSanhId";
+            }
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@sanhId", sanhId),
+                new SqlParameter("@caId", caId),
+                new SqlParameter("@ngayToChuc", ngayToChuc.Date)
+            };
+
+            if (excludeDatSanhId.HasValue)
+            {
+                var paramList = parameters.ToList();
+                paramList.Add(new SqlParameter("@excludeDatSanhId", excludeDatSanhId.Value));
+                parameters = paramList.ToArray();
+            }
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                int count = Convert.ToInt32(result);
+                
+                return count == 0;
             }
             catch (Exception ex)
             {
@@ -739,12 +790,41 @@ namespace QLNhaHangTiecCuoi.DAL
             {
                 object result = _dbHelper.ExecuteScalar(query, parameters);
                 if (result != null && result != DBNull.Value)
+                {
                     return Convert.ToInt32(result);
+                }
                 return null;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy hop_dong_id: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy dat_sanh_id từ hop_dong_id
+        public int? LayDatSanhIdByHopDongId(int hopDongId)
+        {
+            string query = @"
+                SELECT dat_sanh_id
+                FROM dbo.hop_dong
+                WHERE hop_dong_id = @hopDongId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@hopDongId", hopDongId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy dat_sanh_id: {ex.Message}", ex);
             }
         }
 
@@ -1056,6 +1136,70 @@ namespace QLNhaHangTiecCuoi.DAL
 
                             if (hopDongId.HasValue)
                             {
+                                // Lấy danh sách hoa_don_id liên quan đến hop_dong_id
+                                string queryGetHoaDonIds = @"
+                                    SELECT hoa_don_id
+                                    FROM dbo.hoa_don
+                                    WHERE loai = N'TIECCUOI' AND tham_chieu_id = @hopDongId;";
+
+                                List<int> hoaDonIds = new List<int>();
+                                using (var cmd = new SqlCommand(queryGetHoaDonIds, connection, transaction))
+                                {
+                                    cmd.Parameters.Add(new SqlParameter("@hopDongId", hopDongId.Value));
+                                    using (var reader = cmd.ExecuteReader())
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            hoaDonIds.Add(reader.GetInt32(0));
+                                        }
+                                    }
+                                }
+
+                                // Xóa các bảng liên quan đến hóa đơn
+                                foreach (int hoaDonId in hoaDonIds)
+                                {
+                                    string queryDeleteHoaDonKm = @"
+                                        DELETE FROM dbo.hoa_don_km
+                                        WHERE hoa_don_id = @hoaDonId;";
+
+                                    using (var cmd = new SqlCommand(queryDeleteHoaDonKm, connection, transaction))
+                                    {
+                                        cmd.Parameters.Add(new SqlParameter("@hoaDonId", hoaDonId));
+                                        cmd.ExecuteNonQuery();
+                                    }
+
+                                    string queryDeleteHoaDonCt = @"
+                                        DELETE FROM dbo.hoa_don_ct
+                                        WHERE hoa_don_id = @hoaDonId;";
+
+                                    using (var cmd = new SqlCommand(queryDeleteHoaDonCt, connection, transaction))
+                                    {
+                                        cmd.Parameters.Add(new SqlParameter("@hoaDonId", hoaDonId));
+                                        cmd.ExecuteNonQuery();
+                                    }
+
+                                    string queryDeleteThanhToan = @"
+                                        DELETE FROM dbo.thanh_toan
+                                        WHERE hoa_don_id = @hoaDonId;";
+
+                                    using (var cmd = new SqlCommand(queryDeleteThanhToan, connection, transaction))
+                                    {
+                                        cmd.Parameters.Add(new SqlParameter("@hoaDonId", hoaDonId));
+                                        cmd.ExecuteNonQuery();
+                                    }
+
+                                    // Xóa hoa_don
+                                    string queryDeleteHoaDon = @"
+                                        DELETE FROM dbo.hoa_don
+                                        WHERE hoa_don_id = @hoaDonId;";
+
+                                    using (var cmd = new SqlCommand(queryDeleteHoaDon, connection, transaction))
+                                    {
+                                        cmd.Parameters.Add(new SqlParameter("@hoaDonId", hoaDonId));
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+
                                 // Xóa hop_dong_ct_mon (chi tiết món)
                                 string queryDeleteCTMon = @"
                                     DELETE FROM dbo.hop_dong_ct_mon
@@ -1177,6 +1321,35 @@ namespace QLNhaHangTiecCuoi.DAL
             catch
             {
                 return false;
+            }
+        }
+
+        // Lấy hoa_don_id tiệc cưới theo dat_sanh_id (nếu đã tồn tại)
+        public int? GetHoaDonIdByDatSanh(int datSanhId)
+        {
+            string query = @"
+                SELECT TOP 1 hd.hoa_don_id
+                FROM dbo.hoa_don hd
+                INNER JOIN dbo.hop_dong h ON h.hop_dong_id = hd.tham_chieu_id
+                WHERE hd.loai = N'TIECCUOI' AND h.dat_sanh_id = @datSanhId
+                ORDER BY hd.ngay_lap DESC";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@datSanhId", datSanhId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
             }
         }
 

@@ -20,7 +20,8 @@ namespace UI
     {
         private readonly DatabaseHelper _db = new DatabaseHelper();
         private readonly KhuyenMaiBLL _kmBll;
-        public decimal BillTotal { get; set; } = 0m; // tổng tiền hóa đơn hiện tại (truyền từ form gọi)
+        public decimal BillTotal { get; set; } = 0m;
+        public string InvoiceLoai { get; set; } = "";
 
         // Kết quả chọn/áp dụng
         public bool IsApplied { get; private set; }
@@ -49,6 +50,13 @@ namespace UI
             BillTotal = billTotal;
         }
 
+        // truyền tổng tiền hóa đơn và loại hóa đơn để lọc khuyến mãi
+        public ApDungVoucher(decimal billTotal, string invoiceLoai) : this()
+        {
+            BillTotal = billTotal;
+            InvoiceLoai = invoiceLoai ?? "";
+        }
+
         private void TogglePanels()
         {
             bool showVoucher = segmentedPill1.SelectedIndex == 0;
@@ -67,12 +75,27 @@ namespace UI
         {
             try
             {
-                // Hiển thị tất cả CTKM (kể cả hết hiệu lực)
+                // Hiển thị CTKM (lọc theo loại hóa đơn nếu có)
                 var kmList = _kmBll.GetAllPrograms();
                 panelKhuyenMai.Controls.Clear();
                 int y = 4;
                 foreach (DataRow r in kmList.Rows)
                 {
+                    // Lọc khuyến mãi theo loại hóa đơn
+                    string apDungLoai = Convert.ToString(r["ap_dung_loai"]) ?? "ALL";
+                    bool shouldShow = false;
+                    
+                    if (string.IsNullOrEmpty(InvoiceLoai))
+                    {
+                        shouldShow = true;
+                    }
+                    else
+                    {
+                        shouldShow = apDungLoai == "ALL" || apDungLoai == InvoiceLoai;
+                    }
+                    
+                    if (!shouldShow) continue;
+                    
                     var item = new KhuyenMaiPanel();
                     item.TopLevel = false;
                     item.FormBorderStyle = FormBorderStyle.None;
@@ -82,7 +105,7 @@ namespace UI
                         Convert.ToString(r["hinh_thuc"]) ?? string.Empty,
                         r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]),
                         r["tg_ket_thuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(r["tg_ket_thuc"]),
-                        Convert.ToString(r["ap_dung_loai"]) ?? string.Empty,
+                        apDungLoai,
                         BillTotal
                     );
                     item.Cursor = Cursors.Hand;
@@ -98,7 +121,7 @@ namespace UI
                         ProgramCode = Convert.ToString(r["ma_km"]) ?? string.Empty;
                         DiscountType = Convert.ToString(r["hinh_thuc"]) ?? string.Empty;
                         DiscountValue = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
-                        ApplyScope = Convert.ToString(r["ap_dung_loai"]) ?? "ALL";
+                        ApplyScope = apDungLoai;
                         DialogResult = DialogResult.OK;
                         Close();
                     };
@@ -129,12 +152,38 @@ namespace UI
                         r.Table.Columns.Contains("so_lan") && r["so_lan"] != DBNull.Value ? Convert.ToInt32(r["so_lan"]) : 0,
                         false
                     );
-                    // hover + click chọn voucher
                     item.Cursor = Cursors.Hand;
                     EventHandler vEnter = (s, e) => { item.BackColor = Color.FromArgb(248, 248, 255); };
                     EventHandler vLeave = (s, e) => { item.BackColor = Color.White; };
                     EventHandler vClick = (s, e) =>
                     {
+                        // Kiểm tra lượt dùng trước khi áp dụng
+                        int soLan = r.Table.Columns.Contains("so_lan") && r["so_lan"] != DBNull.Value ? Convert.ToInt32(r["so_lan"]) : 0;
+                        int daDung = r.Table.Columns.Contains("da_dung") && r["da_dung"] != DBNull.Value ? Convert.ToInt32(r["da_dung"]) : 0;
+                        
+                        if (soLan > 0 && daDung >= soLan)
+                        {
+                            MessageBox.Show("Voucher đã sử dụng hết số lượt cho phép.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
+                        DateTime now = DateTime.UtcNow;
+                        DateTime tgBd = Convert.ToDateTime(r["tg_bat_dau"]);
+                        DateTime tgKt = Convert.ToDateTime(r["tg_ket_thuc"]);
+                        DateTime? han = r["han_dung"] == DBNull.Value ? null : Convert.ToDateTime(r["han_dung"]);
+
+                        if (!(now >= tgBd && now <= tgKt))
+                        {
+                            MessageBox.Show("Chương trình khuyến mãi đã hết hiệu lực.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                        
+                        if (han.HasValue && han.Value < now.Date)
+                        {
+                            MessageBox.Show("Voucher đã hết hạn sử dụng.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
                         IsApplied = true;
                         VoucherId = r.Table.Columns.Contains("voucher_id") && r["voucher_id"] != DBNull.Value ? Convert.ToInt32(r["voucher_id"]) : null;
                         ProgramId = r.Table.Columns.Contains("km_id") && r["km_id"] != DBNull.Value ? Convert.ToInt32(r["km_id"]) : null;

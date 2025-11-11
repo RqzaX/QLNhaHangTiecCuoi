@@ -45,6 +45,34 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        // Overload method để kiểm tra dựa trên ca_id (khớp với UNIQUE constraint)
+        public bool KiemTraSanhTrong(int sanhId, int caId, DateTime ngayToChuc, out string errorMessage, int? excludeDatSanhId = null)
+        {
+            errorMessage = string.Empty;
+
+            try
+            {
+                if (sanhId <= 0)
+                {
+                    errorMessage = "Vui lòng chọn sảnh!";
+                    return false;
+                }
+
+                if (ngayToChuc.Date < DateTime.Now.Date)
+                {
+                    errorMessage = "Ngày tổ chức không được ở quá khứ!";
+                    return false;
+                }
+
+                return _dal.KiemTraSanhTrong(sanhId, caId, ngayToChuc, excludeDatSanhId);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Lỗi kiểm tra trạng thái sảnh: {ex.Message}";
+                return false;
+            }
+        }
+
         // Lấy danh sách sảnh
         public DataTable LayDanhSachSanh(int chiNhanhId)
         {
@@ -480,6 +508,89 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        // Kiểm tra và cập nhật trạng thái khi thanh toán hết
+        public bool KiemTraVaCapNhatTrangThaiTheoTienThanhToan(int datSanhId, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            try
+            {
+                if (datSanhId <= 0)
+                {
+                    errorMessage = "ID đơn đặt sảnh không hợp lệ!";
+                    return false;
+                }
+
+                // Lấy thông tin đặt sảnh
+                DataRow datSanhInfo = LayThongTinDatSanh(datSanhId);
+                if (datSanhInfo == null)
+                {
+                    errorMessage = "Không tìm thấy thông tin đặt sảnh!";
+                    return false;
+                }
+
+                string trangThaiHienTai = datSanhInfo["trang_thai"]?.ToString() ?? "";
+                
+                if (trangThaiHienTai.ToUpper() != "ĐÃ CỌC")
+                {
+                    return true;
+                }
+
+                int? hopDongId = LayHopDongId(datSanhId);
+                if (!hopDongId.HasValue || hopDongId.Value <= 0)
+                {
+                    return true;
+                }
+
+                decimal tongDuKien = LayTongDuKien(hopDongId.Value);
+                decimal tongCoc = 0;
+                DataTable dtCoc = LayDanhSachCoc(hopDongId.Value);
+                if (dtCoc != null && dtCoc.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtCoc.Rows)
+                    {
+                        if (row["so_tien"] != DBNull.Value)
+                        {
+                            tongCoc += Convert.ToDecimal(row["so_tien"]);
+                        }
+                    }
+                }
+
+                // Tính tổng thanh toán
+                decimal tongThanhToan = 0;
+                DataTable dtThanhToan = LayDanhSachThanhToan(hopDongId.Value);
+                if (dtThanhToan != null && dtThanhToan.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dtThanhToan.Rows)
+                    {
+                        if (row["so_tien"] != DBNull.Value)
+                        {
+                            tongThanhToan += Convert.ToDecimal(row["so_tien"]);
+                        }
+                    }
+                }
+
+                decimal tongConLai = tongDuKien - tongCoc - tongThanhToan;
+            
+                if (tongConLai <= 0)
+                {
+                    bool success = CapNhatTrangThaiDatSanh(datSanhId, "ĐÃ THANH TOÁN", out string errorUpdate);
+                    if (!success)
+                    {
+                        errorMessage = errorUpdate;
+                        return false;
+                    }
+                    return true;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Lỗi kiểm tra và cập nhật trạng thái: {ex.Message}";
+                return false;
+            }
+        }
+
         // Hủy đặt sảnh - cập nhật trạng thái và ghi chú vào các bảng liên quan
         public bool HuyDatSanh(int datSanhId, DateTime ngayHuy, string lyDoHuy, decimal soTienHoanCoc, out string errorMessage)
         {
@@ -557,6 +668,19 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Lấy hop_dong_id: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy dat_sanh_id từ hop_dong_id
+        public int? LayDatSanhIdByHopDongId(int hopDongId)
+        {
+            try
+            {
+                return _dal.LayDatSanhIdByHopDongId(hopDongId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy dat_sanh_id: {ex.Message}", ex);
             }
         }
 
@@ -667,7 +791,7 @@ namespace QLNhaHangTiecCuoi.BLL
                         errorMessage = "Không thể đổi lịch cho đơn đặt sảnh đã bị hủy!";
                         return false;
                     }
-
+                    
                     if (trangThai.ToUpper() == "HOÀN TẤT")
                     {
                         errorMessage = "Không thể đổi lịch cho đơn đặt sảnh đã hoàn tất!";
@@ -701,7 +825,7 @@ namespace QLNhaHangTiecCuoi.BLL
 
                 // Kiểm tra nếu thông tin mới giống thông tin cũ
                 bool thongTinGiongNhau = true;
-
+                
                 if (datSanhInfo["chi_nhanh_id"] != DBNull.Value)
                 {
                     int chiNhanhIdCu = Convert.ToInt32(datSanhInfo["chi_nhanh_id"]);
@@ -788,23 +912,16 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // Lấy danh sách dat_sanh theo chi nhánh để hiển thị trong panelHDGD
+        // Lấy danh sách đơn đặt sảnh theo chi nhánh
         public DataTable LayDanhSachDatSanhTheoChiNhanh(int chiNhanhId, int top = 100)
         {
             try
             {
-                if (chiNhanhId <= 0)
-                    throw new ArgumentException("Chi nhánh không hợp lệ!");
-
-                // Validate top để đảm bảo an toàn
-                if (top <= 0) top = 100;
-                if (top > 1000) top = 1000;
-
                 return _dal.LayDanhSachDatSanhTheoChiNhanh(chiNhanhId, top);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Lỗi BLL - Lấy danh sách đặt sảnh theo chi nhánh: {ex.Message}", ex);
+                throw new Exception($"Lỗi BLL - Lấy danh sách đơn đặt sảnh theo chi nhánh: {ex.Message}", ex);
             }
         }
 
@@ -915,9 +1032,17 @@ namespace QLNhaHangTiecCuoi.BLL
                     return 0;
                 }
 
-                // Kiểm tra xem đã có hóa đơn chưa
+                int? hoaDonExisting = _dal.GetHoaDonIdByDatSanh(datSanhId);
+                if (hoaDonExisting.HasValue && hoaDonExisting.Value > 0)
+                {
+                    return hoaDonExisting.Value;
+                }
                 if (DaCoHoaDon(hopDongId.Value))
                 {
+                    // Đã có hóa đơn cho hợp đồng này
+                    hoaDonExisting = _dal.GetHoaDonIdByDatSanh(datSanhId);
+                    if (hoaDonExisting.HasValue && hoaDonExisting.Value > 0)
+                        return hoaDonExisting.Value;
                     errorMessage = "Đã có hóa đơn cho hợp đồng này!";
                     return 0;
                 }
@@ -938,16 +1063,22 @@ namespace QLNhaHangTiecCuoi.BLL
                 decimal vat = Math.Round(tongTruocThue * vatPercent / 100m, 0);
                 decimal tongSauThue = tongTruocThue + vat + phiDv - giamGia;
 
+                // Lấy tên sảnh và tên khách hàng (người đặt sảnh)
+                string tenSanh = datSanhInfo["ten_sanh"]?.ToString() ?? "";
+                string tenKhachHang = datSanhInfo["ten_khach_hang"]?.ToString() ?? "";
+
                 int hoaDonId = _hoaDonDAL.CreateHoaDon(
-                    chiNhanhId,
-                    "TIECCUOI",
-                    vatPercent,
-                    phiDv,
-                    giamGia,
-                    tongTruocThue,
+                    chiNhanhId, 
+                    "TIECCUOI", 
+                    vatPercent, 
+                    phiDv, 
+                    giamGia, 
+                    tongTruocThue, 
                     tongSauThue,
                     khachHangId,
-                    hopDongId.Value
+                    hopDongId.Value,
+                    soBanSanh: tenSanh,
+                    tenNguoiDat: tenKhachHang
                 );
 
                 // Thêm chi tiết hóa đơn từ hợp đồng

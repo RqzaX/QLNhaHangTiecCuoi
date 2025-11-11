@@ -37,7 +37,7 @@ namespace BLL
         }
 
         // Tạo hóa đơn từ dữ liệu giỏ hàng hiện tại
-        public int CreateInvoiceFromCart(int chiNhanhId, IEnumerable<OrderItemInput> items, decimal vatPercent, decimal phiDv = 0, decimal giamGia = 0)
+        public int CreateInvoiceFromCart(int chiNhanhId, IEnumerable<OrderItemInput> items, decimal vatPercent, decimal phiDv = 0, decimal giamGia = 0, int? banId = null, string? soBan = null, string? tenNguoiBan = null)
         {
             decimal sub = 0;
             foreach (var it in items)
@@ -48,7 +48,19 @@ namespace BLL
             decimal total = sub + vat + phiDv - giamGia;
             if (total < 0) total = 0;
 
-            int hdId = _hdDal.CreateHoaDon(chiNhanhId, "NHAHANG", vatPercent, phiDv, giamGia, sub, total);
+            int hdId = _hdDal.CreateHoaDon(
+                chiNhanhId, 
+                "NHAHANG", 
+                vatPercent, 
+                phiDv, 
+                giamGia, 
+                sub, 
+                total,
+                khachHangId: null,
+                thamChieuId: banId,
+                soBanSanh: soBan,
+                tenNguoiBan: tenNguoiBan
+            );
             foreach (var it in items)
             {
                 _hdDal.InsertHoaDonCt(hdId, "MÓN", it.MonId, it.TenMon, it.SoLuong, it.DonGia);

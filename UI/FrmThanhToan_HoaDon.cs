@@ -25,6 +25,8 @@ namespace UI
         private System.Windows.Forms.Timer? _autoRefreshTimer;
         private bool _isRefreshing;
         private DateTime _lastInvoicesInteractionUtc;
+        private string? _lastInvoicesHash;
+        private string? _currentInvoiceLoai = "NHAHANG";
 
         public FrmThanhToan_HoaDon()
         {
@@ -33,15 +35,18 @@ namespace UI
             Activated += FrmThanhToan_HoaDon_Activated; // tự làm mới khi trở lại màn hình
             segmentedPill1.SelectedIndexChanged += SegmentedPill1_SelectedIndexChanged;
             // Event handlers lịch sử thanh toán
-            dateTuNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
-            dateDenNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
-            guna2ComboBox1.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
-            guna2ComboBox2.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 1) LoadPaymentHistoryToDataGridView(); };
+            dateTuNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 2) LoadPaymentHistoryToDataGridView(); };
+            dateDenNgay.ValueChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 2) LoadPaymentHistoryToDataGridView(); };
+            guna2ComboBox1.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 2) LoadPaymentHistoryToDataGridView(); };
+            guna2ComboBox2.SelectedIndexChanged += (s, e) => { if (segmentedPill1.SelectedIndex == 2) LoadPaymentHistoryToDataGridView(); };
             if (dgvLichSuHoaDon != null)
             {
                 dgvLichSuHoaDon.CellClick += DgvHoaDon_CellClick;
                 dgvLichSuHoaDon.CellPainting += DgvTrangThai_CellPainting;
+                dgvLichSuHoaDon.CellFormatting += DgvLichSuHoaDon_CellFormatting;
             }
+            KeyDown += FrmThanhToan_HoaDon_KeyDown;
+            KeyPreview = true;
         }
 
         private void FrmThanhToan_HoaDon_Load(object sender, EventArgs e)
@@ -53,9 +58,8 @@ namespace UI
             lbSoSanhPhanTram.Text = "0 % vs hôm qua";
             SetupHistoryGrid();
             SetupInvoiceListContainer();
-            LoadInvoicesFromDb();
             RefreshTopStats();
-            SegmentedPill1_SelectedIndexChanged(null, EventArgs.Empty);
+            SegmentedPill1_SelectedIndexChanged(segmentedPill1, EventArgs.Empty);
             dateTuNgay.Checked = false;
             dateDenNgay.Checked = false;
 
@@ -72,13 +76,13 @@ namespace UI
                 try
                 {
                     _isRefreshing = true;
-                    if (segmentedPill1.SelectedIndex == 0)
+                    if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
                     {
                         if ((DateTime.UtcNow - _lastInvoicesInteractionUtc) < TimeSpan.FromSeconds(4)) return;
                         LoadInvoicesFromDb();
                         RefreshTopStats();
                     }
-                    else if (segmentedPill1.SelectedIndex == 1)
+                    else if (segmentedPill1.SelectedIndex == 2)
                     {
                         LoadPaymentHistoryToDataGridView();
                     }
@@ -91,7 +95,6 @@ namespace UI
             _autoRefreshTimer.Start();
         }
 
-        // Cấu hình DataGridView lịch sử thanh toán theo mẫu ở test.cs
         private void SetupHistoryGrid()
         {
             if (dgvLichSuHoaDon == null) return;
@@ -220,60 +223,208 @@ namespace UI
             };
             panelDanhSachHoaDon.Controls.Clear();
             panelDanhSachHoaDon.Controls.Add(invoicesFlowPanel);
+            EnableDoubleBuffer(invoicesFlowPanel);
 
             invoicesFlowPanel.Scroll += (s, e) => { _lastInvoicesInteractionUtc = DateTime.UtcNow; };
             invoicesFlowPanel.MouseWheel += (s, e) => { _lastInvoicesInteractionUtc = DateTime.UtcNow; };
             invoicesFlowPanel.MouseMove += (s, e) =>
             {
                 if (System.Windows.Forms.Control.MouseButtons != MouseButtons.None)
+                {
                     _lastInvoicesInteractionUtc = DateTime.UtcNow;
+                }
             };
         }
-        // Load hóa đơn từ database
-        private void LoadInvoicesFromDb()
+
+        private static void EnableDoubleBuffer(Control c)
+        {
+            try
+            {
+                var prop = typeof(Control).GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                prop?.SetValue(c, true, null);
+            }
+            catch
+            {
+            }
+        }
+
+        private static string ComputeInvoicesHash(DataTable? dt)
+        {
+            if (dt == null || dt.Rows.Count == 0) return "empty";
+            var sb = new StringBuilder();
+            sb.Append("c=").Append(dt.Rows.Count).Append("|");
+            foreach (DataRow row in dt.Rows)
+            {
+                try
+                {
+                    int id = Convert.ToInt32(row["hoa_don_id"]);
+                    decimal total = Convert.ToDecimal(row["tong_sau_thue"]);
+                    string stt = row.Table.Columns.Contains("trang_thai") && row["trang_thai"] != DBNull.Value
+                        ? row["trang_thai"]?.ToString() ?? string.Empty
+                        : string.Empty;
+                    sb.Append(id).Append(':').Append(total).Append(':').Append(stt).Append('|');
+                }
+                catch
+                {
+                }
+            }
+            return sb.ToString();
+        }
+
+        // Load hóa đơn từ database theo loại
+        private void LoadInvoicesFromDb(string? loai = null)
         {
             if (invoicesFlowPanel == null)
             {
                 SetupInvoiceListContainer();
             }
 
-            int prevScroll = invoicesFlowPanel.VerticalScroll.Value;
-
-            invoicesFlowPanel.SuspendLayout();
-            invoicesFlowPanel.Controls.Clear();
-
-            var dt = _hoaDonBLL.GetHoaDonList(Session.ChiNhanhId, "CHỜ TT", 100);
-            foreach (System.Data.DataRow row in dt.Rows)
+            loai ??= _currentInvoiceLoai;
+            if (loai == null)
             {
-                var invoiceItem = new Controls.HoaDonPanel
+                _lastInvoicesHash = null;
+                invoicesFlowPanel?.Controls.Clear();
+                invoicesFlowPanel?.PerformLayout();
+                return;
+            }
+
+            int prevScroll = invoicesFlowPanel.VerticalScroll.Value;
+            invoicesFlowPanel.SuspendLayout();
+
+            var dt = _hoaDonBLL.GetHoaDonList(Session.ChiNhanhId, "CHỜ TT", 100, loai);
+            if (dt == null)
+            {
+                _lastInvoicesHash = null;
+                invoicesFlowPanel.Controls.Clear();
+                invoicesFlowPanel.ResumeLayout(false);
+                invoicesFlowPanel.PerformLayout();
+                return;
+            }
+            string currHash = $"{loai}|{ComputeInvoicesHash(dt)}";
+            if (string.Equals(currHash, _lastInvoicesHash, StringComparison.Ordinal))
+            {
+                invoicesFlowPanel.ResumeLayout(false);
+                invoicesFlowPanel.PerformLayout();
+                return;
+            }
+            _lastInvoicesHash = currHash;
+
+            var existing = new Dictionary<int, Controls.HoaDonPanel>();
+            foreach (Control ctl in invoicesFlowPanel.Controls)
+            {
+                if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
                 {
-                    TopLevel = false,
-                    FormBorderStyle = FormBorderStyle.None,
-                    Dock = DockStyle.None,
-                };
+                    if (int.TryParse(hp.Name.Substring(4), out int exId))
+                    {
+                        existing[exId] = hp;
+                    }
+                }
+            }
 
-                int id = System.Convert.ToInt32(row["hoa_don_id"]);
-                decimal sub = System.Convert.ToDecimal(row["tong_truoc_thue"]);
-                decimal vatPercent = System.Convert.ToDecimal(row["vat"]);
-                decimal vatValue = System.Math.Round(sub * vatPercent / 100m, 0);
-                decimal total = System.Convert.ToDecimal(row["tong_sau_thue"]);
-                DateTime ngayLap = System.Convert.ToDateTime(row["ngay_lap"]);
+            var newOrderIds = new List<int>();
+            var newIdSet = new HashSet<int>();
 
-                invoiceItem.TableName = row["loai"].ToString() == "NHAHANG" ? "Nhà hàng" : "Tiệc cưới";
+            foreach (DataRow row in dt.Rows)
+            {
+                int id = Convert.ToInt32(row["hoa_don_id"]);
+                decimal sub = Convert.ToDecimal(row["tong_truoc_thue"]);
+                decimal vatPercent = Convert.ToDecimal(row["vat"]);
+                decimal vatValue = Math.Round(sub * vatPercent / 100m, 0);
+                decimal total = Convert.ToDecimal(row["tong_sau_thue"]);
+                DateTime ngayLap = Convert.ToDateTime(row["ngay_lap"]);
+
+                newOrderIds.Add(id);
+                newIdSet.Add(id);
+
+                Controls.HoaDonPanel invoiceItem;
+                if (!existing.TryGetValue(id, out invoiceItem!))
+                {
+                    invoiceItem = new Controls.HoaDonPanel
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        Dock = DockStyle.None,
+                        Name = $"INV_{id}"
+                    };
+                    invoiceItem.Width = invoicesFlowPanel.ClientSize.Width - 40;
+                    invoiceItem.Height = 189;
+                    invoiceItem.Margin = new Padding(0, 0, 5, 8);
+                    invoiceItem.Selected += (_, __) => OnInvoiceSelected(invoiceItem);
+                    invoiceItem.Show();
+                    invoicesFlowPanel.Controls.Add(invoiceItem);
+                }
+
+                string invoiceLoai = row["loai"]?.ToString() ?? "";
+                invoiceItem.TableName = invoiceLoai == "NHAHANG" ? "Nhà hàng" : "Tiệc cưới";
                 invoiceItem.GuestsAndDishes = $"HD#{id}";
                 invoiceItem.InvoiceCode = $"HD{id}";
                 invoiceItem.Subtotal = FormatCurrency(sub);
                 invoiceItem.Vat = FormatCurrency(vatValue);
                 invoiceItem.Total = FormatCurrency(total);
-                try { invoiceItem.SetStartTime(ngayLap.ToLocalTime()); } catch { }
-
-                invoiceItem.Width = invoicesFlowPanel.ClientSize.Width - 40;
-                invoiceItem.Height = 189;
-                invoiceItem.Margin = new Padding(0, 0, 5, 8);
-                invoiceItem.Show();
-                invoiceItem.Selected += (_, __) => OnInvoiceSelected(invoiceItem);
-                invoicesFlowPanel.Controls.Add(invoiceItem);
+                invoiceItem.Tag = new { HoaDonId = id, VatPercent = vatPercent };
+                
+                decimal displayVatPercent = invoiceLoai == "NHAHANG" ? 8m : 10m;
+                invoiceItem.SetVatPercent(displayVatPercent);
+                
+                if (invoiceLoai == "TIECCUOI")
+                {
+                    // Lấy thông tin ngày tổ chức cho tiệc cưới
+                    try
+                    {
+                        if (row["tham_chieu_id"] != DBNull.Value)
+                        {
+                            int hopDongId = Convert.ToInt32(row["tham_chieu_id"]);
+                            var datSanhBLL = new QLNhaHangTiecCuoi.BLL.DatSanhBLL();
+                            int? datSanhId = datSanhBLL.LayDatSanhIdByHopDongId(hopDongId);
+                            if (datSanhId.HasValue)
+                            {
+                                DataRow datSanhInfo = datSanhBLL.LayThongTinDatSanh(datSanhId.Value);
+                                if (datSanhInfo != null)
+                                {
+                                    DateTime ngayToChuc = Convert.ToDateTime(datSanhInfo["ngay_to_chuc"]);
+                                    TimeSpan gioToChuc = datSanhInfo["gio_to_chuc"] != DBNull.Value 
+                                        ? (TimeSpan)datSanhInfo["gio_to_chuc"] 
+                                        : new TimeSpan(10, 30, 0);
+                                    invoiceItem.SetNgayToChuc(gioToChuc, ngayToChuc);
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+                else
+                {
+                    try { invoiceItem.SetStartTime(ngayLap.ToLocalTime()); } catch { }
+                }
             }
+
+            var toRemove = new List<Control>();
+            foreach (Control ctl in invoicesFlowPanel.Controls)
+            {
+                if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
+                {
+                    if (int.TryParse(hp.Name.Substring(4), out int exId) && !newIdSet.Contains(exId))
+                    {
+                        toRemove.Add(ctl);
+                    }
+                }
+            }
+            foreach (var ctl in toRemove)
+            {
+                invoicesFlowPanel.Controls.Remove(ctl);
+                try { ctl.Dispose(); } catch { }
+            }
+
+            for (int i = newOrderIds.Count - 1; i >= 0; i--)
+            {
+                string name = $"INV_{newOrderIds[i]}";
+                var ctl = invoicesFlowPanel.Controls.Cast<Control>().FirstOrDefault(c => c.Name == name);
+                if (ctl != null)
+                {
+                    invoicesFlowPanel.Controls.SetChildIndex(ctl, 0);
+                }
+            }
+
             invoicesFlowPanel.ResumeLayout(false);
             invoicesFlowPanel.PerformLayout();
 
@@ -283,14 +434,48 @@ namespace UI
                 invoicesFlowPanel.VerticalScroll.Value = prevScroll;
                 invoicesFlowPanel.PerformLayout();
             }
-            catch { }
+            catch
+            {
+            }
         }
-        
+
         // Khi quay lại form (từ màn hình bán hàng), tự reload danh sách hóa đơn
         private void FrmThanhToan_HoaDon_Activated(object? sender, EventArgs e)
         {
-            LoadInvoicesFromDb();
-            RefreshTopStats();
+            RefreshData();
+        }
+
+        // Xử lý phím tắt F5 để refresh
+        private void FrmThanhToan_HoaDon_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                e.Handled = true;
+                RefreshData();
+            }
+        }
+
+        // Method public để refresh/reload dữ liệu
+        public void RefreshData()
+        {
+            try
+            {
+                if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
+                {
+                    _lastInvoicesHash = null;
+                    LoadInvoicesFromDb();
+                    RefreshTopStats();
+                }
+                else if (segmentedPill1.SelectedIndex == 2)
+                {
+                    LoadPaymentHistoryToDataGridView();
+                    RefreshTopStats();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi làm mới dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
@@ -334,20 +519,92 @@ namespace UI
 
             payPanel.PaymentCompleted += (s, e) =>
             {
-                LoadInvoicesFromDb();
-                RefreshTopStats();
+                if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
+                {
+                    LoadInvoicesFromDb();
+                    RefreshTopStats();
+                }
                 panelHoaDonThanhToan.Controls.Clear(); // Xóa panel thanh toán sau khi thanh toán thành công
             };
 
-            // tính tổng tiền hóa đơn
+            decimal vatPercent = 8; // Mặc định 8%
+            if (selected.Tag != null)
+            {
+                var tagData = selected.Tag as dynamic;
+                if (tagData != null && tagData.VatPercent != null)
+                {
+                    vatPercent = Convert.ToDecimal(tagData.VatPercent);
+                }
+            }
+            
+            if (hoaDonId > 0)
+            {
+                var hoaDon = _hoaDonBLL.GetHoaDonById(hoaDonId);
+                if (hoaDon != null && hoaDon["vat"] != DBNull.Value)
+                {
+                    vatPercent = Convert.ToDecimal(hoaDon["vat"]);
+                }
+            }
+
             decimal subtotal = ParseCurrency(selected.Total) - ParseCurrency(selected.Vat);
             decimal vatValue = ParseCurrency(selected.Vat);
             decimal total = ParseCurrency(selected.Total);
-            decimal vatPercent = 0;
-            if (subtotal > 0) vatPercent = System.Math.Round(vatValue * 100m / subtotal, 0);
+
+            // tính số tiền còn lại (trừ số tiền đã cọc và đã thanh toán) cho hóa đơn tiệc cưới
+            decimal soTienConLai = total;
+            if (hoaDonId > 0)
+            {
+                soTienConLai = _hoaDonBLL.LaySoTienConLai(hoaDonId, out string error);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Lỗi tính số tiền còn lại: {error}");
+                }
+            }
 
             payPanel.SetTitle($"Thanh toán - {selected.InvoiceCode}");
-            payPanel.BindAmounts(subtotal, vatPercent, total);
+            payPanel.BindAmounts(subtotal, vatPercent, soTienConLai);
+            
+            if (hoaDonId > 0)
+            {
+                var hoaDon = _hoaDonBLL.GetHoaDonById(hoaDonId);
+                if (hoaDon != null)
+                {
+                    string loaiHd = hoaDon["loai"]?.ToString() ?? "";
+                    if (loaiHd == "TIECCUOI")
+                    {
+                        try
+                        {
+                            decimal tongHoaDon = hoaDon["tong_sau_thue"] != DBNull.Value ? Convert.ToDecimal(hoaDon["tong_sau_thue"]) : 0m;
+                            if (hoaDon["tham_chieu_id"] != DBNull.Value)
+                            {
+                                int hopDongId = Convert.ToInt32(hoaDon["tham_chieu_id"]);
+                                var datSanhBLL = new QLNhaHangTiecCuoi.BLL.DatSanhBLL();
+                                var dtCoc = datSanhBLL.LayDanhSachCoc(hopDongId);
+                                decimal tongCoc = 0;
+                                if (dtCoc != null && dtCoc.Rows.Count > 0)
+                                {
+                                    foreach (DataRow r in dtCoc.Rows)
+                                    {
+                                        if (r["so_tien"] != DBNull.Value)
+                                            tongCoc += Convert.ToDecimal(r["so_tien"]);
+                                    }
+                                }
+                                // Hiển thị cọc sau khi BindAmounts để đảm bảo hiển thị đúng
+                                if (tongCoc > 0)
+                                {
+                                    payPanel.SetDeposit(tongCoc);
+                                }
+                                payPanel.SetBaseDiscountTotal(tongHoaDon);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Lỗi khi lấy tiền cọc: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            
             payPanel.Show();
         }
 
@@ -366,11 +623,8 @@ namespace UI
                 int soHdY = yesterdayStats.SoHd;
                 decimal tongY = yesterdayStats.Tong;
 
-                // Số giao dịch = số hóa đơn hôm nay
                 int soGiaoDich = soHdToday;
-                // Giá trị TB mỗi hóa đơn hôm nay
                 decimal giaTriTb = soHdToday > 0 ? Math.Round(tongToday / soHdToday, 0) : 0m;
-                // So sánh % với hôm qua (theo tổng doanh thu)
                 decimal percent = tongY <= 0 ? 0 : Math.Round((tongToday - tongY) * 100m / tongY, 1);
 
                 // Gán trực tiếp vào các label trên UI
@@ -413,20 +667,45 @@ namespace UI
         // Chuyển đổi giữa danh sách hóa đơn/thanh toán và lịch sử giao dịch
         private void SegmentedPill1_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (segmentedPill1.SelectedIndex == 0)
+            if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
             {
-                // Hiển thị danh sách hóa đơn và thanh toán
+                lbDanhSachHoaDon.Visible = true;
                 panelDanhSachHoaDon.Visible = true;
                 panelHoaDonThanhToan.Visible = true;
                 panelLichSuGiaoDich.Visible = false;
+
+                string? newLoai = segmentedPill1.SelectedIndex == 0 ? "NHAHANG" : "TIECCUOI";
+                if (_currentInvoiceLoai != newLoai)
+                {
+                    _currentInvoiceLoai = newLoai;
+                    _lastInvoicesHash = null;
+                }
+
+                if (lbDanhSachHoaDon != null)
+                {
+                    lbDanhSachHoaDon.Text = segmentedPill1.SelectedIndex == 0
+                        ? "Danh sách hóa đơn nhà hàng"
+                        : "Danh sách hóa đơn tiệc cưới";
+                }
+
+                panelHoaDonThanhToan.Controls.Clear();
+                LoadInvoicesFromDb();
             }
-            else if (segmentedPill1.SelectedIndex == 1)
+            else if (segmentedPill1.SelectedIndex == 2)
             {
-                // Hiển thị lịch sử giao dịch, ẩn danh sách hóa đơn và thanh toán
+                lbDanhSachHoaDon.Visible = false;
                 panelDanhSachHoaDon.Visible = false;
                 panelHoaDonThanhToan.Visible = false;
                 panelLichSuGiaoDich.Visible = true;
-                // Load dữ liệu vào DataGridView
+                panelHoaDonThanhToan.Controls.Clear();
+
+                _currentInvoiceLoai = null;
+                _lastInvoicesHash = null;
+                if (lbDanhSachHoaDon != null)
+                {
+                    lbDanhSachHoaDon.Text = "Danh sách hóa đơn";
+                }
+
                 LoadPaymentHistoryToDataGridView();
             }
         }
@@ -503,6 +782,10 @@ namespace UI
                         {
                             trangThaiText = "Chờ thanh toán";
                         }
+                        else if (trangThai == "HOÀN TIỀN")
+                        {
+                            trangThaiText = "Hoàn tiền";
+                        }
                         else
                         {
                             trangThaiText = trangThai ?? "";
@@ -519,18 +802,17 @@ namespace UI
                         dgvLichSuHoaDon.Rows[rowIndex].Cells["ThoiGian"].Value = ngayLap.ToLocalTime().ToString("HH:mm"); // Thời gian
                         dgvLichSuHoaDon.Rows[rowIndex].Cells["ThuNgan"].Value = thuNgan ?? "-"; // Thu ngân
                         dgvLichSuHoaDon.Rows[rowIndex].Cells["TrangThai"].Value = trangThaiText; // Trạng thái
-                        dgvLichSuHoaDon.Rows[rowIndex].Tag = id; // Lưu HoaDonId vào Tag để dùng cho buttons
+                        string? loai = row["loai"] != DBNull.Value ? row["loai"].ToString() : null;
+                        // Lưu HoaDonId và loại hóa đơn vào Tag
+                        dgvLichSuHoaDon.Rows[rowIndex].Tag = new { HoaDonId = id, Loai = loai ?? "" };
                     }
                     catch (Exception rowEx)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Error processing row: {rowEx.Message}");
-                        // Tiếp tục với row tiếp theo
                     }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"LoadPaymentHistoryToDataGridView Exception: {ex}");
                 GunaToast.Show(this, $"Lỗi tải lịch sử thanh toán: {ex.Message}", UI.Controls.ToastType.Error);
             }
         }
@@ -544,15 +826,76 @@ namespace UI
             var colName = dgvLichSuHoaDon.Columns[e.ColumnIndex].Name;
             if (colName == "ColPrint" || colName == "ColRefund")
             {
-                int hoaDonId = dgvLichSuHoaDon.Rows[e.RowIndex].Tag != null ? (int)dgvLichSuHoaDon.Rows[e.RowIndex].Tag : 0;
+                int hoaDonId = 0;
+                if (dgvLichSuHoaDon.Rows[e.RowIndex].Tag != null)
+                {
+                    var tagData = dgvLichSuHoaDon.Rows[e.RowIndex].Tag as dynamic;
+                    if (tagData != null && tagData.HoaDonId != null)
+                    {
+                        hoaDonId = Convert.ToInt32(tagData.HoaDonId);
+                    }
+                }
+                
                 string trangThai = dgvLichSuHoaDon.Rows[e.RowIndex].Cells["TrangThai"].Value?.ToString() ?? "";
                 if (colName == "ColPrint")
                 {
                     PrintInvoice(hoaDonId);
                 }
-                else if (colName == "ColRefund" && trangThai == "Hoàn thành")
+                else if (colName == "ColRefund")
                 {
-                    RefundPayment(hoaDonId);
+                    // Chỉ cho phép hoàn tiền hóa đơn nhà hàng đã thanh toán
+                    if (trangThai == "Hoàn thành")
+                    {
+                        var hoaDon = _hoaDonBLL.GetHoaDonById(hoaDonId);
+                        if (hoaDon != null)
+                        {
+                            string loai = hoaDon["loai"]?.ToString() ?? "";
+                            if (loai == "NHAHANG")
+                            {
+                                RefundPayment(hoaDonId);
+                            }
+                            else
+                            {
+                                GunaToast.Show(this, "Chức năng hoàn tiền chỉ áp dụng cho hóa đơn nhà hàng!", UI.Controls.ToastType.Info);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ẩn/hiện nút hoàn tiền dựa trên loại hóa đơn và trạng thái
+        private void DgvLichSuHoaDon_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            if (dgvLichSuHoaDon == null) return;
+
+            var colName = dgvLichSuHoaDon.Columns[e.ColumnIndex].Name;
+            if (colName == "ColRefund")
+            {
+                string trangThai = dgvLichSuHoaDon.Rows[e.RowIndex].Cells["TrangThai"].Value?.ToString() ?? "";
+                string loai = "";
+                
+                if (dgvLichSuHoaDon.Rows[e.RowIndex].Tag != null)
+                {
+                    var tagData = dgvLichSuHoaDon.Rows[e.RowIndex].Tag as dynamic;
+                    if (tagData != null && tagData.Loai != null)
+                    {
+                        loai = tagData.Loai.ToString() ?? "";
+                    }
+                }
+
+                // Chỉ hiển thị nút hoàn tiền cho hóa đơn nhà hàng đã thanh toán
+                if (trangThai == "Hoàn thành" && loai == "NHAHANG")
+                {
+                    dgvLichSuHoaDon.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor = dgvLichSuHoaDon.DefaultCellStyle.ForeColor;
+                    dgvLichSuHoaDon.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly = false;
+                }
+                else
+                {
+                    // Ẩn nút bằng cách đặt màu chữ giống màu nền
+                    dgvLichSuHoaDon.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor = dgvLichSuHoaDon.DefaultCellStyle.BackColor;
+                    dgvLichSuHoaDon.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly = true;
                 }
             }
         }
@@ -659,22 +1002,60 @@ namespace UI
         {
             try
             {
+                // Kiểm tra hóa đơn có tồn tại và là loại nhà hàng
+                var hoaDon = _hoaDonBLL.GetHoaDonById(hoaDonId);
+                if (hoaDon == null)
+                {
+                    GunaToast.Show(this, "Không tìm thấy hóa đơn!", UI.Controls.ToastType.Error);
+                    return;
+                }
+
+                string loai = hoaDon["loai"]?.ToString() ?? "";
+                if (loai != "NHAHANG")
+                {
+                    GunaToast.Show(this, "Chức năng hoàn tiền chỉ áp dụng cho hóa đơn nhà hàng!", UI.Controls.ToastType.Info);
+                    return;
+                }
+
+                string trangThai = hoaDon["trang_thai"]?.ToString() ?? "";
+                if (trangThai != "ĐÃ THANH TOÁN")
+                {
+                    GunaToast.Show(this, "Chỉ có thể hoàn tiền cho hóa đơn đã thanh toán!", UI.Controls.ToastType.Info);
+                    return;
+                }
+
+                decimal tongTien = hoaDon["tong_sau_thue"] != DBNull.Value 
+                    ? Convert.ToDecimal(hoaDon["tong_sau_thue"]) 
+                    : 0m;
+
                 var result = MessageBox.Show(
-                    $"Xác nhận hoàn tiền cho hóa đơn HD{hoaDonId:D2}?\n\nThao tác này không thể hoàn tác!",
+                    $"Xác nhận hoàn tiền cho hóa đơn HD{hoaDonId:D2}?\n\n" +
+                    $"Tổng tiền: {FormatCurrency(tongTien)}\n\n" +
+                    $"Thao tác này không thể hoàn tác!",
                     "Xác nhận hoàn tiền",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
-                    // TODO: Implement refund functionality
-                    GunaToast.Show(this, $"Đã hoàn tiền cho hóa đơn HD{hoaDonId:D2}", UI.Controls.ToastType.Success);
-                    LoadPaymentHistoryToDataGridView(); // Refresh danh sách
+                    string errorMessage;
+                    bool success = _hoaDonBLL.ProcessRefund(hoaDonId, out errorMessage);
+                    
+                    if (success)
+                    {
+                        GunaToast.Show(this, $"Đã hoàn tiền cho hóa đơn HD{hoaDonId:D2}", UI.Controls.ToastType.Success);
+                        LoadPaymentHistoryToDataGridView();
+                        RefreshTopStats();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Lỗi khi hoàn tiền: {errorMessage}");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                GunaToast.Show(this, $"Lỗi khi hoàn tiền: {ex.Message}", UI.Controls.ToastType.Error);
+                MessageBox.Show($"Lỗi khi hoàn tiền: {ex.Message}");
             }
         }
 

@@ -449,6 +449,16 @@ namespace UI
             DataRowView row = (DataRowView)comboBox.SelectedItem;
             return Convert.ToInt32(row[valueMember]);
         }
+        
+        private TimeSpan? GetGioToChucFromCombo()
+        {
+            if (cbbGioToChuc == null || cbbGioToChuc.SelectedIndex < 0) return null;
+            
+            if (cbbGioToChuc.SelectedIndex == 0) return new TimeSpan(10, 30, 0);
+            if (cbbGioToChuc.SelectedIndex == 1) return new TimeSpan(17, 30, 0);
+            
+            return null;
+        }
 
         // Lấy ca_id mặc định từ database (ca đầu tiên)
         private int? GetCaIdDefault()
@@ -509,47 +519,21 @@ namespace UI
                 string errorMessage = string.Empty;
                 bool isTrong = true;
 
-                if (caId.HasValue)
+                // Kiểm tra sảnh trống dựa trên giờ tổ chức trực tiếp từ ComboBox
+                TimeSpan? gioToChucFromCombo = GetGioToChucFromCombo();
+                if (gioToChucFromCombo.HasValue)
                 {
-                    // Lấy giờ bắt đầu từ ca_id
-                    TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
-                    if (gioToChuc.HasValue)
-                    {
-                        isTrong = _datSanhBLL.KiemTraSanhTrong(
-                            sanhId.Value,
-                            gioToChuc.Value,
-                            ngayToChuc,
-                            out errorMessage
-                        );
-                    }
-                    else
-                    {
-                        errorMessage = "Không tìm thấy thông tin ca!";
-                        isTrong = false;
-                    }
+                    isTrong = _datSanhBLL.KiemTraSanhTrong(
+                        sanhId.Value,
+                        gioToChucFromCombo.Value,
+                        ngayToChuc,
+                        out errorMessage
+                    );
                 }
                 else
                 {
-                    int? caIdDefault = GetCaIdDefault();
-                    if (caIdDefault.HasValue)
-                    {
-                        // Lấy giờ bắt đầu từ ca_id
-                        TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caIdDefault.Value);
-                        if (gioToChuc.HasValue)
-                        {
-                            isTrong = _datSanhBLL.KiemTraSanhTrong(
-                                sanhId.Value,
-                                gioToChuc.Value,
-                                ngayToChuc,
-                                out errorMessage
-                            );
-                        }
-                        else
-                        {
-                            errorMessage = "Không tìm thấy thông tin ca!";
-                            isTrong = false;
-                        }
-                    }
+                    errorMessage = "Vui lòng chọn giờ tổ chức tiệc!";
+                    isTrong = false;
                 }
 
                 DataRow sanhInfo = _datSanhBLL.LayThongTinSanh(sanhId.Value);
@@ -655,7 +639,8 @@ namespace UI
                 }
                 
                 decimal tamTinh = _phiSanh + _giaGoi;
-                decimal vat = tamTinh * 0.08m;
+                // VAT cho tiệc cưới là 10%
+                decimal vat = tamTinh * 0.10m;
                 decimal phiDichVu = tamTinh * 0.05m;
                 _tongTien = tamTinh + vat + phiDichVu;
     
@@ -788,56 +773,20 @@ namespace UI
             }
 
             int? caId = null;
-            if (cbbGioToChuc.SelectedValue != null)
+            TimeSpan? gioToChucFromCombo = GetGioToChucFromCombo();
+            if (gioToChucFromCombo.HasValue)
             {
-                caId = Convert.ToInt32(cbbGioToChuc.SelectedValue);
-            }
-            else if (cbbGioToChuc.SelectedItem is DataRowView rowView)
-            {
-                caId = Convert.ToInt32(rowView["ca_id"]);
-            }
-
-            if (caId.HasValue)
-            {
-                // Lấy giờ bắt đầu từ ca_id
-                TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
-                if (gioToChuc.HasValue)
+                string checkError;
+                if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChucFromCombo.Value, ngayToChuc, out checkError))
                 {
-                    string checkError;
-                    if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChuc.Value, ngayToChuc, out checkError))
-                    {
-                        errorMessage = checkError;
-                        return false;
-                    }
-                }
-                else
-                {
-                    errorMessage = "Không tìm thấy thông tin ca!";
+                    errorMessage = checkError;
                     return false;
                 }
             }
             else
             {
-                int? caIdDefault = GetCaIdDefault();
-                if (caIdDefault.HasValue)
-                {
-                    // Lấy giờ bắt đầu từ ca_id
-                    TimeSpan? gioToChuc = _datSanhBLL.LayGioBatDauCa(caIdDefault.Value);
-                    if (gioToChuc.HasValue)
-                    {
-                        string checkError;
-                        if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChuc.Value, ngayToChuc, out checkError))
-                        {
-                            errorMessage = checkError;
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "Không tìm thấy thông tin ca!";
-                        return false;
-                    }
-                }
+                errorMessage = "Vui lòng chọn giờ tổ chức tiệc!";
+                return false;
             }
 
             return true;
@@ -1203,22 +1152,8 @@ namespace UI
                 int? chiNhanhId = GetComboBoxValue(cbbChiNhanh, "chi_nhanh_id");
                 int? sanhId = GetComboBoxValue(cbbSanh, "sanh_id");
                 
-                int? caId = null;
-                if (cbbGioToChuc.SelectedValue != null)
-                {
-                    caId = Convert.ToInt32(cbbGioToChuc.SelectedValue);
-                }
-                else if (cbbGioToChuc.SelectedItem is DataRowView rowView)
-                {
-                    caId = Convert.ToInt32(rowView["ca_id"]);
-                }
-                
-                if (!caId.HasValue)
-                {
-                    caId = GetCaIdDefault();
-                }
-                
-                if (!chiNhanhId.HasValue || !sanhId.HasValue || !caId.HasValue)
+                TimeSpan? gioToChuc = GetGioToChucFromCombo();
+                if (!chiNhanhId.HasValue || !sanhId.HasValue || !gioToChuc.HasValue)
                 {
                     MessageBox.Show("Vui lòng kiểm tra lại thông tin đặt sảnh!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -1226,32 +1161,14 @@ namespace UI
 
                 DateTime ngayToChuc = dateNgayToChuc.Value;
                 
-                // Lấy giờ bắt đầu từ ComboBox đã chọn
-                TimeSpan? gioToChuc = null;
-                if (cbbGioToChuc.SelectedItem is DataRowView rowViewCa)
+                string checkError;
+                if (!_datSanhBLL.KiemTraSanhTrong(sanhId.Value, gioToChuc.Value, ngayToChuc, out checkError))
                 {
-                    string gioBdStr = rowViewCa["gio_bd"]?.ToString() ?? "";
-                    if (!string.IsNullOrWhiteSpace(gioBdStr))
-                    {
-                        string[] parts = gioBdStr.Split(':');
-                        if (parts.Length >= 2)
-                        {
-                            if (int.TryParse(parts[0], out int hours) && int.TryParse(parts[1], out int minutes))
-                            {
-                                gioToChuc = new TimeSpan(hours, minutes, 0);
-                            }
-                        }
-                        if (!gioToChuc.HasValue && TimeSpan.TryParse(gioBdStr, out TimeSpan gioBd))
-                        {
-                            gioToChuc = gioBd;
-                        }
-                    }
+                    MessageBox.Show(checkError, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
                 
-                if (!gioToChuc.HasValue)
-                {
-                    gioToChuc = _datSanhBLL.LayGioBatDauCa(caId.Value);
-                }
+                int? caId = cbbGioToChuc.SelectedIndex == 0 ? 1 : 2;
                 
                 int? soBanDuKien = null;
                 if (!string.IsNullOrWhiteSpace(txtSoBanDuKien.Text))

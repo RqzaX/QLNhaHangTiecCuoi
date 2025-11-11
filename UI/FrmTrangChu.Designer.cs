@@ -399,7 +399,7 @@ namespace UI
             btnDatSanh_TiecCuoi.Padding = new Padding(14, 8, 14, 8);
             btnDatSanh_TiecCuoi.Size = new Size(244, 29);
             btnDatSanh_TiecCuoi.TabIndex = 14;
-            btnDatSanh_TiecCuoi.Text = "Đặt sảng/Tiệc cưới";
+            btnDatSanh_TiecCuoi.Text = "Đặt sảnh/Tiệc cưới";
             btnDatSanh_TiecCuoi.TextColor = Color.FromArgb(31, 41, 55);
             btnDatSanh_TiecCuoi.TextColorDisabled = Color.FromArgb(156, 163, 175);
             btnDatSanh_TiecCuoi.TextColorSelected = Color.FromArgb(17, 24, 39);
