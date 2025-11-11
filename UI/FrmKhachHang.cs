@@ -797,6 +797,9 @@ namespace UI
             {
                 panelHDGD.Visible = true;
                 panelCTTT.Visible = false;
+                cbbLocHang.Visible = false;
+                btnThem.Visible = false;
+                panelHDGD.Location = new Point(10, 305);
                 // Load lại khi chuyển sang tab này
                 if (panelHDGD.Controls.Count == 0)
                 {
@@ -807,6 +810,9 @@ namespace UI
             {
                 panelCTTT.Visible = true;
                 panelHDGD.Visible = false;
+                cbbLocHang.Visible = false;
+                btnThem.Visible= false;
+                panelCTTT.Location = new Point(10, 305);
                 // Load lại khi chuyển sang tab này
                 if (panelCTTT.Controls.Count == 0)
                 {

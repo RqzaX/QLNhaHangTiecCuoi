@@ -272,16 +272,12 @@ namespace QLNhaHangTiecCuoi.DAL
         {
             try
             {
-                // Query đơn giản hơn - chỉ lấy khu vực có bàn thuộc chi nhánh
+                // Lấy tất cả khu vực thuộc chi nhánh, kể cả khu vực không có bàn
                 string query = @"
-                    SELECT DISTINCT kv.khu_vuc_id, kv.ten_khu_vuc
-                    FROM khu_vuc kv
-                    WHERE EXISTS (
-                        SELECT 1 FROM ban b 
-                        WHERE b.khu_vuc_id = kv.khu_vuc_id 
-                        AND b.chi_nhanh_id = @chiNhanhId
-                    )
-                    ORDER BY kv.ten_khu_vuc";
+                    SELECT khu_vuc_id, ten_khu_vuc
+                    FROM khu_vuc
+                    WHERE chi_nhanh_id = @chiNhanhId
+                    ORDER BY ten_khu_vuc";
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {
