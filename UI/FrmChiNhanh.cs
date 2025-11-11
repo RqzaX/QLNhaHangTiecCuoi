@@ -54,6 +54,12 @@ namespace UI
             cbbTrangThai.SelectedIndexChanged += CbbTrangThai_SelectedIndexChanged;
             cbbKhuVuc.SelectedIndexChanged += CbbKhuVuc_SelectedIndexChanged;
             btnThemBan.Click += BtnThemBan_Click;
+
+            // Đăng ký event handler cho nút thêm khu vực
+            btnThem.Click += BtnThemKhuVuc_Click;
+
+            // Đăng ký event handler cho nút thêm sảnh
+            btnThemSanh.Click += BtnThemSanh_Click;
         }
         private const string COL_TEN = "TenCN";
         private const string COL_DC = "DiaChi";
@@ -252,10 +258,18 @@ namespace UI
                 f.StartPosition = FormStartPosition.CenterParent;
                 f.ChiNhanhAdded += (s, args) =>
                 {
-                    // Reload danh sách khi thêm chi nhánh mới
-                    LoadDanhSachChiNhanh();
+                    // Reload danh sách khi thêm chi nhánh mới, giữ lại filter hiện tại
+                    string currentSearch = txtTimKiemChiNhanh.Text.Trim();
+                    int? currentTrangThai = GetCurrentTrangThai();
+                    LoadDanhSachChiNhanh(currentSearch, currentTrangThai);
                 };
-                f.ShowDialog(this);
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Đảm bảo reload ngay cả khi form đóng bằng DialogResult.OK
+                    string currentSearch = txtTimKiemChiNhanh.Text.Trim();
+                    int? currentTrangThai = GetCurrentTrangThai();
+                    LoadDanhSachChiNhanh(currentSearch, currentTrangThai);
+                }
             }
         }
 
@@ -406,7 +420,7 @@ namespace UI
                 panelBan.Visible = false;
                 panelSanh.Visible = true;
                 panelTimKiemSanh.Visible = true;
-                
+
                 // Load danh sách sảnh
                 LoadDanhSachSanh();
             }
@@ -927,16 +941,16 @@ namespace UI
                 // Lọc theo số bàn (tìm kiếm)
                 if (!string.IsNullOrWhiteSpace(searchKeyword))
                 {
-                    filteredRows = filteredRows.Where(r => 
-                        r["so_ban"] != DBNull.Value && 
+                    filteredRows = filteredRows.Where(r =>
+                        r["so_ban"] != DBNull.Value &&
                         r["so_ban"].ToString().ToLower().Contains(searchKeyword.ToLower()));
                 }
 
                 // Lọc theo trạng thái
                 if (!string.IsNullOrWhiteSpace(trangThaiFilter))
                 {
-                    filteredRows = filteredRows.Where(r => 
-                        r["trang_thai"] != DBNull.Value && 
+                    filteredRows = filteredRows.Where(r =>
+                        r["trang_thai"] != DBNull.Value &&
                         r["trang_thai"].ToString() == trangThaiFilter);
                 }
 
@@ -1025,6 +1039,74 @@ namespace UI
             }
         }
 
+        private void BtnThemKhuVuc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int chiNhanhId = Session.ChiNhanhId;
+                if (chiNhanhId <= 0)
+                {
+                    MessageBox.Show("Không tìm thấy thông tin chi nhánh!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Mở form thêm khu vực mới
+                using (var frm = new Frm_ThemKhuVuc(chiNhanhId))
+                {
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.KhuVucAdded += (s, args) =>
+                    {
+                        // Reload danh sách khu vực khi có thay đổi
+                        LoadDanhSachKhuVuc();
+                    };
+
+                    if (frm.ShowDialog(this) == DialogResult.OK)
+                    {
+                        // Đảm bảo reload ngay cả khi form đóng bằng DialogResult.OK
+                        LoadDanhSachKhuVuc();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm khu vực: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnThemSanh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int chiNhanhId = Session.ChiNhanhId;
+                if (chiNhanhId <= 0)
+                {
+                    MessageBox.Show("Không tìm thấy thông tin chi nhánh!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Mở form thêm sảnh mới
+                using (var frm = new Frm_ThemSanh(chiNhanhId))
+                {
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.SanhAdded += (s, args) =>
+                    {
+                        // Reload danh sách sảnh khi có thay đổi
+                        LoadDanhSachSanh();
+                    };
+
+                    if (frm.ShowDialog(this) == DialogResult.OK)
+                    {
+                        // Đảm bảo reload ngay cả khi form đóng bằng DialogResult.OK
+                        LoadDanhSachSanh();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void LoadDanhSachSanh()
         {
             try
@@ -1037,7 +1119,7 @@ namespace UI
                     panel.Dispose();
                 }
                 _listSanhPanels.Clear();
-                
+
                 // Xóa các panel sảnh cũ và FlowLayoutPanel
                 if (_flowLayoutSanh != null)
                 {
@@ -1046,7 +1128,7 @@ namespace UI
                     _flowLayoutSanh.Dispose();
                     _flowLayoutSanh = null;
                 }
-                
+
                 // Xóa chỉ FlowLayoutPanel và các SanhPanel, giữ lại panelTimKiemSanh
                 var controlsToRemove = new List<Control>();
                 foreach (Control ctrl in panelSanh.Controls)
@@ -1089,7 +1171,7 @@ namespace UI
                     Margin = new Padding(0)
                 };
                 panelSanh.Controls.Add(_flowLayoutSanh);
-                
+
                 // Đảm bảo FlowLayoutPanel được hiển thị
                 _flowLayoutSanh.Visible = true;
                 _flowLayoutSanh.BringToFront();
@@ -1147,12 +1229,12 @@ namespace UI
                         int sucChua = Convert.ToInt32(row["suc_chua"]);
                         decimal phiThueCb = Convert.ToDecimal(row["phi_thue_cb"]);
 
-                    // Tạo SanhPanel
-                    SanhPanel sanhPanel = new SanhPanel
-                    {
-                        Size = new Size(370, 240),
-                        Margin = new Padding(12, 12, 12, 12)
-                    };
+                        // Tạo SanhPanel
+                        SanhPanel sanhPanel = new SanhPanel
+                        {
+                            Size = new Size(370, 240),
+                            Margin = new Padding(12, 12, 12, 12)
+                        };
 
                         // Load dữ liệu vào panel
                         sanhPanel.LoadData(sanhId, tenSanh, tenChiNhanh, sucChua, phiThueCb);
@@ -1184,9 +1266,15 @@ namespace UI
                                 using (var frm = new Frm_ChiTietSanh(sanhIdCopy, _sanhBLL, allowEdit: true))
                                 {
                                     frm.StartPosition = FormStartPosition.CenterParent;
+                                    frm.SanhDeleted += (s2, e2) =>
+                                    {
+                                        // Reload danh sách sảnh sau khi xóa thành công
+                                        LoadDanhSachSanh();
+                                    };
+
                                     if (frm.ShowDialog(this) == DialogResult.OK)
                                     {
-                                        // Reload danh sách sảnh sau khi sửa thành công
+                                        // Reload danh sách sảnh sau khi sửa hoặc xóa thành công
                                         LoadDanhSachSanh();
                                     }
                                 }

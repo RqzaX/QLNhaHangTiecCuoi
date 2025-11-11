@@ -23,13 +23,13 @@ namespace UI
             InitializeComponent();
             var dbHelper = new DatabaseHelper();
             _chiNhanhBLL = new ChiNhanhBLL(dbHelper);
-            
+
             // Load dữ liệu cho combobox trạng thái
             LoadComboBoxTrangThai();
-            
+
             // Thiết lập ràng buộc cho số điện thoại
             SetupPhoneNumberValidation();
-            
+
             // Đăng ký event cho nút Lưu
             roundedButton2.Click += BtnLuu_Click;
             // Đăng ký event cho nút Hủy
@@ -40,7 +40,7 @@ namespace UI
         {
             // Giới hạn tối đa 10 ký tự
             roundedTextBox3.MaxLength = 10;
-            
+
             // Đăng ký event sau khi control được load
             this.Load += (s, e) =>
             {
@@ -52,7 +52,7 @@ namespace UI
                     textBox.KeyPress += TextBox_KeyPress;
                 }
             };
-            
+
             // Validate khi text thay đổi để chỉ cho phép số và giới hạn 10 ký tự
             roundedTextBox3.TextChanged += RoundedTextBox3_TextChanged;
         }
@@ -66,7 +66,7 @@ namespace UI
                 // Loại bỏ các ký tự không phải số và giới hạn 10 ký tự
                 string text = textBox.Text;
                 string numbersOnly = new string(text.Where(char.IsDigit).Take(10).ToArray());
-                
+
                 if (text != numbersOnly)
                 {
                     int selectionStart = textBox.SelectionStart;
@@ -93,14 +93,14 @@ namespace UI
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Text", typeof(string));
                 dt.Columns.Add("Value", typeof(int));
-                
+
                 dt.Rows.Add("Đang hoạt động", 1);
                 dt.Rows.Add("Bảo trì", 0);
-                
+
                 cbbTrangThai.DataSource = dt;
                 cbbTrangThai.DisplayMember = "Text";
                 cbbTrangThai.ValueMember = "Value";
-                
+
                 // Mặc định chọn "Đang hoạt động"
                 cbbTrangThai.SelectedIndex = 0;
             }
@@ -136,7 +136,7 @@ namespace UI
 
                 // Loại bỏ khoảng trắng và kiểm tra
                 string sdtClean = sdt.Replace(" ", "").Replace("-", "").Trim();
-                
+
                 // Kiểm tra chỉ chứa số
                 if (!sdtClean.All(char.IsDigit))
                 {
@@ -144,7 +144,7 @@ namespace UI
                     roundedTextBox3.Focus();
                     return;
                 }
-                
+
                 // Kiểm tra độ dài chính xác 10 số
                 if (sdtClean.Length != 10)
                 {
@@ -152,7 +152,7 @@ namespace UI
                     roundedTextBox3.Focus();
                     return;
                 }
-                
+
                 // Cập nhật lại giá trị đã làm sạch
                 sdt = sdtClean;
 
@@ -162,7 +162,7 @@ namespace UI
                 {
                     trangThai = Convert.ToInt32(cbbTrangThai.SelectedValue);
                 }
-                
+
                 // Thêm chi nhánh vào database
                 int chiNhanhId = _chiNhanhBLL.ThemChiNhanh(ten, diaChi, sdt, trangThai);
 
@@ -172,7 +172,8 @@ namespace UI
                 // Trigger event để form cha reload
                 ChiNhanhAdded?.Invoke(this, EventArgs.Empty);
 
-                // Đóng form
+                // Đặt DialogResult và đóng form
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)

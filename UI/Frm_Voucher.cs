@@ -16,6 +16,8 @@ namespace UI
     {
         private VoucherBLL _bll;
         private DataTable _allData;
+        // Dictionary để lưu giá trị đơn tối thiểu theo voucherId (không lưu vào database)
+        private Dictionary<int, decimal> _donToiThieuMap = new Dictionary<int, decimal>();
 
         private const string VC_CODE = "Code";
         private const string VC_KH = "KhachHang";
@@ -46,7 +48,7 @@ namespace UI
 
         private void BtnThemVoucher_Click(object sender, EventArgs e)
         {
-            using (var frm = new Frm_ThemVoucher())
+            using (var frm = new Frm_ThemVoucher(this))
             {
                 frm.StartPosition = FormStartPosition.CenterParent;
                 if (frm.ShowDialog(this) == DialogResult.OK)
@@ -204,6 +206,33 @@ namespace UI
             }
         }
 
+        // Helper method để tính trạng thái voucher dựa trên CTKM
+        // Trạng thái voucher hoàn toàn phụ thuộc vào trạng thái của CTKM (tg_bat_dau và tg_ket_thuc)
+        private string TinhTrangThaiVoucher(DateTime tgBatDau, DateTime tgKetThuc)
+        {
+            // Đảm bảo chỉ so sánh phần Date (bỏ phần time)
+            DateTime now = DateTime.Now.Date;
+            DateTime batDau = tgBatDau.Date;
+            DateTime ketThuc = tgKetThuc.Date;
+
+            // Trạng thái voucher phụ thuộc hoàn toàn vào thời gian của CTKM
+            // Nếu CTKM đã kết thúc (tg_ket_thuc < now) -> voucher hết hạn
+            if (ketThuc < now)
+            {
+                return "Đã hết hạn";
+            }
+            // Nếu CTKM đang trong thời gian áp dụng (tg_bat_dau <= now && tg_ket_thuc >= now) -> voucher đang áp dụng
+            else if (batDau <= now && ketThuc >= now)
+            {
+                return "Đang áp dụng";
+            }
+            // Nếu CTKM chưa bắt đầu (tg_bat_dau > now) -> voucher chưa có hiệu lực (coi như hết hạn)
+            else
+            {
+                return "Đã hết hạn";
+            }
+        }
+
         private void UpdatePanelStatistics()
         {
             try
@@ -216,22 +245,20 @@ namespace UI
                     return;
                 }
 
-                DateTime now = DateTime.Now.Date;
                 int totalVouchers = _allData.Rows.Count;
                 int dangApDung = 0;
                 int daHetHan = 0;
 
                 foreach (DataRow row in _allData.Rows)
                 {
-                    DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgBatDau"]).Date;
-                    DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgKetThuc"]).Date;
+                    // Đảm bảo chỉ lấy phần Date để so sánh chính xác
+                    DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgBatDau"]).Date;
+                    DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgKetThuc"]).Date;
 
-                    // Tính trạng thái dựa trên CTKM (tg_bat_dau và tg_ket_thuc)
-                    if (tgKetThuc < now)
-                    {
-                        daHetHan++;
-                    }
-                    else if (tgBatDau <= now && tgKetThuc >= now)
+                    // Tính trạng thái dựa trên CTKM (trạng thái voucher phụ thuộc vào trạng thái CTKM)
+                    string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
+
+                    if (trangThai == "Đang áp dụng")
                     {
                         dangApDung++;
                     }
@@ -261,10 +288,11 @@ namespace UI
             string hinhThuc = row["HinhThuc"]?.ToString() ?? "";
             decimal donToiThieu = row["DonToiThieu"] == DBNull.Value ? 0 : Convert.ToDecimal(row["DonToiThieu"]);
 
-            DateTime ngayPhatHanh = row["NgayPhatHanh"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayPhatHanh"]);
-            DateTime ngayHetHan = row["NgayHetHan"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayHetHan"]);
-            DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgBatDau"]);
-            DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgKetThuc"]);
+            DateTime ngayPhatHanh = row["NgayPhatHanh"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayPhatHanh"]).Date;
+            DateTime ngayHetHan = row["NgayHetHan"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayHetHan"]).Date;
+            // Lấy tgBatDau và tgKetThuc từ CTKM, chỉ lấy phần Date để so sánh chính xác
+            DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgBatDau"]).Date;
+            DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgKetThuc"]).Date;
 
             int soLan = row["SoLan"] == DBNull.Value ? 0 : Convert.ToInt32(row["SoLan"]);
             int daDung = row["DaDung"] == DBNull.Value ? 0 : Convert.ToInt32(row["DaDung"]);
@@ -288,11 +316,19 @@ namespace UI
                 giaTriStr = Money(giaTri);
             }
 
-            // Format đơn tối thiểu (mặc định 5 triệu nếu chưa có)
-            if (donToiThieu == 0)
+            // Lấy giá trị đơn tối thiểu từ Dictionary (nếu có), nếu không thì dùng giá trị mặc định
+            // Giá trị này chỉ lưu trên DataGridView, không lưu vào database
+            if (_donToiThieuMap.ContainsKey(voucherId))
             {
-                donToiThieu = giaTri * 10; // Đơn tối thiểu = 10 lần giá trị voucher
-                if (donToiThieu < 1000000) donToiThieu = 1000000; // Tối thiểu 1 triệu
+                donToiThieu = _donToiThieuMap[voucherId];
+            }
+            else if (donToiThieu == 0)
+            {
+                // Giá trị mặc định: 10 lần giá trị voucher, tối thiểu 1 triệu
+                donToiThieu = giaTri * 10;
+                if (donToiThieu < 1000000) donToiThieu = 1000000;
+                // Lưu vào Dictionary để lần sau dùng
+                _donToiThieuMap[voucherId] = donToiThieu;
             }
             string donToiThieuStr = Money(donToiThieu);
 
@@ -300,22 +336,9 @@ namespace UI
             string ngayPHStr = ngayPhatHanh.ToString("dd/M/yyyy");
             string ngayHHStr = ngayHetHan.ToString("dd/M/yyyy");
 
-            // Tính trạng thái dựa trên CTKM (tg_bat_dau và tg_ket_thuc)
-            DateTime now = DateTime.Now.Date;
-            string trangThai = "";
-
-            if (tgKetThuc < now)
-            {
-                trangThai = "Đã hết hạn";
-            }
-            else if (tgBatDau <= now && tgKetThuc >= now)
-            {
-                trangThai = "Đang áp dụng";
-            }
-            else
-            {
-                trangThai = "Đã hết hạn";
-            }
+            // Tính trạng thái voucher dựa trên trạng thái CTKM (tg_bat_dau và tg_ket_thuc)
+            // Trạng thái voucher hoàn toàn phụ thuộc vào trạng thái của CTKM
+            string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
 
             AddVoucher(voucherId, code, khachHang, giaTriStr, donToiThieuStr, ngayPHStr, ngayHHStr, soLan, daDung, trangThai);
         }
@@ -443,28 +466,11 @@ namespace UI
                     bool matchStatus = true;
                     if (selectedStatus != "Tất cả")
                     {
-                        // Tính trạng thái của voucher
-                        DateTime ngayPhatHanh = row["NgayPhatHanh"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayPhatHanh"]).Date;
-                        DateTime ngayHetHan = row["NgayHetHan"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["NgayHetHan"]).Date;
-                        int soLan = row["SoLan"] == DBNull.Value ? 0 : Convert.ToInt32(row["SoLan"]);
-                        int daDung = row["DaDung"] == DBNull.Value ? 0 : Convert.ToInt32(row["DaDung"]);
+                        // Đảm bảo chỉ so sánh phần Date (bỏ phần time) để so sánh chính xác
+                        DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgBatDau"]).Date;
+                        DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(row["TgKetThuc"]).Date;
 
-                        DateTime now = DateTime.Now.Date;
-                        string trangThai = "";
-
-                        if (ngayHetHan < now)
-                        {
-                            trangThai = "Đã hết hạn";
-                        }
-                        else if (ngayPhatHanh <= now && ngayHetHan >= now)
-                        {
-                            trangThai = "Đang áp dụng";
-                        }
-                        else
-                        {
-                            trangThai = "Đã hết hạn";
-                        }
-
+                        string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
                         matchStatus = trangThai == selectedStatus;
                     }
 
@@ -586,7 +592,7 @@ namespace UI
                 if (row.Cells["ID"].Value == null) return;
 
                 int voucherId = Convert.ToInt32(row.Cells["ID"].Value);
-                
+
                 using (var frm = new Frm_ChiTietVoucher(voucherId, this))
                 {
                     frm.StartPosition = FormStartPosition.CenterParent;
@@ -606,6 +612,58 @@ namespace UI
         public void ReloadData()
         {
             LoadDataVoucher();
+        }
+
+        // Method để cập nhật giá trị đơn tối thiểu (được gọi từ Frm_ChiTietVoucher)
+        public void UpdateDonToiThieu(int voucherId, decimal donToiThieu)
+        {
+            if (_donToiThieuMap.ContainsKey(voucherId))
+            {
+                _donToiThieuMap[voucherId] = donToiThieu;
+            }
+            else
+            {
+                _donToiThieuMap.Add(voucherId, donToiThieu);
+            }
+
+            // Cập nhật lại DataGridView và trạng thái
+            foreach (DataGridViewRow row in dgvVoucher.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                if (row.Cells["ID"].Value != null && Convert.ToInt32(row.Cells["ID"].Value) == voucherId)
+                {
+                    row.Cells[VC_DON_MIN].Value = Money(donToiThieu);
+
+                    // Cập nhật lại trạng thái dựa trên CTKM
+                    // Tìm lại dữ liệu từ _allData để cập nhật trạng thái
+                    if (_allData != null)
+                    {
+                        foreach (DataRow dataRow in _allData.Rows)
+                        {
+                            if (Convert.ToInt32(dataRow["ID"]) == voucherId)
+                            {
+                                DateTime tgBatDau = dataRow["TgBatDau"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(dataRow["TgBatDau"]).Date;
+                                DateTime tgKetThuc = dataRow["TgKetThuc"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(dataRow["TgKetThuc"]).Date;
+                                string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
+                                row.Cells[VC_TT].Value = trangThai;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Method để lấy giá trị đơn tối thiểu (được gọi từ Frm_ChiTietVoucher)
+        public decimal GetDonToiThieu(int voucherId)
+        {
+            if (_donToiThieuMap.ContainsKey(voucherId))
+            {
+                return _donToiThieuMap[voucherId];
+            }
+            return 0;
         }
     }
 }

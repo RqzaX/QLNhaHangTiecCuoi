@@ -8,38 +8,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
-using QLNhaHangTiecCuoi.Share;
 
 namespace UI
 {
-    public partial class Frm_ThemKHMoi : Form
+    public partial class Frm_ChiTietKhachHang : Form
     {
         private KhachHangBLL _khachHangBLL;
         private DataTable _dtHang;
+        private int _khachHangId;
+        private bool _isEditMode = false;
         private bool _isUpdatingHang = false;
 
-        public Frm_ThemKHMoi()
+        public Frm_ChiTietKhachHang(int khachHangId)
         {
             InitializeComponent();
             _khachHangBLL = new KhachHangBLL();
+            _khachHangId = khachHangId;
 
             // Load danh sách hạng từ database
             LoadDanhSachHang();
 
+            // Load thông tin khách hàng
+            LoadThongTinKhachHang();
+
             // Đăng ký event handlers
-            this.Load += Frm_ThemKHMoi_Load;
-            btnThemKH.Click += BtnThemKH_Click;
+            this.Load += Frm_ChiTietKhachHang_Load;
+            btnSua.Click += BtnSua_Click;
+            btnXoa.Click += BtnXoa_Click;
+            btnLuu.Click += BtnLuu_Click;
             btnHuy.Click += (s, e) => this.Close();
-
-            // Set giá trị mặc định
-            txtChiTieu.Text = "0";
-        }
-
-        private void Frm_ThemKHMoi_Load(object sender, EventArgs e)
-        {
-            // Đăng ký event TextChanged cho txtChiTieu sau khi form load
             txtChiTieu.TextChanged += TxtChiTieu_TextChanged;
 
+            // Mặc định ở chế độ xem
+            SetEditMode(false);
+        }
+
+        private void Frm_ChiTietKhachHang_Load(object sender, EventArgs e)
+        {
             // Ràng buộc số điện thoại: chỉ cho phép nhập số, tối đa 10 ký tự
             txtSDT.MaxLength = 10;
             txtSDT.KeyPress += TxtSDT_KeyPress;
@@ -62,18 +67,9 @@ namespace UI
 
                 if (_dtHang != null && _dtHang.Rows.Count > 0)
                 {
-                    // Sử dụng DataSource để bind dữ liệu
                     cbbHang.DataSource = _dtHang;
                     cbbHang.DisplayMember = "ten_hang";
                     cbbHang.ValueMember = "hang_code";
-                    cbbHang.SelectedIndex = 0; // Mặc định chọn hạng đầu tiên (Thành viên)
-                }
-                else
-                {
-                    // Nếu không có dữ liệu, thêm mặc định
-                    cbbHang.Items.Clear();
-                    cbbHang.Items.Add("Thành viên");
-                    cbbHang.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -82,13 +78,59 @@ namespace UI
             }
         }
 
+        private void LoadThongTinKhachHang()
+        {
+            try
+            {
+                DataTable dt = _khachHangBLL.LayThongTinKhachHang(_khachHangId);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    DataRow row = dt.Rows[0];
+
+                    txtHoTen.Text = row["ho_ten"]?.ToString() ?? "";
+                    txtSDT.Text = row["sdt"]?.ToString() ?? "";
+                    txtEmail.Text = row["email"]?.ToString() ?? "";
+                    txtGhiChu.Text = row["ghi_chu"]?.ToString() ?? "";
+
+                    decimal tongChiTieu = row["tong_chi_tieu"] == DBNull.Value ? 0 : Convert.ToDecimal(row["tong_chi_tieu"]);
+                    txtChiTieu.Text = tongChiTieu.ToString("N0");
+
+                    string hangCode = row["hang_code"]?.ToString() ?? "MEM";
+                    if (cbbHang.DataSource != null)
+                    {
+                        cbbHang.SelectedValue = hangCode;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load thông tin khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetEditMode(bool isEdit)
+        {
+            _isEditMode = isEdit;
+
+            txtHoTen.ReadOnly = !isEdit;
+            txtSDT.ReadOnly = !isEdit;
+            txtEmail.ReadOnly = !isEdit;
+            txtGhiChu.ReadOnly = !isEdit;
+            txtChiTieu.ReadOnly = !isEdit;
+            cbbHang.Enabled = isEdit;
+
+            btnSua.Visible = !isEdit;
+            btnLuu.Visible = isEdit;
+            btnXoa.Visible = !isEdit;
+        }
+
         private void TxtChiTieu_TextChanged(object sender, EventArgs e)
         {
-            if (_isUpdatingHang) return;
+            if (_isUpdatingHang || !_isEditMode) return;
 
             try
             {
-                // Lấy giá trị chi tiêu (loại bỏ dấu phẩy, dấu chấm, và ký tự không phải số)
                 string chiTieuText = txtChiTieu.Text.Trim().Replace(",", "").Replace(".", "").Replace("₫", "").Replace(" ", "");
 
                 if (string.IsNullOrWhiteSpace(chiTieuText))
@@ -98,14 +140,12 @@ namespace UI
 
                 if (decimal.TryParse(chiTieuText, out decimal chiTieu))
                 {
-                    // Tự động set hạng dựa trên chi tiêu
                     string hangCode = TinhHangTheoChiTieu(chiTieu);
                     SetHangByCode(hangCode);
                 }
             }
             catch (Exception ex)
             {
-                // Không hiển thị lỗi khi đang nhập
                 System.Diagnostics.Debug.WriteLine($"Lỗi tính hạng: {ex.Message}");
             }
         }
@@ -115,7 +155,6 @@ namespace UI
             if (_dtHang == null || _dtHang.Rows.Count == 0)
                 return "MEM";
 
-            // Sắp xếp theo thu_tu giảm dần để tìm hạng cao nhất mà khách hàng đạt được
             var sortedHang = _dtHang.AsEnumerable()
                 .OrderByDescending(r => Convert.ToInt32(r["thu_tu"]))
                 .ToList();
@@ -129,7 +168,6 @@ namespace UI
                 }
             }
 
-            // Mặc định là Thành viên (hạng thấp nhất)
             return "MEM";
         }
 
@@ -141,24 +179,9 @@ namespace UI
             _isUpdatingHang = true;
             try
             {
-                // Nếu combobox đang dùng DataSource
                 if (cbbHang.DataSource != null)
                 {
                     cbbHang.SelectedValue = hangCode;
-                }
-                else
-                {
-                    // Fallback: tìm theo tên hạng
-                    DataRow[] rows = _dtHang.Select($"hang_code = '{hangCode}'");
-                    if (rows.Length > 0)
-                    {
-                        string tenHang = rows[0]["ten_hang"].ToString();
-                        int index = cbbHang.Items.IndexOf(tenHang);
-                        if (index >= 0)
-                        {
-                            cbbHang.SelectedIndex = index;
-                        }
-                    }
                 }
             }
             finally
@@ -172,7 +195,6 @@ namespace UI
             if (cbbHang.SelectedIndex < 0 || _dtHang == null)
                 return "MEM";
 
-            // Nếu combobox đang dùng DataSource với ValueMember
             if (cbbHang.DataSource != null && !string.IsNullOrEmpty(cbbHang.ValueMember))
             {
                 object value = cbbHang.SelectedValue;
@@ -182,21 +204,15 @@ namespace UI
                 }
             }
 
-            // Fallback: tìm theo tên hạng
-            string tenHang = cbbHang.SelectedItem?.ToString();
-            if (string.IsNullOrEmpty(tenHang))
-                return "MEM";
-
-            DataRow[] rows = _dtHang.Select($"ten_hang = '{tenHang}'");
-            if (rows.Length > 0)
-            {
-                return rows[0]["hang_code"].ToString();
-            }
-
             return "MEM";
         }
 
-        private void BtnThemKH_Click(object sender, EventArgs e)
+        private void BtnSua_Click(object sender, EventArgs e)
+        {
+            SetEditMode(true);
+        }
+
+        private void BtnLuu_Click(object sender, EventArgs e)
         {
             try
             {
@@ -215,10 +231,9 @@ namespace UI
                 string ghiChu = txtGhiChu.Text?.Trim() ?? "";
                 DateTime? ngaySinh = null; // Không yêu cầu ngày sinh
 
-                // Validation số điện thoại: phải đúng 10 số
+                // Validation số điện thoại
                 if (!string.IsNullOrWhiteSpace(sdt))
                 {
-                    // Loại bỏ tất cả ký tự không phải số
                     sdt = new string(sdt.Where(char.IsDigit).ToArray());
 
                     if (sdt.Length != 10)
@@ -242,24 +257,72 @@ namespace UI
                 // Lấy hang_code từ combobox
                 string hangCode = GetHangCodeFromSelected();
 
-                // Tạo khách hàng (lượt đến và điểm mặc định = 0)
-                int khachHangId = _khachHangBLL.TaoKhachHang(hoTen, sdt, email, ghiChu, ngaySinh, hangCode, tongChiTieu, 0, 0);
+                // Cập nhật khách hàng (giữ nguyên so_lan_den và diem)
+                DataTable dt = _khachHangBLL.LayThongTinKhachHang(_khachHangId);
+                int soLanDen = 0;
+                int diem = 0;
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    soLanDen = dt.Rows[0]["so_lan_den"] == DBNull.Value ? 0 : Convert.ToInt32(dt.Rows[0]["so_lan_den"]);
+                    diem = dt.Rows[0]["diem"] == DBNull.Value ? 0 : Convert.ToInt32(dt.Rows[0]["diem"]);
+                }
 
-                MessageBox.Show($"Thêm khách hàng thành công!\nMã khách hàng ID: {khachHangId}", "Thành công",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                bool success = _khachHangBLL.CapNhatKhachHang(_khachHangId, hoTen, sdt, email, ghiChu, ngaySinh, hangCode, tongChiTieu, soLanDen, diem);
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                if (success)
+                {
+                    MessageBox.Show("Cập nhật thông tin khách hàng thành công!", "Thành công",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Cập nhật thông tin khách hàng thất bại!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi thêm khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi cập nhật khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void label4_Click(object sender, EventArgs e)
+        private void BtnXoa_Click(object sender, EventArgs e)
         {
+            try
+            {
+                DialogResult result = MessageBox.Show(
+                    "Bạn có chắc chắn muốn xóa khách hàng này?",
+                    "Xác nhận xóa",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
+                if (result == DialogResult.Yes)
+                {
+                    bool success = _khachHangBLL.XoaKhachHang(_khachHangId);
+
+                    if (success)
+                    {
+                        MessageBox.Show("Xóa khách hàng thành công!", "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Xóa khách hàng thất bại!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi xóa khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
+

@@ -58,7 +58,7 @@ namespace QLNhaHangTiecCuoi.BLL
             {
                 if (khuVucId <= 0)
                     throw new Exception("ID khu vực không hợp lệ");
-                
+
                 if (string.IsNullOrWhiteSpace(tenKhuVuc))
                     throw new Exception("Tên khu vực không được để trống");
 
@@ -67,6 +67,24 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Cập nhật khu vực: {ex.Message}");
+            }
+        }
+
+        public int ThemKhuVuc(int chiNhanhId, string tenKhuVuc, string moTa)
+        {
+            try
+            {
+                if (chiNhanhId <= 0)
+                    throw new Exception("ID chi nhánh không hợp lệ");
+
+                if (string.IsNullOrWhiteSpace(tenKhuVuc))
+                    throw new Exception("Tên khu vực không được để trống");
+
+                return _khuVucDAL.ThemKhuVuc(chiNhanhId, tenKhuVuc.Trim(), moTa?.Trim());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Thêm khu vực: {ex.Message}");
             }
         }
 

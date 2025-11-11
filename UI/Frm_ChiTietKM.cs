@@ -17,6 +17,7 @@ namespace UI
         private ChuongTrinhKMBLL _bll;
         private int _kmId;
         private FrmChuongTrinhKM _parentForm;
+        private bool _isLoadingData = false; // Flag để tránh event handler chạy khi load data
 
         public Frm_ChiTietKM(int kmId, FrmChuongTrinhKM parentForm = null)
         {
@@ -47,6 +48,8 @@ namespace UI
         {
             try
             {
+                _isLoadingData = true; // Đặt flag để tránh event handler chạy
+
                 DataRow row = _bll.GetById(_kmId);
                 if (row == null)
                 {
@@ -86,13 +89,18 @@ namespace UI
                     cbbLoaiApDung.SelectedIndex = 1;
                 else if (apDungLoai == "TIECCUOI")
                     cbbLoaiApDung.SelectedIndex = 2;
-                DateTime now = DateTime.Now;
-                DateTime tgBatDau = dateNgayBatDau.Value;
-                DateTime tgKetThuc = dateNgayKetThuc.Value;
-                checkSuDung.Checked = (now >= tgBatDau && now <= tgKetThuc);
+
+                DateTime now = DateTime.Now.Date;
+                DateTime tgBatDau = dateNgayBatDau.Value.Date;
+                DateTime tgKetThuc = dateNgayKetThuc.Value.Date;
+                // Checkbox "Sử dụng" = true nếu CTKM đang trong thời gian áp dụng
+                checkSuDung.Checked = (tgBatDau <= now && tgKetThuc >= now);
+
+                _isLoadingData = false; // Reset flag sau khi load xong
             }
             catch (Exception ex)
             {
+                _isLoadingData = false; // Reset flag nếu có lỗi
                 MessageBox.Show($"Lỗi khi load dữ liệu: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -100,6 +108,70 @@ namespace UI
 
         private void CheckSuDung_CheckedChanged(object sender, EventArgs e)
         {
+            // Bỏ qua nếu đang load data
+            if (_isLoadingData)
+                return;
+
+            DateTime now = DateTime.Now.Date;
+            DateTime tgBatDau = dateNgayBatDau.Value.Date;
+            DateTime tgKetThuc;
+
+            if (checkSuDung.Checked)
+            {
+                // Khi check (sử dụng) -> ngày kết thúc tăng 2 ngày so với ngày hiện tại
+                tgKetThuc = now.AddDays(2);
+
+                // Đảm bảo ngày bắt đầu <= ngày kết thúc
+                // Nếu ngày bắt đầu > ngày kết thúc, đặt ngày bắt đầu = hôm nay
+                if (tgBatDau > tgKetThuc)
+                {
+                    tgBatDau = now;
+                }
+
+                // Cập nhật giá trị vào datePicker
+                dateNgayBatDau.Value = tgBatDau;
+                dateNgayKetThuc.Value = tgKetThuc;
+            }
+            else
+            {
+                // Khi uncheck (không sử dụng) -> điều chỉnh ngày kết thúc để đảm bảo trạng thái "đã hết hạn"
+                // Đặt ngày kết thúc = hôm qua để đảm bảo trạng thái là "hết hạn"
+                tgKetThuc = now.AddDays(-1);
+
+                // Đảm bảo ngày kết thúc > ngày bắt đầu để không bị lỗi validation trong BLL
+                // BLL yêu cầu: tgKetThuc > tgBatDau (không được <=)
+                if (tgBatDau >= tgKetThuc)
+                {
+                    // Nếu ngày bắt đầu >= ngày kết thúc (hôm qua), đặt ngày bắt đầu = ngày kết thúc - 1 ngày
+                    tgBatDau = tgKetThuc.AddDays(-1);
+                }
+
+                // Cập nhật giá trị vào datePicker
+                dateNgayBatDau.Value = tgBatDau;
+                dateNgayKetThuc.Value = tgKetThuc;
+            }
+        }
+
+        // Method để thông báo cho các form Voucher đang mở để reload dữ liệu
+        private void NotifyVoucherFormsToReload()
+        {
+            try
+            {
+                // Tìm tất cả các form Voucher đang mở và reload dữ liệu
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form is Frm_Voucher voucherForm)
+                    {
+                        // Gọi method ReloadData của form Voucher
+                        voucherForm.ReloadData();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Không hiển thị lỗi nếu không tìm thấy form Voucher
+                System.Diagnostics.Debug.WriteLine($"Không thể thông báo form Voucher: {ex.Message}");
+            }
         }
 
         private void CBBLoaiKM_SelectedIndexChanged(object sender, EventArgs e)
@@ -124,7 +196,7 @@ namespace UI
             {
                 int voucherCount = _bll.CountVouchersByKmId(_kmId);
                 string confirmMessage = "Bạn có chắc chắn muốn xóa chương trình khuyến mãi này?";
-                
+
                 if (voucherCount > 0)
                 {
                     confirmMessage += $"\n\nLưu ý: Sẽ xóa luôn {voucherCount} voucher đang sử dụng chương trình khuyến mãi này.";
@@ -141,6 +213,10 @@ namespace UI
                     bool success = _bll.Delete(_kmId);
                     if (success)
                     {
+                        // Thông báo cho các form Voucher đang mở để reload dữ liệu
+                        // Vì các voucher liên quan đã bị xóa
+                        NotifyVoucherFormsToReload();
+
                         string successMessage = "Xóa chương trình khuyến mãi thành công!";
                         if (voucherCount > 0)
                         {
@@ -232,109 +308,106 @@ namespace UI
                 decimal giaTri = 0;
 
                 if (string.IsNullOrWhiteSpace(txtGiamTD.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập giá trị khuyến mãi!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                string giaTriText = txtGiamTD.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
+
+                if (!decimal.TryParse(giaTriText, NumberStyles.Any, CultureInfo.InvariantCulture, out giaTri))
+                {
+                    MessageBox.Show("Giá trị khuyến mãi không hợp lệ! Vui lòng nhập số.", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                if (giaTri <= 0)
+                {
+                    MessageBox.Show("Giá trị khuyến mãi phải lớn hơn 0!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGiamTD.Focus();
+                    return;
+                }
+
+                if (hinhThuc == "PERCENT")
+                {
+                    if (giaTri < 5)
                     {
-                        MessageBox.Show("Vui lòng nhập giá trị khuyến mãi!", "Lỗi",
+                        MessageBox.Show("Giá trị giảm theo % không được nhỏ hơn 5%!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;
                     }
-
-                    string giaTriText = txtGiamTD.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
-
-                    if (!decimal.TryParse(giaTriText, NumberStyles.Any, CultureInfo.InvariantCulture, out giaTri))
-                    {
-                        MessageBox.Show("Giá trị khuyến mãi không hợp lệ! Vui lòng nhập số.", "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        txtGiamTD.Focus();
-                        return;
-                    }
-
-                    if (giaTri <= 0)
-                    {
-                        MessageBox.Show("Giá trị khuyến mãi phải lớn hơn 0!", "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        txtGiamTD.Focus();
-                        return;
-                    }
-
-                    if (hinhThuc == "PERCENT" && giaTri > 50)
+                    if (giaTri > 50)
                     {
                         MessageBox.Show("Giá trị giảm theo % không được vượt quá 50%!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;
                     }
-                    else if (hinhThuc == "AMOUNT")
-                    {
-                        if (giaTri < 100000)
-                        {
-                            MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 100.000 đ!", "Lỗi",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtGiamTD.Focus();
-                            return;
-                        }
-                        if (giaTri > 10000000)
-                        {
-                            MessageBox.Show("Giá trị giảm theo số tiền không được vượt quá 10.000.000 đ!", "Lỗi",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            txtGiamTD.Focus();
-                            return;
-                        }
-                    }
-
-                DateTime tgBatDau = dateNgayBatDau.Value;
-                DateTime tgKetThuc = dateNgayKetThuc.Value;
-                DateTime now = DateTime.Now.Date;
-
-                if (checkSuDung.Checked)
+                }
+                else if (hinhThuc == "AMOUNT")
                 {
-                    if (tgBatDau > now)
+                    if (giaTri < 10000)
                     {
-                        tgBatDau = now;
+                        MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 10.000 đ!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtGiamTD.Focus();
+                        return;
                     }
-                    if (tgKetThuc < now)
+                    if (giaTri > 10000000)
                     {
-                        DateTime newEndDate = now.AddDays(30);
-                        if (newEndDate <= tgBatDau)
-                        {
-                            newEndDate = tgBatDau.AddDays(1);
-                        }
-                        tgKetThuc = newEndDate;
+                        MessageBox.Show("Giá trị giảm theo số tiền không được vượt quá 10.000.000 đ!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtGiamTD.Focus();
+                        return;
                     }
                 }
-                else
-                {
-                    if (tgKetThuc >= now)
-                    {
-                        DateTime yesterday = now.AddDays(-1);
-                        if (yesterday > tgBatDau)
-                        {
-                            tgKetThuc = yesterday;
-                        }
-                        else
-                        {
-                            DateTime minEndDate = tgBatDau.AddDays(1);
-                            if (minEndDate < now)
-                            {
-                                tgKetThuc = minEndDate;
-                            }
-                            else
-                            {
-                                tgKetThuc = now.AddDays(-1);
-                                if (tgKetThuc <= tgBatDau)
-                                {
-                                    tgBatDau = tgKetThuc.AddDays(-1);
-                                }
-                            }
-                        }
-                    }
-                }
+
+                // Lấy giá trị ngày từ datePicker (đã được điều chỉnh bởi CheckSuDung_CheckedChanged)
+                DateTime tgBatDau = dateNgayBatDau.Value.Date;
+                DateTime tgKetThuc = dateNgayKetThuc.Value.Date;
+
+                // Validation: đảm bảo ngày kết thúc > ngày bắt đầu (BLL yêu cầu strict >)
+                // Nếu không hợp lệ, điều chỉnh lại dựa trên trạng thái checkbox
                 if (tgKetThuc <= tgBatDau)
                 {
-                    MessageBox.Show("Sau khi điều chỉnh trạng thái, ngày kết thúc phải sau ngày bắt đầu. Vui lòng kiểm tra lại!", "Lỗi",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    dateNgayKetThuc.Focus();
-                    return;
+                    DateTime now = DateTime.Now.Date;
+
+                    if (!checkSuDung.Checked)
+                    {
+                        // Nếu uncheck (hết hạn), đặt ngày kết thúc = hôm qua
+                        tgKetThuc = now.AddDays(-1);
+                        // Đảm bảo ngày kết thúc > ngày bắt đầu
+                        if (tgBatDau >= tgKetThuc)
+                        {
+                            // Nếu ngày bắt đầu >= hôm qua, đặt ngày bắt đầu = hôm qua - 1 ngày
+                            tgBatDau = tgKetThuc.AddDays(-1);
+                        }
+                    }
+                    else
+                    {
+                        // Nếu check (đang áp dụng), đặt ngày kết thúc = hôm nay + 2 ngày
+                        tgKetThuc = now.AddDays(2);
+                        // Đảm bảo ngày kết thúc > ngày bắt đầu
+                        if (tgBatDau >= tgKetThuc)
+                        {
+                            // Nếu ngày bắt đầu >= hôm nay + 2, đặt ngày bắt đầu = hôm nay
+                            tgBatDau = now;
+                        }
+                    }
+
+                    // Cập nhật lại giá trị vào datePicker
+                    dateNgayBatDau.Value = tgBatDau;
+                    dateNgayKetThuc.Value = tgKetThuc;
+
+                    // Lấy lại giá trị sau khi điều chỉnh
+                    tgBatDau = dateNgayBatDau.Value.Date;
+                    tgKetThuc = dateNgayKetThuc.Value.Date;
                 }
 
                 string apDungLoai = "ALL";
@@ -362,6 +435,10 @@ namespace UI
 
                 if (result)
                 {
+                    // Thông báo cho các form Voucher đang mở để reload dữ liệu
+                    // Vì trạng thái voucher phụ thuộc vào trạng thái CTKM
+                    NotifyVoucherFormsToReload();
+
                     MessageBox.Show("Cập nhật chương trình khuyến mãi thành công!", "Thành công",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
 

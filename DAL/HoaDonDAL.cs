@@ -13,7 +13,7 @@ namespace DAL
 
         // Tạo hóa đơn
         public int CreateHoaDon(int chiNhanhId, string loai, decimal vatPercent, decimal phiDv,
-                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue, 
+                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue,
                                 int? khachHangId = null, int? thamChieuId = null)
         {
             string sql = @"INSERT INTO hoa_don(chi_nhanh_id, khach_hang_id, loai, tham_chieu_id, ngay_lap, vat, phi_dv, giam_gia, tong_truoc_thue, tong_sau_thue, trang_thai)
@@ -64,6 +64,24 @@ namespace DAL
                 new SqlParameter("@top", top),
                 new SqlParameter("@cn", chiNhanhId),
                 new SqlParameter("@tt", (object?)trangThai ?? DBNull.Value)
+            };
+            return _db.GetDataTable(sql, p);
+        }
+
+        // Lấy danh sách hóa đơn đơn giản (loai, tong_sau_thue, ngay_lap) cho khách hàng theo chi nhánh
+        public DataTable GetHoaDonForKhachHang(int chiNhanhId, int top = 100)
+        {
+            string sql = @"SELECT TOP (@top) 
+                                loai, 
+                                tong_sau_thue, 
+                                ngay_lap
+                           FROM hoa_don
+                           WHERE chi_nhanh_id = @cn
+                           ORDER BY ngay_lap DESC";
+            var p = new[]
+            {
+                new SqlParameter("@top", top),
+                new SqlParameter("@cn", chiNhanhId)
             };
             return _db.GetDataTable(sql, p);
         }
@@ -129,7 +147,7 @@ namespace DAL
                            LEFT JOIN hoa_don_km hdkm ON hdkm.hoa_don_id = hd.hoa_don_id
                            LEFT JOIN chuong_trinh_km km ON km.km_id = hdkm.km_id
                            WHERE hd.chi_nhanh_id = @cn";
-            
+
             var parameters = new List<SqlParameter>
             {
                 new SqlParameter("@top", top),
@@ -173,7 +191,7 @@ namespace DAL
                                      WHERE hoa_don_id = @id AND trang_thai = N'CHỜ TT'";
                 var pUpdate = new[] { new SqlParameter("@id", hoaDonId) };
                 int rowsAffected = _db.ExecuteNonQuery(sqlUpdate, pUpdate);
-                
+
                 if (rowsAffected == 0)
                 {
                     return false; // Hóa đơn không tồn tại hoặc đã được thanh toán

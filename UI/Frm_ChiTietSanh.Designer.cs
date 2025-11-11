@@ -40,6 +40,7 @@ namespace UI
             cbbChiNhanh = new ComboBox();
             btnSua = new UI.Controls.RoundedButton();
             btnDong = new UI.Controls.RoundedButton();
+            btnXoa = new UI.Controls.RoundedButton();
             SuspendLayout();
             // 
             // lblTitle
@@ -150,6 +151,26 @@ namespace UI
             cbbChiNhanh.Size = new Size(250, 31);
             cbbChiNhanh.TabIndex = 9;
             // 
+            // btnXoa
+            // 
+            btnXoa.BackColor = Color.FromArgb(220, 53, 69);
+            btnXoa.BorderThickness = 0;
+            btnXoa.CornerRadius = 8;
+            btnXoa.FlatStyle = FlatStyle.Flat;
+            btnXoa.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnXoa.ForeColor = Color.White;
+            btnXoa.HoverBackColor = Color.FromArgb(200, 35, 51);
+            btnXoa.Location = new Point(30, 316);
+            btnXoa.Margin = new Padding(3, 4, 3, 4);
+            btnXoa.Name = "btnXoa";
+            btnXoa.Padding = new Padding(14, 11, 14, 11);
+            btnXoa.PressedBackColor = Color.FromArgb(178, 28, 42);
+            btnXoa.Size = new Size(140, 54);
+            btnXoa.TabIndex = 12;
+            btnXoa.Text = "Xóa";
+            btnXoa.UseVisualStyleBackColor = false;
+            btnXoa.Click += btnXoa_Click;
+            // 
             // btnSua
             // 
             btnSua.BackColor = Color.FromArgb(59, 130, 246);
@@ -159,12 +180,12 @@ namespace UI
             btnSua.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnSua.ForeColor = Color.White;
             btnSua.HoverBackColor = Color.FromArgb(37, 99, 235);
-            btnSua.Location = new Point(230, 316);
+            btnSua.Location = new Point(185, 316);
             btnSua.Margin = new Padding(3, 4, 3, 4);
             btnSua.Name = "btnSua";
             btnSua.Padding = new Padding(14, 11, 14, 11);
             btnSua.PressedBackColor = Color.FromArgb(29, 78, 216);
-            btnSua.Size = new Size(150, 54);
+            btnSua.Size = new Size(140, 54);
             btnSua.TabIndex = 10;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = false;
@@ -179,12 +200,12 @@ namespace UI
             btnDong.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnDong.ForeColor = Color.White;
             btnDong.HoverBackColor = Color.FromArgb(75, 85, 99);
-            btnDong.Location = new Point(395, 316);
+            btnDong.Location = new Point(340, 316);
             btnDong.Margin = new Padding(3, 4, 3, 4);
             btnDong.Name = "btnDong";
             btnDong.Padding = new Padding(14, 11, 14, 11);
             btnDong.PressedBackColor = Color.FromArgb(55, 65, 81);
-            btnDong.Size = new Size(150, 54);
+            btnDong.Size = new Size(140, 54);
             btnDong.TabIndex = 11;
             btnDong.Text = "Đóng";
             btnDong.UseVisualStyleBackColor = false;
@@ -196,6 +217,7 @@ namespace UI
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             ClientSize = new Size(600, 400);
+            Controls.Add(btnXoa);
             Controls.Add(btnDong);
             Controls.Add(btnSua);
             Controls.Add(cbbChiNhanh);
@@ -233,6 +255,7 @@ namespace UI
         private System.Windows.Forms.ComboBox cbbChiNhanh;
         private UI.Controls.RoundedButton btnSua;
         private UI.Controls.RoundedButton btnDong;
+        private UI.Controls.RoundedButton btnXoa;
     }
 }
 

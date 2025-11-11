@@ -45,6 +45,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Frm_ChiTietDatBan.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

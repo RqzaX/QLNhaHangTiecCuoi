@@ -912,7 +912,7 @@ namespace UI
                 {
                     int khachHangId = Convert.ToInt32(dt.Rows[0]["khach_hang_id"]);
                     
-                    bool updated = _khachHangBLL.CapNhatKhachHang(khachHangId, hoTen, email, ghiChu);
+                    bool updated = _khachHangBLL.CapNhatKhachHang(khachHangId, hoTen,sdt, email, ghiChu);
                     if (!updated)
                     {
                         throw new Exception("Không thể cập nhật thông tin khách hàng!");

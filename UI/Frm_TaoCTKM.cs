@@ -92,7 +92,7 @@ namespace UI
             {
                 if (loaiText.Contains("%") || loaiText == "Giảm Theo %")
                 {
-                    if (giaTri > 50)
+                    if (giaTri < 5 || giaTri > 50)
                     {
                         txtGiamTD.BackColor = Color.FromArgb(255, 200, 200); // Màu đỏ nhạt
                         return false;
@@ -100,12 +100,7 @@ namespace UI
                 }
                 else if (loaiText.Contains("Số Tiền") || loaiText == "GIảm Theo Số Tiền")
                 {
-                    if (giaTri < 100000)
-                    {
-                        txtGiamTD.BackColor = Color.FromArgb(255, 200, 200); // Màu đỏ nhạt
-                        return false;
-                    }
-                    if (giaTri > 10000000)
+                    if (giaTri < 10000 || giaTri > 10000000)
                     {
                         txtGiamTD.BackColor = Color.FromArgb(255, 200, 200); // Màu đỏ nhạt
                         return false;
@@ -213,6 +208,13 @@ namespace UI
                 // Ràng buộc theo loại
                 if (hinhThuc == "PERCENT")
                 {
+                    if (giaTri < 5)
+                    {
+                        MessageBox.Show("Giá trị giảm theo % không được nhỏ hơn 5%!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtGiamTD.Focus();
+                        return;
+                    }
                     if (giaTri > 50)
                     {
                         MessageBox.Show("Giá trị giảm theo % không được vượt quá 50%!", "Lỗi",
@@ -223,9 +225,9 @@ namespace UI
                 }
                 else if (hinhThuc == "AMOUNT")
                 {
-                    if (giaTri < 100000)
+                    if (giaTri < 10000)
                     {
-                        MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 100.000 đ!", "Lỗi",
+                        MessageBox.Show("Giá trị giảm theo số tiền không được nhỏ hơn 10.000 đ!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         txtGiamTD.Focus();
                         return;

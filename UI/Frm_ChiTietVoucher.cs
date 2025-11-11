@@ -46,6 +46,26 @@ namespace UI
             cbbCTApDung.SelectedIndexChanged += CbbCTApDung_SelectedIndexChanged;
         }
 
+        private string TinhTrangThaiVoucher(DateTime tgBatDau, DateTime tgKetThuc)
+        {
+            DateTime now = DateTime.Now.Date;
+
+            if (tgKetThuc < now)
+            {
+                return "Đã hết hạn";
+            }
+
+            else if (tgBatDau <= now && tgKetThuc >= now)
+            {
+                return "Đang áp dụng";
+            }
+
+            else
+            {
+                return "Đã hết hạn";
+            }
+        }
+
         private void CbbCTApDung_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -58,28 +78,19 @@ namespace UI
                     {
                         string hinhThuc = kmRow["hinh_thuc"]?.ToString() ?? "";
                         _currentHinhThuc = hinhThuc;
-                        
+
                         DateTime tgBatDau = kmRow["tg_bat_dau"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(kmRow["tg_bat_dau"]).Date;
                         DateTime tgKetThuc = kmRow["tg_ket_thuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(kmRow["tg_ket_thuc"]).Date;
-                        DateTime now = DateTime.Now.Date;
 
-                        string trangThai = "";
-                        if (tgKetThuc < now)
-                        {
-                            trangThai = "Đã hết hạn";
-                        }
-                        else if (tgBatDau <= now && tgKetThuc >= now)
-                        {
-                            trangThai = "Đang áp dụng";
-                        }
-                        else
-                        {
-                            trangThai = "Đã hết hạn";
-                        }
+                        // Tính trạng thái voucher dựa trên trạng thái CTKM
+                        string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
 
                         cbbTrangThai.Items.Clear();
                         cbbTrangThai.Items.Add(trangThai);
                         cbbTrangThai.SelectedIndex = 0;
+
+                        // Không tự động cập nhật đơn tối thiểu khi đổi CTKM
+                        // Người dùng có thể nhập/sửa tự do, không phụ thuộc vào giá trị
                     }
                 }
             }
@@ -117,7 +128,7 @@ namespace UI
                 }
 
                 txtMa.Text = row["Code"]?.ToString() ?? "";
-                
+
                 int kmId = row["KmId"] == DBNull.Value ? 0 : Convert.ToInt32(row["KmId"]);
                 if (kmId > 0)
                 {
@@ -149,8 +160,20 @@ namespace UI
                     txtGiaTri.Text = "0";
                 }
 
-                decimal donToiThieu = giaTri * 10;
-                if (donToiThieu < 1000000) donToiThieu = 1000000;
+                // Lấy giá trị đơn tối thiểu từ parent form (nếu có), nếu không thì tính mặc định
+                decimal donToiThieu = 0;
+                if (_parentForm != null)
+                {
+                    donToiThieu = _parentForm.GetDonToiThieu(_voucherId);
+                }
+
+                // Nếu không có trong parent form, tính giá trị mặc định
+                if (donToiThieu == 0)
+                {
+                    donToiThieu = giaTri * 10;
+                    if (donToiThieu < 1000000) donToiThieu = 1000000;
+                }
+
                 _originalDonToiThieu = donToiThieu;
                 txtDonToiThieu.Text = donToiThieu.ToString("#,##0").Replace(",", ".");
 
@@ -161,21 +184,9 @@ namespace UI
 
                 DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgBatDau"]).Date;
                 DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgKetThuc"]).Date;
-                DateTime now = DateTime.Now.Date;
 
-                string trangThai = "";
-                if (tgKetThuc < now)
-                {
-                    trangThai = "Đã hết hạn";
-                }
-                else if (tgBatDau <= now && tgKetThuc >= now)
-                {
-                    trangThai = "Đang áp dụng";
-                }
-                else
-                {
-                    trangThai = "Đã hết hạn";
-                }
+                // Tính trạng thái voucher dựa trên trạng thái CTKM
+                string trangThai = TinhTrangThaiVoucher(tgBatDau, tgKetThuc);
 
                 cbbTrangThai.Items.Clear();
                 cbbTrangThai.Items.Add(trangThai);
@@ -193,18 +204,19 @@ namespace UI
         private void SetEditMode(bool isEdit)
         {
             _isEditMode = isEdit;
-            
+
             txtMa.ReadOnly = !isEdit;
             cbbCTApDung.Enabled = isEdit;
             txtLuotDung.ReadOnly = !isEdit;
             txtDaDung.ReadOnly = !isEdit;
             txtGiaTri.ReadOnly = !isEdit;
-            
+
+            // Đơn tối thiểu luôn cho phép nhập/sửa (không phụ thuộc vào giá trị)
             txtDonToiThieu.Enabled = true;
             txtDonToiThieu.ReadOnly = !isEdit;
-            
+
             cbbTrangThai.Enabled = false;
-            
+
             if (isEdit)
             {
                 btnSua.Text = "Lưu";
@@ -328,7 +340,7 @@ namespace UI
 
                 string hinhThuc = kmRow["hinh_thuc"]?.ToString() ?? "";
                 string giaTriText = txtGiaTri.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace("%", "").Replace(" ", "");
-                
+
                 if (string.IsNullOrWhiteSpace(giaTriText))
                 {
                     MessageBox.Show("Vui lòng nhập giá trị!", "Lỗi",
@@ -378,8 +390,40 @@ namespace UI
                     }
                 }
 
+                // Lưu giá trị đơn tối thiểu (không lưu vào database, chỉ lưu vào Dictionary trong parent form)
+                string donToiThieuText = txtDonToiThieu.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
+                if (string.IsNullOrWhiteSpace(donToiThieuText))
+                {
+                    MessageBox.Show("Vui lòng nhập đơn tối thiểu!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                if (!decimal.TryParse(donToiThieuText, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal donToiThieu))
+                {
+                    MessageBox.Show("Đơn tối thiểu không hợp lệ! Vui lòng nhập số.", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                if (donToiThieu < 0)
+                {
+                    MessageBox.Show("Đơn tối thiểu không được nhỏ hơn 0!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                // Cập nhật giá trị đơn tối thiểu vào parent form (không lưu vào database)
+                if (_parentForm != null)
+                {
+                    _parentForm.UpdateDonToiThieu(_voucherId, donToiThieu);
+                }
+
                 bool resultVoucher = _bll.Update(_voucherId, kmId, txtMa.Text.Trim(), soLan, null, daDung);
-                
+
                 bool resultKM = _kmBll.Update(
                     kmId,
                     kmRow["ma_km"]?.ToString() ?? "",

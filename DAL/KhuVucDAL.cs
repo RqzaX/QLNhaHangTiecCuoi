@@ -202,6 +202,31 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        public int ThemKhuVuc(int chiNhanhId, string tenKhuVuc, string moTa)
+        {
+            try
+            {
+                string query = @"
+                    INSERT INTO dbo.khu_vuc (chi_nhanh_id, ten_khu_vuc, mo_ta)
+                    OUTPUT INSERTED.khu_vuc_id
+                    VALUES (@chiNhanhId, @tenKhuVuc, @moTa)";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@tenKhuVuc", tenKhuVuc ?? (object)DBNull.Value),
+                    new SqlParameter("@moTa", moTa ?? (object)DBNull.Value)
+                };
+
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return result != null ? Convert.ToInt32(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi thêm khu vực: {ex.Message}");
+            }
+        }
+
         public bool XoaKhuVuc(int khuVucId)
         {
             try

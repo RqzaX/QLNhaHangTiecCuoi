@@ -15,12 +15,14 @@ namespace UI
     {
         private VoucherBLL _bll;
         private ChuongTrinhKMBLL _kmBll;
+        private Frm_Voucher _parentForm;
 
-        public Frm_ThemVoucher()
+        public Frm_ThemVoucher(Frm_Voucher parentForm = null)
         {
             InitializeComponent();
             _bll = new VoucherBLL();
             _kmBll = new ChuongTrinhKMBLL();
+            _parentForm = parentForm;
             InitializeEvents();
             LoadChuongTrinhKM();
         }
@@ -75,9 +77,14 @@ namespace UI
                             txtGiaTri.Text = "0";
                         }
 
-                        decimal donToiThieu = giaTri * 10;
-                        if (donToiThieu < 1000000) donToiThieu = 1000000;
-                        txtDonToiThieu.Text = donToiThieu.ToString("#,##0").Replace(",", ".");
+                        // Chỉ gợi ý giá trị đơn tối thiểu, người dùng có thể nhập/sửa tự do
+                        // Không tự động cập nhật nếu đã có giá trị
+                        if (string.IsNullOrWhiteSpace(txtDonToiThieu.Text))
+                        {
+                            decimal donToiThieu = giaTri * 10;
+                            if (donToiThieu < 1000000) donToiThieu = 1000000;
+                            txtDonToiThieu.Text = donToiThieu.ToString("#,##0").Replace(",", ".");
+                        }
                     }
                 }
             }
@@ -136,9 +143,41 @@ namespace UI
                     return;
                 }
 
-                bool result = _bll.Add(kmId, txtMa.Text.Trim(), soLan, null);
-                if (result)
+                // Lấy và validate giá trị đơn tối thiểu
+                string donToiThieuText = txtDonToiThieu.Text.Trim().Replace(".", "").Replace(",", "").Replace("đ", "").Replace(" ", "");
+                if (string.IsNullOrWhiteSpace(donToiThieuText))
                 {
+                    MessageBox.Show("Vui lòng nhập đơn tối thiểu!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                if (!decimal.TryParse(donToiThieuText, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal donToiThieu))
+                {
+                    MessageBox.Show("Đơn tối thiểu không hợp lệ! Vui lòng nhập số.", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                if (donToiThieu < 0)
+                {
+                    MessageBox.Show("Đơn tối thiểu không được nhỏ hơn 0!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDonToiThieu.Focus();
+                    return;
+                }
+
+                int voucherId = _bll.Add(kmId, txtMa.Text.Trim(), soLan, null);
+                if (voucherId > 0)
+                {
+                    // Sau khi tạo voucher thành công, lưu giá trị đơn tối thiểu vào parent form
+                    if (_parentForm != null)
+                    {
+                        _parentForm.UpdateDonToiThieu(voucherId, donToiThieu);
+                    }
+
                     MessageBox.Show("Thêm voucher thành công!", "Thành công",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;

@@ -16,23 +16,26 @@ namespace UI
         private bool _isEditMode = false;
         private bool _allowEdit = false;
 
+        public event EventHandler SanhDeleted;
+
         public Frm_ChiTietSanh(int sanhId, SanhBLL sanhBLL, bool allowEdit = false)
         {
             InitializeComponent();
             _sanhId = sanhId;
             _sanhBLL = sanhBLL;
             _allowEdit = allowEdit;
-            
+
             this.Text = allowEdit ? "Sửa sảnh" : "Chi tiết sảnh";
             lblTitle.Text = allowEdit ? "Sửa sảnh" : "Chi tiết sảnh";
             lblSubtitle.Text = allowEdit ? "Chỉnh sửa thông tin sảnh" : "Thông tin chi tiết về sảnh";
-            
+
             LoadData();
-            
+
             // Ẩn nút Sửa nếu không cho phép chỉnh sửa
             if (!_allowEdit)
             {
                 btnSua.Visible = false;
+                btnXoa.Visible = false;
                 SetEditMode(false);
                 // Điều chỉnh vị trí nút Đóng
                 btnDong.Location = new Point((this.Width - btnDong.Width) / 2, btnDong.Location.Y);
@@ -53,12 +56,12 @@ namespace UI
                 if (dtSanh != null && dtSanh.Rows.Count > 0)
                 {
                     var sanh = dtSanh.Rows[0];
-                    
+
                     txtTenSanh.Text = sanh["ten_sanh"]?.ToString() ?? "";
                     txtSucChua.Text = sanh["suc_chua"]?.ToString() ?? "0";
-                    txtPhiThueCb.Text = sanh["phi_thue_cb"] != DBNull.Value ? 
+                    txtPhiThueCb.Text = sanh["phi_thue_cb"] != DBNull.Value ?
                         Convert.ToDecimal(sanh["phi_thue_cb"]).ToString("N0") : "0";
-                    
+
                     // Load chi nhánh
                     LoadChiNhanh();
                     int? chiNhanhId = sanh["chi_nhanh_id"] == DBNull.Value ? (int?)null : Convert.ToInt32(sanh["chi_nhanh_id"]);
@@ -102,12 +105,13 @@ namespace UI
         private void SetEditMode(bool isEdit)
         {
             _isEditMode = isEdit;
-            
+
             txtTenSanh.ReadOnly = !isEdit;
             txtSucChua.ReadOnly = !isEdit;
             txtPhiThueCb.ReadOnly = !isEdit;
-            cbbChiNhanh.Enabled = isEdit;
-            
+            // Không cho phép sửa chi nhánh
+            cbbChiNhanh.Enabled = false;
+
             if (isEdit)
             {
                 btnSua.Text = "Lưu";
@@ -173,10 +177,10 @@ namespace UI
 
                 // Lưu dữ liệu
                 string tenSanh = txtTenSanh.Text.Trim();
-                
+
                 // Cập nhật sảnh
                 bool result = _sanhBLL.CapNhatSanh(_sanhId, tenSanh, sucChua, phiThueCb);
-                
+
                 if (result)
                 {
                     MessageBox.Show("Cập nhật sảnh thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -198,6 +202,50 @@ namespace UI
         private void btnDong_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Lấy tên sảnh để hiển thị trong xác nhận
+                string tenSanh = txtTenSanh.Text.Trim();
+
+                // Xác nhận trước khi xóa
+                DialogResult result = MessageBox.Show(
+                    $"Bạn có chắc chắn muốn xóa sảnh \"{tenSanh}\"?\n\n" +
+                    "CẢNH BÁO: Hành động này không thể hoàn tác!\n\n" +
+                    "Lưu ý: Nếu sảnh đang có đặt sảnh, bạn cần xóa hoặc hủy các đặt sảnh trước!",
+                    "Xác nhận xóa",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Thực hiện xóa
+                    bool success = _sanhBLL.XoaSanh(_sanhId);
+
+                    if (success)
+                    {
+                        MessageBox.Show("Xóa sảnh thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Trigger event để form cha reload
+                        SanhDeleted?.Invoke(this, EventArgs.Empty);
+
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể xóa sảnh. Vui lòng thử lại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi xóa sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

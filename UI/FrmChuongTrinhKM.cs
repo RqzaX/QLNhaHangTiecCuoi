@@ -38,7 +38,6 @@ namespace UI
         private const string KM_GIA = "GiaTri";
         private const string KM_AP_DUNG = "LoaiApDung";
         private const string KM_TG = "ThoiGian";
-        private const string KM_LIMIT = "DaDung";
         private const string KM_TT = "TrangThai";
 
         private void FrmVoucher_Load(object sender, EventArgs e)
@@ -88,13 +87,10 @@ namespace UI
             var colTG = new DataGridViewTextBoxColumn { Name = KM_TG, HeaderText = "Thời gian", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Visible = true };
             dgv.Columns.Add(colTG);
 
-            var colLimit = new DataGridViewTextBoxColumn { Name = KM_LIMIT, HeaderText = "Đã dùng/Giới hạn", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Visible = true };
-            dgv.Columns.Add(colLimit);
-
             var colTT = new DataGridViewTextBoxColumn { Name = KM_TT, HeaderText = "Trạng thái", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Visible = true };
             dgv.Columns.Add(colTT);
 
-            // Đảm bảo DisplayIndex đúng thứ tự: ID (ẩn), Tên chương trình, Mã KM, Loại, Giá trị, Loại áp dụng, Thời gian, Đã dùng/Giới hạn, Trạng thái
+            // Đảm bảo DisplayIndex đúng thứ tự: ID (ẩn), Tên chương trình, Mã KM, Loại, Giá trị, Loại áp dụng, Thời gian, Trạng thái
             colId.DisplayIndex = 0;
             colTen.DisplayIndex = 1;
             colMa.DisplayIndex = 2;
@@ -102,8 +98,7 @@ namespace UI
             colGia.DisplayIndex = 4;
             colApDung.DisplayIndex = 5;
             colTG.DisplayIndex = 6;
-            colLimit.DisplayIndex = 7;
-            colTT.DisplayIndex = 8;
+            colTT.DisplayIndex = 7;
 
             // style tổng
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10f);
@@ -195,8 +190,6 @@ namespace UI
             decimal giaTri = row["GiaTri"] == DBNull.Value ? 0 : Convert.ToDecimal(row["GiaTri"]);
             DateTime tgBatDau = row["TgBatDau"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgBatDau"]);
             DateTime tgKetThuc = row["TgKetThuc"] == DBNull.Value ? DateTime.Now : Convert.ToDateTime(row["TgKetThuc"]);
-            int daDung = row["DaDung"] == DBNull.Value ? 0 : Convert.ToInt32(row["DaDung"]);
-            int tongSoLan = row["TongSoLan"] == DBNull.Value ? 0 : Convert.ToInt32(row["TongSoLan"]);
 
             // Format loại
             string loai = hinhThuc == "PERCENT" ? "Giảm %" :
@@ -216,18 +209,15 @@ namespace UI
             // Format thời gian
             string thoigian = $"{tgBatDau:dd/M/yyyy} - {tgKetThuc:dd/M/yyyy}";
 
-            // Đã dùng/Giới hạn
-            string dadung = tongSoLan > 0 ? $"{daDung}/{tongSoLan}" : "0/0";
-
             // Trạng thái
             DateTime now = DateTime.Now;
             string trangthai = (now >= tgBatDau && now <= tgKetThuc) ? "Đang áp dụng" : "Đã hết hạn";
 
-            AddKM(kmId, ten, ma, loai, giatri, loaiApDung, thoigian, dadung, trangthai);
+            AddKM(kmId, ten, ma, loai, giatri, loaiApDung, thoigian, trangthai);
         }
 
         private void AddKM(int kmId, string ten, string ma, string loai, string giatri,
-                           string loaiApDung, string thoigian, string dadung, string trangthai)
+                           string loaiApDung, string thoigian, string trangthai)
         {
             int r = dgvKhuyenMai.Rows.Add();
             var row = dgvKhuyenMai.Rows[r];
@@ -238,7 +228,6 @@ namespace UI
             row.Cells[KM_GIA].Value = giatri;
             row.Cells[KM_AP_DUNG].Value = loaiApDung;
             row.Cells[KM_TG].Value = thoigian;
-            row.Cells[KM_LIMIT].Value = dadung;
             row.Cells[KM_TT].Value = trangthai;
         }
 
@@ -429,11 +418,8 @@ namespace UI
                     if (match)
                     {
                         int kmId = row["ID"] == DBNull.Value ? 0 : Convert.ToInt32(row["ID"]);
-                        int daDung = row["DaDung"] == DBNull.Value ? 0 : Convert.ToInt32(row["DaDung"]);
-                        int tongSoLan = row["TongSoLan"] == DBNull.Value ? 0 : Convert.ToInt32(row["TongSoLan"]);
-                        string dadung = tongSoLan > 0 ? $"{daDung}/{tongSoLan}" : "0/0";
 
-                        AddKM(kmId, ten, ma, loai, giatri, loaiApDung, thoigian, dadung, trangthai);
+                        AddKM(kmId, ten, ma, loai, giatri, loaiApDung, thoigian, trangthai);
                     }
                 }
 

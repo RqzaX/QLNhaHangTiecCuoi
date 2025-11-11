@@ -38,6 +38,11 @@ namespace BLL
         {
             return _dal.GetHoaDonById(hoaDonId);
         }
+
+        public DataTable GetHoaDonForKhachHang(int chiNhanhId, int top = 100)
+        {
+            return _dal.GetHoaDonForKhachHang(chiNhanhId, top);
+        }
     }
 }
 

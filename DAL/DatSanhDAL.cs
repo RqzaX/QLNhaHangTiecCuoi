@@ -152,7 +152,7 @@ namespace QLNhaHangTiecCuoi.DAL
         }
 
         // Tạo đơn đặt sảnh
-        public int TaoDatSanh(int chiNhanhId, int sanhId, int caId, DateTime ngayToChuc, 
+        public int TaoDatSanh(int chiNhanhId, int sanhId, int caId, DateTime ngayToChuc,
             int khachHangId, int? soBanDuKien, int? goiId, string ghiChu, TimeSpan? gioToChuc, string trangThai)
         {
             string query = @"
@@ -530,7 +530,7 @@ namespace QLNhaHangTiecCuoi.DAL
                 {
                     ghiChuMoi = ghiChuHienTai + "\n";
                 }
-                
+
                 ghiChuMoi += $"Ngày hủy: {ngayHuy:dd/MM/yyyy} | Lý do hủy: {lyDoHuy}";
                 if (soTienHoanCoc > 0)
                 {
@@ -857,7 +857,7 @@ namespace QLNhaHangTiecCuoi.DAL
                 {
                     ghiChuMoi = ghiChuHienTai + "\n";
                 }
-                
+
                 ghiChuMoi += $"Lý do đổi sảnh: {lyDo}";
                 if (!string.IsNullOrWhiteSpace(ghiChuThem))
                 {
@@ -885,7 +885,7 @@ namespace QLNhaHangTiecCuoi.DAL
                     // Tạm giờ bắt đầu tiệc test
                     string tenCa = gioToChuc.Hours == 10 ? "Ca sáng" : "Ca tối";
                     TimeSpan gioKt = gioToChuc.Hours == 10 ? new TimeSpan(13, 30, 0) : new TimeSpan(20, 30, 0);
-                    
+
                     string queryInsertCa = @"
                         INSERT INTO dbo.ca (ten_ca, gio_bd, gio_kt)
                         OUTPUT INSERTED.ca_id
@@ -1132,7 +1132,7 @@ namespace QLNhaHangTiecCuoi.DAL
                             {
                                 cmd.Parameters.Add(new SqlParameter("@datSanhId", datSanhId));
                                 int rowsAffected = cmd.ExecuteNonQuery();
-                                
+
                                 if (rowsAffected == 0)
                                 {
                                     throw new Exception("Không tìm thấy đặt sảnh để xóa!");
@@ -1231,6 +1231,55 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy chi tiết dịch vụ hợp đồng: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách dat_sanh theo chi nhánh để hiển thị trong panelHDGD
+        public DataTable LayDanhSachDatSanhTheoChiNhanh(int chiNhanhId, int top = 100)
+        {
+            // Validate top để tránh SQL injection (chỉ cho phép giá trị hợp lệ)
+            if (top <= 0) top = 100;
+            if (top > 1000) top = 1000; // Giới hạn tối đa 1000 bản ghi
+
+            // Sử dụng ROW_NUMBER() để đảm bảo an toàn và tương thích với mọi phiên bản SQL Server
+            string query = @"
+                SELECT 
+                    dat_sanh_id,
+                    ngay_to_chuc,
+                    trang_thai,
+                    ten_khach_hang,
+                    ten_sanh,
+                    gia_goi_tiec
+                FROM (
+                    SELECT 
+                        ds.dat_sanh_id,
+                        ds.ngay_to_chuc,
+                        ds.trang_thai,
+                        kh.ho_ten AS ten_khach_hang,
+                        s.ten_sanh,
+                        ISNULL(gt.gia_co_ban, 0) AS gia_goi_tiec,
+                        ROW_NUMBER() OVER (ORDER BY ds.ngay_to_chuc DESC, ds.dat_sanh_id DESC) AS RowNum
+                    FROM dbo.dat_sanh ds
+                    INNER JOIN dbo.khach_hang kh ON ds.khach_hang_id = kh.khach_hang_id
+                    INNER JOIN dbo.sanh s ON ds.sanh_id = s.sanh_id
+                    LEFT JOIN dbo.goi_tiec gt ON ds.goi_id = gt.goi_id
+                    WHERE ds.chi_nhanh_id = @chiNhanhId
+                ) AS RankedData
+                WHERE RowNum <= @top
+                ORDER BY ngay_to_chuc DESC, dat_sanh_id DESC";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@chiNhanhId", chiNhanhId),
+                new SqlParameter("@top", top)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách đặt sảnh theo chi nhánh: {ex.Message}", ex);
             }
         }
     }

@@ -63,7 +63,9 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
-        // Cập nhật thông tin sảnh
+        /// <summary>
+        /// Cập nhật thông tin sảnh trong database
+        /// </summary>
         public bool CapNhatSanh(int sanhId, string tenSanh, int sucChua, decimal phiThueCb)
         {
             try
@@ -89,6 +91,110 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi cập nhật sảnh: {ex.Message}");
+            }
+        }
+
+        public DataTable LayDanhSachChiNhanh()
+        {
+            try
+            {
+                string query = @"
+                    SELECT chi_nhanh_id, ten
+                    FROM dbo.chi_nhanh
+                    WHERE trang_thai = 1
+                    ORDER BY ten";
+
+                return _dbHelper.GetDataTable(query);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách chi nhánh: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Kiểm tra xem sảnh có đang được sử dụng trong dat_sanh không
+        /// </summary>
+        public int DemSoLuongDatSanh(int sanhId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT COUNT(*)
+                    FROM dbo.dat_sanh
+                    WHERE sanh_id = @sanhId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@sanhId", sanhId)
+                };
+
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return result != null ? Convert.ToInt32(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi kiểm tra số lượng đặt sảnh: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Thêm sảnh mới vào database
+        /// </summary>
+        public int ThemSanh(int chiNhanhId, string tenSanh, int sucChua, decimal phiThueCb)
+        {
+            try
+            {
+                string query = @"
+                    INSERT INTO dbo.sanh (chi_nhanh_id, ten_sanh, suc_chua, phi_thue_cb)
+                    OUTPUT INSERTED.sanh_id
+                    VALUES (@chiNhanhId, @tenSanh, @sucChua, @phiThueCb)";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@tenSanh", tenSanh),
+                    new SqlParameter("@sucChua", sucChua),
+                    new SqlParameter("@phiThueCb", phiThueCb)
+                };
+
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return result != null ? Convert.ToInt32(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi thêm sảnh: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Xóa sảnh khỏi database
+        /// </summary>
+        public bool XoaSanh(int sanhId)
+        {
+            try
+            {
+                // Kiểm tra xem có đặt sảnh nào đang sử dụng sảnh này không
+                int soLuongDatSanh = DemSoLuongDatSanh(sanhId);
+                if (soLuongDatSanh > 0)
+                {
+                    throw new Exception($"Không thể xóa sảnh này vì đang có {soLuongDatSanh} đặt sảnh đang sử dụng. Vui lòng xóa hoặc hủy các đặt sảnh trước!");
+                }
+
+                // Xóa sảnh
+                string query = @"DELETE FROM dbo.sanh WHERE sanh_id = @sanhId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@sanhId", sanhId)
+                };
+
+                int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi xóa sảnh: {ex.Message}");
             }
         }
     }

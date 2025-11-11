@@ -76,7 +76,7 @@
             label2.Size = new Size(102, 23);
             label2.TabIndex = 1;
             label2.Text = "Mã Voucher";
-           
+
             // 
             // label3
             // 
@@ -87,7 +87,7 @@
             label3.Size = new Size(180, 23);
             label3.TabIndex = 1;
             label3.Text = "Tên CT Đang Áp Dụng";
-           
+
             // 
             // label6
             // 
@@ -98,7 +98,7 @@
             label6.Size = new Size(58, 23);
             label6.TabIndex = 1;
             label6.Text = "Giá Trị";
-            
+
             // 
             // label7
             // 
@@ -119,7 +119,7 @@
             label8.Size = new Size(111, 23);
             label8.TabIndex = 1;
             label8.Text = "Đơn tối thiểu";
-       
+
             // 
             // txtMa
             // 
@@ -192,7 +192,7 @@
             txtDonToiThieu.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
             txtDonToiThieu.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
             txtDonToiThieu.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            txtDonToiThieu.Enabled = false;
+            txtDonToiThieu.Enabled = true;
             txtDonToiThieu.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtDonToiThieu.Font = new Font("Segoe UI", 9F);
             txtDonToiThieu.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
@@ -200,7 +200,7 @@
             txtDonToiThieu.Margin = new Padding(3, 4, 3, 4);
             txtDonToiThieu.Name = "txtDonToiThieu";
             txtDonToiThieu.PlaceholderText = "";
-            txtDonToiThieu.ReadOnly = true;
+            txtDonToiThieu.ReadOnly = false;
             txtDonToiThieu.SelectedText = "";
             txtDonToiThieu.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtDonToiThieu.Size = new Size(263, 60);
@@ -262,7 +262,7 @@
             btnDong.Size = new Size(120, 60);
             btnDong.TabIndex = 4;
             btnDong.Text = "Đóng";
-          
+
             // 
             // Frm_ThemVoucher
             // 

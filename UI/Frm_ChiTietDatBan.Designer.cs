@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Guna.UI2.WinForms;
@@ -20,546 +20,499 @@ namespace UI
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-
-            // Form properties
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.Size = new Size(650, 720);
-            this.BackColor = Color.White;
-            this.Padding = new Padding(0);
-
-            // Main panel với viền đen và bo tròn
-            pnlMain = new Guna2Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.White,
-                BorderRadius = 15,
-                BorderColor = Color.Black,
-                BorderThickness = 2
-            };
-            this.Controls.Add(pnlMain);
-
-            // Header panel
-            pnlHeader = new Guna2Panel
-            {
-                Height = 80,
-                Dock = DockStyle.Top,
-                BackColor = Color.Transparent,
-                Padding = new Padding(20, 15, 20, 10)
-            };
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges21 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges19 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges20 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            pnlMain = new Guna2Panel();
+            pnlHeader = new Guna2Panel();
+            btnClose = new Guna2Button();
+            pnlTitleIcon = new Guna2Panel();
+            lblTitleIcon = new Label();
+            lblTitle = new Label();
+            lblSubtitle = new Label();
+            pnlStatusBadge = new Guna2Panel();
+            lblStatusIcon = new Label();
+            lblStatus = new Label();
+            pnlThongTinKhachHang = new Guna2Panel();
+            lblKhachHangTitle = new Label();
+            lblTenKhachHang = new Label();
+            lblTenKhachHangValue = new Label();
+            lblEmail = new Label();
+            lblEmailIcon = new Label();
+            lblEmailValue = new Label();
+            lblSoDienThoai = new Label();
+            lblPhoneIcon = new Label();
+            lblSoDienThoaiValue = new Label();
+            pnlThongTinDatBan = new Guna2Panel();
+            lblThongTinTitle = new Label();
+            lblNgayDat = new Label();
+            lblNgayDatValue = new Label();
+            lblBan = new Label();
+            lblBanValue = new Label();
+            lblSoKhach = new Label();
+            lblSoKhachIcon = new Label();
+            lblSoKhachValue = new Label();
+            lblGio = new Label();
+            lblGioIcon = new Label();
+            lblGioValue = new Label();
+            lblKhuVuc = new Label();
+            lblKhuVucIcon = new Label();
+            lblKhuVucValue = new Label();
+            lblTienCoc = new Label();
+            lblTienCocValue = new Label();
+            pnlGhiChu = new Guna2Panel();
+            lblGhiChuTitle = new Label();
+            lblGhiChuIcon = new Label();
+            lblGhiChuValue = new Label();
+            pnlFooter = new Guna2Panel();
+            lblTimestamp = new Label();
+            btnDong = new Guna2Button();
+            btnGuiTinNhan = new Guna2Button();
+            lblGuiTinNhanIcon = new Label();
+            pnlMain.SuspendLayout();
+            pnlHeader.SuspendLayout();
+            pnlTitleIcon.SuspendLayout();
+            pnlStatusBadge.SuspendLayout();
+            pnlThongTinKhachHang.SuspendLayout();
+            pnlThongTinDatBan.SuspendLayout();
+            pnlGhiChu.SuspendLayout();
+            pnlFooter.SuspendLayout();
+            SuspendLayout();
+            // 
+            // pnlMain
+            // 
             pnlMain.Controls.Add(pnlHeader);
-
-            // Close button
-            btnClose = new Guna2Button
-            {
-                Text = "✕",
-                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
-                Size = new Size(30, 30),
-                Location = new Point(600, 10),
-                BorderRadius = 15,
-                FillColor = Color.Transparent,
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Animated = true,
-                UseTransparentBackground = true,
-                Cursor = Cursors.Hand
-            };
-            btnClose.Click += btnClose_Click;
-            pnlHeader.Controls.Add(btnClose);
-
-            // Title với icon
-            pnlTitleIcon = new Guna2Panel
-            {
-                BackColor = Color.FromArgb(59, 130, 246),
-                Size = new Size(40, 40),
-                Location = new Point(20, 10),
-                BorderRadius = 20
-            };
-            pnlHeader.Controls.Add(pnlTitleIcon);
-
-            lblTitleIcon = new Label
-            {
-                Text = "", // Icon sẽ thêm sau
-                Font = new Font("Segoe UI", 16F),
-                AutoSize = false,
-                Size = new Size(40, 40),
-                TextAlign = ContentAlignment.MiddleCenter,
-                BackColor = Color.Transparent,
-                ForeColor = Color.White
-            };
-            pnlTitleIcon.Controls.Add(lblTitleIcon);
-
-            lblTitle = new Label
-            {
-                Text = "Chi tiết đặt bàn",
-                Font = new Font("Segoe UI", 18F, FontStyle.Bold),
-                ForeColor = Color.Black,
-                Location = new Point(70, 12),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlHeader.Controls.Add(lblTitle);
-
-            lblSubtitle = new Label
-            {
-                Text = "Xem và quản lý thông tin đặt bàn",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(70, 42),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlHeader.Controls.Add(lblSubtitle);
-
-            // Status badge
-            pnlStatusBadge = new Guna2Panel
-            {
-                Height = 40,
-                Dock = DockStyle.Top,
-                BackColor = Color.FromArgb(239, 68, 68),
-                BorderRadius = 20,
-                Padding = new Padding(20, 8, 20, 8),
-                Margin = new Padding(20, 10, 20, 10)
-            };
             pnlMain.Controls.Add(pnlStatusBadge);
-
-            lblStatusIcon = new Label
-            {
-                Text = "✕",
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                ForeColor = Color.White,
-                Location = new Point(20, 10),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlStatusBadge.Controls.Add(lblStatusIcon);
-
-            lblStatus = new Label
-            {
-                Text = "Đã hủy",
-                Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold),
-                ForeColor = Color.White,
-                Location = new Point(40, 10),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlStatusBadge.Controls.Add(lblStatus);
-
-            // Thông tin khách hàng panel
-            pnlThongTinKhachHang = new Guna2Panel
-            {
-                Height = 100,
-                Dock = DockStyle.Top,
-                BackColor = Color.White,
-                BorderRadius = 12,
-                BorderColor = Color.FromArgb(225, 229, 234),
-                BorderThickness = 1,
-                Padding = new Padding(20, 15, 20, 15),
-                Margin = new Padding(20, 10, 20, 10)
-            };
             pnlMain.Controls.Add(pnlThongTinKhachHang);
-
-            lblKhachHangTitle = new Label
-            {
-                Text = "Thông tin khách hàng",
-                Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold),
-                ForeColor = Color.Black,
-                Location = new Point(0, 0),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblKhachHangTitle);
-
-            // Left column - Tên và Email
-            lblTenKhachHang = new Label
-            {
-                Text = "Tên khách hàng",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(0, 35),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblTenKhachHang);
-
-            lblTenKhachHangValue = new Label
-            {
-                Text = "Hoàng Văn E",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(0, 53),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblTenKhachHangValue);
-
-            lblEmail = new Label
-            {
-                Text = "Email",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(0, 80),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblEmail);
-
-            lblEmailIcon = new Label
-            {
-                Text = "", // Icon email
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(50, 78),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblEmailIcon);
-
-            lblEmailValue = new Label
-            {
-                Text = "hoangvane@email.com",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(70, 78),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblEmailValue);
-
-            // Right column - Số điện thoại
-            lblSoDienThoai = new Label
-            {
-                Text = "Số điện thoại",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(280, 35),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblSoDienThoai);
-
-            lblPhoneIcon = new Label
-            {
-                Text = "", // Icon phone
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(280, 53),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblPhoneIcon);
-
-            lblSoDienThoaiValue = new Label
-            {
-                Text = "0945678901",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(300, 53),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinKhachHang.Controls.Add(lblSoDienThoaiValue);
-
-            // Thông tin đặt bàn panel
-            pnlThongTinDatBan = new Guna2Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.White,
-                BorderRadius = 12,
-                BorderColor = Color.FromArgb(225, 229, 234),
-                BorderThickness = 1,
-                Padding = new Padding(20, 15, 20, 15),
-                Margin = new Padding(20, 10, 20, 10)
-            };
             pnlMain.Controls.Add(pnlThongTinDatBan);
-
-            lblThongTinTitle = new Label
-            {
-                Text = "Thông tin đặt bàn",
-                Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold),
-                ForeColor = Color.Black,
-                Location = new Point(0, 0),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblThongTinTitle);
-
-            // Left column
-            lblNgayDat = new Label
-            {
-                Text = "Ngày đặt",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(0, 40),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblNgayDat);
-
-            lblNgayDatValue = new Label
-            {
-                Text = "18/10/2025",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(0, 58),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblNgayDatValue);
-
-            lblBan = new Label
-            {
-                Text = "Bàn",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(0, 90),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblBan);
-
-            lblBanValue = new Label
-            {
-                Text = "Bàn A04",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(0, 108),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblBanValue);
-
-            lblSoKhach = new Label
-            {
-                Text = "Số khách",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(0, 140),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblSoKhach);
-
-            lblSoKhachIcon = new Label
-            {
-                Text = "", // Icon person
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(80, 158),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblSoKhachIcon);
-
-            lblSoKhachValue = new Label
-            {
-                Text = "4 người",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(100, 158),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblSoKhachValue);
-
-            // Right column
-            lblGio = new Label
-            {
-                Text = "Giờ",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(280, 40),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblGio);
-
-            lblGioIcon = new Label
-            {
-                Text = "", // Icon clock
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(320, 58),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblGioIcon);
-
-            lblGioValue = new Label
-            {
-                Text = "13:00",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(340, 58),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblGioValue);
-
-            lblKhuVuc = new Label
-            {
-                Text = "Khu vực",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(280, 90),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblKhuVuc);
-
-            lblKhuVucIcon = new Label
-            {
-                Text = "", // Icon location
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(320, 108),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblKhuVucIcon);
-
-            lblKhuVucValue = new Label
-            {
-                Text = "Khu A",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.Black,
-                Location = new Point(340, 108),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblKhuVucValue);
-
-            lblTienCoc = new Label
-            {
-                Text = "Tiền cọc",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(280, 140),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblTienCoc);
-
-            lblTienCocValue = new Label
-            {
-                Text = "Chưa cọc",
-                Font = new Font("Segoe UI", 12F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(34, 197, 94),
-                Location = new Point(280, 158),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlThongTinDatBan.Controls.Add(lblTienCocValue);
-
-            // Ghi chú panel
-            pnlGhiChu = new Guna2Panel
-            {
-                Height = 80,
-                Dock = DockStyle.Bottom,
-                BackColor = Color.FromArgb(254, 243, 199),
-                BorderRadius = 12,
-                Padding = new Padding(15, 10, 15, 10),
-                Margin = new Padding(20, 10, 20, 20)
-            };
             pnlMain.Controls.Add(pnlGhiChu);
-
-            lblGhiChuTitle = new Label
-            {
-                Text = "Ghi chú",
-                Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(180, 83, 9),
-                Location = new Point(15, 10),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlGhiChu.Controls.Add(lblGhiChuTitle);
-
-            lblGhiChuIcon = new Label
-            {
-                Text = "", // Icon speech bubble
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(70, 8),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            pnlGhiChu.Controls.Add(lblGhiChuIcon);
-
-            lblGhiChuValue = new Label
-            {
-                Text = "Khách hủy do bận việc",
-                Font = new Font("Segoe UI", 11F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(180, 83, 9),
-                Location = new Point(15, 35),
-                AutoSize = false,
-                Size = new Size(520, 40),
-                BackColor = Color.Transparent
-            };
-            pnlGhiChu.Controls.Add(lblGhiChuValue);
-
-            // Footer
-            pnlFooter = new Guna2Panel
-            {
-                Height = 70,
-                Dock = DockStyle.Bottom,
-                BackColor = Color.Transparent,
-                Padding = new Padding(20, 10, 20, 15)
-            };
             pnlMain.Controls.Add(pnlFooter);
-
-            lblTimestamp = new Label
-            {
-                Text = "Tạo lúc: 11:00:00 12/10/2025",
-                Font = new Font("Segoe UI", 9F),
-                ForeColor = Color.FromArgb(107, 114, 128),
-                Location = new Point(20, 15),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
+            pnlMain.CustomizableEdges = customizableEdges21;
+            pnlMain.Location = new Point(0, 0);
+            pnlMain.Name = "pnlMain";
+            pnlMain.ShadowDecoration.CustomizableEdges = customizableEdges22;
+            pnlMain.Size = new Size(200, 100);
+            pnlMain.TabIndex = 0;
+            // 
+            // pnlHeader
+            // 
+            pnlHeader.Controls.Add(btnClose);
+            pnlHeader.Controls.Add(pnlTitleIcon);
+            pnlHeader.Controls.Add(lblTitle);
+            pnlHeader.Controls.Add(lblSubtitle);
+            pnlHeader.CustomizableEdges = customizableEdges5;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            pnlHeader.Size = new Size(200, 100);
+            pnlHeader.TabIndex = 0;
+            // 
+            // btnClose
+            // 
+            btnClose.CustomizableEdges = customizableEdges1;
+            btnClose.Font = new Font("Segoe UI", 9F);
+            btnClose.ForeColor = Color.White;
+            btnClose.Location = new Point(0, 0);
+            btnClose.Name = "btnClose";
+            btnClose.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnClose.Size = new Size(180, 45);
+            btnClose.TabIndex = 0;
+            btnClose.Click += btnClose_Click;
+            // 
+            // pnlTitleIcon
+            // 
+            pnlTitleIcon.Controls.Add(lblTitleIcon);
+            pnlTitleIcon.CustomizableEdges = customizableEdges3;
+            pnlTitleIcon.Location = new Point(0, 0);
+            pnlTitleIcon.Name = "pnlTitleIcon";
+            pnlTitleIcon.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            pnlTitleIcon.Size = new Size(200, 100);
+            pnlTitleIcon.TabIndex = 1;
+            // 
+            // lblTitleIcon
+            // 
+            lblTitleIcon.Location = new Point(0, 0);
+            lblTitleIcon.Name = "lblTitleIcon";
+            lblTitleIcon.Size = new Size(100, 23);
+            lblTitleIcon.TabIndex = 0;
+            // 
+            // lblTitle
+            // 
+            lblTitle.Location = new Point(0, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(100, 23);
+            lblTitle.TabIndex = 2;
+            // 
+            // lblSubtitle
+            // 
+            lblSubtitle.Location = new Point(0, 0);
+            lblSubtitle.Name = "lblSubtitle";
+            lblSubtitle.Size = new Size(100, 23);
+            lblSubtitle.TabIndex = 3;
+            // 
+            // pnlStatusBadge
+            // 
+            pnlStatusBadge.Controls.Add(lblStatusIcon);
+            pnlStatusBadge.Controls.Add(lblStatus);
+            pnlStatusBadge.CustomizableEdges = customizableEdges7;
+            pnlStatusBadge.Location = new Point(0, 0);
+            pnlStatusBadge.Name = "pnlStatusBadge";
+            pnlStatusBadge.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            pnlStatusBadge.Size = new Size(200, 100);
+            pnlStatusBadge.TabIndex = 1;
+            // 
+            // lblStatusIcon
+            // 
+            lblStatusIcon.Location = new Point(0, 0);
+            lblStatusIcon.Name = "lblStatusIcon";
+            lblStatusIcon.Size = new Size(100, 23);
+            lblStatusIcon.TabIndex = 0;
+            // 
+            // lblStatus
+            // 
+            lblStatus.Location = new Point(0, 0);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(100, 23);
+            lblStatus.TabIndex = 1;
+            // 
+            // pnlThongTinKhachHang
+            // 
+            pnlThongTinKhachHang.Controls.Add(lblKhachHangTitle);
+            pnlThongTinKhachHang.Controls.Add(lblTenKhachHang);
+            pnlThongTinKhachHang.Controls.Add(lblTenKhachHangValue);
+            pnlThongTinKhachHang.Controls.Add(lblEmail);
+            pnlThongTinKhachHang.Controls.Add(lblEmailIcon);
+            pnlThongTinKhachHang.Controls.Add(lblEmailValue);
+            pnlThongTinKhachHang.Controls.Add(lblSoDienThoai);
+            pnlThongTinKhachHang.Controls.Add(lblPhoneIcon);
+            pnlThongTinKhachHang.Controls.Add(lblSoDienThoaiValue);
+            pnlThongTinKhachHang.CustomizableEdges = customizableEdges9;
+            pnlThongTinKhachHang.Location = new Point(0, 0);
+            pnlThongTinKhachHang.Name = "pnlThongTinKhachHang";
+            pnlThongTinKhachHang.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            pnlThongTinKhachHang.Size = new Size(200, 100);
+            pnlThongTinKhachHang.TabIndex = 2;
+            // 
+            // lblKhachHangTitle
+            // 
+            lblKhachHangTitle.Location = new Point(0, 0);
+            lblKhachHangTitle.Name = "lblKhachHangTitle";
+            lblKhachHangTitle.Size = new Size(100, 23);
+            lblKhachHangTitle.TabIndex = 0;
+            // 
+            // lblTenKhachHang
+            // 
+            lblTenKhachHang.Location = new Point(0, 0);
+            lblTenKhachHang.Name = "lblTenKhachHang";
+            lblTenKhachHang.Size = new Size(100, 23);
+            lblTenKhachHang.TabIndex = 1;
+            // 
+            // lblTenKhachHangValue
+            // 
+            lblTenKhachHangValue.Location = new Point(0, 0);
+            lblTenKhachHangValue.Name = "lblTenKhachHangValue";
+            lblTenKhachHangValue.Size = new Size(100, 23);
+            lblTenKhachHangValue.TabIndex = 2;
+            // 
+            // lblEmail
+            // 
+            lblEmail.Location = new Point(0, 0);
+            lblEmail.Name = "lblEmail";
+            lblEmail.Size = new Size(100, 23);
+            lblEmail.TabIndex = 3;
+            // 
+            // lblEmailIcon
+            // 
+            lblEmailIcon.Location = new Point(0, 0);
+            lblEmailIcon.Name = "lblEmailIcon";
+            lblEmailIcon.Size = new Size(100, 23);
+            lblEmailIcon.TabIndex = 4;
+            // 
+            // lblEmailValue
+            // 
+            lblEmailValue.Location = new Point(0, 0);
+            lblEmailValue.Name = "lblEmailValue";
+            lblEmailValue.Size = new Size(100, 23);
+            lblEmailValue.TabIndex = 5;
+            // 
+            // lblSoDienThoai
+            // 
+            lblSoDienThoai.Location = new Point(0, 0);
+            lblSoDienThoai.Name = "lblSoDienThoai";
+            lblSoDienThoai.Size = new Size(100, 23);
+            lblSoDienThoai.TabIndex = 6;
+            // 
+            // lblPhoneIcon
+            // 
+            lblPhoneIcon.Location = new Point(0, 0);
+            lblPhoneIcon.Name = "lblPhoneIcon";
+            lblPhoneIcon.Size = new Size(100, 23);
+            lblPhoneIcon.TabIndex = 7;
+            // 
+            // lblSoDienThoaiValue
+            // 
+            lblSoDienThoaiValue.Location = new Point(0, 0);
+            lblSoDienThoaiValue.Name = "lblSoDienThoaiValue";
+            lblSoDienThoaiValue.Size = new Size(100, 23);
+            lblSoDienThoaiValue.TabIndex = 8;
+            // 
+            // pnlThongTinDatBan
+            // 
+            pnlThongTinDatBan.Controls.Add(lblThongTinTitle);
+            pnlThongTinDatBan.Controls.Add(lblNgayDat);
+            pnlThongTinDatBan.Controls.Add(lblNgayDatValue);
+            pnlThongTinDatBan.Controls.Add(lblBan);
+            pnlThongTinDatBan.Controls.Add(lblBanValue);
+            pnlThongTinDatBan.Controls.Add(lblSoKhach);
+            pnlThongTinDatBan.Controls.Add(lblSoKhachIcon);
+            pnlThongTinDatBan.Controls.Add(lblSoKhachValue);
+            pnlThongTinDatBan.Controls.Add(lblGio);
+            pnlThongTinDatBan.Controls.Add(lblGioIcon);
+            pnlThongTinDatBan.Controls.Add(lblGioValue);
+            pnlThongTinDatBan.Controls.Add(lblKhuVuc);
+            pnlThongTinDatBan.Controls.Add(lblKhuVucIcon);
+            pnlThongTinDatBan.Controls.Add(lblKhuVucValue);
+            pnlThongTinDatBan.Controls.Add(lblTienCoc);
+            pnlThongTinDatBan.Controls.Add(lblTienCocValue);
+            pnlThongTinDatBan.CustomizableEdges = customizableEdges11;
+            pnlThongTinDatBan.Location = new Point(0, 0);
+            pnlThongTinDatBan.Name = "pnlThongTinDatBan";
+            pnlThongTinDatBan.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            pnlThongTinDatBan.Size = new Size(200, 100);
+            pnlThongTinDatBan.TabIndex = 3;
+            // 
+            // lblThongTinTitle
+            // 
+            lblThongTinTitle.Location = new Point(0, 0);
+            lblThongTinTitle.Name = "lblThongTinTitle";
+            lblThongTinTitle.Size = new Size(100, 23);
+            lblThongTinTitle.TabIndex = 0;
+            // 
+            // lblNgayDat
+            // 
+            lblNgayDat.Location = new Point(0, 0);
+            lblNgayDat.Name = "lblNgayDat";
+            lblNgayDat.Size = new Size(100, 23);
+            lblNgayDat.TabIndex = 1;
+            // 
+            // lblNgayDatValue
+            // 
+            lblNgayDatValue.Location = new Point(0, 0);
+            lblNgayDatValue.Name = "lblNgayDatValue";
+            lblNgayDatValue.Size = new Size(100, 23);
+            lblNgayDatValue.TabIndex = 2;
+            // 
+            // lblBan
+            // 
+            lblBan.Location = new Point(0, 0);
+            lblBan.Name = "lblBan";
+            lblBan.Size = new Size(100, 23);
+            lblBan.TabIndex = 3;
+            // 
+            // lblBanValue
+            // 
+            lblBanValue.Location = new Point(0, 0);
+            lblBanValue.Name = "lblBanValue";
+            lblBanValue.Size = new Size(100, 23);
+            lblBanValue.TabIndex = 4;
+            // 
+            // lblSoKhach
+            // 
+            lblSoKhach.Location = new Point(0, 0);
+            lblSoKhach.Name = "lblSoKhach";
+            lblSoKhach.Size = new Size(100, 23);
+            lblSoKhach.TabIndex = 5;
+            // 
+            // lblSoKhachIcon
+            // 
+            lblSoKhachIcon.Location = new Point(0, 0);
+            lblSoKhachIcon.Name = "lblSoKhachIcon";
+            lblSoKhachIcon.Size = new Size(100, 23);
+            lblSoKhachIcon.TabIndex = 6;
+            // 
+            // lblSoKhachValue
+            // 
+            lblSoKhachValue.Location = new Point(0, 0);
+            lblSoKhachValue.Name = "lblSoKhachValue";
+            lblSoKhachValue.Size = new Size(100, 23);
+            lblSoKhachValue.TabIndex = 7;
+            // 
+            // lblGio
+            // 
+            lblGio.Location = new Point(0, 0);
+            lblGio.Name = "lblGio";
+            lblGio.Size = new Size(100, 23);
+            lblGio.TabIndex = 8;
+            // 
+            // lblGioIcon
+            // 
+            lblGioIcon.Location = new Point(0, 0);
+            lblGioIcon.Name = "lblGioIcon";
+            lblGioIcon.Size = new Size(100, 23);
+            lblGioIcon.TabIndex = 9;
+            // 
+            // lblGioValue
+            // 
+            lblGioValue.Location = new Point(0, 0);
+            lblGioValue.Name = "lblGioValue";
+            lblGioValue.Size = new Size(100, 23);
+            lblGioValue.TabIndex = 10;
+            // 
+            // lblKhuVuc
+            // 
+            lblKhuVuc.Location = new Point(0, 0);
+            lblKhuVuc.Name = "lblKhuVuc";
+            lblKhuVuc.Size = new Size(100, 23);
+            lblKhuVuc.TabIndex = 11;
+            // 
+            // lblKhuVucIcon
+            // 
+            lblKhuVucIcon.Location = new Point(0, 0);
+            lblKhuVucIcon.Name = "lblKhuVucIcon";
+            lblKhuVucIcon.Size = new Size(100, 23);
+            lblKhuVucIcon.TabIndex = 12;
+            // 
+            // lblKhuVucValue
+            // 
+            lblKhuVucValue.Location = new Point(0, 0);
+            lblKhuVucValue.Name = "lblKhuVucValue";
+            lblKhuVucValue.Size = new Size(100, 23);
+            lblKhuVucValue.TabIndex = 13;
+            // 
+            // lblTienCoc
+            // 
+            lblTienCoc.Location = new Point(0, 0);
+            lblTienCoc.Name = "lblTienCoc";
+            lblTienCoc.Size = new Size(100, 23);
+            lblTienCoc.TabIndex = 14;
+            // 
+            // lblTienCocValue
+            // 
+            lblTienCocValue.Location = new Point(0, 0);
+            lblTienCocValue.Name = "lblTienCocValue";
+            lblTienCocValue.Size = new Size(100, 23);
+            lblTienCocValue.TabIndex = 15;
+            // 
+            // pnlGhiChu
+            // 
+            pnlGhiChu.Controls.Add(lblGhiChuTitle);
+            pnlGhiChu.Controls.Add(lblGhiChuIcon);
+            pnlGhiChu.Controls.Add(lblGhiChuValue);
+            pnlGhiChu.CustomizableEdges = customizableEdges13;
+            pnlGhiChu.Location = new Point(0, 0);
+            pnlGhiChu.Name = "pnlGhiChu";
+            pnlGhiChu.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            pnlGhiChu.Size = new Size(200, 100);
+            pnlGhiChu.TabIndex = 4;
+            // 
+            // lblGhiChuTitle
+            // 
+            lblGhiChuTitle.Location = new Point(0, 0);
+            lblGhiChuTitle.Name = "lblGhiChuTitle";
+            lblGhiChuTitle.Size = new Size(100, 23);
+            lblGhiChuTitle.TabIndex = 0;
+            // 
+            // lblGhiChuIcon
+            // 
+            lblGhiChuIcon.Location = new Point(0, 0);
+            lblGhiChuIcon.Name = "lblGhiChuIcon";
+            lblGhiChuIcon.Size = new Size(100, 23);
+            lblGhiChuIcon.TabIndex = 1;
+            // 
+            // lblGhiChuValue
+            // 
+            lblGhiChuValue.Location = new Point(0, 0);
+            lblGhiChuValue.Name = "lblGhiChuValue";
+            lblGhiChuValue.Size = new Size(100, 23);
+            lblGhiChuValue.TabIndex = 2;
+            // 
+            // pnlFooter
+            // 
             pnlFooter.Controls.Add(lblTimestamp);
-
-            // Buttons
-            btnDong = new Guna2Button
-            {
-                Text = "Đóng",
-                Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold),
-                Size = new Size(100, 40),
-                Location = new Point(380, 15),
-                BorderRadius = 10,
-                FillColor = Color.White,
-                ForeColor = Color.FromArgb(107, 114, 128),
-                BorderColor = Color.FromArgb(209, 213, 219),
-                BorderThickness = 1,
-                Animated = true,
-                Cursor = Cursors.Hand
-            };
-            btnDong.Click += btnDong_Click;
             pnlFooter.Controls.Add(btnDong);
-
-            btnGuiTinNhan = new Guna2Button
-            {
-                Text = "   Gửi tin nhắn",
-                Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold),
-                Size = new Size(140, 40),
-                Location = new Point(490, 15),
-                BorderRadius = 10,
-                FillColor = Color.FromArgb(17, 24, 39),
-                ForeColor = Color.White,
-                Animated = true,
-                Cursor = Cursors.Hand,
-                TextAlign = HorizontalAlignment.Left,
-                Padding = new Padding(35, 0, 0, 0)
-            };
-            btnGuiTinNhan.Click += btnGuiTinNhan_Click;
             pnlFooter.Controls.Add(btnGuiTinNhan);
-
-            lblGuiTinNhanIcon = new Label
-            {
-                Text = "", // Icon message - sẽ thêm ảnh gif sau
-                Font = new Font("Segoe UI", 12F),
-                Location = new Point(500, 23),
-                AutoSize = true,
-                BackColor = Color.Transparent,
-                ForeColor = Color.White
-            };
             pnlFooter.Controls.Add(lblGuiTinNhanIcon);
-            lblGuiTinNhanIcon.BringToFront();
-
-            this.ResumeLayout(false);
+            pnlFooter.CustomizableEdges = customizableEdges19;
+            pnlFooter.Location = new Point(0, 0);
+            pnlFooter.Name = "pnlFooter";
+            pnlFooter.ShadowDecoration.CustomizableEdges = customizableEdges20;
+            pnlFooter.Size = new Size(200, 100);
+            pnlFooter.TabIndex = 5;
+            // 
+            // lblTimestamp
+            // 
+            lblTimestamp.Location = new Point(0, 0);
+            lblTimestamp.Name = "lblTimestamp";
+            lblTimestamp.Size = new Size(100, 23);
+            lblTimestamp.TabIndex = 0;
+            // 
+            // btnDong
+            // 
+            btnDong.CustomizableEdges = customizableEdges15;
+            btnDong.Font = new Font("Segoe UI", 9F);
+            btnDong.ForeColor = Color.White;
+            btnDong.Location = new Point(0, 0);
+            btnDong.Name = "btnDong";
+            btnDong.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            btnDong.Size = new Size(180, 45);
+            btnDong.TabIndex = 1;
+            btnDong.Click += btnDong_Click;
+            // 
+            // btnGuiTinNhan
+            // 
+            btnGuiTinNhan.CustomizableEdges = customizableEdges17;
+            btnGuiTinNhan.Font = new Font("Segoe UI", 9F);
+            btnGuiTinNhan.ForeColor = Color.White;
+            btnGuiTinNhan.Location = new Point(0, 0);
+            btnGuiTinNhan.Name = "btnGuiTinNhan";
+            btnGuiTinNhan.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            btnGuiTinNhan.Size = new Size(180, 45);
+            btnGuiTinNhan.TabIndex = 2;
+            btnGuiTinNhan.Click += btnGuiTinNhan_Click;
+            // 
+            // lblGuiTinNhanIcon
+            // 
+            lblGuiTinNhanIcon.Location = new Point(0, 0);
+            lblGuiTinNhanIcon.Name = "lblGuiTinNhanIcon";
+            lblGuiTinNhanIcon.Size = new Size(100, 23);
+            lblGuiTinNhanIcon.TabIndex = 3;
+            // 
+            // Frm_ChiTietDatBan
+            // 
+            BackColor = Color.White;
+            ClientSize = new Size(650, 720);
+            Controls.Add(pnlMain);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "Frm_ChiTietDatBan";
+            StartPosition = FormStartPosition.CenterParent;
+            pnlMain.ResumeLayout(false);
+            pnlHeader.ResumeLayout(false);
+            pnlTitleIcon.ResumeLayout(false);
+            pnlStatusBadge.ResumeLayout(false);
+            pnlThongTinKhachHang.ResumeLayout(false);
+            pnlThongTinDatBan.ResumeLayout(false);
+            pnlGhiChu.ResumeLayout(false);
+            pnlFooter.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         // Control declarations

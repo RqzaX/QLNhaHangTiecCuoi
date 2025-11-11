@@ -1,15 +1,11 @@
 ﻿namespace UI
 {
-    partial class Frm_ThemKHMoi
+    partial class Frm_ChiTietKhachHang
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
+       
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
+        
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
@@ -22,10 +18,7 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
+       
         private void InitializeComponent()
         {
             label1 = new Label();
@@ -37,38 +30,38 @@
             label5 = new Label();
             txtEmail = new UI.Controls.RoundedTextBox();
             label7 = new Label();
-            btnHuy = new UI.Controls.RoundedButton();
-            btnThemKH = new UI.Controls.RoundedButton();
             cbbHang = new UI.Controls.RoundedComboBox();
-            label8 = new Label();
-            txtLuotDen = new UI.Controls.RoundedTextBox();
             label9 = new Label();
             txtGhiChu = new UI.Controls.RoundedTextBox();
             label10 = new Label();
             txtChiTieu = new UI.Controls.RoundedTextBox();
+            btnHuy = new UI.Controls.RoundedButton();
+            btnSua = new UI.Controls.RoundedButton();
+            btnLuu = new UI.Controls.RoundedButton();
+            btnXoa = new UI.Controls.RoundedButton();
             SuspendLayout();
-            // 
+            
             // label1
-            // 
+            
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(210, 28);
+            label1.Size = new Size(200, 28);
             label1.TabIndex = 6;
-            label1.Text = "Thêm Khách Hàng Mới";
-            // 
+            label1.Text = "Chi Tiết Khách Hàng";
+            
             // label2
-            // 
+            
             label2.AutoSize = true;
             label2.Location = new Point(12, 37);
             label2.Name = "label2";
             label2.Size = new Size(237, 20);
             label2.TabIndex = 7;
-            label2.Text = "Nhập đầy đủ thông tin khách hàng";
-            // 
+            label2.Text = "Xem và chỉnh sửa thông tin khách hàng";
+            
             // txtHoTen
-            // 
+            
             txtHoTen.BackColor = Color.White;
             txtHoTen.Font = new Font("Segoe UI", 10F);
             txtHoTen.ForeColor = Color.Black;
@@ -77,9 +70,9 @@
             txtHoTen.Padding = new Padding(10, 8, 10, 8);
             txtHoTen.Size = new Size(577, 51);
             txtHoTen.TabIndex = 18;
-            // 
-            // label3
-            // 
+             
+            //abel3
+            
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(12, 70);
@@ -87,9 +80,9 @@
             label3.Size = new Size(78, 20);
             label3.TabIndex = 17;
             label3.Text = "Họ và Tên";
-            // 
+            
             // label4
-            // 
+            
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(12, 158);
@@ -97,10 +90,9 @@
             label4.Size = new Size(100, 20);
             label4.TabIndex = 17;
             label4.Text = "Số điện thoại";
-            label4.Click += label4_Click;
-            // 
+            
             // txtSDT
-            // 
+            
             txtSDT.BackColor = Color.White;
             txtSDT.Font = new Font("Segoe UI", 10F);
             txtSDT.ForeColor = Color.Black;
@@ -109,9 +101,9 @@
             txtSDT.Padding = new Padding(10, 8, 10, 8);
             txtSDT.Size = new Size(257, 51);
             txtSDT.TabIndex = 18;
-            // 
+            
             // label5
-            // 
+            
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(332, 158);
@@ -119,9 +111,9 @@
             label5.Size = new Size(47, 20);
             label5.TabIndex = 17;
             label5.Text = "Email";
-            // 
+            
             // txtEmail
-            // 
+            
             txtEmail.BackColor = Color.White;
             txtEmail.Font = new Font("Segoe UI", 10F);
             txtEmail.ForeColor = Color.Black;
@@ -130,86 +122,30 @@
             txtEmail.Padding = new Padding(10, 8, 10, 8);
             txtEmail.Size = new Size(257, 51);
             txtEmail.TabIndex = 18;
-            // 
+            
             // label7
-            // 
+            
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(12, 235);
+            label7.Location = new Point(12, 245);
             label7.Name = "label7";
             label7.Size = new Size(124, 20);
             label7.TabIndex = 17;
             label7.Text = "Hạng thành viên";
-            label7.Click += label4_Click;
-            // 
-            // btnHuy
-            // 
-            btnHuy.BackColor = Color.White;
-            btnHuy.BorderThickness = 0;
-            btnHuy.FlatAppearance.BorderSize = 0;
-            btnHuy.FlatStyle = FlatStyle.Flat;
-            btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
-            btnHuy.ForeColor = Color.Black;
-            btnHuy.Location = new Point(299, 520);
-            btnHuy.Name = "btnHuy";
-            btnHuy.Padding = new Padding(10, 6, 10, 6);
-            btnHuy.Size = new Size(94, 61);
-            btnHuy.TabIndex = 20;
-            btnHuy.Text = "Hủy";
-            btnHuy.UseVisualStyleBackColor = false;
-            // 
-            // btnThemKH
-            // 
-            btnThemKH.BackColor = Color.Black;
-            btnThemKH.BorderThickness = 0;
-            btnThemKH.FlatAppearance.BorderSize = 0;
-            btnThemKH.FlatStyle = FlatStyle.Flat;
-            btnThemKH.Font = new Font("Segoe UI Semibold", 10.5F);
-            btnThemKH.ForeColor = Color.White;
-            btnThemKH.Location = new Point(399, 520);
-            btnThemKH.Name = "btnThemKH";
-            btnThemKH.Padding = new Padding(10, 6, 10, 6);
-            btnThemKH.Size = new Size(188, 61);
-            btnThemKH.TabIndex = 21;
-            btnThemKH.Text = "Thêm Khách Hàng";
-            btnThemKH.UseVisualStyleBackColor = false;
-            // 
+            
             // cbbHang
-            // 
+            
             cbbHang.BackColor = Color.FromArgb(248, 248, 250);
             cbbHang.FlatStyle = FlatStyle.Flat;
             cbbHang.ForeColor = Color.FromArgb(70, 70, 70);
             cbbHang.FormattingEnabled = true;
-            cbbHang.Location = new Point(14, 269);
+            cbbHang.Location = new Point(12, 268);
             cbbHang.Name = "cbbHang";
             cbbHang.Size = new Size(255, 28);
             cbbHang.TabIndex = 22;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(12, 309);
-            label8.Name = "label8";
-            label8.Size = new Size(72, 20);
-            label8.TabIndex = 17;
-            label8.Text = "Lượt đến";
-            label8.Visible = false;
-            // 
-            // txtLuotDen
-            // 
-            txtLuotDen.BackColor = Color.White;
-            txtLuotDen.Font = new Font("Segoe UI", 10F);
-            txtLuotDen.ForeColor = Color.Black;
-            txtLuotDen.Location = new Point(12, 332);
-            txtLuotDen.Name = "txtLuotDen";
-            txtLuotDen.Padding = new Padding(10, 8, 10, 8);
-            txtLuotDen.Size = new Size(117, 51);
-            txtLuotDen.TabIndex = 18;
-            txtLuotDen.Visible = false;
-            // 
+            
             // label9
-            // 
+            
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label9.Location = new Point(12, 397);
@@ -217,9 +153,9 @@
             label9.Size = new Size(64, 20);
             label9.TabIndex = 17;
             label9.Text = "Ghi Chú";
-            // 
+            
             // txtGhiChu
-            // 
+            
             txtGhiChu.BackColor = Color.White;
             txtGhiChu.Font = new Font("Segoe UI", 10F);
             txtGhiChu.ForeColor = Color.Black;
@@ -228,9 +164,9 @@
             txtGhiChu.Padding = new Padding(10, 8, 10, 8);
             txtGhiChu.Size = new Size(577, 95);
             txtGhiChu.TabIndex = 18;
-            // 
+            
             // label10
-            // 
+            
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label10.Location = new Point(12, 309);
@@ -238,9 +174,9 @@
             label10.Size = new Size(65, 20);
             label10.TabIndex = 17;
             label10.Text = "Chi Tiêu";
-            // 
+            
             // txtChiTieu
-            // 
+            
             txtChiTieu.BackColor = Color.White;
             txtChiTieu.Font = new Font("Segoe UI", 10F);
             txtChiTieu.ForeColor = Color.Black;
@@ -249,15 +185,82 @@
             txtChiTieu.Padding = new Padding(10, 8, 10, 8);
             txtChiTieu.Size = new Size(255, 51);
             txtChiTieu.TabIndex = 18;
+             
+            // btnHuy
+            
+            btnHuy.BackColor = Color.White;
+            btnHuy.BorderThickness = 0;
+            btnHuy.FlatAppearance.BorderSize = 0;
+            btnHuy.FlatStyle = FlatStyle.Flat;
+            btnHuy.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnHuy.ForeColor = Color.Black;
+            btnHuy.Location = new Point(399, 520);
+            btnHuy.Name = "btnHuy";
+            btnHuy.Padding = new Padding(10, 6, 10, 6);
+            btnHuy.Size = new Size(94, 61);
+            btnHuy.TabIndex = 20;
+            btnHuy.Text = "Đóng";
+            btnHuy.UseVisualStyleBackColor = false;
             // 
-            // Frm_ThemKHMoi
+            // btnSua
+            // 
+            btnSua.BackColor = Color.Black;
+            btnSua.BorderThickness = 0;
+            btnSua.FlatAppearance.BorderSize = 0;
+            btnSua.FlatStyle = FlatStyle.Flat;
+            btnSua.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnSua.ForeColor = Color.White;
+            btnSua.Location = new Point(12, 520);
+            btnSua.Name = "btnSua";
+            btnSua.Padding = new Padding(10, 6, 10, 6);
+            btnSua.Size = new Size(120, 61);
+            btnSua.TabIndex = 21;
+            btnSua.Text = "Sửa";
+            btnSua.UseVisualStyleBackColor = false;
+            // 
+            // btnLuu
+            // 
+            btnLuu.BackColor = Color.Black;
+            btnLuu.BorderThickness = 0;
+            btnLuu.FlatAppearance.BorderSize = 0;
+            btnLuu.FlatStyle = FlatStyle.Flat;
+            btnLuu.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnLuu.ForeColor = Color.White;
+            btnLuu.Location = new Point(138, 520);
+            btnLuu.Name = "btnLuu";
+            btnLuu.Padding = new Padding(10, 6, 10, 6);
+            btnLuu.Size = new Size(120, 61);
+            btnLuu.TabIndex = 21;
+            btnLuu.Text = "Lưu";
+            btnLuu.UseVisualStyleBackColor = false;
+            btnLuu.Visible = false;
+            // 
+            // btnXoa
+            // 
+            btnXoa.BackColor = Color.FromArgb(220, 38, 38);
+            btnXoa.BorderThickness = 0;
+            btnXoa.FlatAppearance.BorderSize = 0;
+            btnXoa.FlatStyle = FlatStyle.Flat;
+            btnXoa.Font = new Font("Segoe UI Semibold", 10.5F);
+            btnXoa.ForeColor = Color.White;
+            btnXoa.Location = new Point(264, 520);
+            btnXoa.Name = "btnXoa";
+            btnXoa.Padding = new Padding(10, 6, 10, 6);
+            btnXoa.Size = new Size(120, 61);
+            btnXoa.TabIndex = 21;
+            btnXoa.Text = "Xóa";
+            btnXoa.UseVisualStyleBackColor = false;
+            // 
+            // Frm_ChiTietKhachHang
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(599, 612);
-            Controls.Add(cbbHang);
-            Controls.Add(btnThemKH);
+            Controls.Add(btnXoa);
+            Controls.Add(btnLuu);
+            Controls.Add(btnSua);
             Controls.Add(btnHuy);
+            Controls.Add(cbbHang);
             Controls.Add(txtEmail);
             Controls.Add(label5);
             Controls.Add(txtSDT);
@@ -266,15 +269,13 @@
             Controls.Add(txtGhiChu);
             Controls.Add(label9);
             Controls.Add(txtChiTieu);
-            Controls.Add(txtLuotDen);
             Controls.Add(label10);
-            Controls.Add(label8);
             Controls.Add(txtHoTen);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Name = "Frm_ThemKHMoi";
-            Text = "Frm_ThemKHMoiw";
+            Name = "Frm_ChiTietKhachHang";
+            Text = "Chi Tiết Khách Hàng";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -290,14 +291,15 @@
         private Label label5;
         private Controls.RoundedTextBox txtEmail;
         private Label label7;
-        private Controls.RoundedButton btnHuy;
-        private Controls.RoundedButton btnThemKH;
         private Controls.RoundedComboBox cbbHang;
-        private Label label8;
-        private Controls.RoundedTextBox txtLuotDen;
         private Label label9;
         private Controls.RoundedTextBox txtGhiChu;
         private Label label10;
         private Controls.RoundedTextBox txtChiTieu;
+        private Controls.RoundedButton btnHuy;
+        private Controls.RoundedButton btnSua;
+        private Controls.RoundedButton btnLuu;
+        private Controls.RoundedButton btnXoa;
     }
 }
+

@@ -41,7 +41,7 @@ namespace BLL
             }
         }
 
-        public bool Add(int kmId, string code, int soLan, DateTime? hanDung)
+        public int Add(int kmId, string code, int soLan, DateTime? hanDung)
         {
             try
             {
@@ -56,7 +56,28 @@ namespace BLL
                 if (hanDung.HasValue && hanDung.Value < DateTime.Now.Date)
                     throw new Exception("Hạn dùng phải từ hôm nay trở đi");
 
-                return _dal.Insert(kmId, code.Trim().ToUpper(), soLan, hanDung);
+                DataRow kmRow = _dal.GetChuongTrinhKMById(kmId);
+                if (kmRow != null)
+                {
+                    // Đảm bảo chỉ so sánh phần Date (bỏ phần time) để so sánh chính xác
+                    DateTime tgBatDau = kmRow["tg_bat_dau"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(kmRow["tg_bat_dau"]).Date;
+                    DateTime tgKetThuc = kmRow["tg_ket_thuc"] == DBNull.Value ? DateTime.Now.Date : Convert.ToDateTime(kmRow["tg_ket_thuc"]).Date;
+                    DateTime now = DateTime.Now.Date;
+
+                    // Chỉ cho phép tạo voucher khi CTKM đang trong thời gian áp dụng
+                    // Điều kiện: tgBatDau <= now && tgKetThuc >= now
+                    if (tgBatDau > now)
+                    {
+                        throw new Exception($"Chương trình khuyến mãi chưa bắt đầu (bắt đầu từ {tgBatDau:dd/MM/yyyy}). Chỉ có thể tạo voucher khi chương trình đang áp dụng.");
+                    }
+                    if (tgKetThuc < now)
+                    {
+                        throw new Exception($"Chương trình khuyến mãi đã kết thúc (kết thúc ngày {tgKetThuc:dd/MM/yyyy}). Chỉ có thể tạo voucher khi chương trình đang áp dụng.");
+                    }
+                }
+
+                int voucherId = _dal.Insert(kmId, code.Trim().ToUpper(), soLan, hanDung);
+                return voucherId;
             }
             catch (Exception ex)
             {

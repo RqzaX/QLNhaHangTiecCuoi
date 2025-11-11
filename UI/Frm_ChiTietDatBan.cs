@@ -34,7 +34,7 @@ namespace UI
                 var colors = GetStatusColors(_reservation.Status);
                 pnlStatusBadge.BackColor = colors.BadgeColor;
                 lblStatus.ForeColor = colors.TextColor;
-                
+
                 // Đổi icon theo trạng thái
                 string statusUpper = _reservation.Status.ToUpper();
                 if (statusUpper.Contains("HỦY") || statusUpper.Contains("ĐÃ HỦY"))
@@ -68,7 +68,7 @@ namespace UI
                 lblGioValue.Text = _reservation.Date.ToString("HH:mm");
                 lblKhuVucValue.Text = _reservation.Area;
                 lblTienCocValue.Text = _reservation.Deposit > 0 ? $"{_reservation.Deposit:N0} đ" : "Chưa cọc";
-                
+
                 if (_reservation.Deposit == 0)
                 {
                     lblTienCocValue.ForeColor = Color.FromArgb(34, 197, 94); // Màu xanh lá

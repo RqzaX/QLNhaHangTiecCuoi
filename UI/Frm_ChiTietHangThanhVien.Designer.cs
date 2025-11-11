@@ -1,6 +1,6 @@
 ﻿namespace UI
 {
-    partial class FrmThemKhuVuc
+    partial class Frm_ChiTietHangThanhVien
     {
         /// <summary>
         /// Required designer variable.
@@ -28,12 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FrmThemKhuVuc";
+            SuspendLayout();
+            // 
+            // Frm_ChiTietHangThanhVien
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 600);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "Frm_ChiTietHangThanhVien";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Chi Tiết Hạng Thành Viên";
+            ResumeLayout(false);
         }
 
         #endregion
     }
 }
+

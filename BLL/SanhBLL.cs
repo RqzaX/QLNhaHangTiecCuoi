@@ -70,6 +70,20 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - Cập nhật sảnh: {ex.Message}");
             }
         }
+        public bool XoaSanh(int sanhId)
+        {
+            if (sanhId <= 0)
+                throw new Exception("ID sảnh không hợp lệ!");
+
+            try
+            {
+                return _sanhDAL.XoaSanh(sanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Xóa sảnh: {ex.Message}");
+            }
+        }
     }
 }
 

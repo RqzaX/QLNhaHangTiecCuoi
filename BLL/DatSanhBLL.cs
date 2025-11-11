@@ -667,7 +667,7 @@ namespace QLNhaHangTiecCuoi.BLL
                         errorMessage = "Không thể đổi lịch cho đơn đặt sảnh đã bị hủy!";
                         return false;
                     }
-                    
+
                     if (trangThai.ToUpper() == "HOÀN TẤT")
                     {
                         errorMessage = "Không thể đổi lịch cho đơn đặt sảnh đã hoàn tất!";
@@ -701,7 +701,7 @@ namespace QLNhaHangTiecCuoi.BLL
 
                 // Kiểm tra nếu thông tin mới giống thông tin cũ
                 bool thongTinGiongNhau = true;
-                
+
                 if (datSanhInfo["chi_nhanh_id"] != DBNull.Value)
                 {
                     int chiNhanhIdCu = Convert.ToInt32(datSanhInfo["chi_nhanh_id"]);
@@ -785,6 +785,26 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Lấy danh sách đơn đặt sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách dat_sanh theo chi nhánh để hiển thị trong panelHDGD
+        public DataTable LayDanhSachDatSanhTheoChiNhanh(int chiNhanhId, int top = 100)
+        {
+            try
+            {
+                if (chiNhanhId <= 0)
+                    throw new ArgumentException("Chi nhánh không hợp lệ!");
+
+                // Validate top để đảm bảo an toàn
+                if (top <= 0) top = 100;
+                if (top > 1000) top = 1000;
+
+                return _dal.LayDanhSachDatSanhTheoChiNhanh(chiNhanhId, top);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy danh sách đặt sảnh theo chi nhánh: {ex.Message}", ex);
             }
         }
 
@@ -919,12 +939,12 @@ namespace QLNhaHangTiecCuoi.BLL
                 decimal tongSauThue = tongTruocThue + vat + phiDv - giamGia;
 
                 int hoaDonId = _hoaDonDAL.CreateHoaDon(
-                    chiNhanhId, 
-                    "TIECCUOI", 
-                    vatPercent, 
-                    phiDv, 
-                    giamGia, 
-                    tongTruocThue, 
+                    chiNhanhId,
+                    "TIECCUOI",
+                    vatPercent,
+                    phiDv,
+                    giamGia,
+                    tongTruocThue,
                     tongSauThue,
                     khachHangId,
                     hopDongId.Value

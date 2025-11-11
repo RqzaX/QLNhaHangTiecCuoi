@@ -82,13 +82,45 @@ namespace DAL
             }
         }
 
-        public bool Insert(int kmId, string code, int soLan, DateTime? hanDung)
+        public DataRow GetChuongTrinhKMById(int kmId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT 
+                        km_id,
+                        ma_km,
+                        ten,
+                        hinh_thuc,
+                        gia_tri,
+                        tg_bat_dau,
+                        tg_ket_thuc,
+                        ap_dung_loai
+                    FROM dbo.chuong_trinh_km
+                    WHERE km_id = @KmId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@KmId", kmId)
+                };
+
+                DataTable dt = _dbHelper.GetDataTable(query, parameters);
+                return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi DAL GetChuongTrinhKMById: " + ex.Message);
+            }
+        }
+
+        public int Insert(int kmId, string code, int soLan, DateTime? hanDung)
         {
             try
             {
                 string query = @"
                     INSERT INTO dbo.voucher 
                     (km_id, code, so_lan, da_dung, han_dung)
+                    OUTPUT INSERTED.voucher_id
                     VALUES 
                     (@KmId, @Code, @SoLan, 0, @HanDung)";
 
@@ -100,8 +132,12 @@ namespace DAL
                     new SqlParameter("@HanDung", hanDung ?? (object)DBNull.Value)
                 };
 
-                int result = _dbHelper.ExecuteNonQuery(query, parameters);
-                return result > 0;
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+                return 0;
             }
             catch (Exception ex)
             {
