@@ -134,7 +134,7 @@ namespace UI
                     MessageBox.Show("Database helper chưa được khởi tạo!", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                }
+                } 
             }
             catch (Exception ex)
             {
@@ -227,7 +227,8 @@ namespace UI
         {
             var parts = new List<string>();
 
-            // điều kiện theo tình trạng
+
+          
             switch (tinhTrang)
             {
                 case 1: parts.Add("sl_ton > 0"); break;
@@ -236,7 +237,7 @@ namespace UI
                 default: break; // tất cả
             }
 
-            // điều kiện theo ô tìm kiếm
+           
             if (!string.IsNullOrWhiteSpace(searchText))
             {
                 string esc = searchText.Trim().Replace("'", "''");

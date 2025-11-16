@@ -6,13 +6,13 @@ using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.Share;
 using Guna.UI2.WinForms;
 using System.ComponentModel;
-using System.ComponentModel;
 
 namespace UI
 {
     public partial class Frm_ThemSanh : Form
     {
         private readonly int _chiNhanhId;
+        private QLNhaHangTiecCuoi.BLL.SanhBLL _sanhBLL;
         public event EventHandler SanhAdded;
         public Frm_ThemSanh() : this(-1) { }
 
@@ -61,18 +61,14 @@ namespace UI
        
         private void InitBusiness()
         {
-            // var db = new DatabaseHelper(/* ... */);
-            // _sanhBLL = new SanhBLL(db);
+            var dbHelper = new DatabaseHelper();
+            _sanhBLL = new QLNhaHangTiecCuoi.BLL.SanhBLL(dbHelper);
         }
 
         /// <summary>Nạp dữ liệu combobox, v.v…</summary>
         private void LoadData()
         {
-            // Ví dụ: nạp danh sách chi nhánh
-            // var list = _sanhBLL.GetChiNhanh();
-            // cboChiNhanh.DataSource = list;
-            // cboChiNhanh.DisplayMember = "TenChiNhanh";
-            // cboChiNhanh.ValueMember = "ChiNhanhId";
+            // Không cần nạp dữ liệu vì chi nhánh đã được truyền vào constructor
         }
 
         private void BtnLuu_Click(object sender, EventArgs e)
@@ -92,27 +88,56 @@ namespace UI
                 return;
             }
 
-            // decimal phi;
-            // if (!decimal.TryParse(txtPhiThue.Text.Trim(), out phi) || phi < 0)
-            // {
-            //     MessageBox.Show("Phí thuê cơ bản không hợp lệ.", "Lỗi dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //     txtPhiThue.Focus();
-            //     return;
-            // }
+            decimal phiThue = 0;
+            if (!string.IsNullOrWhiteSpace(txtPhiThue.Text))
+            {
+                // Xử lý định dạng số Việt Nam (dấu chấm là phân cách hàng nghìn)
+                string phiThueText = txtPhiThue.Text.Trim();
+                // Loại bỏ dấu chấm (phân cách hàng nghìn) nhưng giữ dấu phẩy (phân cách thập phân)
+                phiThueText = phiThueText.Replace(".", "");
+                // Thay dấu phẩy thành dấu chấm cho định dạng số quốc tế
+                phiThueText = phiThueText.Replace(",", ".");
+                
+                if (!decimal.TryParse(phiThueText, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out phiThue) || phiThue < 0)
+                {
+                    MessageBox.Show("Phí thuê cơ bản không hợp lệ.", "Lỗi dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPhiThue.Focus();
+                    return;
+                }
+            }
 
-            // var chiNhanhId = (int)(cboChiNhanh.SelectedValue ?? 0);
+            if (_chiNhanhId <= 0)
+            {
+                MessageBox.Show("Chi nhánh không hợp lệ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            // TODO: Gọi BLL lưu
-            // _sanhBLL.ThemSanh(new SanhCreateDto {
-            //     ChiNhanhId = chiNhanhId,
-            //     TenSanh = txtTenSanh.Text.Trim(),
-            //     SucChua = (int)numSucChua.Value,
-            //     PhiThueCoBan = phi
-            // });
+            try
+            {
+                // Gọi BLL lưu sảnh
+                int sanhId = _sanhBLL.ThemSanh(
+                    _chiNhanhId,
+                    txtTenSanh.Text.Trim(),
+                    (int)numSucChua.Value,
+                    phiThue
+                );
 
-            MessageBox.Show("Đã lưu sảnh (demo). Hãy nối BLL/DB thực tế.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                if (sanhId > 0)
+                {
+                    MessageBox.Show("Đã lưu sảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    SanhAdded?.Invoke(this, EventArgs.Empty);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể lưu sảnh. Vui lòng thử lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lưu sảnh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

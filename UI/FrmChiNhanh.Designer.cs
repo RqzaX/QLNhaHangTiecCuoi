@@ -76,6 +76,8 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges30 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges31 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges32 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges35 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges36 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label2 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             label1 = new Label();
@@ -101,6 +103,7 @@
             txtTimSanh = new Guna.UI2.WinForms.Guna2TextBox();
             btnThemSanh = new Guna.UI2.WinForms.Guna2Button();
             panelChiNhanh = new Panel();
+            btnThemChiNhanhFloating = new Guna.UI2.WinForms.Guna2Button();
             PanelTimKiemChiNhanh.SuspendLayout();
             panelKhuVuc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvKhuVuc).BeginInit();
@@ -109,6 +112,7 @@
             PanelSoDoBan.SuspendLayout();
             panelSanh.SuspendLayout();
             panelTimKiemSanh.SuspendLayout();
+            panelChiNhanh.SuspendLayout();
             SuspendLayout();
             // 
             // label2
@@ -479,10 +483,33 @@
             // 
             // panelChiNhanh
             // 
+            panelChiNhanh.Controls.Add(btnThemChiNhanhFloating);
             panelChiNhanh.Location = new Point(7, 218);
             panelChiNhanh.Name = "panelChiNhanh";
             panelChiNhanh.Size = new Size(1146, 552);
             panelChiNhanh.TabIndex = 15;
+            // 
+            // btnThemChiNhanhFloating
+            // 
+            btnThemChiNhanhFloating.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnThemChiNhanhFloating.BorderRadius = 25;
+            btnThemChiNhanhFloating.CustomizableEdges = customizableEdges35;
+            btnThemChiNhanhFloating.DisabledState.BorderColor = Color.DarkGray;
+            btnThemChiNhanhFloating.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnThemChiNhanhFloating.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnThemChiNhanhFloating.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnThemChiNhanhFloating.FillColor = Color.FromArgb(31, 111, 235);
+            btnThemChiNhanhFloating.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnThemChiNhanhFloating.ForeColor = Color.White;
+            btnThemChiNhanhFloating.Location = new Point(1000, 480);
+            btnThemChiNhanhFloating.Name = "btnThemChiNhanhFloating";
+            btnThemChiNhanhFloating.ShadowDecoration.CustomizableEdges = customizableEdges36;
+            btnThemChiNhanhFloating.ShadowDecoration.Enabled = true;
+          
+            btnThemChiNhanhFloating.Size = new Size(130, 60);
+            btnThemChiNhanhFloating.TabIndex = 0;
+            btnThemChiNhanhFloating.Text = "+ Thêm";
+            btnThemChiNhanhFloating.Click += btnThemChiNhanh_Click;
             // 
             // FrmChiNhanh
             // 
@@ -511,6 +538,7 @@
             PanelSoDoBan.PerformLayout();
             panelSanh.ResumeLayout(false);
             panelTimKiemSanh.ResumeLayout(false);
+            panelChiNhanh.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -541,5 +569,6 @@
         private Panel panelTimKiemSanh;
         private Guna.UI2.WinForms.Guna2Button btnThemSanh;
         private Guna.UI2.WinForms.Guna2TextBox txtTimSanh;
+        private Guna.UI2.WinForms.Guna2Button btnThemChiNhanhFloating;
     }
 }

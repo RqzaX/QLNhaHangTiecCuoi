@@ -11,13 +11,11 @@
         private Guna.UI2.WinForms.Guna2TextBox txtTenSanh;
         private Guna.UI2.WinForms.Guna2NumericUpDown numSucChua;
         private Guna.UI2.WinForms.Guna2TextBox txtPhiThue;
-        private Guna.UI2.WinForms.Guna2ComboBox cboChiNhanh;
         private Guna.UI2.WinForms.Guna2Button btnLuu;
         private Guna.UI2.WinForms.Guna2Button btnThoat;
         private System.Windows.Forms.Label lblTenSanh;
         private System.Windows.Forms.Label lblSucChua;
         private System.Windows.Forms.Label lblPhi;
-        private System.Windows.Forms.Label lblChiNhanh;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -41,13 +39,11 @@
             this.txtTenSanh = new Guna.UI2.WinForms.Guna2TextBox();
             this.numSucChua = new Guna.UI2.WinForms.Guna2NumericUpDown();
             this.txtPhiThue = new Guna.UI2.WinForms.Guna2TextBox();
-            this.cboChiNhanh = new Guna.UI2.WinForms.Guna2ComboBox();
             this.btnLuu = new Guna.UI2.WinForms.Guna2Button();
             this.btnThoat = new Guna.UI2.WinForms.Guna2Button();
             this.lblTenSanh = new System.Windows.Forms.Label();
             this.lblSucChua = new System.Windows.Forms.Label();
             this.lblPhi = new System.Windows.Forms.Label();
-            this.lblChiNhanh = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSucChua)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,32 +99,9 @@
             this.txtPhiThue.Size = new System.Drawing.Size(180, 36);
             this.txtPhiThue.TabIndex = 3;
             // 
-            // lblChiNhanh
-            // 
-            this.lblChiNhanh.AutoSize = true;
-            this.lblChiNhanh.Location = new System.Drawing.Point(32, 192);
-            this.lblChiNhanh.Name = "lblChiNhanh";
-            this.lblChiNhanh.Size = new System.Drawing.Size(71, 15);
-            this.lblChiNhanh.TabIndex = 0;
-            this.lblChiNhanh.Text = "Chi nhánh:";
-            // 
-            // cboChiNhanh
-            // 
-            this.cboChiNhanh.BackColor = System.Drawing.Color.Transparent;
-            this.cboChiNhanh.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cboChiNhanh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboChiNhanh.FocusedColor = System.Drawing.Color.Empty;
-            this.cboChiNhanh.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cboChiNhanh.ForeColor = System.Drawing.Color.Black;
-            this.cboChiNhanh.ItemHeight = 30;
-            this.cboChiNhanh.Location = new System.Drawing.Point(140, 184);
-            this.cboChiNhanh.Name = "cboChiNhanh";
-            this.cboChiNhanh.Size = new System.Drawing.Size(330, 36);
-            this.cboChiNhanh.TabIndex = 4;
-            // 
             // btnLuu
             // 
-            this.btnLuu.Location = new System.Drawing.Point(140, 250);
+            this.btnLuu.Location = new System.Drawing.Point(140, 200);
             this.btnLuu.Name = "btnLuu";
             this.btnLuu.Size = new System.Drawing.Size(120, 40);
             this.btnLuu.TabIndex = 5;
@@ -136,7 +109,7 @@
             // 
             // btnThoat
             // 
-            this.btnThoat.Location = new System.Drawing.Point(280, 250);
+            this.btnThoat.Location = new System.Drawing.Point(280, 200);
             this.btnThoat.Name = "btnThoat";
             this.btnThoat.Size = new System.Drawing.Size(120, 40);
             this.btnThoat.TabIndex = 6;
@@ -145,11 +118,9 @@
             // Frm_ThemSanh
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(520, 320);
+            this.ClientSize = new System.Drawing.Size(520, 280);
             this.Controls.Add(this.btnThoat);
             this.Controls.Add(this.btnLuu);
-            this.Controls.Add(this.cboChiNhanh);
-            this.Controls.Add(this.lblChiNhanh);
             this.Controls.Add(this.txtPhiThue);
             this.Controls.Add(this.lblPhi);
             this.Controls.Add(this.numSucChua);

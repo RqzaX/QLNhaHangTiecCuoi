@@ -84,6 +84,33 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - Xóa sảnh: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Thêm sảnh mới
+        /// </summary>
+        public int ThemSanh(int chiNhanhId, string tenSanh, int sucChua, decimal phiThueCb)
+        {
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+
+            if (string.IsNullOrWhiteSpace(tenSanh))
+                throw new Exception("Tên sảnh không được để trống!");
+
+            if (sucChua <= 0)
+                throw new Exception("Sức chứa phải lớn hơn 0!");
+
+            if (phiThueCb < 0)
+                throw new Exception("Phí thuê cơ bản không được âm!");
+
+            try
+            {
+                return _sanhDAL.ThemSanh(chiNhanhId, tenSanh, sucChua, phiThueCb);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Thêm sảnh: {ex.Message}");
+            }
+        }
     }
 }
 

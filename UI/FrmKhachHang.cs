@@ -792,6 +792,8 @@ namespace UI
                 // Hiển thị danh sách hóa đơn và thanh toán
                 panelHDGD.Visible = false;
                 panelCTTT.Visible = false;
+                btnThem.Visible = true;
+                cbbLocHang.Visible = true;
             }
             else if (segmentedPill1.SelectedIndex == 1)
             {
