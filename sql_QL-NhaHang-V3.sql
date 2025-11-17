@@ -25,6 +25,21 @@ CREATE TABLE dbo.ca(
   gio_kt TIME(0) NOT NULL
 );
 
+--Phân ca cho nhân viên
+IF OBJECT_ID('dbo.nguoi_dung_ca','U') IS NULL
+CREATE TABLE dbo.nguoi_dung_ca(
+  nguoi_dung_ca_id INT IDENTITY(1,1) PRIMARY KEY,
+  nguoi_dung_id    INT NOT NULL,
+  chi_nhanh_id     INT NOT NULL,
+  ca_id            INT NOT NULL,
+  trang_thai       TINYINT NOT NULL DEFAULT 1, -- 1=Hoạt động, 0=Không hoạt động
+  FOREIGN KEY (nguoi_dung_id) REFERENCES dbo.nguoi_dung(nguoi_dung_id),
+  FOREIGN KEY (chi_nhanh_id)  REFERENCES dbo.chi_nhanh(chi_nhanh_id),
+  FOREIGN KEY (ca_id)         REFERENCES dbo.ca(ca_id),
+  -- Một nhân viên có thể có nhiều ca trong 1 chi nhánh, nhưng không được trùng lặp cùng một ca
+  UNIQUE (nguoi_dung_id, chi_nhanh_id, ca_id)
+);
+
 IF OBJECT_ID('dbo.khu_vuc','U') IS NULL
 CREATE TABLE dbo.khu_vuc(
   khu_vuc_id   INT IDENTITY(1,1) PRIMARY KEY,
@@ -475,4 +490,254 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_order_head' AND object_
     
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_hd_lap' AND object_id=OBJECT_ID('dbo.hoa_don'))
   CREATE INDEX IX_hd_lap ON dbo.hoa_don(chi_nhanh_id, loai, ngay_lap);
-  Select * from khach_hang
+
+--Thêm vai trò
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'ADMIN')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'ADMIN', N'Quản trị viên');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'QLCN')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'QLCN', N'Quản lý chi nhánh');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'QLNV')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'QLNV', N'Quản lý nhân viên');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'THUNGAN')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'THUNGAN', N'Thu ngân');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'PHUCVU')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'PHUCVU', N'Nhân viên phục vụ');
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'DAUBEP')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'DAUBEP', N'Đầu bếp');
+
+
+IF NOT EXISTS (SELECT 1 FROM dbo.vai_tro WHERE ma = N'LETAN')
+  INSERT INTO dbo.vai_tro(ma, ten)
+  VALUES (N'LETAN', N'Lễ tân');
+
+--Thêm Người dùng
+--lấy id chi nhánh (đã có dữ liệu chi nhánh )
+DECLARE @cn_tt INT = (SELECT TOP 1 chi_nhanh_id FROM dbo.chi_nhanh WHERE ten = N'Chi nhánh Hồ Chí Minh' ORDER BY chi_nhanh_id);
+DECLARE @cn_q7 INT = (SELECT TOP 1 chi_nhanh_id FROM dbo.chi_nhanh WHERE ten = N'Chi nhánh Hà Nội' ORDER BY chi_nhanh_id);
+-- Thêm người dùng (chỉ thêm nhân viên, admin đã có sẵn)
+-- 1 Thu ngân
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan = N'thungan01')
+  INSERT INTO dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES (N'thungan01', N'123456', N'Phạm Thị Thu Ngân', 1);
+
+-- 2 Phục vụ
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu01')
+  INSERT INTO dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES (N'phucvu01', N'123456', N'Nguyễn Thị Phục Vụ', 1);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu02')
+  INSERT INTO dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES (N'phucvu02', N'123456', N'Trần Văn Phục Vụ', 1);
+
+-- 1 Đầu bếp
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan = N'daubep01')
+  INSERT INTO dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES (N'daubep01', N'123456', N'Võ Văn Đầu Bếp', 1);
+
+-- 1 Lễ tân
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan = N'letan01')
+  INSERT INTO dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES (N'letan01', N'123456', N'Bùi Thị Lễ Tân', 1);
+
+  /* ========================
+   3) GÁN VAI TRÒ CHO NGƯỜI DÙNG
+   ======================== */
+DECLARE @vai_tro_admin INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'ADMIN');
+DECLARE @vai_tro_qlcn INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'QLCN');
+DECLARE @vai_tro_thungan INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'THUNGAN');
+DECLARE @vai_tro_phucvu INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'PHUCVU');
+DECLARE @vai_tro_daubep INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'DAUBEP');
+DECLARE @vai_tro_letan INT = (SELECT vai_tro_id FROM dbo.vai_tro WHERE ma = N'LETAN');
+
+DECLARE @nd_thungan01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'thungan01');
+DECLARE @nd_phucvu01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu01');
+DECLARE @nd_phucvu02 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu02');
+DECLARE @nd_daubep01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'daubep01');
+DECLARE @nd_letan01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'letan01');
+
+-- Thu ngân
+IF @nd_thungan01 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @nd_thungan01 AND vai_tro_id = @vai_tro_thungan)
+  INSERT INTO dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
+  VALUES (@nd_thungan01, @vai_tro_thungan);
+
+-- Phục vụ
+IF @nd_phucvu01 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @nd_phucvu01 AND vai_tro_id = @vai_tro_phucvu)
+  INSERT INTO dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
+  VALUES (@nd_phucvu01, @vai_tro_phucvu);
+
+IF @nd_phucvu02 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @nd_phucvu02 AND vai_tro_id = @vai_tro_phucvu)
+  INSERT INTO dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
+  VALUES (@nd_phucvu02, @vai_tro_phucvu);
+
+-- Đầu bếp
+IF @nd_daubep01 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @nd_daubep01 AND vai_tro_id = @vai_tro_daubep)
+  INSERT INTO dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
+  VALUES (@nd_daubep01, @vai_tro_daubep);
+
+-- Lễ tân
+IF @nd_letan01 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @nd_letan01 AND vai_tro_id = @vai_tro_letan)
+  INSERT INTO dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
+  VALUES (@nd_letan01, @vai_tro_letan);
+
+  /* ========================
+   4) GÁN CHI NHÁNH CHO NGƯỜI DÙNG
+   ======================== */
+DECLARE @cn_tt2 INT = (SELECT TOP 1 chi_nhanh_id FROM dbo.chi_nhanh WHERE ten = N'CN Trung tâm' ORDER BY chi_nhanh_id);
+
+DECLARE @nd_thungan01_2 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'thungan01');
+DECLARE @nd_phucvu01_2 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu01');
+DECLARE @nd_phucvu02_2 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu02');
+DECLARE @nd_daubep01_2 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'daubep01');
+DECLARE @nd_letan01_2 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'letan01');
+
+-- Thu ngân làm việc tại CN Trung tâm
+IF @cn_tt2 IS NOT NULL AND @nd_thungan01_2 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @nd_thungan01_2 AND chi_nhanh_id = @cn_tt2)
+  INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+  VALUES (@nd_thungan01_2, @cn_tt2);
+
+-- Phục vụ 01, 02 làm việc tại CN Trung tâm
+IF @cn_tt2 IS NOT NULL AND @nd_phucvu01_2 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @nd_phucvu01_2 AND chi_nhanh_id = @cn_tt2)
+  INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+  VALUES (@nd_phucvu01_2, @cn_tt2);
+
+IF @cn_tt2 IS NOT NULL AND @nd_phucvu02_2 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @nd_phucvu02_2 AND chi_nhanh_id = @cn_tt2)
+  INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+  VALUES (@nd_phucvu02_2, @cn_tt2);
+
+-- Đầu bếp làm việc tại CN Trung tâm
+IF @cn_tt2 IS NOT NULL AND @nd_daubep01_2 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @nd_daubep01_2 AND chi_nhanh_id = @cn_tt2)
+  INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+  VALUES (@nd_daubep01_2, @cn_tt2);
+
+-- Lễ tân làm việc tại CN Trung tâm
+IF @cn_tt2 IS NOT NULL AND @nd_letan01_2 IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @nd_letan01_2 AND chi_nhanh_id = @cn_tt2)
+  INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+  VALUES (@nd_letan01_2, @cn_tt2);
+
+  PRINT N'=== DANH SÁCH VAI TRÒ ===';
+SELECT vai_tro_id, ma, ten FROM dbo.vai_tro ORDER BY vai_tro_id;
+
+PRINT N'=== DANH SÁCH NGƯỜI DÙNG ===';
+SELECT nguoi_dung_id, tai_khoan, ho_ten, 
+       CASE WHEN hoat_dong = 1 THEN N'Hoạt động' ELSE N'Không hoạt động' END AS trang_thai
+FROM dbo.nguoi_dung 
+ORDER BY nguoi_dung_id;
+
+PRINT N'=== NGƯỜI DÙNG VÀ VAI TRÒ ===';
+SELECT nd.tai_khoan, nd.ho_ten, vt.ma AS ma_vai_tro, vt.ten AS ten_vai_tro
+FROM dbo.nguoi_dung nd
+INNER JOIN dbo.nguoi_dung_vai_tro ndvt ON nd.nguoi_dung_id = ndvt.nguoi_dung_id
+INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
+ORDER BY nd.tai_khoan, vt.ma;
+
+PRINT N'=== NGƯỜI DÙNG VÀ CHI NHÁNH ===';
+SELECT nd.tai_khoan, nd.ho_ten, cn.ten AS ten_chi_nhanh, cn.dia_chi
+FROM dbo.nguoi_dung nd
+INNER JOIN dbo.nguoi_dung_chi_nhanh ndcn ON nd.nguoi_dung_id = ndcn.nguoi_dung_id
+INNER JOIN dbo.chi_nhanh cn ON ndcn.chi_nhanh_id = cn.chi_nhanh_id
+ORDER BY nd.tai_khoan, cn.ten;
+
+/* ========================
+   3) PHÂN CA CHO NHÂN VIÊN
+   ======================== */
+select * from ca
+-- Lấy ID các ca
+DECLARE @ca_sang INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca = N'Ca tiệc cưới sáng');
+DECLARE @ca_trua INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca = N'Ca tiệc cưới chiều');
+DECLARE @ca_toi INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca = N'Ca tiệc cưới tối');
+
+-- Lấy ID chi nhánh
+DECLARE @cn_tt INT = (SELECT TOP 1 chi_nhanh_id FROM dbo.chi_nhanh WHERE ten = N'Chi nhánh Hồ Chí Minh' ORDER BY chi_nhanh_id);
+
+-- Lấy ID người dùng
+DECLARE @nd_thungan01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'thungan01');
+DECLARE @nd_phucvu01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu01');
+DECLARE @nd_phucvu02 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'phucvu02');
+DECLARE @nd_daubep01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'daubep01');
+DECLARE @nd_letan01 INT = (SELECT nguoi_dung_id FROM dbo.nguoi_dung WHERE tai_khoan = N'letan01');
+
+-- Phân ca cho Thu ngân: Ca sáng và ca trưa
+IF @cn_tt IS NOT NULL AND @nd_thungan01 IS NOT NULL AND @ca_sang IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_thungan01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_sang)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_thungan01, @cn_tt, @ca_sang, 1);
+
+IF @cn_tt IS NOT NULL AND @nd_thungan01 IS NOT NULL AND @ca_trua IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_thungan01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_trua)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_thungan01, @cn_tt, @ca_trua, 1);
+
+-- Phân ca cho Phục vụ 01: Ca sáng
+IF @cn_tt IS NOT NULL AND @nd_phucvu01 IS NOT NULL AND @ca_sang IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_phucvu01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_sang)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_phucvu01, @cn_tt, @ca_sang, 1);
+
+-- Phân ca cho Phục vụ 02: Ca trưa và ca tối
+IF @cn_tt IS NOT NULL AND @nd_phucvu02 IS NOT NULL AND @ca_trua IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_phucvu02 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_trua)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_phucvu02, @cn_tt, @ca_trua, 1);
+
+IF @cn_tt IS NOT NULL AND @nd_phucvu02 IS NOT NULL AND @ca_toi IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_phucvu02 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_toi)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_phucvu02, @cn_tt, @ca_toi, 1);
+
+-- Phân ca cho Đầu bếp: Ca trưa và ca tối
+IF @cn_tt IS NOT NULL AND @nd_daubep01 IS NOT NULL AND @ca_trua IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_daubep01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_trua)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_daubep01, @cn_tt, @ca_trua, 1);
+
+IF @cn_tt IS NOT NULL AND @nd_daubep01 IS NOT NULL AND @ca_toi IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_daubep01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_toi)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_daubep01, @cn_tt, @ca_toi, 1);
+
+-- Phân ca cho Lễ tân: Ca sáng và ca trưa
+IF @cn_tt IS NOT NULL AND @nd_letan01 IS NOT NULL AND @ca_sang IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_letan01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_sang)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_letan01, @cn_tt, @ca_sang, 1);
+
+IF @cn_tt IS NOT NULL AND @nd_letan01 IS NOT NULL AND @ca_trua IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung_ca WHERE nguoi_dung_id = @nd_letan01 AND chi_nhanh_id = @cn_tt AND ca_id = @ca_trua)
+  INSERT INTO dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+  VALUES (@nd_letan01, @cn_tt, @ca_trua, 1);
+
+SELECT 
+  nd.tai_khoan,
+  nd.ho_ten,
+  cn.ten AS ten_chi_nhanh,
+  c.ten_ca,
+  c.gio_bd,
+  c.gio_kt,
+  CASE WHEN ndc.trang_thai = 1 THEN N'Hoạt động' ELSE N'Không hoạt động' END AS trang_thai
+FROM dbo.nguoi_dung_ca ndc
+INNER JOIN dbo.nguoi_dung nd ON ndc.nguoi_dung_id = nd.nguoi_dung_id
+INNER JOIN dbo.chi_nhanh cn ON ndc.chi_nhanh_id = cn.chi_nhanh_id
+INNER JOIN dbo.ca c ON ndc.ca_id = c.ca_id
+ORDER BY nd.ho_ten, c.ten_ca;
+select * from nguoi_dung_ca

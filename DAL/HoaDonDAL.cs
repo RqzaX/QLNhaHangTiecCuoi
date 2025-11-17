@@ -122,6 +122,65 @@ namespace DAL
             return (c, s);
         }
 
+        // Đếm số lượng hóa đơn theo loại (NHAHANG hoặc TIECCUOI)
+        public (int NhaHang, int TiecCuoi) GetHoaDonCountByLoai(int? chiNhanhId = null)
+        {
+            string sql = @"
+                SELECT 
+                    SUM(CASE WHEN loai = N'NHAHANG' THEN 1 ELSE 0 END) AS nha_hang,
+                    SUM(CASE WHEN loai = N'TIECCUOI' THEN 1 ELSE 0 END) AS tiec_cuoi
+                FROM hoa_don
+                WHERE (@cn IS NULL OR chi_nhanh_id = @cn)";
+
+            var parameters = new List<SqlParameter>();
+            if (chiNhanhId.HasValue)
+            {
+                parameters.Add(new SqlParameter("@cn", chiNhanhId.Value));
+            }
+            else
+            {
+                parameters.Add(new SqlParameter("@cn", DBNull.Value));
+            }
+
+            var dt = _db.GetDataTable(sql, parameters.ToArray());
+            if (dt == null || dt.Rows.Count == 0)
+                return (0, 0);
+
+            int nhaHang = Convert.ToInt32(dt.Rows[0]["nha_hang"] ?? 0);
+            int tiecCuoi = Convert.ToInt32(dt.Rows[0]["tiec_cuoi"] ?? 0);
+            return (nhaHang, tiecCuoi);
+        }
+
+        // Lấy top 5 món bán chạy nhất (dựa trên tổng số lượng đã bán từ tất cả hóa đơn đã thanh toán)
+        public DataTable GetTop5MonBanChay(int? chiNhanhId = null)
+        {
+            string sql = @"
+                SELECT TOP 5
+                    hdct.ten_hang,
+                    SUM(hdct.so_luong) AS tong_so_luong,
+                    COUNT(DISTINCT hdct.hoa_don_id) AS so_lan_goi,
+                    SUM(hdct.thanh_tien) AS tong_tien
+                FROM dbo.hoa_don_ct hdct
+                INNER JOIN dbo.hoa_don hd ON hd.hoa_don_id = hdct.hoa_don_id
+                WHERE hdct.loai_hang = N'MÓN'
+                  AND hd.trang_thai = N'ĐÃ THANH TOÁN'
+                  AND (@cn IS NULL OR hd.chi_nhanh_id = @cn)
+                GROUP BY hdct.ten_hang
+                ORDER BY SUM(hdct.so_luong) DESC";
+
+            var parameters = new List<SqlParameter>();
+            if (chiNhanhId.HasValue)
+            {
+                parameters.Add(new SqlParameter("@cn", chiNhanhId.Value));
+            }
+            else
+            {
+                parameters.Add(new SqlParameter("@cn", DBNull.Value));
+            }
+
+            return _db.GetDataTable(sql, parameters.ToArray());
+        }
+
         // Lấy lịch sử thanh toán (hóa đơn đã thanh toán) với filter theo ngày
         public DataTable GetPaidInvoicesHistory(int chiNhanhId, DateTime? fromDate = null, DateTime? toDate = null, string? phuongThuc = null, int top = 100)
         {

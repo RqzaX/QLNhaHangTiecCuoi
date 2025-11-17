@@ -8,15 +8,47 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using QLNhaHangTiecCuoi.BLL;
+using QLNhaHangTiecCuoi.Share;
 
 namespace UI
 {
     [SupportedOSPlatform("windows")]
     public partial class FrmNhanSuVaCa : Form
     {
+        private NguoiDungBLL _nguoiDungBLL;
+        private DatabaseHelper _dbHelper;
+        private Controls.PhanCaPanel _phanCaPanel;
+
         public FrmNhanSuVaCa()
         {
             InitializeComponent();
+            try
+            {
+                _dbHelper = new DatabaseHelper();
+
+                if (!_dbHelper.TestConnection())
+                {
+                    MessageBox.Show(
+                        "Không thể kết nối đến database!\n\n" +
+                        "Kiểm tra lại:\n" +
+                        "1. SQL Server đang chạy\n" +
+                        "2. Server name trong DatabaseHelper.cs\n" +
+                        "3. Database: QL_NhaHangTiecCuoi_V3\n\n" +
+                        "Mở SQL Server Management Studio để kiểm tra.",
+                        "Lỗi Kết Nối Database",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                _nguoiDungBLL = new NguoiDungBLL(_dbHelper);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void label12_Click(object sender, EventArgs e)
@@ -29,11 +61,7 @@ namespace UI
         }
         private const string NS_TEN = "TenNV";
         private const string NS_CV = "ChucVu";
-        private const string NS_LH = "LienHe";
         private const string NS_CN = "ChiNhanh";
-        private const string NS_NGAY = "NgayVao";
-        private const string NS_TT = "TrangThai";
-        private const string NS_TTAC = "ThaoTac";
         private void InitDgvNhanSu()
         {
             var dgv = dgvNhanSu;
@@ -47,176 +75,95 @@ namespace UI
             {
                 dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_TEN, HeaderText = "Tên NV", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 210 });
                 dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CV, HeaderText = "Chức vụ", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_LH, HeaderText = "Liên hệ", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 250 });
-                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CN, HeaderText = "Chi nhánh", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_NGAY, HeaderText = "Ngày vào làm", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_TT, HeaderText = "Trạng thái", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-
-                // Cột Chi tiết (link) – sẽ click cả ô
-                dgv.Columns.Add(new DataGridViewLinkColumn
-                {
-                    Name = NS_TTAC,
-                    HeaderText = "Thao tác",
-                    Text = "Chi tiết",
-                    UseColumnTextForLinkValue = true,
-                    LinkBehavior = LinkBehavior.HoverUnderline,
-                    LinkColor = Color.FromArgb(23, 82, 255),
-                    ActiveLinkColor = Color.FromArgb(23, 82, 255),
-                    VisitedLinkColor = Color.FromArgb(23, 82, 255)
-                });
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CN, HeaderText = "Chi nhánh", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 250 });
             }
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10f);
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10.5f);
             dgv.DefaultCellStyle.Padding = new Padding(12, 8, 12, 8);
             dgv.RowTemplate.Height = 56;
-
-            // Liên hệ 2 dòng
-            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            dgv.Columns[NS_LH].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-
-            // Gắn sự kiện
-            dgv.CellPainting -= dgvNhanSu_CellPainting;
-            dgv.CellPainting += dgvNhanSu_CellPainting;
-            dgv.CellClick -= dgvNhanSu_CellClick;
-            dgv.CellClick += dgvNhanSu_CellClick;
-            dgv.CellMouseEnter -= dgvNhanSu_CellMouseEnter;
-            dgv.CellMouseEnter += dgvNhanSu_CellMouseEnter;
-            dgv.CellMouseLeave -= dgvNhanSu_CellMouseLeave;
-            dgv.CellMouseLeave += dgvNhanSu_CellMouseLeave;
         }
         private void LoadDataNhanSu()
         {
-            dgvNhanSu.Rows.Clear();
-
-            AddNV("Nguyễn Văn X", "Quản lý", "0901111111", "nguyenvanx@email.com",
-                  "Chi nhánh Quận 1", new DateTime(2023, 1, 15), "Đang làm");
-
-            AddNV("Trần Thị Y", "Phục vụ", "0902222222", "tranthiy@email.com",
-                  "Chi nhánh Quận 1", new DateTime(2023, 6, 20), "Đang làm");
-
-            AddNV("Lê Minh Z", "Đầu bếp", "0903333333", "leminhz@email.com",
-                  "Chi nhánh Quận 1", new DateTime(2023, 3, 10), "Đang làm");
-
-            AddNV("Phạm Thu T", "Thu ngân", "0904444444", "phamthut@email.com",
-                  "Chi nhánh Quận 3", new DateTime(2023, 9, 5), "Nghỉ phép");
-        }
-
-        private void AddNV(string ten, string chucVu, string phone, string email,
-                   string chiNhanh, DateTime ngayVao, string trangThai)
-        {
-            string lienHe = $"{phone}\n{email}";
-            dgvNhanSu.Rows.Add(ten, chucVu, lienHe, chiNhanh, ngayVao.ToString("dd/M/yyyy"),
-                               trangThai, "Chi tiết");
-        }
-        private void dgvNhanSu_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            var dgv = (DataGridView)sender;
-            var col = dgv.Columns[e.ColumnIndex].Name;
-            var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-            // Liên hệ 2 dòng
-            if (col == NS_LH)
+            try
             {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
+                dgvNhanSu.Rows.Clear();
 
-                var parts = (e.FormattedValue?.ToString() ?? "").Split('\n');
-                string phone = parts.ElementAtOrDefault(0) ?? "";
-                string mail = parts.ElementAtOrDefault(1) ?? "";
+                DataTable dt = _nguoiDungBLL.LayDanhSachNhanVien();
 
-                var r = Rectangle.Inflate(e.CellBounds, -8, -6);
-                using var br1 = new SolidBrush(e.CellStyle.ForeColor);
-                using var br2 = new SolidBrush(Color.FromArgb(110, 119, 135));
-                using var f1 = new Font(e.CellStyle.Font, FontStyle.Regular);
-                using var f2 = new Font(e.CellStyle.Font.FontFamily, e.CellStyle.Font.Size - 1f);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string ten = row["TenNV"]?.ToString() ?? "";
+                        string chucVu = row["ChucVu"]?.ToString() ?? "";
+                        string chiNhanh = row["ChiNhanh"]?.ToString() ?? "";
 
-                g.DrawString(phone, f1, br1, new RectangleF(r.X, r.Y + 2, r.Width, r.Height / 2f),
-                    new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near });
-                g.DrawString(mail, f2, br2, new RectangleF(r.X, r.Y + r.Height / 2f - 2, r.Width, r.Height / 2f),
-                    new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near });
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;                           // <— QUAN TRỌNG
+                        dgvNhanSu.Rows.Add(ten, chucVu, chiNhanh);
+                    }
+                }
             }
-
-            // Trạng thái: chip (xanh "Đang làm" / vàng "Nghỉ phép")
-            if (col == NS_TT)
+            catch (Exception ex)
             {
-                e.Handled = true;
-                e.PaintBackground(e.CellBounds, true);
-
-                string text = Convert.ToString(e.FormattedValue) ?? "";
-                bool active = text.Equals("Đang làm", StringComparison.OrdinalIgnoreCase);
-
-                var chip = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y + (e.CellBounds.Height - 28) / 2, 92, 28);
-                using var path = Rounded(chip, 14);
-                using var fill = new SolidBrush(active ? Color.FromArgb(208, 247, 225) : Color.FromArgb(255, 239, 185));
-                using var br = new SolidBrush(active ? Color.FromArgb(16, 128, 67) : Color.FromArgb(159, 108, 0));
-
-                g.FillPath(fill, path);
-                g.DrawString(text, new Font("Segoe UI Semibold", 9f), br, chip,
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-
-                e.Paint(e.ClipBounds, DataGridViewPaintParts.Border);
-                return;                           // <— QUAN TRỌNG
+                MessageBox.Show($"Lỗi khi tải dữ liệu nhân viên: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-
-        private static System.Drawing.Drawing2D.GraphicsPath Rounded(Rectangle r, int radius)
-        {
-            int d = radius * 2;
-            var p = new System.Drawing.Drawing2D.GraphicsPath();
-            p.AddArc(r.X, r.Y, d, d, 180, 90);
-            p.AddArc(r.Right - d, r.Y, d, d, 270, 90);
-            p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
-            p.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
-            p.CloseFigure(); return p;
-        }
-        private void dgvNhanSu_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            if (dgvNhanSu.Columns[e.ColumnIndex].Name != NS_TTAC) return;
-
-            string ten = dgvNhanSu.Rows[e.RowIndex].Cells[NS_TEN].Value?.ToString();
-            string chuc = dgvNhanSu.Rows[e.RowIndex].Cells[NS_CV].Value?.ToString();
-            string cn = dgvNhanSu.Rows[e.RowIndex].Cells[NS_CN].Value?.ToString();
-            string ngay = dgvNhanSu.Rows[e.RowIndex].Cells[NS_NGAY].Value?.ToString();
-
-            MessageBox.Show($"Chi tiết nhân sự:\n- Tên: {ten}\n- Chức vụ: {chuc}\n- Chi nhánh: {cn}\n- Ngày vào: {ngay}",
-                            "Nhân sự", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 
         private void FrmNhanSuVaCa_Load(object sender, EventArgs e)
         {
-            LoadDataNhanSu();
-            InitDgvNhanSu();
-
+            try
+            {
+                if (_nguoiDungBLL == null)
+                {
+                    MessageBox.Show("Không thể khởi tạo kết nối database. Vui lòng kiểm tra lại cấu hình.", 
+                        "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
+                InitDgvNhanSu();
+                LoadDataNhanSu();
+                LoadTongSoNhanVien();
+                
+                // Khởi tạo PhanCaPanel nhưng chưa hiển thị
+                InitializePhanCaPanel();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi load form: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void dgvNhanSu_CellClick(object sender, DataGridViewCellEventArgs e)
+        /// <summary>
+        /// Load tổng số nhân viên lên RpanelTongNV
+        /// </summary>
+        private void LoadTongSoNhanVien()
         {
-            if (e.RowIndex < 0) return;
-            if (dgvNhanSu.Columns[e.ColumnIndex].Name != NS_TTAC) return;
+            try
+            {
+                if (_nguoiDungBLL == null)
+                    return;
 
-            string ten = dgvNhanSu.Rows[e.RowIndex].Cells[NS_TEN].Value?.ToString();
-            MessageBox.Show($"Chi tiết nhân sự: {ten}");
-        }
+                // Lấy danh sách nhân viên và đếm số lượng
+                DataTable dt = _nguoiDungBLL.LayDanhSachNhanVien();
+                int tongSo = dt != null ? dt.Rows.Count : 0;
 
-        private void dgvNhanSu_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 &&
-        dgvNhanSu.Columns[e.ColumnIndex].Name == NS_TTAC)
-                dgvNhanSu.Cursor = Cursors.Hand;
-        }
-
-        private void dgvNhanSu_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
-        {
-            dgvNhanSu.Cursor = Cursors.Default;
+                // Cập nhật label8 với tổng số nhân viên
+                if (label8 != null)
+                {
+                    label8.Text = tongSo.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Nếu có lỗi, hiển thị "0" hoặc giữ nguyên giá trị cũ
+                if (label8 != null)
+                {
+                    label8.Text = "0";
+                }
+                System.Diagnostics.Debug.WriteLine($"Lỗi load tổng số nhân viên: {ex.Message}");
+            }
         }
 
         private void btnThemNV_Click(object sender, EventArgs e)
@@ -224,7 +171,73 @@ namespace UI
             using (var f = new Frm_ThemNV())
             {
                 f.StartPosition = FormStartPosition.CenterParent;
-                f.ShowDialog(this);
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Reload dữ liệu nhân viên sau khi thêm mới
+                    LoadDataNhanSu();
+                    LoadTongSoNhanVien();
+                    
+                    // Reload dữ liệu phân ca nếu đang ở tab phân ca
+                    if (segmentedPill1.SelectedIndex == 1 && _phanCaPanel != null && !_phanCaPanel.IsDisposed)
+                    {
+                        _phanCaPanel.LoadDataPhanCa();
+                    }
+                }
+            }
+        }
+
+        private void segmentedPill1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (segmentedPill1.SelectedIndex == 0)
+            {
+                panelNhanSu.Visible = true;
+                panelPhanCa.Visible = false;
+            }
+            else if (segmentedPill1.SelectedIndex == 1)
+            {
+                panelNhanSu.Visible = false;
+                panelPhanCa.Visible = true;
+                
+                // Khởi tạo và load PhanCaPanel nếu chưa có
+                if (_phanCaPanel == null || _phanCaPanel.IsDisposed)
+                {
+                    InitializePhanCaPanel();
+                }
+                else
+                {
+                    // Reload dữ liệu khi chuyển tab
+                    _phanCaPanel.LoadDataPhanCa();
+                }
+            }
+        }
+
+        private void InitializePhanCaPanel()
+        {
+            try
+            {
+                // Xóa panel cũ nếu có
+                panelPhanCa.Controls.Clear();
+                if (_phanCaPanel != null && !_phanCaPanel.IsDisposed)
+                {
+                    _phanCaPanel.Dispose();
+                }
+
+                // Tạo PhanCaPanel mới
+                _phanCaPanel = new Controls.PhanCaPanel
+                {
+                    Dock = DockStyle.Fill
+                };
+
+                // Thêm vào panelPhanCa
+                panelPhanCa.Controls.Add(_phanCaPanel);
+                
+                // Load dữ liệu
+                _phanCaPanel.LoadDataPhanCa();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khởi tạo panel phân ca: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

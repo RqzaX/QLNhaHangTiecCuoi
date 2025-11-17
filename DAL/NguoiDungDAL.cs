@@ -87,5 +87,185 @@ namespace QLNhaHangTiecCuoi.DAL
 
             _dbHelper.ExecuteNonQuery(query, parameters);
         }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên với tên, chức vụ và chi nhánh
+        /// </summary>
+        public DataTable LayDanhSachNhanVien()
+        {
+            string query = @"
+                SELECT 
+                    nd.nguoi_dung_id,
+                    nd.ho_ten AS TenNV,
+                    ISNULL((
+                        SELECT TOP 1 vt.ten 
+                        FROM dbo.nguoi_dung_vai_tro ndvt 
+                        INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
+                        WHERE ndvt.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY vt.vai_tro_id
+                    ), N'Chưa phân quyền') AS ChucVu,
+                    ISNULL((
+                        SELECT TOP 1 cn.ten 
+                        FROM dbo.nguoi_dung_chi_nhanh ndcn 
+                        INNER JOIN dbo.chi_nhanh cn ON ndcn.chi_nhanh_id = cn.chi_nhanh_id
+                        WHERE ndcn.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY cn.chi_nhanh_id
+                    ), N'Chưa phân chi nhánh') AS ChiNhanh
+                FROM dbo.nguoi_dung nd
+                WHERE nd.hoat_dong = 1
+                ORDER BY nd.ho_ten";
+
+            return _dbHelper.GetDataTable(query);
+        }
+
+        /// <summary>
+        /// Lấy danh sách phân ca cho nhân viên
+        /// </summary>
+        public DataTable LayDanhSachPhanCa()
+        {
+            string query = @"
+                SELECT 
+                    ndc.nguoi_dung_ca_id,
+                    ndc.nguoi_dung_id,
+                    ndc.chi_nhanh_id,
+                    ndc.ca_id,
+                    c.ten_ca,
+                    c.gio_bd,
+                    c.gio_kt,
+                    nd.ho_ten,
+                    nd.tai_khoan,
+                    cn.ten AS ten_chi_nhanh,
+                    ndc.trang_thai
+                FROM dbo.nguoi_dung_ca ndc
+                INNER JOIN dbo.nguoi_dung nd ON ndc.nguoi_dung_id = nd.nguoi_dung_id
+                INNER JOIN dbo.chi_nhanh cn ON ndc.chi_nhanh_id = cn.chi_nhanh_id
+                INNER JOIN dbo.ca c ON ndc.ca_id = c.ca_id
+                WHERE ndc.trang_thai = 1
+                ORDER BY c.gio_bd, nd.ho_ten";
+
+            return _dbHelper.GetDataTable(query);
+        }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên trong ca (theo ca_id và chi_nhanh_id)
+        /// </summary>
+        public DataTable LayNhanVienTrongCa(int caId, int chiNhanhId)
+        {
+            string query = @"
+                SELECT 
+                    ndc.nguoi_dung_ca_id,
+                    ndc.nguoi_dung_id,
+                    nd.ho_ten,
+                    nd.tai_khoan,
+                    ISNULL((
+                        SELECT TOP 1 vt.ten 
+                        FROM dbo.nguoi_dung_vai_tro ndvt 
+                        INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
+                        WHERE ndvt.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY vt.vai_tro_id
+                    ), N'Chưa phân quyền') AS chuc_vu
+                FROM dbo.nguoi_dung_ca ndc
+                INNER JOIN dbo.nguoi_dung nd ON ndc.nguoi_dung_id = nd.nguoi_dung_id
+                WHERE ndc.ca_id = @caId 
+                  AND ndc.chi_nhanh_id = @chiNhanhId
+                  AND ndc.trang_thai = 1
+                  AND nd.hoat_dong = 1
+                ORDER BY nd.ho_ten";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@caId", caId),
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên chưa có trong ca (bao gồm: không hoạt động trong ca đó, không có trong ca đó, và chưa ở trong ca nào)
+        /// </summary>
+        public DataTable LayNhanVienChuaTrongCa(int caId, int chiNhanhId)
+        {
+            string query = @"
+                SELECT 
+                    nd.nguoi_dung_id,
+                    nd.ho_ten,
+                    nd.tai_khoan,
+                    ISNULL((
+                        SELECT TOP 1 vt.ten 
+                        FROM dbo.nguoi_dung_vai_tro ndvt 
+                        INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
+                        WHERE ndvt.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY vt.vai_tro_id
+                    ), N'Chưa phân quyền') AS chuc_vu
+                FROM dbo.nguoi_dung nd
+                INNER JOIN dbo.nguoi_dung_chi_nhanh ndcn ON nd.nguoi_dung_id = ndcn.nguoi_dung_id
+                LEFT JOIN dbo.nguoi_dung_ca ndc ON ndc.nguoi_dung_id = nd.nguoi_dung_id
+                    AND ndc.ca_id = @caId
+                    AND ndc.chi_nhanh_id = @chiNhanhId
+                    AND ndc.trang_thai = 1
+                WHERE ndcn.chi_nhanh_id = @chiNhanhId
+                  AND nd.hoat_dong = 1
+                  AND ndc.nguoi_dung_ca_id IS NULL
+                ORDER BY nd.ho_ten";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@caId", caId),
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
+
+        /// <summary>
+     
+        /// Cho phép 1 nhân viên có nhiều ca khác nhau trong cùng 1 chi nhánh
+        /// </summary>
+        public int ThemNhanVienVaoCa(int nguoiDungId, int chiNhanhId, int caId)
+        {
+            // Sử dụng MERGE để xử lý cả trường hợp INSERT và UPDATE trong một lệnh
+            string mergeQuery = @"
+                MERGE dbo.nguoi_dung_ca AS target
+                USING (SELECT @nguoiDungId AS nguoi_dung_id, @chiNhanhId AS chi_nhanh_id, @caId AS ca_id) AS source
+                ON target.nguoi_dung_id = source.nguoi_dung_id
+                   AND target.chi_nhanh_id = source.chi_nhanh_id
+                   AND target.ca_id = source.ca_id
+                WHEN MATCHED THEN
+                    UPDATE SET 
+                        trang_thai = 1
+                WHEN NOT MATCHED THEN
+                    INSERT (nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+                    VALUES (@nguoiDungId, @chiNhanhId, @caId, 1)
+                OUTPUT INSERTED.nguoi_dung_ca_id;";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@nguoiDungId", nguoiDungId),
+                new SqlParameter("@chiNhanhId", chiNhanhId),
+                new SqlParameter("@caId", caId)
+            };
+
+            object result = _dbHelper.ExecuteScalar(mergeQuery, parameters);
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        /// <summary>
+        /// Xóa nhân viên khỏi ca (DELETE record khỏi nguoi_dung_ca)
+        /// </summary>
+        public bool XoaNhanVienKhoiCa(int nguoiDungCaId)
+        {
+            string query = @"
+                DELETE FROM dbo.nguoi_dung_ca
+                WHERE nguoi_dung_ca_id = @nguoiDungCaId";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@nguoiDungCaId", nguoiDungCaId)
+            };
+
+            int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
+            return rowsAffected > 0;
+        }
     }
 }

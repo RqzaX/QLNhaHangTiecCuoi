@@ -36,7 +36,30 @@ namespace QLNhaHangTiecCuoi.BLL
                     return false;
                 }
 
-                return _dal.KiemTraSanhTrong(sanhId, gioToChuc, ngayToChuc, excludeDatSanhId);
+                // Chuyển đổi TimeSpan gioToChuc thành caId bằng cách tìm ca có gio_bd khớp
+                int? caId = null;
+                DataTable dtCa = _dal.LayDanhSachCa();
+                foreach (DataRow row in dtCa.Rows)
+                {
+                    if (row["gio_bd"] != DBNull.Value)
+                    {
+                        TimeSpan gioBd = (TimeSpan)row["gio_bd"];
+                        // So sánh giờ bắt đầu (chỉ so sánh giờ và phút)
+                        if (gioBd.Hours == gioToChuc.Hours && gioBd.Minutes == gioToChuc.Minutes)
+                        {
+                            caId = Convert.ToInt32(row["ca_id"]);
+                            break;
+                        }
+                    }
+                }
+
+                if (!caId.HasValue)
+                {
+                    errorMessage = "Không tìm thấy ca phù hợp với giờ tổ chức!";
+                    return false;
+                }
+
+                return _dal.KiemTraSanhTrong(sanhId, caId.Value, ngayToChuc, excludeDatSanhId);
             }
             catch (Exception ex)
             {
@@ -170,28 +193,16 @@ namespace QLNhaHangTiecCuoi.BLL
                     return 0;
                 }
 
-                // Kiểm tra sảnh còn trống
-                TimeSpan? gioToChucCheck = gioToChuc;
-                if (!gioToChucCheck.HasValue)
-                {
-                    gioToChucCheck = LayGioBatDauCa(caId);
-                    if (!gioToChucCheck.HasValue)
-                    {
-                        errorMessage = "Không tìm thấy thông tin ca!";
-                        return 0;
-                    }
-                }
-
-                if (!_dal.KiemTraSanhTrong(sanhId, gioToChucCheck.Value, ngayToChuc))
+                // Kiểm tra sảnh còn trống (sử dụng caId trực tiếp)
+                if (!_dal.KiemTraSanhTrong(sanhId, caId, ngayToChuc))
                 {
                     errorMessage = "Sảnh đã được đặt trong thời gian này!";
                     return 0;
                 }
 
                 // Tạo đơn đặt sảnh
-                TimeSpan? gioToChucFinal = gioToChuc ?? gioToChucCheck;
                 int datSanhId = _dal.TaoDatSanh(chiNhanhId, sanhId, caId, ngayToChuc,
-                    khachHangId, soBanDuKien, goiId, ghiChu, gioToChucFinal, trangThai ?? "CHỜ XÁC NHẬN");
+                    khachHangId, soBanDuKien, goiId, ghiChu, gioToChuc, trangThai ?? "CHỜ XÁC NHẬN");
 
                 return datSanhId;
             }
@@ -876,8 +887,31 @@ namespace QLNhaHangTiecCuoi.BLL
                     return false;
                 }
 
+                // Chuyển đổi TimeSpan gioToChuc thành caId bằng cách tìm ca có gio_bd khớp
+                int? caId = null;
+                DataTable dtCa = _dal.LayDanhSachCa();
+                foreach (DataRow row in dtCa.Rows)
+                {
+                    if (row["gio_bd"] != DBNull.Value)
+                    {
+                        TimeSpan gioBd = (TimeSpan)row["gio_bd"];
+                        // So sánh giờ bắt đầu (chỉ so sánh giờ và phút)
+                        if (gioBd.Hours == gioToChuc.Hours && gioBd.Minutes == gioToChuc.Minutes)
+                        {
+                            caId = Convert.ToInt32(row["ca_id"]);
+                            break;
+                        }
+                    }
+                }
+
+                if (!caId.HasValue)
+                {
+                    errorMessage = "Không tìm thấy ca phù hợp với giờ tổ chức!";
+                    return false;
+                }
+
                 // Kiểm tra sảnh có trống không (loại trừ đơn đặt sảnh hiện tại)
-                bool sanhTrong = _dal.KiemTraSanhTrong(sanhId, gioToChuc, ngayToChuc, datSanhId);
+                bool sanhTrong = _dal.KiemTraSanhTrong(sanhId, caId.Value, ngayToChuc, datSanhId);
                 if (!sanhTrong)
                 {
                     errorMessage = "Sảnh đã được đặt vào thời gian này. Vui lòng chọn ngày/ca khác!";

@@ -91,5 +91,115 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception("Lỗi lấy chi nhánh theo người dùng: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên với tên, chức vụ và chi nhánh
+        /// </summary>
+        public DataTable LayDanhSachNhanVien()
+        {
+            try
+            {
+                return _dal.LayDanhSachNhanVien();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy danh sách nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách phân ca cho nhân viên
+        /// </summary>
+        public DataTable LayDanhSachPhanCa()
+        {
+            try
+            {
+                return _dal.LayDanhSachPhanCa();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy danh sách phân ca: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên trong ca
+        /// </summary>
+        public DataTable LayNhanVienTrongCa(int caId, int chiNhanhId)
+        {
+            if (caId <= 0)
+                throw new Exception("ID ca không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.LayNhanVienTrongCa(caId, chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy danh sách nhân viên trong ca: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách nhân viên chưa có trong ca
+        /// </summary>
+        public DataTable LayNhanVienChuaTrongCa(int caId, int chiNhanhId)
+        {
+            if (caId <= 0)
+                throw new Exception("ID ca không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.LayNhanVienChuaTrongCa(caId, chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy danh sách nhân viên chưa có trong ca: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Thêm nhân viên vào ca
+        /// </summary>
+        public int ThemNhanVienVaoCa(int nguoiDungId, int chiNhanhId, int caId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+            if (caId <= 0)
+                throw new Exception("ID ca không hợp lệ!");
+
+            try
+            {
+                return _dal.ThemNhanVienVaoCa(nguoiDungId, chiNhanhId, caId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi thêm nhân viên vào ca: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Xóa nhân viên khỏi ca
+        /// </summary>
+        public bool XoaNhanVienKhoiCa(int nguoiDungCaId)
+        {
+            if (nguoiDungCaId <= 0)
+                throw new Exception("ID phân ca không hợp lệ!");
+
+            try
+            {
+                return _dal.XoaNhanVienKhoiCa(nguoiDungCaId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xóa nhân viên khỏi ca: " + ex.Message);
+            }
+        }
     }
 }

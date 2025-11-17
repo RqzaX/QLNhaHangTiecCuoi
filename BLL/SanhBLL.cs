@@ -85,9 +85,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// <summary>
-        /// Thêm sảnh mới
-        /// </summary>
+        
         public int ThemSanh(int chiNhanhId, string tenSanh, int sucChua, decimal phiThueCb)
         {
             if (chiNhanhId <= 0)

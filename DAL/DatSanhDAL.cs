@@ -16,56 +16,8 @@ namespace QLNhaHangTiecCuoi.DAL
         }
 
         // Kiểm tra sảnh có còn trống trong thời gian này không
-        public bool KiemTraSanhTrong(int sanhId, TimeSpan gioToChuc, DateTime ngayToChuc, int? excludeDatSanhId = null)
-        {
-            string query = @"
-                SELECT COUNT(*) 
-                FROM dbo.dat_sanh 
-                WHERE sanh_id = @sanhId 
-                  AND CONVERT(TIME(0), gio_to_chuc) = CONVERT(TIME(0), @gioToChuc)
-                  AND CAST(ngay_to_chuc AS DATE) = CAST(@ngayToChuc AS DATE)
-                  AND trang_thai NOT IN (N'ĐÃ HỦY', N'HOÀN TẤT')";
-
-            if (excludeDatSanhId.HasValue)
-            {
-                query += " AND dat_sanh_id != @excludeDatSanhId";
-            }
-
-            TimeSpan gioToChucClean = new TimeSpan(gioToChuc.Hours, gioToChuc.Minutes, gioToChuc.Seconds);
-            
-            SqlParameter gioParam = new SqlParameter("@gioToChuc", System.Data.SqlDbType.Time);
-            gioParam.Value = gioToChucClean;
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@sanhId", sanhId),
-                gioParam,
-                new SqlParameter("@ngayToChuc", ngayToChuc.Date)
-            };
-
-            if (excludeDatSanhId.HasValue)
-            {
-                var paramList = parameters.ToList();
-                paramList.Add(new SqlParameter("@excludeDatSanhId", excludeDatSanhId.Value));
-                parameters = paramList.ToArray();
-            }
-
-            try
-            {
-                object result = _dbHelper.ExecuteScalar(query, parameters);
-                int count = Convert.ToInt32(result);
-                
-                return count == 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Lỗi kiểm tra trạng thái sảnh: {ex.Message}", ex);
-            }
-        }
-
-        // Overload method để kiểm tra dựa trên ca_id (khớp với UNIQUE constraint)
         public bool KiemTraSanhTrong(int sanhId, int caId, DateTime ngayToChuc, int? excludeDatSanhId = null)
         {
-            // Kiểm tra dựa trên ca_id để khớp với UNIQUE constraint (sanh_id, ca_id, ngay_to_chuc)
             string query = @"
                 SELECT COUNT(*) 
                 FROM dbo.dat_sanh 
@@ -104,6 +56,9 @@ namespace QLNhaHangTiecCuoi.DAL
                 throw new Exception($"Lỗi kiểm tra trạng thái sảnh: {ex.Message}", ex);
             }
         }
+
+        // Overload method để kiểm tra dựa trên ca_id (khớp với UNIQUE constraint)
+      
 
         // Lấy danh sách sảnh theo chi nhánh
         public DataTable LayDanhSachSanh(int chiNhanhId)
@@ -209,11 +164,11 @@ namespace QLNhaHangTiecCuoi.DAL
             string query = @"
                 INSERT INTO dbo.dat_sanh (
                     chi_nhanh_id, sanh_id, ca_id, ngay_to_chuc,
-                    khach_hang_id, so_ban_du_kien, goi_id, trang_thai, ghi_chu, gio_to_chuc
+                    khach_hang_id, so_ban_du_kien, goi_id, trang_thai, ghi_chu
                 )
                 VALUES (
                     @chiNhanhId, @sanhId, @caId, @ngayToChuc,
-                    @khachHangId, @soBanDuKien, @goiId, @trangThai, @ghiChu, @gioToChuc
+                    @khachHangId, @soBanDuKien, @goiId, @trangThai, @ghiChu
                 );
                 SELECT SCOPE_IDENTITY();";
 
@@ -226,8 +181,7 @@ namespace QLNhaHangTiecCuoi.DAL
                 new SqlParameter("@soBanDuKien", (object)soBanDuKien ?? DBNull.Value),
                 new SqlParameter("@goiId", (object)goiId ?? DBNull.Value),
                 new SqlParameter("@trangThai", trangThai ?? "CHỜ XÁC NHẬN"),
-                new SqlParameter("@ghiChu", ghiChu ?? ""),
-                new SqlParameter("@gioToChuc", (object)gioToChuc ?? DBNull.Value)
+                new SqlParameter("@ghiChu", ghiChu ?? "")
             };
 
             try
@@ -696,7 +650,6 @@ namespace QLNhaHangTiecCuoi.DAL
                     c.ten_ca,
                     c.gio_bd,
                     c.gio_kt,
-                    ds.gio_to_chuc,
                     ds.ngay_to_chuc,
                     ds.khach_hang_id,
                     kh.ho_ten AS ten_khach_hang,
@@ -741,7 +694,6 @@ namespace QLNhaHangTiecCuoi.DAL
                 SELECT 
                     ds.dat_sanh_id,
                     ds.ngay_to_chuc,
-                    ds.gio_to_chuc,
                     kh.ho_ten AS ten_khach_hang,
                     kh.sdt,
                     s.ten_sanh,
@@ -1004,7 +956,6 @@ namespace QLNhaHangTiecCuoi.DAL
                         sanh_id = @sanhId,
                         ca_id = @caId,
                         ngay_to_chuc = @ngayToChuc,
-                        gio_to_chuc = @gioToChuc,
                         ghi_chu = @ghiChu
                     WHERE dat_sanh_id = @datSanhId";
 
@@ -1014,7 +965,6 @@ namespace QLNhaHangTiecCuoi.DAL
                     new SqlParameter("@sanhId", sanhId),
                     new SqlParameter("@caId", caId),
                     new SqlParameter("@ngayToChuc", ngayToChuc.Date),
-                    new SqlParameter("@gioToChuc", gioToChuc),
                     new SqlParameter("@ghiChu", ghiChuMoi)
                 };
 

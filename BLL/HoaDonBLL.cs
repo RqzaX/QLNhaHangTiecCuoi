@@ -204,6 +204,18 @@ namespace BLL
         {
             return _dal.ProcessRefund(hoaDonId, out errorMessage);
         }
+
+        // Đếm số lượng hóa đơn theo loại (NHAHANG hoặc TIECCUOI)
+        public (int NhaHang, int TiecCuoi) GetHoaDonCountByLoai(int? chiNhanhId = null)
+        {
+            return _dal.GetHoaDonCountByLoai(chiNhanhId);
+        }
+
+        // Lấy top 5 món bán chạy nhất
+        public DataTable GetTop5MonBanChay(int? chiNhanhId = null)
+        {
+            return _dal.GetTop5MonBanChay(chiNhanhId);
+        }
     }
 }
 
