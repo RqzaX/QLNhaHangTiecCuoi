@@ -134,15 +134,26 @@ namespace UI
                     giaGoi = soBan.Value * giaCoBan.Value;
 
                 if (lbTextPhiSanh != null && soBan.HasValue && giaCoBan.HasValue)
+                {
+                    // Đảm bảo label có đủ không gian để hiển thị text đầy đủ
+                    lbTextPhiSanh.AutoSize = true;
+                    lbTextPhiSanh.MaximumSize = new Size(300, 0); // Giới hạn chiều rộng, cho phép wrap nếu cần
                     lbTextPhiSanh.Text = $"Phí sảnh ({soBan.Value} bàn x {giaCoBan.Value:N0} đ)";
+                    // Đảm bảo label có đủ chiều cao để hiển thị text
+                    if (lbTextPhiSanh.Height < 30)
+                    {
+                        lbTextPhiSanh.Height = 30;
+                    }
+                }
 
                 decimal phiSanh = giaGoi;
 
                 if (lbSoTienPhiSanh != null)
                 {
                     lbSoTienPhiSanh.AutoSize = false;
-                    lbSoTienPhiSanh.Width = 150;
-                    lbSoTienPhiSanh.Location = new Point(342, lbSoTienPhiSanh.Location.Y);
+                    lbSoTienPhiSanh.Width = 200;
+                    lbSoTienPhiSanh.Height = 30;
+                    lbSoTienPhiSanh.Location = new Point(292, lbSoTienPhiSanh.Location.Y);
                     lbSoTienPhiSanh.Text = $"{phiSanh:N0} ₫";
                     lbSoTienPhiSanh.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -367,8 +378,9 @@ namespace UI
                 if (lbTongMonAn != null)
                 {
                     lbTongMonAn.AutoSize = false;
-                    lbTongMonAn.Width = 150;
-                    lbTongMonAn.Location = new Point(342, lbTongMonAn.Location.Y);
+                    lbTongMonAn.Width = 200;
+                    lbTongMonAn.Height = 30;
+                    lbTongMonAn.Location = new Point(292, lbTongMonAn.Location.Y);
                     lbTongMonAn.Text = $"{tongMonAn:N0} ₫";
                     lbTongMonAn.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -376,8 +388,9 @@ namespace UI
                 if (lbTongDichVu != null)
                 {
                     lbTongDichVu.AutoSize = false;
-                    lbTongDichVu.Width = 150;
-                    lbTongDichVu.Location = new Point(342, lbTongDichVu.Location.Y);
+                    lbTongDichVu.Width = 200;
+                    lbTongDichVu.Height = 30;
+                    lbTongDichVu.Location = new Point(292, lbTongDichVu.Location.Y);
                     lbTongDichVu.Text = $"{tongDichVu:N0} ₫";
                     lbTongDichVu.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -387,8 +400,9 @@ namespace UI
                 if (lbSoTienTamTinh != null)
                 {
                     lbSoTienTamTinh.AutoSize = false;
-                    lbSoTienTamTinh.Width = 150;
-                    lbSoTienTamTinh.Location = new Point(342, lbSoTienTamTinh.Location.Y);
+                    lbSoTienTamTinh.Width = 200;
+                    lbSoTienTamTinh.Height = 30;
+                    lbSoTienTamTinh.Location = new Point(292, lbSoTienTamTinh.Location.Y);
                     lbSoTienTamTinh.Text = $"{tamTinh:N0} ₫";
                     lbSoTienTamTinh.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -398,8 +412,9 @@ namespace UI
                 if (lbSoTienVAT != null)
                 {
                     lbSoTienVAT.AutoSize = false;
-                    lbSoTienVAT.Width = 150;
-                    lbSoTienVAT.Location = new Point(342, lbSoTienVAT.Location.Y);
+                    lbSoTienVAT.Width = 200;
+                    lbSoTienVAT.Height = 30;
+                    lbSoTienVAT.Location = new Point(292, lbSoTienVAT.Location.Y);
                     lbSoTienVAT.Text = $"{vat:N0} ₫";
                     lbSoTienVAT.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -409,8 +424,9 @@ namespace UI
                 if (lbSoTienPhiDichVu != null)
                 {
                     lbSoTienPhiDichVu.AutoSize = false;
-                    lbSoTienPhiDichVu.Width = 150;
-                    lbSoTienPhiDichVu.Location = new Point(342, lbSoTienPhiDichVu.Location.Y);
+                    lbSoTienPhiDichVu.Width = 200;
+                    lbSoTienPhiDichVu.Height = 30;
+                    lbSoTienPhiDichVu.Location = new Point(292, lbSoTienPhiDichVu.Location.Y);
                     lbSoTienPhiDichVu.Text = $"{phiDichVu:N0} ₫";
                     lbSoTienPhiDichVu.TextAlign = ContentAlignment.MiddleRight;
                     lbSoTienPhiDichVu.Visible = true;
@@ -425,8 +441,9 @@ namespace UI
                 if (lbTongTien != null)
                 {
                     lbTongTien.AutoSize = false;
-                    lbTongTien.Width = 150;
-                    lbTongTien.Location = new Point(342, lbTongTien.Location.Y);
+                    lbTongTien.Width = 200;
+                    lbTongTien.Height = 30;
+                    lbTongTien.Location = new Point(292, lbTongTien.Location.Y);
                     lbTongTien.Text = $"{tongTien:N0} ₫";
                     lbTongTien.TextAlign = ContentAlignment.MiddleRight;
                 }
@@ -989,7 +1006,9 @@ namespace UI
 
                 string trangThaiHienTai = datSanhInfo["trang_thai"]?.ToString() ?? "";
                 
-                if (trangThaiHienTai.ToUpper() == "ĐÃ HỦY" || trangThaiHienTai.ToUpper() == "HOÀN TẤT")
+                if (trangThaiHienTai.ToUpper() == "ĐÃ HỦY" || 
+                    trangThaiHienTai.ToUpper() == "HOÀN TẤT" || 
+                    trangThaiHienTai.ToUpper() == "ĐÃ THANH TOÁN")
                 {
                     return;
                 }
@@ -1220,35 +1239,38 @@ namespace UI
             }
         }
 
-        // Vô hiệu hóa các chức năng khi trạng thái là "ĐÃ HỦY"
         private void CapNhatTrangThaiChucNang()
         {
-            bool daHuy = _trangThai.ToUpper() == "ĐÃ HỦY";
+            string trangThaiUpper = _trangThai.ToUpper();
+            bool daHuy = trangThaiUpper == "ĐÃ HỦY";
+            bool daThanhToan = trangThaiUpper == "ĐÃ THANH TOÁN";
+            bool hoanTat = trangThaiUpper == "HOÀN TẤT";
+            bool voHieuHoa = daHuy || daThanhToan || hoanTat;
 
             if (btnThemDotCoc != null)
             {
-                btnThemDotCoc.Enabled = !daHuy;
+                btnThemDotCoc.Enabled = !voHieuHoa;
             }
 
-            if (btnDoiLich != null)
-            {
-                btnDoiLich.Enabled = !daHuy;
-            }
+            // if (btnDoiLich != null)
+            // {
+            //     btnDoiLich.Enabled = !voHieuHoa;
+            // }
 
             if (btnHuyDatSanh != null)
             {
-                btnHuyDatSanh.Enabled = !daHuy;
+                btnHuyDatSanh.Enabled = !voHieuHoa;
             }
 
             if (dgvDanhSachCoc != null)
             {
                 if (dgvDanhSachCoc.Columns.Contains("ColEdit"))
                 {
-                    dgvDanhSachCoc.Columns["ColEdit"].Visible = !daHuy;
+                    dgvDanhSachCoc.Columns["ColEdit"].Visible = !voHieuHoa;
                 }
                 if (dgvDanhSachCoc.Columns.Contains("ColDelete"))
                 {
-                    dgvDanhSachCoc.Columns["ColDelete"].Visible = !daHuy;
+                    dgvDanhSachCoc.Columns["ColDelete"].Visible = !voHieuHoa;
                 }
             }
         }

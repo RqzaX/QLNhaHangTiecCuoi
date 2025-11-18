@@ -149,7 +149,7 @@ WHERE 1 = 1";
         IF EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id=@cn AND nl_id=@nl)
          UPDATE dbo.ton_kho SET sl_ton=@sl WHERE chi_nhanh_id=@cn AND nl_id=@nl;
         ELSE
-            INSERT INTO dbo.ton_kho(chi_nhanh_id, nl_id, sl_ton) VALUES(@cn, @nl, @sl);";
+            INSERT INTO dbo.ton_kho(chi_nhanh_id, nl_id, sl_ton, ton_toi_thieu) VALUES(@cn, @nl, @sl, 0);";
             return _db.ExecuteNonQuery(sql, new[] {
              new SqlParameter("@cn", chiNhanhId),
              new SqlParameter("@nl", nlId),
@@ -188,8 +188,8 @@ WHERE 1 = 1";
                 -- Nếu chưa có record tồn kho thì tạo mới
                 IF NOT EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhId AND nl_id = @nlId)
                 BEGIN
-                    INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
-                    VALUES (@chiNhanhId, @nlId, @soLuong);
+                    INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton, ton_toi_thieu)
+                    VALUES (@chiNhanhId, @nlId, @soLuong, 0);
                 END";
             
             var parameters = new[]
@@ -270,8 +270,8 @@ WHERE 1 = 1";
                     -- Nếu chưa có record tồn kho ở chi nhánh đích thì tạo mới
                     IF NOT EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @chiNhanhDichId AND nl_id = @nlId)
                     BEGIN
-                        INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton)
-                        VALUES (@chiNhanhDichId, @nlId, @soLuong);
+                        INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton, ton_toi_thieu)
+                        VALUES (@chiNhanhDichId, @nlId, @soLuong, 0);
                     END
                 END";
             
@@ -292,5 +292,198 @@ WHERE 1 = 1";
                 throw new Exception($"Lỗi DAL - ChuyenKho: {ex.Message}", ex);
             }
         }
+
+        public int LuuPhieuNhapKho(int chiNhanhId, DateTime ngayNhap, TimeSpan gioNhap, string nhanVienNhap, 
+            string ghiChu, List<PhieuNhapKhoChiTiet> chiTietList)
+        {
+            const string sqlPhieu = @"
+                INSERT INTO dbo.phieu_nhap_kho (chi_nhanh_id, ngay_nhap, gio_nhap, nhan_vien_nhap, ghi_chu, trang_thai)
+                VALUES (@chiNhanhId, @ngayNhap, @gioNhap, @nhanVienNhap, @ghiChu, N'ĐÃ LƯU');
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            const string sqlChiTiet = @"
+                INSERT INTO dbo.phieu_nhap_kho_ct (phieu_nhap_id, nl_id, so_luong, don_vi, ghi_chu)
+                VALUES (@phieuNhapId, @nlId, @soLuong, @donVi, @ghiChu);";
+
+            try
+            {
+                // Lưu phiếu nhập kho
+                var phieuParams = new[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@ngayNhap", ngayNhap.Date),
+                    new SqlParameter("@gioNhap", gioNhap),
+                    new SqlParameter("@nhanVienNhap", nhanVienNhap ?? (object)DBNull.Value),
+                    new SqlParameter("@ghiChu", ghiChu ?? (object)DBNull.Value)
+                };
+
+                var phieuNhapId = Convert.ToInt32(_db.ExecuteScalar(sqlPhieu, phieuParams));
+
+                // Lưu chi tiết và cập nhật tồn kho (xuất kho ra bếp)
+                foreach (var ct in chiTietList)
+                {
+                    // Kiểm tra tồn kho trước khi xuất
+                    decimal tonHienTai = GetTonKho(chiNhanhId, ct.NlId);
+                    if (tonHienTai < ct.SoLuong)
+                    {
+                        throw new Exception($"Nguyên liệu (ID: {ct.NlId}) không đủ tồn kho. Hiện còn: {tonHienTai:N3}");
+                    }
+
+                    var ctParams = new[]
+                    {
+                        new SqlParameter("@phieuNhapId", phieuNhapId),
+                        new SqlParameter("@nlId", ct.NlId),
+                        new SqlParameter("@soLuong", ct.SoLuong),
+                        new SqlParameter("@donVi", ct.DonVi ?? ""),
+                        new SqlParameter("@ghiChu", ct.GhiChu ?? (object)DBNull.Value)
+                    };
+
+                    _db.ExecuteNonQuery(sqlChiTiet, ctParams);
+
+                    // Trừ tồn kho
+                    XuatKho(chiNhanhId, ct.NlId, ct.SoLuong);
+                }
+
+                return phieuNhapId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - LuuPhieuNhapKho: {ex.Message}", ex);
+            }
+        }
+
+        public int LuuPhieuTraKho(int chiNhanhId, DateTime ngayTra, TimeSpan gioTra, string nhanVienTra,
+            string ghiChu, List<PhieuTraKhoChiTiet> chiTietList)
+        {
+            const string sqlPhieu = @"
+                INSERT INTO dbo.phieu_tra_kho (chi_nhanh_id, ngay_tra, gio_tra, nhan_vien_tra, ghi_chu, trang_thai)
+                VALUES (@chiNhanhId, @ngayTra, @gioTra, @nhanVienTra, @ghiChu, N'ĐÃ LƯU');
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            const string sqlChiTiet = @"
+                INSERT INTO dbo.phieu_tra_kho_ct (phieu_tra_id, nl_id, so_luong_tra, so_luong_ton, so_luong_con_lai, don_vi, ghi_chu)
+                VALUES (@phieuTraId, @nlId, @soLuongTra, @soLuongTon, @soLuongConLai, @donVi, @ghiChu);";
+
+            try
+            {
+                // Lưu phiếu trả kho
+                var phieuParams = new[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId),
+                    new SqlParameter("@ngayTra", ngayTra.Date),
+                    new SqlParameter("@gioTra", gioTra),
+                    new SqlParameter("@nhanVienTra", nhanVienTra ?? (object)DBNull.Value),
+                    new SqlParameter("@ghiChu", ghiChu ?? (object)DBNull.Value)
+                };
+
+                var phieuTraId = Convert.ToInt32(_db.ExecuteScalar(sqlPhieu, phieuParams));
+
+                // Lưu chi tiết và cộng tồn kho (trả lại kho)
+                foreach (var ct in chiTietList)
+                {
+                    var ctParams = new[]
+                    {
+                        new SqlParameter("@phieuTraId", phieuTraId),
+                        new SqlParameter("@nlId", ct.NlId),
+                        new SqlParameter("@soLuongTra", ct.SoLuongTra),
+                        new SqlParameter("@soLuongTon", ct.SoLuongTon),
+                        new SqlParameter("@soLuongConLai", ct.SoLuongConLai),
+                        new SqlParameter("@donVi", ct.DonVi ?? ""),
+                        new SqlParameter("@ghiChu", ct.GhiChu ?? (object)DBNull.Value)
+                    };
+
+                    _db.ExecuteNonQuery(sqlChiTiet, ctParams);
+
+                    // Cộng tồn kho
+                    NhapKho(chiNhanhId, ct.NlId, ct.SoLuongTra);
+                }
+
+                return phieuTraId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - LuuPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
+        /// Lấy danh sách tồn kho với thông tin đầy đủ
+        public DataTable GetDanhSachTonKho(int? chiNhanhId = null)
+        {
+            var sql = @"
+                SELECT 
+                    ROW_NUMBER() OVER (ORDER BY nl.ten_nl) AS stt,
+                    nl.nl_id,
+                    nl.ma_nl,
+                    nl.ten_nl,
+                    ISNULL(tk.sl_ton, 0) AS sl_ton,
+                    ISNULL(tk.ton_toi_thieu, 0) AS ton_toi_thieu,
+                    CASE 
+                        WHEN ISNULL(tk.sl_ton, 0) = 0 THEN N'Hết hàng'
+                        WHEN ISNULL(tk.sl_ton, 0) <= ISNULL(tk.ton_toi_thieu, 0) THEN N'Tồn thấp'
+                        ELSE N'Đủ tồn'
+                    END AS trang_thai
+                FROM dbo.nguyen_lieu nl
+                LEFT JOIN dbo.ton_kho tk ON tk.nl_id = nl.nl_id 
+                    AND (@chiNhanhId IS NULL OR tk.chi_nhanh_id = @chiNhanhId)
+                ORDER BY nl.ten_nl;";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@chiNhanhId", (object?)chiNhanhId ?? DBNull.Value)
+            };
+
+            return _db.GetDataTable(sql, parameters);
+        }
+
+        /// <summary>
+        /// Cập nhật tồn tối thiểu cho nguyên liệu tại chi nhánh
+        /// </summary>
+        public int CapNhatTonToiThieu(int chiNhanhId, int nlId, decimal tonToiThieu)
+        {
+            const string sql = @"
+                IF EXISTS (SELECT 1 FROM dbo.ton_kho WHERE chi_nhanh_id = @cn AND nl_id = @nl)
+                    UPDATE dbo.ton_kho 
+                    SET ton_toi_thieu = @tonToiThieu 
+                    WHERE chi_nhanh_id = @cn AND nl_id = @nl;
+                ELSE
+                    INSERT INTO dbo.ton_kho (chi_nhanh_id, nl_id, sl_ton, ton_toi_thieu)
+                    VALUES (@cn, @nl, 0, @tonToiThieu);";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@cn", chiNhanhId),
+                new SqlParameter("@nl", nlId),
+                new SqlParameter("@tonToiThieu", tonToiThieu)
+            };
+
+            try
+            {
+                return _db.ExecuteNonQuery(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - CapNhatTonToiThieu: {ex.Message}", ex);
+            }
+        }
+    }
+
+    /// Class hỗ trợ cho chi tiết phiếu nhập kho
+    public class PhieuNhapKhoChiTiet
+    {
+        public int NlId { get; set; }
+        public decimal SoLuong { get; set; }
+        public string DonVi { get; set; }
+        public string GhiChu { get; set; }
+    }
+
+    /// Class hỗ trợ cho chi tiết phiếu trả kho
+    public class PhieuTraKhoChiTiet
+    {
+        public int NlId { get; set; }
+        public decimal SoLuongTra { get; set; }
+        public decimal SoLuongTon { get; set; }
+        public decimal SoLuongConLai { get; set; }
+        public string DonVi { get; set; }
+        public string GhiChu { get; set; }
     }
 }

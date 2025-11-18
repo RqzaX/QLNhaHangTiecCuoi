@@ -49,6 +49,22 @@ namespace DAL
             var p = new[] { new SqlParameter("@tt", trangThai), new SqlParameter("@id", phieuOrderId) };
             _db.ExecuteNonQuery(sql, p);
         }
+
+        // Kiểm tra xem đã có phieu_order đang phục vụ cho bàn này chưa
+        public int? GetActiveOrderIdByBanId(int chiNhanhId, int banId)
+        {
+            string sql = @"SELECT TOP 1 phieu_order_id 
+                          FROM phieu_order 
+                          WHERE chi_nhanh_id = @cn AND ban_id = @ban AND trang_thai = N'ĐANG PHỤC VỤ'
+                          ORDER BY ngay_gio DESC";
+            var p = new[]
+            {
+                new SqlParameter("@cn", chiNhanhId),
+                new SqlParameter("@ban", banId)
+            };
+            var result = _db.ExecuteScalar(sql, p);
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : (int?)null;
+        }
     }
 }
 

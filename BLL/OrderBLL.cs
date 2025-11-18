@@ -28,7 +28,10 @@ namespace BLL
         // Lưu phiếu order và trả về id
         public int SaveOrder(int chiNhanhId, int? banId, string nhanVien, IEnumerable<OrderItemInput> items)
         {
+
             int poId = _orderDal.CreateOrderHead(chiNhanhId, banId, nhanVien);
+
+            // Thêm chi tiết món vào phieu_order
             foreach (var it in items)
             {
                 _orderDal.InsertOrderDetail(poId, it.MonId, it.SoLuong, it.DonGia);

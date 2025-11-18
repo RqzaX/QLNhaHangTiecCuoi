@@ -31,9 +31,7 @@ namespace UI
         private const int SPACING_X = -5;
         private const int SPACING_Y = -5;
         private Guna2Button _btnTatCaSelected;
-        // Giỏ hàng
         private List<OrderItemCard> _cartItems = new List<OrderItemCard>();
-        // Thông tin bàn đã chọn
         private int _selectedBanId = 0;
         private string _selectedSoBan = "";
         private int? _phieuOrderId = null;
@@ -55,11 +53,9 @@ namespace UI
             _kotBLL = new KOTBLL(_dbHelper);
             _orderBLL = new OrderBLL(_dbHelper);
             
-            // Set thông tin bàn và khách hàng
             _selectedSoBan = soBan;
             _selectedBanId = GetBanIdFromSoBan(soBan);
             
-            // Cập nhật UI
             btnChonBan.Text = $"{soBan}    PHỤC VỤ\n👥 {soKhach} khách";
             if (btnChonBan is Guna2Button gb)
             {
@@ -83,14 +79,22 @@ namespace UI
             SetupEventHandlers();
         }
 
+        private bool _eventHandlersSetup = false;
+        
         private void SetupEventHandlers()
         {
+            if (_eventHandlersSetup)
+                return;
+                
             // Tìm nút "Gửi xuống bếp"
             var btnGuiXuongBep = this.Controls.Find("btnGuiXuongBep", true).FirstOrDefault() as Guna2Button;
             if (btnGuiXuongBep != null)
             {
+                btnGuiXuongBep.Click -= GuiDonXuongBep_Click;
                 btnGuiXuongBep.Click += GuiDonXuongBep_Click;
             }
+            
+            _eventHandlersSetup = true;
         }
         private void LoadDanhSachNhomDynamic()
         {
@@ -420,8 +424,15 @@ namespace UI
             }
         }
 
+        private bool _isProcessingOrder = false;
+        
         private void GuiDonXuongBep_Click(object sender, EventArgs e)
         {
+            // Tránh xử lý trùng lặp
+            if (_isProcessingOrder)
+                return;
+                
+            _isProcessingOrder = true;
             try
             {
                 if (_selectedBanId == 0 || string.IsNullOrEmpty(_selectedSoBan))
@@ -465,15 +476,25 @@ namespace UI
                     });
                 }
 
+                var btnGuiXuongBep = this.Controls.Find("btnGuiXuongBep", true).FirstOrDefault() as Guna2Button;
+                if (btnGuiXuongBep != null)
+                {
+                    btnGuiXuongBep.Enabled = false;
+                }
+
                 bool success = _kotBLL.GuiDonXuongBep(_selectedBanId, Session.ChiNhanhId, Session.NguoiDungId, orderItems, "BẾP");
 
                 if (success)
                 {
-                    // Lưu phiếu order vào DB và sinh hóa đơn chờ thanh toán
-                    int poId = _orderBLL.SaveOrder(Session.ChiNhanhId, _selectedBanId, Session.HoTen, forPersist);
-                    _phieuOrderId = poId;
-                    // VAT mặc định 8%
-                    int hdId = _orderBLL.CreateInvoiceFromCart(Session.ChiNhanhId, forPersist, 8m, 0m, 0m, _selectedBanId, _selectedSoBan, Session.HoTen);
+                    string tenNhanVien = Session.HoTen;
+
+                    //if (!_phieuOrderId.HasValue || _phieuOrderId.Value <= 0)
+                    //{  
+                    //    int poId = _orderBLL.SaveOrder(Session.ChiNhanhId, _selectedBanId, tenNhanVien, forPersist);
+                    //    _phieuOrderId = poId;
+                    //}
+
+                    int hdId = _orderBLL.CreateInvoiceFromCart(Session.ChiNhanhId, forPersist, 8m, 0m, 0m, _selectedBanId, _selectedSoBan, tenNhanVien);
 
                     panelGioHang.Controls.Clear();
                     foreach (var item in _cartItems)
@@ -481,6 +502,7 @@ namespace UI
                         item.Dispose();
                     }
                     _cartItems.Clear();
+                    _phieuOrderId = null;
                     UpdateOrderCount();
 
                     GunaToast.Show(this, $"Đã gửi đơn cho {_selectedSoBan} xuống bếp thành công!", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);
@@ -493,6 +515,16 @@ namespace UI
             catch (Exception ex)
             {
                 GunaToast.Show(this, $"Lỗi gửi đơn: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
+            }
+            finally
+            {
+                _isProcessingOrder = false;
+                // Kích hoạt lại button
+                var btnGuiXuongBep = this.Controls.Find("btnGuiXuongBep", true).FirstOrDefault() as Guna2Button;
+                if (btnGuiXuongBep != null)
+                {
+                    btnGuiXuongBep.Enabled = true;
+                }
             }
         }
         private Guna2Button CreateNhomButton(string displayName, string nhomName)

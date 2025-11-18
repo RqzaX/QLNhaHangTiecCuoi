@@ -1317,6 +1317,14 @@ namespace UI
                     }
                 }
 
+                // Tạo hóa đơn cho tiệc cưới ngay sau khi tạo hợp đồng
+                int hoaDonId = _datSanhBLL.TaoHoaDonKhiDaCoc(datSanhId, out errorMessage);
+                if (hoaDonId <= 0)
+                {
+                    MessageBox.Show($"Đã tạo đơn đặt sảnh và hợp đồng thành công!\nTuy nhiên, không thể tạo hóa đơn: {errorMessage}", 
+                        "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
                 // Lưu thanh toán còn lại vào hop_dong_tt nếu checkbox được check
                 //if (cbTienThanhToanConLai != null && cbTienThanhToanConLai.Checked)
                 //{

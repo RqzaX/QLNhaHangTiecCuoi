@@ -153,5 +153,61 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception($"Lỗi BLL - KiemTraTonKhoDu: {ex.Message}", ex);
             }
         }
+
+        /// Lưu phiếu nhập kho
+        public int LuuPhieuNhapKho(int chiNhanhId, DateTime ngayNhap, TimeSpan gioNhap, string nhanVienNhap,
+            string ghiChu, List<PhieuNhapKhoChiTiet> chiTietList)
+        {
+            try
+            {
+                return _dal.LuuPhieuNhapKho(chiNhanhId, ngayNhap, gioNhap, nhanVienNhap, ghiChu, chiTietList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LuuPhieuNhapKho: {ex.Message}", ex);
+            }
+        }
+
+        /// Lưu phiếu trả kho
+        public int LuuPhieuTraKho(int chiNhanhId, DateTime ngayTra, TimeSpan gioTra, string nhanVienTra,
+            string ghiChu, List<PhieuTraKhoChiTiet> chiTietList)
+        {
+            try
+            {
+                return _dal.LuuPhieuTraKho(chiNhanhId, ngayTra, gioTra, nhanVienTra, ghiChu, chiTietList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LuuPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
+        /// Lấy danh sách tồn kho
+        public DataTable LayDanhSachTonKho(int? chiNhanhId = null)
+        {
+            try
+            {
+                return _dal.GetDanhSachTonKho(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayDanhSachTonKho: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật tồn tối thiểu cho nguyên liệu tại chi nhánh
+        /// </summary>
+        public int CapNhatTonToiThieu(int chiNhanhId, int nlId, decimal tonToiThieu)
+        {
+            try
+            {
+                return _dal.CapNhatTonToiThieu(chiNhanhId, nlId, tonToiThieu);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - CapNhatTonToiThieu: {ex.Message}", ex);
+            }
+        }
     }
 }

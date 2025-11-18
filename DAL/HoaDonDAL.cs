@@ -13,7 +13,7 @@ namespace DAL
 
         // Tạo hóa đơn
         public int CreateHoaDon(int chiNhanhId, string loai, decimal vatPercent, decimal phiDv,
-                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue,
+                                decimal giamGia, decimal tongTruocThue, decimal tongSauThue, 
                                 int? khachHangId = null, int? thamChieuId = null,
                                 string? soBanSanh = null, string? tenNguoiBan = null, string? tenNguoiDat = null)
         {
@@ -254,19 +254,72 @@ namespace DAL
         }
 
         // Xử lý thanh toán hóa đơn: cập nhật trạng thái, lưu thanh toán, lưu khuyến mãi
-        public bool ProcessPayment(int hoaDonId, decimal soTien, string hinhThuc, int? kmId = null, int? voucherId = null, decimal? soTienKm = null)
+        public bool ProcessPayment(int hoaDonId, decimal soTien, string hinhThuc, string? thuNgan = null, int? kmId = null, int? voucherId = null, decimal? soTienKm = null)
         {
             try
             {
-                string sqlUpdate = @"UPDATE hoa_don 
-                                     SET trang_thai = N'ĐÃ THANH TOÁN'
-                                     WHERE hoa_don_id = @id AND trang_thai = N'CHỜ TT'";
-                var pUpdate = new[] { new SqlParameter("@id", hoaDonId) };
-                int rowsAffected = _db.ExecuteNonQuery(sqlUpdate, pUpdate);
+                // Kiểm tra hóa đơn có tồn tại không
+                var hoaDon = GetHoaDonById(hoaDonId);
+                if (hoaDon == null)
+                {
+                    return false; 
+                }
+                string trangThaiHienTai = hoaDon["trang_thai"]?.ToString()?.Trim() ?? "";
+                if (trangThaiHienTai == "ĐÃ THANH TOÁN")
+                {
+                    return false; 
+                }
 
+                // Lấy loại hóa đơn để cập nhật đúng cột thu ngân
+                string sqlGetLoai = @"SELECT loai FROM hoa_don WHERE hoa_don_id = @id";
+                var pGetLoai = new[] { new SqlParameter("@id", hoaDonId) };
+                var dtLoai = _db.GetDataTable(sqlGetLoai, pGetLoai);
+                string loaiHoaDon = "";
+                if (dtLoai.Rows.Count > 0 && dtLoai.Rows[0]["loai"] != DBNull.Value)
+                {
+                    loaiHoaDon = dtLoai.Rows[0]["loai"].ToString() ?? "";
+                }
+
+                // Cập nhật trạng thái hóa đơn và thu ngân
+                string sqlUpdate;
+                if (!string.IsNullOrEmpty(thuNgan))
+                {
+                    if (loaiHoaDon == "NHAHANG")
+                    {
+                        sqlUpdate = @"UPDATE hoa_don 
+                                     SET trang_thai = N'ĐÃ THANH TOÁN', ten_nguoi_ban = @thuNgan
+                                     WHERE hoa_don_id = @id AND trang_thai != N'ĐÃ THANH TOÁN'";
+                    }
+                    else if (loaiHoaDon == "TIECCUOI")
+                    {
+                        sqlUpdate = @"UPDATE hoa_don 
+                                     SET trang_thai = N'ĐÃ THANH TOÁN', ten_nguoi_dat = @thuNgan
+                                     WHERE hoa_don_id = @id AND trang_thai != N'ĐÃ THANH TOÁN'";
+                    }
+                    else
+                    {
+                        sqlUpdate = @"UPDATE hoa_don 
+                                     SET trang_thai = N'ĐÃ THANH TOÁN'
+                                     WHERE hoa_don_id = @id AND trang_thai != N'ĐÃ THANH TOÁN'";
+                    }
+                }
+                else
+                {
+                    sqlUpdate = @"UPDATE hoa_don 
+                                     SET trang_thai = N'ĐÃ THANH TOÁN'
+                                 WHERE hoa_don_id = @id AND trang_thai != N'ĐÃ THANH TOÁN'";
+                }
+
+                var pUpdate = new List<SqlParameter> { new SqlParameter("@id", hoaDonId) };
+                if (!string.IsNullOrEmpty(thuNgan) && (loaiHoaDon == "NHAHANG" || loaiHoaDon == "TIECCUOI"))
+                {
+                    pUpdate.Add(new SqlParameter("@thuNgan", thuNgan));
+                }
+                int rowsAffected = _db.ExecuteNonQuery(sqlUpdate, pUpdate.ToArray());
+                
                 if (rowsAffected == 0)
                 {
-                    return false; // Hóa đơn không tồn tại hoặc đã được thanh toán
+                    return false;
                 }
 
                 string sqlPayment = @"INSERT INTO thanh_toan(hoa_don_id, so_tien, ngay_tt, hinh_thuc)
@@ -311,10 +364,10 @@ namespace DAL
                                 throw new Exception("Voucher đã sử dụng hết số lượt cho phép.");
                             }
                             
-                            string sqlUpdateVoucher = @"UPDATE voucher 
-                                                         SET da_dung = da_dung + 1
+                        string sqlUpdateVoucher = @"UPDATE voucher 
+                                                     SET da_dung = da_dung + 1
                                                          WHERE voucher_id = @vid AND (so_lan = 0 OR da_dung < so_lan)";
-                            var pUpdateVoucher = new[] { new SqlParameter("@vid", voucherId.Value) };
+                        var pUpdateVoucher = new[] { new SqlParameter("@vid", voucherId.Value) };
                             int rowsUpdated = _db.ExecuteNonQuery(sqlUpdateVoucher, pUpdateVoucher);
                             
                             if (rowsUpdated == 0)
@@ -325,8 +378,7 @@ namespace DAL
                     }
                 }
 
-                // Cập nhật trạng thái đặt sảnh sang "ĐÃ THANH TOÁN" nếu hóa đơn là tiệc cưới
-                string sqlCheckLoai = @"SELECT loai, tham_chieu_id FROM hoa_don WHERE hoa_don_id = @id";
+                string sqlCheckLoai = @"SELECT loai, tham_chieu_id, tong_sau_thue FROM hoa_don WHERE hoa_don_id = @id";
                 var pCheckLoai = new[] { new SqlParameter("@id", hoaDonId) };
                 var dtCheckLoai = _db.GetDataTable(sqlCheckLoai, pCheckLoai);
                 
@@ -337,19 +389,75 @@ namespace DAL
                     {
                         int hopDongId = Convert.ToInt32(dtCheckLoai.Rows[0]["tham_chieu_id"]);
                         
-                        string sqlGetDatSanh = @"SELECT dat_sanh_id FROM hop_dong WHERE hop_dong_id = @hdId";
-                        var pGetDatSanh = new[] { new SqlParameter("@hdId", hopDongId) };
-                        var dtDatSanh = _db.GetDataTable(sqlGetDatSanh, pGetDatSanh);
-                        
-                        if (dtDatSanh.Rows.Count > 0 && dtDatSanh.Rows[0]["dat_sanh_id"] != DBNull.Value)
+                        // Tính tổng cọc từ hop_dong_coc
+                        string sqlTongCoc = @"SELECT ISNULL(SUM(so_tien), 0) AS tong_coc 
+                                              FROM hop_dong_coc 
+                                              WHERE hop_dong_id = @hdId";
+                        var pTongCoc = new[] { new SqlParameter("@hdId", hopDongId) };
+                        var dtTongCoc = _db.GetDataTable(sqlTongCoc, pTongCoc);
+                        decimal tongCoc = 0;
+                        if (dtTongCoc.Rows.Count > 0 && dtTongCoc.Rows[0][0] != DBNull.Value)
                         {
-                            int datSanhId = Convert.ToInt32(dtDatSanh.Rows[0]["dat_sanh_id"]);
+                            tongCoc = Convert.ToDecimal(dtTongCoc.Rows[0][0]);
+                        }
+                        
+                        // Tính tổng thanh toán từ hop_dong_tt
+                        string sqlTongThanhToan = @"SELECT ISNULL(SUM(so_tien), 0) AS tong_tt 
+                                                     FROM hop_dong_tt 
+                                                     WHERE hop_dong_id = @hdId";
+                        var pTongTT = new[] { new SqlParameter("@hdId", hopDongId) };
+                        var dtTongTT = _db.GetDataTable(sqlTongThanhToan, pTongTT);
+                        decimal tongThanhToan = 0;
+                        if (dtTongTT.Rows.Count > 0 && dtTongTT.Rows[0][0] != DBNull.Value)
+                        {
+                            tongThanhToan = Convert.ToDecimal(dtTongTT.Rows[0][0]);
+                        }
+                        
+                        // Tính tổng số tiền đã thanh toán từ thanh_toan (cho hóa đơn)
+                        string sqlTongDaThanhToan = @"SELECT ISNULL(SUM(so_tien), 0) AS tong_da_tt 
+                                                       FROM thanh_toan 
+                                                       WHERE hoa_don_id = @id";
+                        var pTongDaTT = new[] { new SqlParameter("@id", hoaDonId) };
+                        var dtTongDaTT = _db.GetDataTable(sqlTongDaThanhToan, pTongDaTT);
+                        decimal tongDaThanhToan = 0;
+                        if (dtTongDaTT.Rows.Count > 0 && dtTongDaTT.Rows[0][0] != DBNull.Value)
+                        {
+                            tongDaThanhToan = Convert.ToDecimal(dtTongDaTT.Rows[0][0]);
+                        }
+                        
+                        // Tính tổng giảm giá (nếu có)
+                        string sqlTongGiamGia = @"SELECT ISNULL(SUM(so_tien_km), 0) AS tong_giam_gia 
+                                                  FROM hoa_don_km 
+                                                  WHERE hoa_don_id = @id";
+                        var pGiamGia = new[] { new SqlParameter("@id", hoaDonId) };
+                        var dtGiamGia = _db.GetDataTable(sqlTongGiamGia, pGiamGia);
+                        decimal tongGiamGia = 0;
+                        if (dtGiamGia.Rows.Count > 0 && dtGiamGia.Rows[0][0] != DBNull.Value)
+                        {
+                            tongGiamGia = Convert.ToDecimal(dtGiamGia.Rows[0][0]);
+                        }
+                        
+                        // Tính số tiền còn lại: tong_sau_thue - (tong_coc + tong_thanh_toan + tong_da_thanh_toan) - tong_giam_gia
+                        decimal tongSauThue = Convert.ToDecimal(dtCheckLoai.Rows[0]["tong_sau_thue"]);
+                        decimal tongDaTra = tongCoc + tongThanhToan + tongDaThanhToan;
+                        decimal soTienConLai = tongSauThue - tongDaTra - tongGiamGia;
+                        
+                        if (soTienConLai <= 0)
+                        {
+                            string sqlGetDatSanh = @"SELECT dat_sanh_id FROM hop_dong WHERE hop_dong_id = @hdId";
+                            var pGetDatSanh = new[] { new SqlParameter("@hdId", hopDongId) };
+                            var dtDatSanh = _db.GetDataTable(sqlGetDatSanh, pGetDatSanh);
                             
-                            string sqlUpdateDatSanh = @"UPDATE dat_sanh 
-                                                         SET trang_thai = N'ĐÃ THANH TOÁN'
-                                                         WHERE dat_sanh_id = @dsId";
-                            var pUpdateDatSanh = new[] { new SqlParameter("@dsId", datSanhId) };
-                            _db.ExecuteNonQuery(sqlUpdateDatSanh, pUpdateDatSanh);
+                            if (dtDatSanh.Rows.Count > 0 && dtDatSanh.Rows[0]["dat_sanh_id"] != DBNull.Value)
+                            {
+                                int datSanhId = Convert.ToInt32(dtDatSanh.Rows[0]["dat_sanh_id"]);
+                                
+                                string sqlUpdateDatSanh = @"UPDATE dat_sanh 
+                                                             SET trang_thai = N'ĐÃ THANH TOÁN'
+                                                             WHERE dat_sanh_id = @dsId";
+                                var pUpdateDatSanh = new[] { new SqlParameter("@dsId", datSanhId) };
+                                _db.ExecuteNonQuery(sqlUpdateDatSanh, pUpdateDatSanh);
+                            }
                         }
                     }
                 }

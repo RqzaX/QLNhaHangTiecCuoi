@@ -340,10 +340,19 @@ CREATE TABLE dbo.ton_kho(
   chi_nhanh_id INT NOT NULL,
   nl_id        INT NOT NULL,
   sl_ton       DECIMAL(18,3) NOT NULL DEFAULT 0,
+  ton_toi_thieu DECIMAL(18,3) NOT NULL DEFAULT 0,
   PRIMARY KEY (chi_nhanh_id, nl_id),
   FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (nl_id)        REFERENCES dbo.nguyen_lieu(nl_id)
 );
+ELSE
+BEGIN
+  -- Thêm cột ton_toi_thieu nếu chưa có
+  IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.ton_kho') AND name = 'ton_toi_thieu')
+  BEGIN
+    ALTER TABLE dbo.ton_kho ADD ton_toi_thieu DECIMAL(18,3) NOT NULL DEFAULT 1;
+  END
+END
 
 -- Khuyến mãi: CTKM giảm theo hóa đơn + voucher (đơn giản)
 IF OBJECT_ID('dbo.chuong_trinh_km','U') IS NULL
@@ -386,8 +395,17 @@ IF OBJECT_ID('dbo.vai_tro','U') IS NULL
 CREATE TABLE dbo.vai_tro(
   vai_tro_id INT IDENTITY(1,1) PRIMARY KEY,
   ma         NVARCHAR(40) NOT NULL UNIQUE,
-  ten        NVARCHAR(100) NOT NULL
+  ten        NVARCHAR(100) NOT NULL,
+  mo_ta      NVARCHAR(500) NULL
 );
+
+-- Bổ sung cột mô tả vào bảng vai_tro nếu bảng đã tồn tại
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'vai_tro')
+  AND NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.vai_tro') AND name = 'mo_ta')
+BEGIN
+  ALTER TABLE dbo.vai_tro ADD mo_ta NVARCHAR(500) NULL;
+END
+GO
 
 IF OBJECT_ID('dbo.nguoi_dung','U') IS NULL
 CREATE TABLE dbo.nguoi_dung(
@@ -635,29 +653,6 @@ IF @cn_tt2 IS NOT NULL AND @nd_letan01_2 IS NOT NULL
   INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
   VALUES (@nd_letan01_2, @cn_tt2);
 
-  PRINT N'=== DANH SÁCH VAI TRÒ ===';
-SELECT vai_tro_id, ma, ten FROM dbo.vai_tro ORDER BY vai_tro_id;
-
-PRINT N'=== DANH SÁCH NGƯỜI DÙNG ===';
-SELECT nguoi_dung_id, tai_khoan, ho_ten, 
-       CASE WHEN hoat_dong = 1 THEN N'Hoạt động' ELSE N'Không hoạt động' END AS trang_thai
-FROM dbo.nguoi_dung 
-ORDER BY nguoi_dung_id;
-
-PRINT N'=== NGƯỜI DÙNG VÀ VAI TRÒ ===';
-SELECT nd.tai_khoan, nd.ho_ten, vt.ma AS ma_vai_tro, vt.ten AS ten_vai_tro
-FROM dbo.nguoi_dung nd
-INNER JOIN dbo.nguoi_dung_vai_tro ndvt ON nd.nguoi_dung_id = ndvt.nguoi_dung_id
-INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
-ORDER BY nd.tai_khoan, vt.ma;
-
-PRINT N'=== NGƯỜI DÙNG VÀ CHI NHÁNH ===';
-SELECT nd.tai_khoan, nd.ho_ten, cn.ten AS ten_chi_nhanh, cn.dia_chi
-FROM dbo.nguoi_dung nd
-INNER JOIN dbo.nguoi_dung_chi_nhanh ndcn ON nd.nguoi_dung_id = ndcn.nguoi_dung_id
-INNER JOIN dbo.chi_nhanh cn ON ndcn.chi_nhanh_id = cn.chi_nhanh_id
-ORDER BY nd.tai_khoan, cn.ten;
-
 /* ========================
    3) PHÂN CA CHO NHÂN VIÊN
    ======================== */
@@ -741,3 +736,219 @@ INNER JOIN dbo.chi_nhanh cn ON ndc.chi_nhanh_id = cn.chi_nhanh_id
 INNER JOIN dbo.ca c ON ndc.ca_id = c.ca_id
 ORDER BY nd.ho_ten, c.ten_ca;
 select * from nguoi_dung_ca
+=======
+GO
+
+/* ======================================================================
+   6) QUẢN LÝ KHO - NHẬP KHO VÀ TRẢ KHO NGUYÊN LIỆU
+   ====================================================================== */
+
+-- Phiếu nhập kho (Nhập nguyên liệu đầu giờ làm việc)
+IF OBJECT_ID('dbo.phieu_nhap_kho','U') IS NULL
+CREATE TABLE dbo.phieu_nhap_kho(
+  phieu_nhap_id INT IDENTITY(1,1) PRIMARY KEY,
+  chi_nhanh_id  INT NOT NULL,
+  ngay_nhap     DATE NOT NULL DEFAULT CAST(GETDATE() AS DATE),
+  gio_nhap      TIME(0) NOT NULL DEFAULT CAST(GETDATE() AS TIME),
+  nhan_vien_nhap NVARCHAR(100) NOT NULL, -- Tên nhân viên nhập kho
+  ghi_chu       NVARCHAR(max) NULL,
+  trang_thai    NVARCHAR(20) NOT NULL DEFAULT N'NHÁP'
+               CHECK (trang_thai IN (N'NHÁP',N'ĐÃ LƯU',N'ĐÃ HỦY')),
+  ngay_tao      DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+  nguoi_tao     NVARCHAR(100) NULL,
+  FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id)
+);
+
+-- Chi tiết phiếu nhập kho
+IF OBJECT_ID('dbo.phieu_nhap_kho_ct','U') IS NULL
+CREATE TABLE dbo.phieu_nhap_kho_ct(
+  ct_nhap_id    INT IDENTITY(1,1) PRIMARY KEY,
+  phieu_nhap_id INT NOT NULL,
+  nl_id         INT NOT NULL,
+  so_luong      DECIMAL(18,3) NOT NULL CHECK (so_luong > 0),
+  don_vi        NVARCHAR(30) NOT NULL, -- Đơn vị tính
+  ghi_chu       NVARCHAR(max) NULL,
+  FOREIGN KEY (phieu_nhap_id) REFERENCES dbo.phieu_nhap_kho(phieu_nhap_id) ON DELETE CASCADE,
+  FOREIGN KEY (nl_id)         REFERENCES dbo.nguyen_lieu(nl_id)
+);
+
+-- Phiếu trả kho (Trả nguyên liệu cuối ngày)
+IF OBJECT_ID('dbo.phieu_tra_kho','U') IS NULL
+CREATE TABLE dbo.phieu_tra_kho(
+  phieu_tra_id  INT IDENTITY(1,1) PRIMARY KEY,
+  chi_nhanh_id  INT NOT NULL,
+  ngay_tra      DATE NOT NULL DEFAULT CAST(GETDATE() AS DATE),
+  gio_tra       TIME(0) NOT NULL DEFAULT CAST(GETDATE() AS TIME),
+  nhan_vien_tra NVARCHAR(100) NOT NULL, -- Tên nhân viên trả kho
+  ghi_chu       NVARCHAR(max) NULL,
+  trang_thai    NVARCHAR(20) NOT NULL DEFAULT N'NHÁP'
+               CHECK (trang_thai IN (N'NHÁP',N'ĐÃ LƯU',N'ĐÃ HỦY')),
+  ngay_tao      DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+  nguoi_tao     NVARCHAR(100) NULL,
+  FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id)
+);
+
+-- Chi tiết phiếu trả kho
+IF OBJECT_ID('dbo.phieu_tra_kho_ct','U') IS NULL
+CREATE TABLE dbo.phieu_tra_kho_ct(
+  ct_tra_id     INT IDENTITY(1,1) PRIMARY KEY,
+  phieu_tra_id  INT NOT NULL,
+  nl_id         INT NOT NULL,
+  so_luong_tra  DECIMAL(18,3) NOT NULL CHECK (so_luong_tra > 0),
+  so_luong_ton  DECIMAL(18,3) NOT NULL DEFAULT 0, -- Tồn kho trước khi trả
+  so_luong_con_lai DECIMAL(18,3) NOT NULL DEFAULT 0, -- Còn lại sau khi trả
+  don_vi        NVARCHAR(30) NOT NULL, -- Đơn vị tính
+  ghi_chu       NVARCHAR(max) NULL,
+  FOREIGN KEY (phieu_tra_id) REFERENCES dbo.phieu_tra_kho(phieu_tra_id) ON DELETE CASCADE,
+  FOREIGN KEY (nl_id)        REFERENCES dbo.nguyen_lieu(nl_id)
+);
+
+-- Indexes cho các bảng kho
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_phieu_nhap_kho' AND object_id=OBJECT_ID('dbo.phieu_nhap_kho'))
+  CREATE INDEX IX_phieu_nhap_kho ON dbo.phieu_nhap_kho(chi_nhanh_id, ngay_nhap, trang_thai);
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_phieu_tra_kho' AND object_id=OBJECT_ID('dbo.phieu_tra_kho'))
+  CREATE INDEX IX_phieu_tra_kho ON dbo.phieu_tra_kho(chi_nhanh_id, ngay_tra, trang_thai);
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_phieu_nhap_kho_ct' AND object_id=OBJECT_ID('dbo.phieu_nhap_kho_ct'))
+  CREATE INDEX IX_phieu_nhap_kho_ct ON dbo.phieu_nhap_kho_ct(phieu_nhap_id, nl_id);
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_phieu_tra_kho_ct' AND object_id=OBJECT_ID('dbo.phieu_tra_kho_ct'))
+  CREATE INDEX IX_phieu_tra_kho_ct ON dbo.phieu_tra_kho_ct(phieu_tra_id, nl_id);
+GO
+
+/* ======================================================================
+   7) TRIGGER TỰ ĐỘNG CẬP NHẬT TỒN KHO
+   ====================================================================== */
+
+-- Trigger cập nhật tồn kho khi lưu phiếu nhập kho
+IF OBJECT_ID('dbo.TR_PhieuNhapKho_UpdateTonKho', 'TR') IS NOT NULL
+    DROP TRIGGER dbo.TR_PhieuNhapKho_UpdateTonKho;
+GO
+
+CREATE TRIGGER dbo.TR_PhieuNhapKho_UpdateTonKho
+ON dbo.phieu_nhap_kho
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Chỉ cập nhật khi trạng thái chuyển từ NHÁP sang ĐÃ LƯU
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN deleted d ON i.phieu_nhap_id = d.phieu_nhap_id
+        WHERE i.trang_thai = N'ĐÃ LƯU' AND d.trang_thai = N'NHÁP'
+    )
+    BEGIN
+        -- Cập nhật tồn kho: tăng số lượng
+        MERGE dbo.ton_kho AS target
+        USING (
+            SELECT 
+                i.chi_nhanh_id,
+                ct.nl_id,
+                SUM(ct.so_luong) AS so_luong_nhap
+            FROM inserted i
+            INNER JOIN dbo.phieu_nhap_kho_ct ct ON i.phieu_nhap_id = ct.phieu_nhap_id
+            WHERE i.trang_thai = N'ĐÃ LƯU'
+            GROUP BY i.chi_nhanh_id, ct.nl_id
+        ) AS source (chi_nhanh_id, nl_id, so_luong_nhap)
+        ON target.chi_nhanh_id = source.chi_nhanh_id 
+           AND target.nl_id = source.nl_id
+        WHEN MATCHED THEN
+            UPDATE SET sl_ton = sl_ton + source.so_luong_nhap
+        WHEN NOT MATCHED THEN
+            INSERT (chi_nhanh_id, nl_id, sl_ton)
+            VALUES (source.chi_nhanh_id, source.nl_id, source.so_luong_nhap);
+    END
+    
+    -- Nếu hủy phiếu (từ ĐÃ LƯU về ĐÃ HỦY), giảm tồn kho
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN deleted d ON i.phieu_nhap_id = d.phieu_nhap_id
+        WHERE i.trang_thai = N'ĐÃ HỦY' AND d.trang_thai = N'ĐÃ LƯU'
+    )
+    BEGIN
+        UPDATE tk
+        SET tk.sl_ton = tk.sl_ton - ct.so_luong
+        FROM dbo.ton_kho tk
+        INNER JOIN (
+            SELECT 
+                i.chi_nhanh_id,
+                ct.nl_id,
+                ct.so_luong
+            FROM inserted i
+            INNER JOIN dbo.phieu_nhap_kho_ct ct ON i.phieu_nhap_id = ct.phieu_nhap_id
+            WHERE i.trang_thai = N'ĐÃ HỦY'
+        ) AS ct ON tk.chi_nhanh_id = ct.chi_nhanh_id AND tk.nl_id = ct.nl_id
+        WHERE tk.sl_ton >= ct.so_luong; -- Đảm bảo tồn kho không âm
+    END
+END;
+GO
+
+-- Trigger cập nhật tồn kho khi lưu phiếu trả kho
+IF OBJECT_ID('dbo.TR_PhieuTraKho_UpdateTonKho', 'TR') IS NOT NULL
+    DROP TRIGGER dbo.TR_PhieuTraKho_UpdateTonKho;
+GO
+
+CREATE TRIGGER dbo.TR_PhieuTraKho_UpdateTonKho
+ON dbo.phieu_tra_kho
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Chỉ cập nhật khi trạng thái chuyển từ NHÁP sang ĐÃ LƯU
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN deleted d ON i.phieu_tra_id = d.phieu_tra_id
+        WHERE i.trang_thai = N'ĐÃ LƯU' AND d.trang_thai = N'NHÁP'
+    )
+    BEGIN
+        -- Cập nhật tồn kho: TĂNG số lượng (trả nguyên liệu từ bếp về kho)
+        MERGE dbo.ton_kho AS target
+        USING (
+            SELECT 
+                i.chi_nhanh_id,
+                ct.nl_id,
+                SUM(ct.so_luong_tra) AS so_luong_tra
+            FROM inserted i
+            INNER JOIN dbo.phieu_tra_kho_ct ct ON i.phieu_tra_id = ct.phieu_tra_id
+            WHERE i.trang_thai = N'ĐÃ LƯU'
+            GROUP BY i.chi_nhanh_id, ct.nl_id
+        ) AS source (chi_nhanh_id, nl_id, so_luong_tra)
+        ON target.chi_nhanh_id = source.chi_nhanh_id 
+           AND target.nl_id = source.nl_id
+        WHEN MATCHED THEN
+            UPDATE SET sl_ton = sl_ton + source.so_luong_tra
+        WHEN NOT MATCHED THEN
+            INSERT (chi_nhanh_id, nl_id, sl_ton)
+            VALUES (source.chi_nhanh_id, source.nl_id, source.so_luong_tra);
+    END
+    
+    -- Nếu hủy phiếu (từ ĐÃ LƯU về ĐÃ HỦY), giảm lại tồn kho
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN deleted d ON i.phieu_tra_id = d.phieu_tra_id
+        WHERE i.trang_thai = N'ĐÃ HỦY' AND d.trang_thai = N'ĐÃ LƯU'
+    )
+    BEGIN
+        UPDATE tk
+        SET tk.sl_ton = tk.sl_ton - ct.so_luong_tra
+        FROM dbo.ton_kho tk
+        INNER JOIN (
+            SELECT 
+                i.chi_nhanh_id,
+                ct.nl_id,
+                ct.so_luong_tra
+            FROM inserted i
+            INNER JOIN dbo.phieu_tra_kho_ct ct ON i.phieu_tra_id = ct.phieu_tra_id
+            WHERE i.trang_thai = N'ĐÃ HỦY'
+        ) AS ct ON tk.chi_nhanh_id = ct.chi_nhanh_id AND tk.nl_id = ct.nl_id
+        WHERE tk.sl_ton >= ct.so_luong_tra; -- Đảm bảo tồn kho không âm
+    END
+END;
+GO

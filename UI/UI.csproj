@@ -36,6 +36,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="Tulpep.NotificationWindow" Version="1.1.38" />
     <PackageReference Include="WinFormAnimation" Version="1.6.0.4" />
+    <PackageReference Include="CrystalReports.Engine" Version="13.0.4000" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -54,6 +55,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\rpt_ChiTietMonAn.rpt">
+      <LogicalName>UI.Reports.rpt_ChiTietMonAn.rpt</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

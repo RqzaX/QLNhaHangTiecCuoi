@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BLL;
 using QLNhaHangTiecCuoi.Share;
+using UI.Common;
 using static UI.Controls.GunaToast;
 
 namespace UI.Controls
@@ -458,6 +459,7 @@ namespace UI.Controls
                     totalAmount,
                     hinhThuc,
                     out string errorMessage,
+                    Session.HoTen,
                     _kmId,
                     _voucherId,
                     discountValue > 0 ? discountValue : null
@@ -473,7 +475,6 @@ namespace UI.Controls
                     }
 
                     GunaToast.Show(ownerForm, $"Thanh toán thành công! Tổng tiền: {FormatCurrency(totalAmount)}", ToastType.Success);
-                    // Trigger event để form cha refresh danh sách
                     PaymentCompleted?.Invoke(this, EventArgs.Empty);
                 }
                 else

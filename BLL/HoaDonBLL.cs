@@ -30,12 +30,12 @@ namespace BLL
             return _dal.GetPaidInvoicesHistory(chiNhanhId, fromDate, toDate, phuongThuc, top);
         }
 
-        public bool ProcessPayment(int hoaDonId, decimal soTien, string hinhThuc, out string errorMessage, int? kmId = null, int? voucherId = null, decimal? soTienKm = null)
+        public bool ProcessPayment(int hoaDonId, decimal soTien, string hinhThuc, out string errorMessage, string? thuNgan = null, int? kmId = null, int? voucherId = null, decimal? soTienKm = null)
         {
             errorMessage = string.Empty;
             try
             {
-                return _dal.ProcessPayment(hoaDonId, soTien, hinhThuc, kmId, voucherId, soTienKm);
+                return _dal.ProcessPayment(hoaDonId, soTien, hinhThuc, thuNgan, kmId, voucherId, soTienKm);
             }
             catch (Exception ex)
             {
@@ -145,7 +145,7 @@ namespace BLL
                 string loai = hoaDon["loai"]?.ToString() ?? "";
                 if (loai != "TIECCUOI")
                 {
-                    return true; // Không cần xử lý cho hóa đơn nhà hàng
+                    return true;
                 }
 
                 string trangThaiHoaDon = hoaDon["trang_thai"]?.ToString() ?? "";
@@ -177,7 +177,6 @@ namespace BLL
                     string trangThaiDatSanh = datSanhInfo["trang_thai"]?.ToString() ?? "";
                     if (trangThaiDatSanh == "ĐÃ THANH TOÁN")
                     {
-                        // Cập nhật trạng thái hóa đơn sang "ĐÃ THANH TOÁN"
                         return _dal.CapNhatTrangThaiHoaDon(hoaDonId, "ĐÃ THANH TOÁN");
                     }
                 }
@@ -186,7 +185,6 @@ namespace BLL
                 decimal soTienConLai = LaySoTienConLai(hoaDonId, out string error);
                 if (soTienConLai <= 0)
                 {
-                    // Cập nhật trạng thái hóa đơn sang "ĐÃ THANH TOÁN"
                     return _dal.CapNhatTrangThaiHoaDon(hoaDonId, "ĐÃ THANH TOÁN");
                 }
 

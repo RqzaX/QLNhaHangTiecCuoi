@@ -28,38 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBep_Bar));
             VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
             VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBep_Bar));
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             roundedPanel4 = new UI.Controls.RoundedPanel();
+            pictureBox4 = new PictureBox();
             lbThoiGianTB = new Label();
             label10 = new Label();
             roundedPanel3 = new UI.Controls.RoundedPanel();
+            pictureBox3 = new PictureBox();
             lbSanSang = new Label();
             label8 = new Label();
             roundedPanel2 = new UI.Controls.RoundedPanel();
+            pictureBox2 = new PictureBox();
             lbDangLam = new Label();
             label6 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
+            pictureBox1 = new PictureBox();
             lbChoLam = new Label();
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             panelDanhSach = new Panel();
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
-            pictureBox3 = new PictureBox();
-            pictureBox4 = new PictureBox();
+            btnNhapTraNL = new Guna.UI2.WinForms.Guna2Button();
             roundedPanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             roundedPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             roundedPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             roundedPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             SuspendLayout();
             // 
             // roundedPanel4
@@ -74,6 +77,16 @@
             roundedPanel4.Padding = new Padding(12);
             roundedPanel4.Size = new Size(243, 125);
             roundedPanel4.TabIndex = 19;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
+            pictureBox4.Location = new Point(144, 15);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new Size(84, 82);
+            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox4.TabIndex = 22;
+            pictureBox4.TabStop = false;
             // 
             // lbThoiGianTB
             // 
@@ -109,6 +122,16 @@
             roundedPanel3.Size = new Size(243, 125);
             roundedPanel3.TabIndex = 20;
             // 
+            // pictureBox3
+            // 
+            pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
+            pictureBox3.Location = new Point(144, 15);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(84, 82);
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox3.TabIndex = 20;
+            pictureBox3.TabStop = false;
+            // 
             // lbSanSang
             // 
             lbSanSang.AutoSize = true;
@@ -143,6 +166,16 @@
             roundedPanel2.Size = new Size(243, 125);
             roundedPanel2.TabIndex = 21;
             // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(144, 15);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(84, 82);
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 19;
+            pictureBox2.TabStop = false;
+            // 
             // lbDangLam
             // 
             lbDangLam.AutoSize = true;
@@ -176,6 +209,16 @@
             roundedPanel1.Padding = new Padding(12);
             roundedPanel1.Size = new Size(243, 125);
             roundedPanel1.TabIndex = 18;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(144, 15);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(84, 82);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 18;
+            pictureBox1.TabStop = false;
             // 
             // lbChoLam
             // 
@@ -221,6 +264,8 @@
             // segmentedPill1
             // 
             segmentedPill1.BackColor = Color.Transparent;
+            segmentedPill1.ContainerPadding = new Padding(3);
+            segmentedPill1.CornerRadius = 20;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             pillItem1.Text = "Chờ làm (0)";
             pillItem2.Text = "Đang làm (0)";
@@ -230,7 +275,7 @@
             segmentedPill1.Items.Add(pillItem3);
             segmentedPill1.Location = new Point(12, 213);
             segmentedPill1.Name = "segmentedPill1";
-            segmentedPill1.Size = new Size(373, 44);
+            segmentedPill1.Size = new Size(357, 44);
             segmentedPill1.TabIndex = 22;
             segmentedPill1.Text = "segmentedPill1";
             // 
@@ -242,51 +287,37 @@
             panelDanhSach.Size = new Size(1018, 408);
             panelDanhSach.TabIndex = 23;
             // 
-            // pictureBox1
+            // btnNhapTraNL
             // 
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(144, 15);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(84, 82);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 18;
-            pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(144, 15);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(84, 82);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 19;
-            pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(144, 15);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(84, 82);
-            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox3.TabIndex = 20;
-            pictureBox3.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(144, 15);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(84, 82);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 22;
-            pictureBox4.TabStop = false;
+            btnNhapTraNL.Animated = true;
+            btnNhapTraNL.AnimatedGIF = true;
+            btnNhapTraNL.BorderColor = Color.LimeGreen;
+            btnNhapTraNL.BorderRadius = 20;
+            btnNhapTraNL.BorderThickness = 1;
+            btnNhapTraNL.CustomizableEdges = customizableEdges1;
+            btnNhapTraNL.DisabledState.BorderColor = Color.DarkGray;
+            btnNhapTraNL.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnNhapTraNL.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnNhapTraNL.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnNhapTraNL.FillColor = Color.White;
+            btnNhapTraNL.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnNhapTraNL.ForeColor = Color.Black;
+            btnNhapTraNL.Image = (Image)resources.GetObject("btnNhapTraNL.Image");
+            btnNhapTraNL.ImageSize = new Size(35, 35);
+            btnNhapTraNL.Location = new Point(749, 12);
+            btnNhapTraNL.Margin = new Padding(3, 2, 3, 2);
+            btnNhapTraNL.Name = "btnNhapTraNL";
+            btnNhapTraNL.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnNhapTraNL.Size = new Size(253, 42);
+            btnNhapTraNL.TabIndex = 24;
+            btnNhapTraNL.Text = "Nhập/Trả nguyên liệu";
             // 
             // FrmBep_Bar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1041, 675);
+            Controls.Add(btnNhapTraNL);
             Controls.Add(panelDanhSach);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
@@ -300,16 +331,16 @@
             Text = "FrmBep_Bar";
             roundedPanel4.ResumeLayout(false);
             roundedPanel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             roundedPanel3.ResumeLayout(false);
             roundedPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             roundedPanel2.ResumeLayout(false);
             roundedPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             roundedPanel1.ResumeLayout(false);
             roundedPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -336,5 +367,6 @@
         private PictureBox pictureBox4;
         private PictureBox pictureBox3;
         private PictureBox pictureBox2;
+        private Guna.UI2.WinForms.Guna2Button btnNhapTraNL;
     }
 }

@@ -27,6 +27,7 @@ namespace UI
         private List<KOTTicket> _kotTickets = new List<KOTTicket>();
         private KOTStatus _currentStatus = KOTStatus.Pending;
         private Timer _autoRefreshTimer;
+        private bool _isLoading = false;
 
         public enum KOTStatus
         {
@@ -66,6 +67,7 @@ namespace UI
                 _autoRefreshTimer?.Stop();
                 _autoRefreshTimer?.Dispose();
             };
+            btnNhapTraNL.Click += BtnNhapNL_Click;
         }
 
         private void FrmBep_Bar_Load(object sender, EventArgs e)
@@ -93,40 +95,45 @@ namespace UI
         {
             segmentedPill1.SelectedIndexChanged += SegmentedPill1_SelectedIndexChanged;
             
-            // Auto-refresh timer: refresh mỗi 5 giây khi form đang visible
-            _autoRefreshTimer = new Timer { Interval = 5000 }; // 5 giây
+            _autoRefreshTimer = new Timer { Interval = 5000 };
             _autoRefreshTimer.Tick += (s, e) =>
             {
-                if (this.Visible && this.Parent != null && this.Parent.Visible)
+                if (this.Visible && this.Parent != null && this.Parent.Visible && !_isLoading)
                 {
                     RefreshData();
                 }
             };
-            _autoRefreshTimer.Start(); // Bắt đầu timer ngay sau khi load
+            var delayTimer = new Timer { Interval = 1000 };
+            delayTimer.Tick += (s, e) =>
+            {
+                delayTimer.Stop();
+                delayTimer.Dispose();
+                _autoRefreshTimer.Start();
+            };
+            delayTimer.Start();
         }
         
-        /// <summary>
-        /// Implement IFormRefreshable - Refresh dữ liệu khi form được chọn lại
-        /// </summary>
         public void RefreshData()
         {
             try
             {
-                // Chỉ refresh nếu form đang visible để tránh refresh không cần thiết
+                if (_isLoading)
+                    return;
+                    
                 if (this.Visible && this.Parent != null)
                 {
                     LoadKOTTickets();
                 }
             }
-            catch (Exception ex)
-            {
-                // Silent fail để tránh spam error
-                System.Diagnostics.Debug.WriteLine($"FrmBep_Bar RefreshData error: {ex.Message}");
-            }
+            catch (Exception ex){ }
         }
 
         private void LoadKOTTickets()
         {
+            if (_isLoading)
+                return;
+                
+            _isLoading = true;
             try
             {
                 if (!TestDatabaseConnection())
@@ -155,6 +162,10 @@ namespace UI
                 DisplayKOTTickets();
                 UpdateStatistics();
             }
+            finally
+            {
+                _isLoading = false;
+            }
         }
 
         private void ProcessKOTData(DataTable dt)
@@ -168,7 +179,7 @@ namespace UI
                     var trangThai = row["trang_thai"]?.ToString() ?? "";
                     
                     var trangThaiUpper = trangThai.ToUpper().Trim();
-                    if (trangThaiUpper == "ĐÃ ĐÓNG" || trangThaiUpper == "DA DONG" || trangThaiUpper == "ĐÃĐÓNG")
+                    if (trangThaiUpper == "ĐÃ ĐÓNG")
                     {
                         continue; // Không thêm vào danh sách
                     }
@@ -326,7 +337,7 @@ namespace UI
             int totalHeight = baseHeight + itemsHeight + notesHeight;
             return Math.Max(minHeight, totalHeight);
         }
-
+        // Tạo card KOT
         private KOTTicketCard CreateKOTCard(KOTTicket kot)
         {
             var card = new KOTTicketCard
@@ -337,7 +348,7 @@ namespace UI
                 Notes = kot.Notes,
                 CardBackColor = Color.White,
                 CornerRadius = 18,
-                CardPadding = new Padding(18, 16, 18, 16),
+                CardPadding = new Padding(8, 6, 8, 6),
                 BorderColor = kot.IsPriority ? Color.Red : Color.FromArgb(225, 229, 234),
                 ButtonColor = Color.FromArgb(12, 15, 28),
                 ButtonHoverColor = Color.FromArgb(20, 24, 45),
@@ -432,7 +443,7 @@ namespace UI
                 GunaToast.Show(this, $"Lỗi in: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
             }
         }
-
+        
         private void StartCooking(int kotId)
         {
             try
@@ -544,6 +555,19 @@ namespace UI
 
             var totalMinutes = completedTickets.Sum(k => (DateTime.Now - k.OrderTime).TotalMinutes);
             return (int)(totalMinutes / completedTickets.Count);
+        }
+
+        private void BtnNhapNL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frmNhapTraNL = new Frm_NhapTraNguyenLieu();
+                frmNhapTraNL.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                GunaToast.Show(this, $"Lỗi mở form nhập/trả nguyên liệu: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
+            }
         }
     }
 }
