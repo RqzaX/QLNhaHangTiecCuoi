@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Forms;
 using UI.Common;
 using UI.Controls;
 using Guna.UI2.WinForms;
+using System.ComponentModel.Design;
 
 namespace UI
 {
@@ -28,16 +30,31 @@ namespace UI
         public Frm_NhapTraNguyenLieu()
         {
             InitializeComponent();
+            
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
+                return;
+            }
+            
             _dbHelper = new DatabaseHelper();
             _nguyenLieuBLL = new NguyenLieuBLL(_dbHelper);
             _chiNhanhId = Session.ChiNhanhId > 0 ? Session.ChiNhanhId : 1;
 
             this.Load += Frm_NhapTraNguyenLieu_Load;
             segmentedPill1.SelectedIndexChanged += SegmentedPill1_SelectedIndexChanged;
+            
+            // Tắt separator/dấu gạch ngang giữa các tab
+            try
+            {
+                var showSeparatorProp = segmentedPill1.GetType().GetProperty("ShowSeparator");
+                if (showSeparatorProp != null)
+                {
+                    showSeparatorProp.SetValue(segmentedPill1, false);
+                }
+            }
+            catch { }
             btnThemDongNhap.Click += btnThemDongNhap_Click;
             btnThemDongTra.Click += btnThemDongTra_Click;
-            btnHuyNhap.Click += btnHuyNhap_Click;
-            btnHuyTra.Click += btnHuyTra_Click;
             btnLuuPhieuNhap.Click += btnLuuPhieuNhap_Click;
             btnLuuPhieuTra.Click += btnLuuPhieuTra_Click;
             dgvChiTietNhap.CellClick += dgvChiTietNhap_CellClick;
@@ -45,6 +62,8 @@ namespace UI
             dgvChiTietNhap.CellEndEdit += dgvChiTietNhap_CellEndEdit;
             dgvChiTietNhap.CellValueChanged += dgvChiTietNhap_CellValueChanged;
             dgvChiTietNhap.DataError += dgvChiTietNhap_DataError;
+            dgvChiTietNhap.EditingControlShowing += dgvChiTietNhap_EditingControlShowing;
+            dgvChiTietNhap.CellValidating += dgvChiTietNhap_CellValidating;
             dgvChiTietTra.CellClick += dgvChiTietTra_CellClick;
             dgvChiTietTra.CellBeginEdit += dgvChiTietTra_CellBeginEdit;
             dgvChiTietTra.CellEndEdit += dgvChiTietTra_CellEndEdit;
@@ -52,6 +71,12 @@ namespace UI
             dgvChiTietTra.DataError += dgvChiTietTra_DataError;
             txtSearchTonKho.TextChanged += txtSearchTonKho_TextChanged;
             dgvTonKho.CellEndEdit += dgvTonKho_CellEndEdit;
+            txtSearchLichSu.TextChanged += txtSearchLichSu_TextChanged;
+            dgvLichSu.CellDoubleClick += dgvLichSu_CellDoubleClick;
+            dgvLichSu.CellFormatting += dgvLichSu_CellFormatting;
+            cmbLoaiPhieu.SelectedIndexChanged += cmbLoaiPhieu_SelectedIndexChanged;
+            dtpTuNgay.ValueChanged += dtpTuNgay_ValueChanged;
+            dtpDenNgay.ValueChanged += dtpDenNgay_ValueChanged;
         }
 
         private void Frm_NhapTraNguyenLieu_Load(object sender, EventArgs e)
@@ -62,14 +87,18 @@ namespace UI
             panelNhapKho.Visible = true;
             panelTraKho.Visible = false;
             panelTonKho.Visible = false;
+            panelLichSu.Visible = false;
             
             LoadNguyenLieu();
+            
+            cmbLoaiPhieu.SelectedIndex = 0;
             
             // Refresh lại để đảm bảo combobox hiển thị dữ liệu
             this.BeginInvoke(new Action(() =>
             {
                 PopulateComboBoxColumns();
             }));
+            SetupSegmentedPill();
         }
 
         private void InitializeForm()
@@ -82,6 +111,45 @@ namespace UI
             SetupDataGridViewNhap();
             SetupDataGridViewTra();
             SetupDataGridViewTonKho();
+        }
+
+        private void SetupSegmentedPill()
+        {
+            try
+            {
+                var type = segmentedPill1.GetType();
+                
+                var showSeparatorProp = type.GetProperty("ShowSeparator");
+                if (showSeparatorProp != null && showSeparatorProp.CanWrite)
+                {
+                    showSeparatorProp.SetValue(segmentedPill1, false);
+                    return;
+                }
+                
+                var separatorVisibleProp = type.GetProperty("SeparatorVisible");
+                if (separatorVisibleProp != null && separatorVisibleProp.CanWrite)
+                {
+                    separatorVisibleProp.SetValue(segmentedPill1, false);
+                    return;
+                }
+                
+                var showDividerProp = type.GetProperty("ShowDivider");
+                if (showDividerProp != null && showDividerProp.CanWrite)
+                {
+                    showDividerProp.SetValue(segmentedPill1, false);
+                    return;
+                }
+                
+                var itemSeparatorProp = type.GetProperty("ItemSeparator");
+                if (itemSeparatorProp != null && itemSeparatorProp.CanWrite)
+                {
+                    itemSeparatorProp.SetValue(segmentedPill1, false);
+                    return;
+                }
+            }
+            catch
+            {
+            }
         }
 
         private void SetupDataGridViewNhap()
@@ -254,6 +322,7 @@ namespace UI
             var newRow = dgvChiTietNhap.Rows[newRowIndex];
             newRow.Cells[colSTT_Nhap.Index].Value = stt;
             newRow.Cells[colNguyenLieu_Nhap.Index].Value = DBNull.Value;
+            newRow.Cells[colTon_Nhap.Index].Value = "";
             newRow.Cells[colSoLuong_Nhap.Index].Value = "";
             newRow.Cells[colDVT_Nhap.Index].Value = "";
             newRow.Cells[colGhiChu_Nhap.Index].Value = "";
@@ -266,10 +335,10 @@ namespace UI
             var newRow = dgvChiTietTra.Rows[newRowIndex];
             newRow.Cells[colSTT_Tra.Index].Value = stt;
             newRow.Cells[colNguyenLieu_Tra.Index].Value = DBNull.Value;
-            newRow.Cells[colTon_Tra.Index].Value = "0";
+            newRow.Cells[colTon_Tra.Index].Value = FormatSoLuong(0);
             newRow.Cells[colSoLuongTra.Index].Value = "";
             newRow.Cells[colDVT_Tra.Index].Value = "";
-            newRow.Cells[colConLai_Tra.Index].Value = "0";
+            newRow.Cells[colConLai_Tra.Index].Value = FormatSoLuong(0);
             newRow.Cells[colGhiChu_Tra.Index].Value = "";
         }
 
@@ -283,29 +352,16 @@ namespace UI
             AddRowTra();
         }
 
-        private void btnHuyNhap_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc muốn hủy phiếu nhập kho?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                ResetFormNhap();
-            }
-        }
-
-        private void btnHuyTra_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc muốn hủy phiếu trả kho?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                ResetFormTra();
-            }
-        }
-
         private void ResetFormNhap()
         {
             dtpNgayNhap.Value = DateTime.Now;
             dtpGioNhap.Value = DateTime.Now;
             txtNhanVienNhap.Text = "";
+            if (txtGhiChuPhieuNhap != null)
+            {
+                txtGhiChuPhieuNhap.Text = "";
+            }
             dgvChiTietNhap.Rows.Clear();
-            AddRowNhap();
         }
 
         private void ResetFormTra()
@@ -313,8 +369,11 @@ namespace UI
             dtpNgayTra.Value = DateTime.Now;
             dtpGioTra.Value = DateTime.Now;
             txtNhanVienTra.Text = "";
+            if (txtGhiChuPhieuTra != null)
+            {
+                txtGhiChuPhieuTra.Text = "";
+            }
             dgvChiTietTra.Rows.Clear();
-            AddRowTra();
         }
 
         private void btnLuuPhieuNhap_Click(object sender, EventArgs e)
@@ -383,7 +442,7 @@ namespace UI
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(soLuong) || !decimal.TryParse(soLuong, out _))
+                if (string.IsNullOrWhiteSpace(soLuong) || !TryParseSoLuong(soLuong, out _))
                 {
                     MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
@@ -421,7 +480,7 @@ namespace UI
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(soLuongTra) || !decimal.TryParse(soLuongTra, out _))
+                if (string.IsNullOrWhiteSpace(soLuongTra) || !TryParseSoLuong(soLuongTra, out _))
                 {
                     MessageBox.Show("Vui lòng nhập số lượng trả hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
@@ -445,9 +504,21 @@ namespace UI
                 var ghiChu = row.Cells[colGhiChu_Nhap.Index].Value?.ToString() ?? "";
 
                 if (nlValue == null || nlValue == DBNull.Value) continue;
-                if (string.IsNullOrWhiteSpace(soLuongStr) || !decimal.TryParse(soLuongStr, out decimal soLuong)) continue;
+                if (string.IsNullOrWhiteSpace(soLuongStr) || !TryParseSoLuong(soLuongStr, out decimal soLuong)) continue;
 
                 int nlId = Convert.ToInt32(nlValue);
+                
+                // Kiểm tra tồn kho trước khi lưu
+                decimal tonHienTai = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
+                if (tonHienTai < soLuong)
+                {
+                    string tenNL = _nguyenLieuDict.ContainsKey(nlId) ? _nguyenLieuDict[nlId] : $"ID: {nlId}";
+                    throw new Exception($"Nguyên liệu '{tenNL}' không đủ tồn kho!\n\n" +
+                                      $"Số lượng yêu cầu: {FormatSoLuong(soLuong)}\n" +
+                                      $"Tồn kho hiện tại: {FormatSoLuong(tonHienTai)}\n" +
+                                      $"Thiếu: {FormatSoLuong(soLuong - tonHienTai)}");
+                }
+                
                 chiTietList.Add(new PhieuNhapKhoChiTiet
                 {
                     NlId = nlId,
@@ -465,8 +536,9 @@ namespace UI
             DateTime ngayNhap = dtpNgayNhap.Value.Date;
             TimeSpan gioNhap = dtpGioNhap.Value.TimeOfDay;
             string nhanVienNhap = txtNhanVienNhap.Text.Trim();
+            string ghiChuPhieu = txtGhiChuPhieuNhap != null ? txtGhiChuPhieuNhap.Text.Trim() : "";
 
-            _nguyenLieuBLL.LuuPhieuNhapKho(_chiNhanhId, ngayNhap, gioNhap, nhanVienNhap, "", chiTietList);
+            _nguyenLieuBLL.LuuPhieuNhapKho(_chiNhanhId, ngayNhap, gioNhap, nhanVienNhap, ghiChuPhieu, chiTietList);
         }
 
         private void SavePhieuTraKho()
@@ -485,17 +557,21 @@ namespace UI
                 var ghiChu = row.Cells[colGhiChu_Tra.Index].Value?.ToString() ?? "";
 
                 if (nlValue == null || nlValue == DBNull.Value) continue;
-                if (string.IsNullOrWhiteSpace(soLuongTraStr) || !decimal.TryParse(soLuongTraStr, out decimal soLuongTra)) continue;
-                if (string.IsNullOrWhiteSpace(tonStr) || !decimal.TryParse(tonStr, out decimal ton)) continue;
-                if (string.IsNullOrWhiteSpace(conLaiStr) || !decimal.TryParse(conLaiStr, out decimal conLai)) continue;
+                if (string.IsNullOrWhiteSpace(soLuongTraStr) || !TryParseSoLuong(soLuongTraStr, out decimal soLuongTra)) continue;
+                if (string.IsNullOrWhiteSpace(tonStr) || !TryParseSoLuong(tonStr, out decimal ton)) continue;
+                if (string.IsNullOrWhiteSpace(conLaiStr) || !TryParseSoLuong(conLaiStr, out decimal conLai)) continue;
 
+                int nlId = Convert.ToInt32(nlValue);
+                
                 // Kiểm tra số lượng trả không vượt quá tồn kho
                 if (soLuongTra > ton)
                 {
-                    throw new Exception($"Số lượng trả không được vượt quá tồn kho hiện tại!");
+                    string tenNL = _nguyenLieuDict.ContainsKey(nlId) ? _nguyenLieuDict[nlId] : $"ID: {nlId}";
+                    throw new Exception($"Nguyên liệu '{tenNL}' không đủ tồn kho để trả!\n\n" +
+                                      $"Số lượng muốn trả: {FormatSoLuong(soLuongTra)}\n" +
+                                      $"Tồn kho hiện tại: {FormatSoLuong(ton)}\n" +
+                                      $"Thiếu: {FormatSoLuong(soLuongTra - ton)}");
                 }
-
-                int nlId = Convert.ToInt32(nlValue);
                 chiTietList.Add(new PhieuTraKhoChiTiet
                 {
                     NlId = nlId,
@@ -515,8 +591,9 @@ namespace UI
             DateTime ngayTra = dtpNgayTra.Value.Date;
             TimeSpan gioTra = dtpGioTra.Value.TimeOfDay;
             string nhanVienTra = txtNhanVienTra.Text.Trim();
+            string ghiChuPhieu = txtGhiChuPhieuTra != null ? txtGhiChuPhieuTra.Text.Trim() : "";
 
-            _nguyenLieuBLL.LuuPhieuTraKho(_chiNhanhId, ngayTra, gioTra, nhanVienTra, "", chiTietList);
+            _nguyenLieuBLL.LuuPhieuTraKho(_chiNhanhId, ngayTra, gioTra, nhanVienTra, ghiChuPhieu, chiTietList);
         }
 
         private void dgvChiTietNhap_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -601,6 +678,7 @@ namespace UI
             panelNhapKho.Visible = false;
             panelTraKho.Visible = false;
             panelTonKho.Visible = false;
+            panelLichSu.Visible = false;
 
             switch (segmentedPill1.SelectedIndex)
             {
@@ -614,6 +692,10 @@ namespace UI
                     panelTonKho.Visible = true;
                     LoadTonKho();
                     break;
+                case 3:
+                    panelLichSu.Visible = true;
+                    LoadLichSu();
+                    break;
             }
         }
 
@@ -624,7 +706,8 @@ namespace UI
 
         private void dgvChiTietNhap_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (e.ColumnIndex == colSTT_Nhap.Index || e.ColumnIndex == colXoa_Nhap.Index || e.ColumnIndex == colDVT_Nhap.Index)
+            if (e.ColumnIndex == colSTT_Nhap.Index || e.ColumnIndex == colXoa_Nhap.Index || 
+                e.ColumnIndex == colDVT_Nhap.Index || e.ColumnIndex == colTon_Nhap.Index)
             {
                 e.Cancel = true;
             }
@@ -634,10 +717,11 @@ namespace UI
         {
             if (e.RowIndex < 0) return;
 
-            // Khi chọn nguyên liệu, tự động điền ĐVT
+            var row = dgvChiTietNhap.Rows[e.RowIndex];
+
+            // Khi chọn nguyên liệu, tự động điền ĐVT và Tồn kho
             if (e.ColumnIndex == colNguyenLieu_Nhap.Index)
             {
-                var row = dgvChiTietNhap.Rows[e.RowIndex];
                 var selectedValue = row.Cells[colNguyenLieu_Nhap.Index].Value;
                 
                 if (selectedValue != null && selectedValue != DBNull.Value && _nguyenLieuData != null)
@@ -651,6 +735,10 @@ namespace UI
                         if (nlRow != null)
                         {
                             row.Cells[colDVT_Nhap.Index].Value = nlRow["don_vi"].ToString();
+                            
+                            // Lấy tồn kho hiện tại
+                            decimal tonKho = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
+                            row.Cells[colTon_Nhap.Index].Value = FormatSoLuong(tonKho);
                         }
                     }
                     catch
@@ -658,6 +746,67 @@ namespace UI
                         // Ignore conversion errors
                     }
                 }
+                else
+                {
+                    row.Cells[colTon_Nhap.Index].Value = "";
+                }
+                
+                CheckSoLuongNhap(row);
+            }
+            // Khi nhập số lượng, kiểm tra tồn kho
+            else if (e.ColumnIndex == colSoLuong_Nhap.Index)
+            {
+                CheckSoLuongNhap(row);
+            }
+        }
+
+        private void CheckSoLuongNhap(DataGridViewRow row)
+        {
+            try
+            {
+                var nlValue = row.Cells[colNguyenLieu_Nhap.Index].Value;
+                var soLuongStr = row.Cells[colSoLuong_Nhap.Index].Value?.ToString() ?? "";
+
+                // Nếu chưa chọn nguyên liệu hoặc chưa nhập số lượng, xóa cảnh báo
+                if (nlValue == null || nlValue == DBNull.Value || string.IsNullOrWhiteSpace(soLuongStr))
+                {
+                    row.Cells[colGhiChu_Nhap.Index].Value = "";
+                    row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                    return;
+                }
+
+                if (!TryParseSoLuong(soLuongStr, out decimal soLuong))
+                {
+                    row.Cells[colGhiChu_Nhap.Index].Value = "";
+                    row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                    return;
+                }
+
+                int nlId = Convert.ToInt32(nlValue);
+                decimal tonHienTai = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
+
+                // Kiểm tra nếu số lượng vượt quá tồn kho
+                if (soLuong > tonHienTai)
+                {
+                    string tenNL = _nguyenLieuDict.ContainsKey(nlId) ? _nguyenLieuDict[nlId] : $"ID: {nlId}";
+                    row.Cells[colGhiChu_Nhap.Index].Value = $"⚠ Không đủ tồn kho! Tồn: {FormatSoLuong(tonHienTai)}, Thiếu: {FormatSoLuong(soLuong - tonHienTai)}";
+                    row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Red;
+                    row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.FromArgb(255, 240, 240); // Light red background
+                }
+                else
+                {
+                    string currentGhiChu = row.Cells[colGhiChu_Nhap.Index].Value?.ToString() ?? "";
+                    if (currentGhiChu.StartsWith("⚠"))
+                    {
+                        row.Cells[colGhiChu_Nhap.Index].Value = "";
+                        row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                        row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.White;
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors
             }
         }
 
@@ -665,10 +814,11 @@ namespace UI
         {
             if (e.RowIndex < 0) return;
 
-            // Khi chọn nguyên liệu, tự động điền ĐVT
+            var row = dgvChiTietNhap.Rows[e.RowIndex];
+
+            // Khi chọn nguyên liệu, tự động điền ĐVT và Tồn kho
             if (e.ColumnIndex == colNguyenLieu_Nhap.Index)
             {
-                var row = dgvChiTietNhap.Rows[e.RowIndex];
                 var selectedValue = row.Cells[colNguyenLieu_Nhap.Index].Value;
                 
                 if (selectedValue != null && selectedValue != DBNull.Value && _nguyenLieuData != null)
@@ -682,6 +832,10 @@ namespace UI
                         if (nlRow != null)
                         {
                             row.Cells[colDVT_Nhap.Index].Value = nlRow["don_vi"].ToString();
+                            
+                            // Lấy tồn kho hiện tại
+                            decimal tonKho = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
+                            row.Cells[colTon_Nhap.Index].Value = FormatSoLuong(tonKho);
                         }
                     }
                     catch
@@ -689,6 +843,19 @@ namespace UI
                         // Ignore conversion errors
                     }
                 }
+                else
+                {
+                    // Xóa tồn kho nếu chưa chọn nguyên liệu
+                    row.Cells[colTon_Nhap.Index].Value = "";
+                }
+                
+                // Kiểm tra lại số lượng sau khi chọn nguyên liệu
+                CheckSoLuongNhap(row);
+            }
+            // Khi nhập số lượng, kiểm tra tồn kho
+            else if (e.ColumnIndex == colSoLuong_Nhap.Index)
+            {
+                CheckSoLuongNhap(row);
             }
         }
 
@@ -730,8 +897,8 @@ namespace UI
                             
                             // Lấy tồn kho hiện tại
                             decimal tonKho = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
-                            row.Cells[colTon_Tra.Index].Value = tonKho.ToString("N3");
-                            row.Cells[colConLai_Tra.Index].Value = tonKho.ToString("N3");
+                            row.Cells[colTon_Tra.Index].Value = FormatSoLuong(tonKho);
+                            row.Cells[colConLai_Tra.Index].Value = FormatSoLuong(tonKho);
                         }
                     }
                     catch
@@ -746,11 +913,11 @@ namespace UI
                 decimal tonKho = 0;
                 decimal soLuongTra = 0;
                 
-                if (decimal.TryParse(row.Cells[colTon_Tra.Index].Value?.ToString(), out tonKho) &&
-                    decimal.TryParse(row.Cells[colSoLuongTra.Index].Value?.ToString(), out soLuongTra))
+                if (TryParseSoLuong(row.Cells[colTon_Tra.Index].Value?.ToString() ?? "", out tonKho) &&
+                    TryParseSoLuong(row.Cells[colSoLuongTra.Index].Value?.ToString() ?? "", out soLuongTra))
                 {
                     decimal conLai = tonKho - soLuongTra;
-                    row.Cells[colConLai_Tra.Index].Value = conLai >= 0 ? conLai.ToString("N3") : "0";
+                    row.Cells[colConLai_Tra.Index].Value = FormatSoLuong(conLai >= 0 ? conLai : 0);
                 }
             }
         }
@@ -789,11 +956,11 @@ namespace UI
                 decimal tonKho = 0;
                 decimal soLuongTra = 0;
                 
-                if (decimal.TryParse(row.Cells[colTon_Tra.Index].Value?.ToString(), out tonKho) &&
-                    decimal.TryParse(row.Cells[colSoLuongTra.Index].Value?.ToString(), out soLuongTra))
+                if (TryParseSoLuong(row.Cells[colTon_Tra.Index].Value?.ToString() ?? "", out tonKho) &&
+                    TryParseSoLuong(row.Cells[colSoLuongTra.Index].Value?.ToString() ?? "", out soLuongTra))
                 {
                     decimal conLai = tonKho - soLuongTra;
-                    row.Cells[colConLai_Tra.Index].Value = conLai >= 0 ? conLai.ToString("N3") : "0";
+                    row.Cells[colConLai_Tra.Index].Value = FormatSoLuong(conLai >= 0 ? conLai : 0);
                 }
             }
         }
@@ -808,6 +975,167 @@ namespace UI
                     dgvChiTietNhap.Rows[e.RowIndex].Cells[colNguyenLieu_Nhap.Index].Value = DBNull.Value;
                 }
             }
+        }
+
+        private void dgvChiTietNhap_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            // Lắng nghe TextChanged và KeyPress khi đang edit cột số lượng
+            if (dgvChiTietNhap.CurrentCell.ColumnIndex == colSoLuong_Nhap.Index)
+            {
+                TextBox textBox = e.Control as TextBox;
+                if (textBox != null)
+                {
+                    textBox.TextChanged -= TextBox_TextChanged;
+                    textBox.KeyPress -= TextBox_KeyPress;
+                    textBox.TextChanged += TextBox_TextChanged;
+                    textBox.KeyPress += TextBox_KeyPress;
+                }
+            }
+        }
+
+        private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Chỉ cho phép số, dấu phẩy, dấu chấm và phím điều khiển
+            if (dgvChiTietNhap.CurrentCell != null && 
+                dgvChiTietNhap.CurrentCell.ColumnIndex == colSoLuong_Nhap.Index)
+            {
+                if (char.IsControl(e.KeyChar))
+                {
+                    return;
+                }
+
+                if (char.IsDigit(e.KeyChar))
+                {
+                    return;
+                }
+
+                if (e.KeyChar == ',' || e.KeyChar == '.')
+                {
+                    TextBox textBox = sender as TextBox;
+                    if (textBox != null)
+                    {
+                        string currentText = textBox.Text;
+                        if (currentText.Contains(',') || currentText.Contains('.'))
+                        {
+                            e.Handled = true;
+                            return;
+                        }
+                    }
+                    return;
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        private void dgvChiTietNhap_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            // Validate cột số lượng
+            if (e.ColumnIndex == colSoLuong_Nhap.Index)
+            {
+                string value = e.FormattedValue?.ToString() ?? "";
+                
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    dgvChiTietNhap.Rows[e.RowIndex].ErrorText = "";
+                    return;
+                }
+
+                if (TryParseSoLuong(value, out decimal soLuong))
+                {
+                    if (soLuong <= 0)
+                    {
+                        e.Cancel = true;
+                        dgvChiTietNhap.Rows[e.RowIndex].ErrorText = "Số lượng phải lớn hơn 0";
+                        MessageBox.Show("Số lượng phải là số dương lớn hơn 0!", "Cảnh báo", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        dgvChiTietNhap.Rows[e.RowIndex].ErrorText = "";
+                    }
+                }
+                else
+                {
+                    e.Cancel = true;
+                    dgvChiTietNhap.Rows[e.RowIndex].ErrorText = "Số lượng không hợp lệ";
+                    MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Kiểm tra và hiển thị cảnh báo ngay khi đang nhập
+            if (dgvChiTietNhap.CurrentCell != null && 
+                dgvChiTietNhap.CurrentCell.ColumnIndex == colSoLuong_Nhap.Index &&
+                dgvChiTietNhap.CurrentCell.RowIndex >= 0)
+            {
+                var row = dgvChiTietNhap.Rows[dgvChiTietNhap.CurrentCell.RowIndex];
+                TextBox textBox = sender as TextBox;
+                
+                string soLuongStr = textBox?.Text ?? "";
+                CheckSoLuongNhapWithValue(row, soLuongStr);
+            }
+        }
+
+        private void CheckSoLuongNhapWithValue(DataGridViewRow row, string soLuongStr)
+        {
+            try
+            {
+                var nlValue = row.Cells[colNguyenLieu_Nhap.Index].Value;
+
+                // Nếu chưa chọn nguyên liệu hoặc chưa nhập số lượng, xóa cảnh báo
+                if (nlValue == null || nlValue == DBNull.Value || string.IsNullOrWhiteSpace(soLuongStr))
+                {
+                    string currentGhiChu = row.Cells[colGhiChu_Nhap.Index].Value?.ToString() ?? "";
+                    if (currentGhiChu.StartsWith("⚠"))
+                    {
+                        row.Cells[colGhiChu_Nhap.Index].Value = "";
+                        row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                        row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.White;
+                    }
+                    return;
+                }
+
+                // Parse số lượng
+                if (!TryParseSoLuong(soLuongStr, out decimal soLuong))
+                {
+                    string currentGhiChu = row.Cells[colGhiChu_Nhap.Index].Value?.ToString() ?? "";
+                    if (currentGhiChu.StartsWith("⚠"))
+                    {
+                        row.Cells[colGhiChu_Nhap.Index].Value = "";
+                        row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                        row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.White;
+                    }
+                    return;
+                }
+
+                int nlId = Convert.ToInt32(nlValue);
+                decimal tonHienTai = _nguyenLieuBLL.LayTonKhoTaiChiNhanh(_chiNhanhId, nlId);
+
+                // Kiểm tra nếu số lượng vượt quá tồn kho
+                if (soLuong > tonHienTai)
+                {
+                    string tenNL = _nguyenLieuDict.ContainsKey(nlId) ? _nguyenLieuDict[nlId] : $"ID: {nlId}";
+                    row.Cells[colGhiChu_Nhap.Index].Value = $"⚠ Không đủ tồn kho! Tồn: {FormatSoLuong(tonHienTai)}, Thiếu: {FormatSoLuong(soLuong - tonHienTai)}";
+                    row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Red;
+                    row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.FromArgb(255, 240, 240); // Light red background
+                }
+                else
+                {
+                    // Xóa cảnh báo nếu đủ tồn kho
+                    string currentGhiChu = row.Cells[colGhiChu_Nhap.Index].Value?.ToString() ?? "";
+                    if (currentGhiChu.StartsWith("⚠"))
+                    {
+                        row.Cells[colGhiChu_Nhap.Index].Value = "";
+                        row.Cells[colGhiChu_Nhap.Index].Style.ForeColor = Color.Black;
+                        row.Cells[colGhiChu_Nhap.Index].Style.BackColor = Color.White;
+                    }
+                }
+            }
+            catch { }
         }
 
         private void dgvChiTietTra_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -842,7 +1170,7 @@ namespace UI
                     }
 
                     if (string.IsNullOrWhiteSpace(tonToiThieuStr) || 
-                        !decimal.TryParse(tonToiThieuStr, NumberStyles.Number, CultureInfo.CurrentCulture, out decimal tonToiThieu))
+                        !TryParseSoLuong(tonToiThieuStr, out decimal tonToiThieu))
                     {
                         MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         // Khôi phục giá trị cũ
@@ -865,7 +1193,7 @@ namespace UI
                     // Cập nhật lại trạng thái
                     var slTonStr = row.Cells[colTonKho_Ton.Index].Value?.ToString();
                     if (!string.IsNullOrWhiteSpace(slTonStr) && 
-                        decimal.TryParse(slTonStr, NumberStyles.Number, CultureInfo.CurrentCulture, out decimal slTon))
+                        TryParseSoLuong(slTonStr, out decimal slTon))
                     {
                         string trangThai;
                         if (slTon == 0)
@@ -891,6 +1219,182 @@ namespace UI
         private string FormatSoLuong(decimal value)
         {
             return value.ToString("#,##0.###", CultureInfo.CurrentCulture);
+        }
+
+        private bool TryParseSoLuong(string value, out decimal result)
+        {
+            result = 0;
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+            
+            string cleanedValue = value.Replace(",", "").Trim();
+            return decimal.TryParse(cleanedValue, NumberStyles.Number, CultureInfo.CurrentCulture, out result);
+        }
+
+        private DataTable _lichSuData;
+
+        private void LoadLichSu()
+        {
+            try
+            {
+                DateTime tuNgay = dtpTuNgay.Value.Date;
+                DateTime denNgay = dtpDenNgay.Value.Date.AddDays(1).AddSeconds(-1); // Đến cuối ngày
+                string loaiPhieu = cmbLoaiPhieu.SelectedIndex == 0 ? null : (cmbLoaiPhieu.SelectedIndex == 1 ? "NHAP" : "TRA");
+                string keyword = txtSearchLichSu.Text.Trim();
+
+                _lichSuData = _nguyenLieuBLL.LayLichSuNhapTra(_chiNhanhId, tuNgay, denNgay, loaiPhieu, keyword);
+                
+                dgvLichSu.Rows.Clear();
+                if (_lichSuData != null && _lichSuData.Rows.Count > 0)
+                {
+                    int stt = 1;
+                    foreach (DataRow row in _lichSuData.Rows)
+                    {
+                        int rowIndex = dgvLichSu.Rows.Add();
+                        var dgvRow = dgvLichSu.Rows[rowIndex];
+                        dgvRow.Cells[colSTT_LichSu.Index].Value = stt++;
+                        dgvRow.Cells[colLoaiPhieu_LichSu.Index].Value = row["loai_phieu"]?.ToString() ?? "";
+                        dgvRow.Cells[colNgay_LichSu.Index].Value = row["ngay"] != DBNull.Value 
+                            ? Convert.ToDateTime(row["ngay"]).ToString("dd/MM/yyyy") : "";
+                        
+                        // Xử lý TimeSpan cho cột giờ
+                        if (row["gio"] != DBNull.Value)
+                        {
+                            if (row["gio"] is TimeSpan timeSpan)
+                            {
+                                dgvRow.Cells[colGio_LichSu.Index].Value = timeSpan.ToString(@"hh\:mm");
+                            }
+                            else if (row["gio"] is DateTime dateTime)
+                            {
+                                dgvRow.Cells[colGio_LichSu.Index].Value = dateTime.ToString("HH:mm");
+                            }
+                            else
+                            {
+                                dgvRow.Cells[colGio_LichSu.Index].Value = row["gio"]?.ToString() ?? "";
+                            }
+                        }
+                        else
+                        {
+                            dgvRow.Cells[colGio_LichSu.Index].Value = "";
+                        }
+                        
+                        dgvRow.Cells[colNhanVien_LichSu.Index].Value = row["nhan_vien"]?.ToString() ?? "";
+                        dgvRow.Cells[colTrangThai_LichSu.Index].Value = row["trang_thai"]?.ToString() ?? "";
+                        dgvRow.Cells[colGhiChu_LichSu.Index].Value = row["ghi_chu"]?.ToString() ?? "";
+                        
+                        // Lưu phieu_id vào Tag để dùng khi hủy
+                        if (row["phieu_id"] != DBNull.Value)
+                        {
+                            dgvRow.Tag = Convert.ToInt32(row["phieu_id"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải lịch sử: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dgvLichSu_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            try
+            {
+                var row = dgvLichSu.Rows[e.RowIndex];
+                
+                if (row.Tag == null)
+                {
+                    return;
+                }
+
+                int phieuId = Convert.ToInt32(row.Tag);
+                string loaiPhieu = row.Cells[colLoaiPhieu_LichSu.Index].Value?.ToString() ?? "";
+
+                if (phieuId > 0 && !string.IsNullOrWhiteSpace(loaiPhieu))
+                {
+                    // Mở form chi tiết
+                    var frmChiTiet = new Frm_ChiTietNhapTraNL(phieuId, loaiPhieu);
+                    if (frmChiTiet.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadLichSu();
+                        LoadTonKho();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi mở chi tiết phiếu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void txtSearchLichSu_TextChanged(object sender, EventArgs e)
+        {
+            if (panelLichSu.Visible)
+            {
+                LoadLichSu();
+            }
+        }
+
+        private void dgvLichSu_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == colLoaiPhieu_LichSu.Index && e.RowIndex >= 0)
+            {
+                var row = dgvLichSu.Rows[e.RowIndex];
+                string loaiPhieu = row.Cells[colLoaiPhieu_LichSu.Index].Value?.ToString() ?? "";
+                
+                if (loaiPhieu == "Nhập kho")
+                {
+                    e.CellStyle.BackColor = Color.FromArgb(220, 255, 220); // Light green
+                    e.CellStyle.ForeColor = Color.FromArgb(34, 197, 94); // Green text
+                }
+                else if (loaiPhieu == "Trả kho")
+                {
+                    e.CellStyle.BackColor = Color.FromArgb(255, 235, 238); // Light red
+                    e.CellStyle.ForeColor = Color.FromArgb(239, 68, 68); // Red text
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            }
+        }
+
+        private void cmbLoaiPhieu_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (panelLichSu.Visible)
+            {
+                LoadLichSu();
+            }
+        }
+
+        private void dtpTuNgay_ValueChanged(object sender, EventArgs e)
+        {
+            if (dtpTuNgay.Value > dtpDenNgay.Value)
+            {
+                dtpDenNgay.Value = dtpTuNgay.Value;
+            }
+            
+            if (panelLichSu.Visible)
+            {
+                LoadLichSu();
+            }
+        }
+
+        private void dtpDenNgay_ValueChanged(object sender, EventArgs e)
+        {
+            if (dtpDenNgay.Value < dtpTuNgay.Value)
+            {
+                dtpTuNgay.Value = dtpDenNgay.Value;
+            }
+            
+            if (panelLichSu.Visible)
+            {
+                LoadLichSu();
+            }
         }
     }
 }

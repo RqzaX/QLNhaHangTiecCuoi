@@ -188,15 +188,18 @@ namespace UI
                     DateTime ngayToChuc = Convert.ToDateTime(row["ngay_to_chuc"]);
                     
                     TimeSpan? gioToChuc = null;
-                    if (row["gio_to_chuc"] != DBNull.Value && row["gio_to_chuc"] != null)
+                    if (dt.Columns.Contains("gio_to_chuc"))
                     {
-                        if (row["gio_to_chuc"] is TimeSpan ts)
+                        if (row["gio_to_chuc"] != DBNull.Value && row["gio_to_chuc"] != null)
                         {
-                            gioToChuc = ts;
-                        }
-                        else if (TimeSpan.TryParse(row["gio_to_chuc"].ToString(), out TimeSpan parsedTime))
-                        {
-                            gioToChuc = parsedTime;
+                            if (row["gio_to_chuc"] is TimeSpan ts)
+                            {
+                                gioToChuc = ts;
+                            }
+                            else if (TimeSpan.TryParse(row["gio_to_chuc"].ToString(), out TimeSpan parsedTime))
+                            {
+                                gioToChuc = parsedTime;
+                            }
                         }
                     }
                     

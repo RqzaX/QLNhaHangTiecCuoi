@@ -1,5 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using QLNhaHangTiecCuoi.Share;
 
 namespace QLNhaHangTiecCuoi.DAL
@@ -32,7 +35,7 @@ SELECT
 FROM dbo.nguyen_lieu nl
 LEFT JOIN dbo.ton_kho tk
   ON tk.nl_id = nl.nl_id
- AND (@cn IS NULL OR tk.chi_nhanh_id = @cn)   -- <<< lọc theo chi nhánh ngay trong JOIN
+ AND (@cn IS NULL OR tk.chi_nhanh_id = @cn)
 WHERE 1 = 1";
             var sb = new System.Text.StringBuilder(sql);
             var prms = new List<SqlParameter> { new SqlParameter("@cn", (object?)chiNhanhId ?? DBNull.Value) };
@@ -406,6 +409,210 @@ WHERE 1 = 1";
             }
         }
 
+        // Hủy phiếu trả kho - cập nhật trạng thái và hoàn nguyên tồn kho
+        public int HuyPhieuTraKho(int phieuTraId)
+        {
+            const string sqlGetChiTiet = @"
+                SELECT nl_id, so_luong_tra
+                FROM dbo.phieu_tra_kho_ct
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            const string sqlUpdateTrangThai = @"
+                UPDATE dbo.phieu_tra_kho
+                SET trang_thai = N'HỦY'
+                WHERE phieu_tra_id = @phieuTraId AND trang_thai = N'ĐÃ LƯU';";
+
+            try
+            {
+                // Kiểm tra phiếu có tồn tại và đang ở trạng thái "ĐÃ LƯU" không
+                const string sqlCheck = @"
+                    SELECT chi_nhanh_id, trang_thai
+                    FROM dbo.phieu_tra_kho
+                    WHERE phieu_tra_id = @phieuTraId;";
+                
+                var checkParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                var checkResult = _db.GetDataTable(sqlCheck, checkParams);
+                
+                if (checkResult == null || checkResult.Rows.Count == 0)
+                {
+                    throw new Exception("Không tìm thấy phiếu trả kho!");
+                }
+
+                var row = checkResult.Rows[0];
+                string trangThai = row["trang_thai"]?.ToString() ?? "";
+                
+                if (trangThai != "ĐÃ LƯU")
+                {
+                    throw new Exception($"Không thể hủy phiếu với trạng thái: {trangThai}");
+                }
+
+                int chiNhanhId = Convert.ToInt32(row["chi_nhanh_id"]);
+
+                // Lấy chi tiết phiếu trả kho - tạo parameter mới
+                var chiTietParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                var chiTietData = _db.GetDataTable(sqlGetChiTiet, chiTietParams);
+                
+                if (chiTietData != null && chiTietData.Rows.Count > 0)
+                {
+                    // Trừ tồn kho để hoàn nguyên (vì khi lưu đã cộng tồn kho)
+                    foreach (DataRow ctRow in chiTietData.Rows)
+                    {
+                        int nlId = Convert.ToInt32(ctRow["nl_id"]);
+                        decimal soLuongTra = Convert.ToDecimal(ctRow["so_luong_tra"]);
+                        
+                        // Trừ tồn kho (hoàn nguyên)
+                        XuatKho(chiNhanhId, nlId, soLuongTra);
+                    }
+                }
+
+                // Cập nhật trạng thái thành "HỦY" - tạo parameter mới
+                var updateParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                return _db.ExecuteNonQuery(sqlUpdateTrangThai, updateParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - HuyPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa vĩnh viễn phiếu nhập kho
+        public int XoaPhieuNhapKho(int phieuNhapId)
+        {
+            const string sqlCheck = @"
+                SELECT chi_nhanh_id, trang_thai
+                FROM dbo.phieu_nhap_kho
+                WHERE phieu_nhap_id = @phieuNhapId;";
+
+            const string sqlGetChiTiet = @"
+                SELECT nl_id, so_luong
+                FROM dbo.phieu_nhap_kho_ct
+                WHERE phieu_nhap_id = @phieuNhapId;";
+
+            const string sqlDeleteChiTiet = @"
+                DELETE FROM dbo.phieu_nhap_kho_ct
+                WHERE phieu_nhap_id = @phieuNhapId;";
+
+            const string sqlDeletePhieu = @"
+                DELETE FROM dbo.phieu_nhap_kho
+                WHERE phieu_nhap_id = @phieuNhapId;";
+
+            try
+            {
+                // Kiểm tra phiếu có tồn tại không
+                var checkParams = new[] { new SqlParameter("@phieuNhapId", phieuNhapId) };
+                var checkResult = _db.GetDataTable(sqlCheck, checkParams);
+                
+                if (checkResult == null || checkResult.Rows.Count == 0)
+                {
+                    throw new Exception("Không tìm thấy phiếu nhập kho!");
+                }
+
+                var row = checkResult.Rows[0];
+                int chiNhanhId = Convert.ToInt32(row["chi_nhanh_id"]);
+                string trangThai = row["trang_thai"]?.ToString() ?? "";
+
+                // Nếu phiếu đã lưu, cần trừ tồn kho trước khi xóa
+                if (trangThai == "ĐÃ LƯU")
+                {
+                    var chiTietParams = new[] { new SqlParameter("@phieuNhapId", phieuNhapId) };
+                    var chiTietData = _db.GetDataTable(sqlGetChiTiet, chiTietParams);
+                    
+                    if (chiTietData != null && chiTietData.Rows.Count > 0)
+                    {
+                        // Trừ tồn kho
+                        foreach (DataRow ctRow in chiTietData.Rows)
+                        {
+                            int nlId = Convert.ToInt32(ctRow["nl_id"]);
+                            decimal soLuong = Convert.ToDecimal(ctRow["so_luong"]);
+                            
+                            XuatKho(chiNhanhId, nlId, soLuong);
+                        }
+                    }
+                }
+
+                // Xóa chi tiết
+                var deleteChiTietParams = new[] { new SqlParameter("@phieuNhapId", phieuNhapId) };
+                _db.ExecuteNonQuery(sqlDeleteChiTiet, deleteChiTietParams);
+
+                // Xóa phiếu
+                var deletePhieuParams = new[] { new SqlParameter("@phieuNhapId", phieuNhapId) };
+                return _db.ExecuteNonQuery(sqlDeletePhieu, deletePhieuParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - XoaPhieuNhapKho: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa vĩnh viễn phiếu trả kho
+        public int XoaPhieuTraKho(int phieuTraId)
+        {
+            const string sqlCheck = @"
+                SELECT chi_nhanh_id, trang_thai
+                FROM dbo.phieu_tra_kho
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            const string sqlGetChiTiet = @"
+                SELECT nl_id, so_luong_tra
+                FROM dbo.phieu_tra_kho_ct
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            const string sqlDeleteChiTiet = @"
+                DELETE FROM dbo.phieu_tra_kho_ct
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            const string sqlDeletePhieu = @"
+                DELETE FROM dbo.phieu_tra_kho
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            try
+            {
+                // Kiểm tra phiếu có tồn tại không
+                var checkParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                var checkResult = _db.GetDataTable(sqlCheck, checkParams);
+                
+                if (checkResult == null || checkResult.Rows.Count == 0)
+                {
+                    throw new Exception("Không tìm thấy phiếu trả kho!");
+                }
+
+                var row = checkResult.Rows[0];
+                int chiNhanhId = Convert.ToInt32(row["chi_nhanh_id"]);
+                string trangThai = row["trang_thai"]?.ToString() ?? "";
+
+                // Nếu phiếu đã lưu, cần cộng lại tồn kho (vì khi lưu đã trừ tồn kho)
+                if (trangThai == "ĐÃ LƯU")
+                {
+                    var chiTietParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                    var chiTietData = _db.GetDataTable(sqlGetChiTiet, chiTietParams);
+                    
+                    if (chiTietData != null && chiTietData.Rows.Count > 0)
+                    {
+                        // Cộng lại tồn kho
+                        foreach (DataRow ctRow in chiTietData.Rows)
+                        {
+                            int nlId = Convert.ToInt32(ctRow["nl_id"]);
+                            decimal soLuongTra = Convert.ToDecimal(ctRow["so_luong_tra"]);
+                            
+                            NhapKho(chiNhanhId, nlId, soLuongTra);
+                        }
+                    }
+                }
+
+                // Xóa chi tiết
+                var deleteChiTietParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                _db.ExecuteNonQuery(sqlDeleteChiTiet, deleteChiTietParams);
+
+                // Xóa phiếu
+                var deletePhieuParams = new[] { new SqlParameter("@phieuTraId", phieuTraId) };
+                return _db.ExecuteNonQuery(sqlDeletePhieu, deletePhieuParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - XoaPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
         /// Lấy danh sách tồn kho với thông tin đầy đủ
         public DataTable GetDanhSachTonKho(int? chiNhanhId = null)
         {
@@ -463,6 +670,255 @@ WHERE 1 = 1";
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi DAL - CapNhatTonToiThieu: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy lịch sử nhập/trả kho
+        public DataTable GetLichSuNhapTra(int chiNhanhId, DateTime? tuNgay = null, DateTime? denNgay = null,
+            string loaiPhieu = null, string keyword = null)
+        {
+            try
+            {
+                var sql = new StringBuilder();
+                var paramList = new List<SqlParameter>
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId)
+                };
+
+                // điều kiện WHERE cho nhập kho
+                var whereNhap = new List<string> { "pnk.chi_nhanh_id = @chiNhanhId" };
+                if (tuNgay.HasValue)
+                {
+                    whereNhap.Add("CAST(pnk.ngay_nhap AS DATE) >= @tuNgay");
+                    paramList.Add(new SqlParameter("@tuNgay", tuNgay.Value.Date));
+                }
+                if (denNgay.HasValue)
+                {
+                    whereNhap.Add("CAST(pnk.ngay_nhap AS DATE) <= @denNgay");
+                    if (!paramList.Any(p => p.ParameterName == "@denNgay"))
+                        paramList.Add(new SqlParameter("@denNgay", denNgay.Value.Date));
+                }
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    whereNhap.Add("pnk.nhan_vien_nhap LIKE @keywordNhap");
+                    paramList.Add(new SqlParameter("@keywordNhap", $"%{keyword}%"));
+                }
+
+                // điều kiện WHERE cho trả kho
+                var whereTra = new List<string> { "ptk.chi_nhanh_id = @chiNhanhId" };
+                if (tuNgay.HasValue)
+                {
+                    whereTra.Add("CAST(ptk.ngay_tra AS DATE) >= @tuNgay");
+                }
+                if (denNgay.HasValue)
+                {
+                    whereTra.Add("CAST(ptk.ngay_tra AS DATE) <= @denNgay");
+                }
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    whereTra.Add("ptk.nhan_vien_tra LIKE @keywordTra");
+                    paramList.Add(new SqlParameter("@keywordTra", $"%{keyword}%"));
+                }
+
+                // Lọc theo loại phiếu
+                if (!string.IsNullOrWhiteSpace(loaiPhieu))
+                {
+                    if (loaiPhieu == "NHAP")
+                    {
+                        sql.AppendLine($@"
+                            SELECT 
+                                N'Nhập kho' AS loai_phieu,
+                                CAST(pnk.ngay_nhap AS DATE) AS ngay,
+                                CAST(pnk.gio_nhap AS TIME) AS gio,
+                                pnk.nhan_vien_nhap AS nhan_vien,
+                                pnk.trang_thai,
+                                pnk.ghi_chu,
+                                pnk.phieu_nhap_id AS phieu_id
+                            FROM dbo.phieu_nhap_kho pnk
+                            WHERE {string.Join(" AND ", whereNhap)}
+                            ORDER BY ngay DESC, gio DESC
+                        ");
+                    }
+                    else if (loaiPhieu == "TRA")
+                    {
+                        sql.AppendLine($@"
+                            SELECT 
+                                N'Trả kho' AS loai_phieu,
+                                CAST(ptk.ngay_tra AS DATE) AS ngay,
+                                CAST(ptk.gio_tra AS TIME) AS gio,
+                                ptk.nhan_vien_tra AS nhan_vien,
+                                ptk.trang_thai,
+                                ptk.ghi_chu,
+                                ptk.phieu_tra_id AS phieu_id
+                            FROM dbo.phieu_tra_kho ptk
+                            WHERE {string.Join(" AND ", whereTra)}
+                            ORDER BY ngay DESC, gio DESC
+                        ");
+                    }
+                }
+                else
+                {
+                    // Lấy cả hai loại
+                    sql.AppendLine($@"
+                        SELECT 
+                            N'Nhập kho' AS loai_phieu,
+                            CAST(pnk.ngay_nhap AS DATE) AS ngay,
+                            CAST(pnk.gio_nhap AS TIME) AS gio,
+                            pnk.nhan_vien_nhap AS nhan_vien,
+                            pnk.trang_thai,
+                            pnk.ghi_chu,
+                            pnk.phieu_nhap_id AS phieu_id
+                        FROM dbo.phieu_nhap_kho pnk
+                        WHERE {string.Join(" AND ", whereNhap)}
+                        
+                        UNION ALL
+                        
+                        SELECT 
+                            N'Trả kho' AS loai_phieu,
+                            CAST(ptk.ngay_tra AS DATE) AS ngay,
+                            CAST(ptk.gio_tra AS TIME) AS gio,
+                            ptk.nhan_vien_tra AS nhan_vien,
+                            ptk.trang_thai,
+                            ptk.ghi_chu,
+                            ptk.phieu_tra_id AS phieu_id
+                        FROM dbo.phieu_tra_kho ptk
+                        WHERE {string.Join(" AND ", whereTra)}
+                        
+                        ORDER BY ngay DESC, gio DESC
+                    ");
+                }
+
+                return _db.GetDataTable(sql.ToString(), paramList.ToArray());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetLichSuNhapTra: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết phiếu nhập kho
+        public DataTable GetChiTietPhieuNhap(int phieuNhapId)
+        {
+            const string sql = @"
+                SELECT 
+                    ROW_NUMBER() OVER (ORDER BY nl.ten_nl) AS stt,
+                    nl.ma_nl,
+                    nl.ten_nl,
+                    ct.so_luong,
+                    ct.don_vi,
+                    ct.ghi_chu
+                FROM dbo.phieu_nhap_kho_ct ct
+                INNER JOIN dbo.nguyen_lieu nl ON nl.nl_id = ct.nl_id
+                WHERE ct.phieu_nhap_id = @phieuNhapId
+                ORDER BY nl.ten_nl;";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@phieuNhapId", phieuNhapId)
+            };
+
+            try
+            {
+                return _db.GetDataTable(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetChiTietPhieuNhap: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết phiếu trả kho
+        public DataTable GetChiTietPhieuTra(int phieuTraId)
+        {
+            const string sql = @"
+                SELECT 
+                    ROW_NUMBER() OVER (ORDER BY nl.ten_nl) AS stt,
+                    nl.ma_nl,
+                    nl.ten_nl,
+                    ct.so_luong_tra,
+                    ct.so_luong_ton,
+                    ct.so_luong_con_lai,
+                    ct.don_vi,
+                    ct.ghi_chu
+                FROM dbo.phieu_tra_kho_ct ct
+                INNER JOIN dbo.nguyen_lieu nl ON nl.nl_id = ct.nl_id
+                WHERE ct.phieu_tra_id = @phieuTraId
+                ORDER BY nl.ten_nl;";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@phieuTraId", phieuTraId)
+            };
+
+            try
+            {
+                return _db.GetDataTable(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetChiTietPhieuTra: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin phiếu nhập kho
+        public DataRow GetThongTinPhieuNhap(int phieuNhapId)
+        {
+            const string sql = @"
+                SELECT 
+                    phieu_nhap_id,
+                    chi_nhanh_id,
+                    ngay_nhap,
+                    gio_nhap,
+                    nhan_vien_nhap,
+                    ghi_chu,
+                    trang_thai
+                FROM dbo.phieu_nhap_kho
+                WHERE phieu_nhap_id = @phieuNhapId;";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@phieuNhapId", phieuNhapId)
+            };
+
+            try
+            {
+                var dt = _db.GetDataTable(sql, parameters);
+                return (dt != null && dt.Rows.Count > 0) ? dt.Rows[0] : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetThongTinPhieuNhap: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin phiếu trả kho
+        public DataRow GetThongTinPhieuTra(int phieuTraId)
+        {
+            const string sql = @"
+                SELECT 
+                    phieu_tra_id,
+                    chi_nhanh_id,
+                    ngay_tra,
+                    gio_tra,
+                    nhan_vien_tra,
+                    ghi_chu,
+                    trang_thai
+                FROM dbo.phieu_tra_kho
+                WHERE phieu_tra_id = @phieuTraId;";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@phieuTraId", phieuTraId)
+            };
+
+            try
+            {
+                var dt = _db.GetDataTable(sql, parameters);
+                return (dt != null && dt.Rows.Count > 0) ? dt.Rows[0] : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - GetThongTinPhieuTra: {ex.Message}", ex);
             }
         }
     }

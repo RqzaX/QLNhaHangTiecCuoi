@@ -154,7 +154,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// Lưu phiếu nhập kho
+        // Lưu phiếu nhập kho
         public int LuuPhieuNhapKho(int chiNhanhId, DateTime ngayNhap, TimeSpan gioNhap, string nhanVienNhap,
             string ghiChu, List<PhieuNhapKhoChiTiet> chiTietList)
         {
@@ -168,7 +168,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// Lưu phiếu trả kho
+        // Lưu phiếu trả kho
         public int LuuPhieuTraKho(int chiNhanhId, DateTime ngayTra, TimeSpan gioTra, string nhanVienTra,
             string ghiChu, List<PhieuTraKhoChiTiet> chiTietList)
         {
@@ -182,7 +182,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// Lấy danh sách tồn kho
+        // Lấy danh sách tồn kho
         public DataTable LayDanhSachTonKho(int? chiNhanhId = null)
         {
             try
@@ -195,9 +195,7 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        /// <summary>
-        /// Cập nhật tồn tối thiểu cho nguyên liệu tại chi nhánh
-        /// </summary>
+        // Cập nhật tồn tối thiểu cho nguyên liệu tại chi nhánh
         public int CapNhatTonToiThieu(int chiNhanhId, int nlId, decimal tonToiThieu)
         {
             try
@@ -207,6 +205,111 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - CapNhatTonToiThieu: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy lịch sử nhập/trả kho
+        public DataTable LayLichSuNhapTra(int chiNhanhId, DateTime? tuNgay = null, DateTime? denNgay = null, 
+            string loaiPhieu = null, string keyword = null)
+        {
+            try
+            {
+                return _dal.GetLichSuNhapTra(chiNhanhId, tuNgay, denNgay, loaiPhieu, keyword);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayLichSuNhapTra: {ex.Message}", ex);
+            }
+        }
+
+        // Hủy phiếu trả kho
+        public int HuyPhieuTraKho(int phieuTraId)
+        {
+            try
+            {
+                return _dal.HuyPhieuTraKho(phieuTraId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - HuyPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa vĩnh viễn phiếu nhập kho
+        public int XoaPhieuNhapKho(int phieuNhapId)
+        {
+            try
+            {
+                return _dal.XoaPhieuNhapKho(phieuNhapId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - XoaPhieuNhapKho: {ex.Message}", ex);
+            }
+        }
+
+        // Xóa vĩnh viễn phiếu trả kho
+        public int XoaPhieuTraKho(int phieuTraId)
+        {
+            try
+            {
+                return _dal.XoaPhieuTraKho(phieuTraId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - XoaPhieuTraKho: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết phiếu nhập kho
+        public DataTable LayChiTietPhieuNhap(int phieuNhapId)
+        {
+            try
+            {
+                return _dal.GetChiTietPhieuNhap(phieuNhapId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayChiTietPhieuNhap: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy chi tiết phiếu trả kho
+        public DataTable LayChiTietPhieuTra(int phieuTraId)
+        {
+            try
+            {
+                return _dal.GetChiTietPhieuTra(phieuTraId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayChiTietPhieuTra: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin phiếu nhập kho
+        public DataRow LayThongTinPhieuNhap(int phieuNhapId)
+        {
+            try
+            {
+                return _dal.GetThongTinPhieuNhap(phieuNhapId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayThongTinPhieuNhap: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy thông tin phiếu trả kho
+        public DataRow LayThongTinPhieuTra(int phieuTraId)
+        {
+            try
+            {
+                return _dal.GetThongTinPhieuTra(phieuTraId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - LayThongTinPhieuTra: {ex.Message}", ex);
             }
         }
     }
