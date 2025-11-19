@@ -201,5 +201,11 @@ namespace QLNhaHangTiecCuoi.BLL
                 throw new Exception("Lỗi xóa nhân viên khỏi ca: " + ex.Message);
             }
         }
+
+        // Lấy danh sách chức vụ (vai trò)
+        public DataTable LayDanhSachChucVu()
+        {
+            return _dal.LayDanhSachChucVu();
+        }
     }
 }

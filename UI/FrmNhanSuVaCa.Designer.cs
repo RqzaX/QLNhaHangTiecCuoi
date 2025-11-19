@@ -220,6 +220,7 @@
             btnThemNV.TabIndex = 25;
             btnThemNV.Text = "+ Thêm Nhân Viên";
             btnThemNV.UseVisualStyleBackColor = false;
+            btnThemNV.Click += btnThemNV_Click;
             // 
             // cbbNhanSu
             // 
@@ -261,16 +262,18 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1190, 900);
-            Controls.Add(panelPhanCa);
             Controls.Add(panelNhanSu);
             Controls.Add(segmentedPill1);
             Controls.Add(RpanelTongNV);
             Controls.Add(label2);
             Controls.Add(label1);
+            Controls.Add(panelPhanCa);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmNhanSuVaCa";
             Text = "FrmNhanSuVaCa";
             Load += FrmNhanSuVaCa_Load;
+            cbbNhanSu.SelectedIndexChanged += cbbNhanSu_SelectedIndexChanged;
+            roundedTextBox1.TextChanged += roundedTextBox1_TextChanged;
             RpanelTongNV.ResumeLayout(false);
             RpanelTongNV.PerformLayout();
             panelNhanSu.ResumeLayout(false);

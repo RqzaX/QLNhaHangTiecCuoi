@@ -267,5 +267,19 @@ namespace QLNhaHangTiecCuoi.DAL
             int rowsAffected = _dbHelper.ExecuteNonQuery(query, parameters);
             return rowsAffected > 0;
         }
+
+        // Lấy danh sách chức vụ (vai trò)
+        public DataTable LayDanhSachChucVu()
+        {
+            string query = @"
+                SELECT 
+                    vai_tro_id,
+                    ten AS ten_chuc_vu,
+                    ma AS ma_chuc_vu
+                FROM dbo.vai_tro
+                ORDER BY ten";
+
+            return _dbHelper.GetDataTable(query);
+        }
     }
 }

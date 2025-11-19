@@ -16,7 +16,7 @@ CREATE TABLE dbo.chi_nhanh(
   sdt          NVARCHAR(30)  NULL,
   trang_thai   TINYINT NOT NULL DEFAULT 1
 );
-
+select * from hoa_don_ct
 IF OBJECT_ID('dbo.ca','U') IS NULL
 CREATE TABLE dbo.ca(
   ca_id  INT IDENTITY(1,1) PRIMARY KEY,
@@ -24,7 +24,7 @@ CREATE TABLE dbo.ca(
   gio_bd TIME(0) NOT NULL,
   gio_kt TIME(0) NOT NULL
 );
-
+select * from dat_sanh
 --Phân ca cho nhân viên
 IF OBJECT_ID('dbo.nguoi_dung_ca','U') IS NULL
 CREATE TABLE dbo.nguoi_dung_ca(
@@ -131,6 +131,7 @@ CREATE TABLE dbo.goi_tiec_dv(
   FOREIGN KEY (goi_id) REFERENCES dbo.goi_tiec(goi_id),
   FOREIGN KEY (dv_id)  REFERENCES dbo.dich_vu(dv_id)
 );
+
 
 GO
 /* ======================================================================

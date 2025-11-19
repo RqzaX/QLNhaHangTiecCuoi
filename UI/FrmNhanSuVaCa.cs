@@ -57,7 +57,53 @@ namespace UI
         }
         private void cbbNhanSu_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Chỉ load lại dữ liệu nếu form đã được load hoàn toàn
+            // Tránh trigger khi đang khởi tạo ComboBox
+            if (this.IsHandleCreated && _nguoiDungBLL != null)
+            {
+                LoadDataNhanSu();
+            }
+        }
 
+        /// <summary>
+        /// Load danh sách chức vụ vào ComboBox cbbNhanSu
+        /// </summary>
+        private void LoadChucVu()
+        {
+            try
+            {
+                if (_nguoiDungBLL == null)
+                    return;
+
+                cbbNhanSu.Items.Clear();
+                cbbNhanSu.Items.Add("Tất cả"); // Thêm option "Tất cả"
+
+                DataTable dt = _nguoiDungBLL.LayDanhSachChucVu();
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string tenChucVu = row["ten_chuc_vu"]?.ToString() ?? "";
+                        if (!string.IsNullOrEmpty(tenChucVu))
+                        {
+                            cbbNhanSu.Items.Add(tenChucVu);
+                        }
+                    }
+                }
+
+                // Chọn "Tất cả" mặc định (tạm thời tắt event để tránh trigger khi load)
+                if (cbbNhanSu.Items.Count > 0)
+                {
+                    cbbNhanSu.SelectedIndexChanged -= cbbNhanSu_SelectedIndexChanged;
+                    cbbNhanSu.SelectedIndex = 0;
+                    cbbNhanSu.SelectedIndexChanged += cbbNhanSu_SelectedIndexChanged;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load danh sách chức vụ: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private const string NS_TEN = "TenNV";
         private const string NS_CV = "ChucVu";
@@ -88,6 +134,16 @@ namespace UI
             {
                 dgvNhanSu.Rows.Clear();
 
+                // Lấy chức vụ được chọn từ ComboBox
+                string chucVuFilter = null;
+                if (cbbNhanSu.SelectedItem != null && cbbNhanSu.SelectedItem.ToString() != "Tất cả")
+                {
+                    chucVuFilter = cbbNhanSu.SelectedItem.ToString();
+                }
+
+                // Lấy từ khóa tìm kiếm từ TextBox
+                string searchKeyword = roundedTextBox1?.Text?.Trim() ?? "";
+
                 DataTable dt = _nguoiDungBLL.LayDanhSachNhanVien();
 
                 if (dt != null && dt.Rows.Count > 0)
@@ -98,7 +154,23 @@ namespace UI
                         string chucVu = row["ChucVu"]?.ToString() ?? "";
                         string chiNhanh = row["ChiNhanh"]?.ToString() ?? "";
 
-                        dgvNhanSu.Rows.Add(ten, chucVu, chiNhanh);
+                        // Lọc theo chức vụ nếu có chọn
+                        bool matchChucVu = (chucVuFilter == null || chucVu == chucVuFilter);
+
+                        // Tìm kiếm theo tên hoặc chức vụ (không phân biệt hoa thường)
+                        bool matchSearch = string.IsNullOrEmpty(searchKeyword);
+                        if (!matchSearch)
+                        {
+                            string searchLower = searchKeyword.ToLower();
+                            matchSearch = ten.ToLower().Contains(searchLower) || 
+                                         chucVu.ToLower().Contains(searchLower);
+                        }
+
+                        // Chỉ hiển thị nếu thỏa cả 2 điều kiện: lọc chức vụ và tìm kiếm
+                        if (matchChucVu && matchSearch)
+                        {
+                            dgvNhanSu.Rows.Add(ten, chucVu, chiNhanh);
+                        }
                     }
                 }
             }
@@ -106,6 +178,23 @@ namespace UI
             {
                 MessageBox.Show($"Lỗi khi tải dữ liệu nhân viên: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+      
+        private void roundedTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                if (_nguoiDungBLL != null)
+                {
+                    LoadDataNhanSu();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi trong TextChanged: {ex.Message}");
             }
         }
 
@@ -124,6 +213,7 @@ namespace UI
                 InitDgvNhanSu();
                 LoadDataNhanSu();
                 LoadTongSoNhanVien();
+                LoadChucVu(); // Load chức vụ vào ComboBox
                 
                 // Khởi tạo PhanCaPanel nhưng chưa hiển thị
                 InitializePhanCaPanel();
