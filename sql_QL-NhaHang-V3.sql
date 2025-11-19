@@ -492,10 +492,11 @@ IF COL_LENGTH('dbo.khach_hang','lan_cuoi_den') IS NULL
 IF NOT EXISTS (
   SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_khach_hang_dm_hang'
 )
-
-ALTER TABLE dbo.khach_hang
-ADD CONSTRAINT FK_khach_hang_dm_hang
-FOREIGN KEY (hang_code) REFERENCES dbo.dm_hang_kh(hang_code);
+BEGIN
+  ALTER TABLE dbo.khach_hang
+  ADD CONSTRAINT FK_khach_hang_dm_hang
+  FOREIGN KEY (hang_code) REFERENCES dbo.dm_hang_kh(hang_code);
+END
 GO
 /* ======================================================================
    5) INDEXES THIẾT THỰC
@@ -504,7 +505,7 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_dat_sanh_unique' AND ob
   CREATE UNIQUE INDEX IX_dat_sanh_unique ON dbo.dat_sanh(sanh_id, ca_id, ngay_to_chuc);
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_order_head' AND object_id=OBJECT_ID('dbo.phieu_order'))
-  CREATE INDEX IX_order_head ON dbo.phieu_order(chi_nhan h_id, trang_thai, ngay_gio);
+  CREATE INDEX IX_order_head ON dbo.phieu_order(chi_nhanh_id, trang_thai, ngay_gio);
     
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name=N'IX_hd_lap' AND object_id=OBJECT_ID('dbo.hoa_don'))
   CREATE INDEX IX_hd_lap ON dbo.hoa_don(chi_nhanh_id, loai, ngay_lap);
@@ -653,10 +654,10 @@ IF @cn_tt2 IS NOT NULL AND @nd_letan01_2 IS NOT NULL
   INSERT INTO dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
   VALUES (@nd_letan01_2, @cn_tt2);
 
+GO
 /* ========================
    3) PHÂN CA CHO NHÂN VIÊN
    ======================== */
-select * from ca
 -- Lấy ID các ca
 DECLARE @ca_sang INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca = N'Ca tiệc cưới sáng');
 DECLARE @ca_trua INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca = N'Ca tiệc cưới chiều');
@@ -735,8 +736,6 @@ INNER JOIN dbo.nguoi_dung nd ON ndc.nguoi_dung_id = nd.nguoi_dung_id
 INNER JOIN dbo.chi_nhanh cn ON ndc.chi_nhanh_id = cn.chi_nhanh_id
 INNER JOIN dbo.ca c ON ndc.ca_id = c.ca_id
 ORDER BY nd.ho_ten, c.ten_ca;
-select * from nguoi_dung_ca
-=======
 GO
 
 /* ======================================================================
