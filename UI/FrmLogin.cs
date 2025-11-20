@@ -67,6 +67,22 @@ namespace UI
             Session.NguoiDungId = nguoiDungId;
             Session.TaiKhoan = taiKhoan;
             Session.HoTen = hoTen;
+            
+            // Load vai trò của người dùng
+            try
+            {
+                DataTable dtVaiTro = _bll.LayVaiTroByNguoiDungId(nguoiDungId);
+                Session.VaiTro.Clear();
+                foreach (DataRow row in dtVaiTro.Rows)
+                {
+                    string maVaiTro = row["ma"].ToString();
+                    Session.VaiTro.Add(maVaiTro);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load vai trò: {ex.Message}", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             // Mở form chọn chi nhánh
             Frm_ChonChiNhanh frmChonChiNhanh = new Frm_ChonChiNhanh();

@@ -33,10 +33,14 @@
             label2 = new Label();
             label1 = new Label();
             roundedPanel9 = new UI.Controls.RoundedPanel();
+            panel3 = new Panel();
+            canhBaoToanKho3 = new UI.Controls.CanhBaoToanKho();
+            canhBaoToanKho4 = new UI.Controls.CanhBaoToanKho();
+            canhBaoToanKho1 = new UI.Controls.CanhBaoToanKho();
             label15 = new Label();
             label16 = new Label();
             roundedPanel7 = new UI.Controls.RoundedPanel();
-            panel1 = new Panel();
+            panelDanhSachDatBanHomNay = new Panel();
             danhSachDatBanPanel6 = new UI.Controls.DanhSachDatBanPanel();
             danhSachDatBanPanel5 = new UI.Controls.DanhSachDatBanPanel();
             danhSachDatBanPanel1 = new UI.Controls.DanhSachDatBanPanel();
@@ -46,51 +50,49 @@
             label13 = new Label();
             label14 = new Label();
             roundedPanel8 = new UI.Controls.RoundedPanel();
-            panel2 = new Panel();
-            topMonBanChay4 = new UI.Controls.TopMonBanChay();
+            panelTopMonBanChay = new Panel();
             topMonBanChay5 = new UI.Controls.TopMonBanChay();
-            topMonBanChay6 = new UI.Controls.TopMonBanChay();
+            topMonBanChay4 = new UI.Controls.TopMonBanChay();
             topMonBanChay3 = new UI.Controls.TopMonBanChay();
             topMonBanChay2 = new UI.Controls.TopMonBanChay();
             topMonBanChay1 = new UI.Controls.TopMonBanChay();
             label11 = new Label();
             label12 = new Label();
             roundedPanel6 = new UI.Controls.RoundedPanel();
+            panelThongKeTyLeSuDungSanh = new Panel();
             label9 = new Label();
             label10 = new Label();
             roundedPanel5 = new UI.Controls.RoundedPanel();
+            panelBieuDoDoanhThu = new Panel();
             label7 = new Label();
             label8 = new Label();
             roundedPanel2 = new UI.Controls.RoundedPanel();
             pictureBox1 = new PictureBox();
             label18 = new Label();
-            label19 = new Label();
-            label17 = new Label();
+            lblTyLeSoVoiHomQua = new Label();
+            lblSoTienDanhThuHomNay = new Label();
             label3 = new Label();
             label4 = new Label();
             roundedPanel1 = new UI.Controls.RoundedPanel();
             pictureBox2 = new PictureBox();
             label20 = new Label();
-            label21 = new Label();
+            lblSuKienDatSanh = new Label();
             label5 = new Label();
             roundedPanel3 = new UI.Controls.RoundedPanel();
             pictureBox3 = new PictureBox();
-            label22 = new Label();
-            label23 = new Label();
+            lblKhachDangPhucVu = new Label();
+            lblSoBan_TongSoBan = new Label();
             label6 = new Label();
             roundedPanel4 = new UI.Controls.RoundedPanel();
             pictureBox4 = new PictureBox();
             label24 = new Label();
-            label25 = new Label();
-            panel3 = new Panel();
-            canhBaoToanKho1 = new UI.Controls.CanhBaoToanKho();
-            canhBaoToanKho3 = new UI.Controls.CanhBaoToanKho();
-            canhBaoToanKho4 = new UI.Controls.CanhBaoToanKho();
+            lblSoHoaDonChoXuLy = new Label();
             roundedPanel9.SuspendLayout();
+            panel3.SuspendLayout();
             roundedPanel7.SuspendLayout();
-            panel1.SuspendLayout();
+            panelDanhSachDatBanHomNay.SuspendLayout();
             roundedPanel8.SuspendLayout();
-            panel2.SuspendLayout();
+            panelTopMonBanChay.SuspendLayout();
             roundedPanel6.SuspendLayout();
             roundedPanel5.SuspendLayout();
             roundedPanel2.SuspendLayout();
@@ -101,13 +103,14 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             roundedPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // roundedButton1
             // 
             roundedButton1.BackColor = Color.FromArgb(31, 111, 235);
+            roundedButton1.BorderThickness = 0;
             roundedButton1.CornerRadius = 10;
+            roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
             roundedButton1.Location = new Point(872, 17);
@@ -117,6 +120,7 @@
             roundedButton1.Size = new Size(130, 34);
             roundedButton1.TabIndex = 20;
             roundedButton1.Text = "Mở POS";
+            roundedButton1.UseVisualStyleBackColor = false;
             // 
             // label2
             // 
@@ -153,6 +157,48 @@
             roundedPanel9.Size = new Size(990, 284);
             roundedPanel9.TabIndex = 16;
             // 
+            // panel3
+            // 
+            panel3.AutoScroll = true;
+            panel3.Controls.Add(canhBaoToanKho3);
+            panel3.Controls.Add(canhBaoToanKho4);
+            panel3.Controls.Add(canhBaoToanKho1);
+            panel3.Location = new Point(4, 66);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(980, 209);
+            panel3.TabIndex = 15;
+            // 
+            // canhBaoToanKho3
+            // 
+            canhBaoToanKho3.Font = new Font("Segoe UI", 10F);
+            canhBaoToanKho3.Location = new Point(9, 181);
+            canhBaoToanKho3.Name = "canhBaoToanKho3";
+            canhBaoToanKho3.Size = new Size(947, 80);
+            canhBaoToanKho3.TabIndex = 3;
+            canhBaoToanKho3.Text = "canhBaoToanKho3";
+            // 
+            // canhBaoToanKho4
+            // 
+            canhBaoToanKho4.Font = new Font("Segoe UI", 10F);
+            canhBaoToanKho4.ItemName = "Thịt bò Úc";
+            canhBaoToanKho4.Level = UI.Controls.AlertLevel.Warning;
+            canhBaoToanKho4.Location = new Point(9, 95);
+            canhBaoToanKho4.MinStock = 15D;
+            canhBaoToanKho4.Name = "canhBaoToanKho4";
+            canhBaoToanKho4.Size = new Size(947, 80);
+            canhBaoToanKho4.Stock = 8D;
+            canhBaoToanKho4.TabIndex = 2;
+            canhBaoToanKho4.Text = "canhBaoToanKho4";
+            // 
+            // canhBaoToanKho1
+            // 
+            canhBaoToanKho1.Font = new Font("Segoe UI", 10F);
+            canhBaoToanKho1.Location = new Point(9, 9);
+            canhBaoToanKho1.Name = "canhBaoToanKho1";
+            canhBaoToanKho1.Size = new Size(947, 80);
+            canhBaoToanKho1.TabIndex = 0;
+            canhBaoToanKho1.Text = "canhBaoToanKho1";
+            // 
             // label15
             // 
             label15.AutoSize = true;
@@ -178,7 +224,7 @@
             roundedPanel7.AutoScroll = true;
             roundedPanel7.BackColor = Color.White;
             roundedPanel7.BorderThickness = 5;
-            roundedPanel7.Controls.Add(panel1);
+            roundedPanel7.Controls.Add(panelDanhSachDatBanHomNay);
             roundedPanel7.Controls.Add(label13);
             roundedPanel7.Controls.Add(label14);
             roundedPanel7.CornerRadius = 20;
@@ -189,19 +235,19 @@
             roundedPanel7.Size = new Size(489, 424);
             roundedPanel7.TabIndex = 17;
             // 
-            // panel1
+            // panelDanhSachDatBanHomNay
             // 
-            panel1.AutoScroll = true;
-            panel1.Controls.Add(danhSachDatBanPanel6);
-            panel1.Controls.Add(danhSachDatBanPanel5);
-            panel1.Controls.Add(danhSachDatBanPanel1);
-            panel1.Controls.Add(danhSachDatBanPanel4);
-            panel1.Controls.Add(danhSachDatBanPanel2);
-            panel1.Controls.Add(danhSachDatBanPanel3);
-            panel1.Location = new Point(3, 57);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(479, 367);
-            panel1.TabIndex = 15;
+            panelDanhSachDatBanHomNay.AutoScroll = true;
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel6);
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel5);
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel1);
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel4);
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel2);
+            panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel3);
+            panelDanhSachDatBanHomNay.Location = new Point(3, 57);
+            panelDanhSachDatBanHomNay.Name = "panelDanhSachDatBanHomNay";
+            panelDanhSachDatBanHomNay.Size = new Size(479, 367);
+            panelDanhSachDatBanHomNay.TabIndex = 15;
             // 
             // danhSachDatBanPanel6
             // 
@@ -296,7 +342,7 @@
             // 
             roundedPanel8.BackColor = Color.White;
             roundedPanel8.BorderThickness = 5;
-            roundedPanel8.Controls.Add(panel2);
+            roundedPanel8.Controls.Add(panelTopMonBanChay);
             roundedPanel8.Controls.Add(label11);
             roundedPanel8.Controls.Add(label12);
             roundedPanel8.CornerRadius = 20;
@@ -307,32 +353,18 @@
             roundedPanel8.Size = new Size(489, 426);
             roundedPanel8.TabIndex = 14;
             // 
-            // panel2
+            // panelTopMonBanChay
             // 
-            panel2.AutoScroll = true;
-            panel2.Controls.Add(topMonBanChay4);
-            panel2.Controls.Add(topMonBanChay5);
-            panel2.Controls.Add(topMonBanChay6);
-            panel2.Controls.Add(topMonBanChay3);
-            panel2.Controls.Add(topMonBanChay2);
-            panel2.Controls.Add(topMonBanChay1);
-            panel2.Location = new Point(4, 59);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(479, 367);
-            panel2.TabIndex = 13;
-            // 
-            // topMonBanChay4
-            // 
-            topMonBanChay4.Font = new Font("Segoe UI", 10F);
-            topMonBanChay4.Location = new Point(13, 374);
-            topMonBanChay4.Name = "topMonBanChay4";
-            topMonBanChay4.Orders = 20;
-            topMonBanChay4.Rank = 6;
-            topMonBanChay4.Revenue = new decimal(new int[] { 19437000, 0, 0, 0 });
-            topMonBanChay4.Size = new Size(446, 66);
-            topMonBanChay4.TabIndex = 5;
-            topMonBanChay4.Text = "topMonBanChay4";
-            topMonBanChay4.Title = "Tôm hùm nướng mỡ hành";
+            panelTopMonBanChay.AutoScroll = true;
+            panelTopMonBanChay.Controls.Add(topMonBanChay5);
+            panelTopMonBanChay.Controls.Add(topMonBanChay4);
+            panelTopMonBanChay.Controls.Add(topMonBanChay3);
+            panelTopMonBanChay.Controls.Add(topMonBanChay2);
+            panelTopMonBanChay.Controls.Add(topMonBanChay1);
+            panelTopMonBanChay.Location = new Point(4, 59);
+            panelTopMonBanChay.Name = "panelTopMonBanChay";
+            panelTopMonBanChay.Size = new Size(479, 367);
+            panelTopMonBanChay.TabIndex = 13;
             // 
             // topMonBanChay5
             // 
@@ -347,18 +379,18 @@
             topMonBanChay5.Text = "topMonBanChay5";
             topMonBanChay5.Title = "Cá chiên xù";
             // 
-            // topMonBanChay6
+            // topMonBanChay4
             // 
-            topMonBanChay6.Font = new Font("Segoe UI", 10F);
-            topMonBanChay6.Location = new Point(13, 230);
-            topMonBanChay6.Name = "topMonBanChay6";
-            topMonBanChay6.Orders = 39;
-            topMonBanChay6.Rank = 4;
-            topMonBanChay6.Revenue = new decimal(new int[] { 29746000, 0, 0, 0 });
-            topMonBanChay6.Size = new Size(446, 66);
-            topMonBanChay6.TabIndex = 3;
-            topMonBanChay6.Text = "topMonBanChay6";
-            topMonBanChay6.Title = "Salad táo";
+            topMonBanChay4.Font = new Font("Segoe UI", 10F);
+            topMonBanChay4.Location = new Point(13, 230);
+            topMonBanChay4.Name = "topMonBanChay4";
+            topMonBanChay4.Orders = 39;
+            topMonBanChay4.Rank = 4;
+            topMonBanChay4.Revenue = new decimal(new int[] { 29746000, 0, 0, 0 });
+            topMonBanChay4.Size = new Size(446, 66);
+            topMonBanChay4.TabIndex = 3;
+            topMonBanChay4.Text = "topMonBanChay6";
+            topMonBanChay4.Title = "Salad táo";
             // 
             // topMonBanChay3
             // 
@@ -404,9 +436,9 @@
             label11.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label11.Location = new Point(13, 35);
             label11.Name = "label11";
-            label11.Size = new Size(66, 19);
+            label11.Size = new Size(76, 19);
             label11.TabIndex = 12;
-            label11.Text = "Hôm nay";
+            label11.Text = "Tháng này";
             // 
             // label12
             // 
@@ -422,6 +454,7 @@
             // 
             roundedPanel6.BackColor = Color.White;
             roundedPanel6.BorderThickness = 5;
+            roundedPanel6.Controls.Add(panelThongKeTyLeSuDungSanh);
             roundedPanel6.Controls.Add(label9);
             roundedPanel6.Controls.Add(label10);
             roundedPanel6.CornerRadius = 20;
@@ -431,6 +464,13 @@
             roundedPanel6.Padding = new Padding(10, 9, 10, 9);
             roundedPanel6.Size = new Size(387, 371);
             roundedPanel6.TabIndex = 15;
+            // 
+            // panelThongKeTyLeSuDungSanh
+            // 
+            panelThongKeTyLeSuDungSanh.Location = new Point(13, 57);
+            panelThongKeTyLeSuDungSanh.Name = "panelThongKeTyLeSuDungSanh";
+            panelThongKeTyLeSuDungSanh.Size = new Size(361, 302);
+            panelThongKeTyLeSuDungSanh.TabIndex = 12;
             // 
             // label9
             // 
@@ -456,6 +496,7 @@
             // 
             roundedPanel5.BackColor = Color.White;
             roundedPanel5.BorderThickness = 5;
+            roundedPanel5.Controls.Add(panelBieuDoDoanhThu);
             roundedPanel5.Controls.Add(label7);
             roundedPanel5.Controls.Add(label8);
             roundedPanel5.CornerRadius = 20;
@@ -465,6 +506,13 @@
             roundedPanel5.Padding = new Padding(10, 9, 10, 9);
             roundedPanel5.Size = new Size(595, 371);
             roundedPanel5.TabIndex = 13;
+            // 
+            // panelBieuDoDoanhThu
+            // 
+            panelBieuDoDoanhThu.Location = new Point(7, 57);
+            panelBieuDoDoanhThu.Name = "panelBieuDoDoanhThu";
+            panelBieuDoDoanhThu.Size = new Size(581, 302);
+            panelBieuDoDoanhThu.TabIndex = 11;
             // 
             // label7
             // 
@@ -492,8 +540,8 @@
             roundedPanel2.BorderThickness = 5;
             roundedPanel2.Controls.Add(pictureBox1);
             roundedPanel2.Controls.Add(label18);
-            roundedPanel2.Controls.Add(label19);
-            roundedPanel2.Controls.Add(label17);
+            roundedPanel2.Controls.Add(lblTyLeSoVoiHomQua);
+            roundedPanel2.Controls.Add(lblSoTienDanhThuHomNay);
             roundedPanel2.Controls.Add(label3);
             roundedPanel2.CornerRadius = 20;
             roundedPanel2.Location = new Point(10, 68);
@@ -525,27 +573,27 @@
             label18.TabIndex = 11;
             label18.Text = "so với hôm qua";
             // 
-            // label19
+            // lblTyLeSoVoiHomQua
             // 
-            label19.AutoSize = true;
-            label19.BackColor = Color.Transparent;
-            label19.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label19.ForeColor = Color.MediumSeaGreen;
-            label19.Location = new Point(32, 100);
-            label19.Name = "label19";
-            label19.Size = new Size(56, 19);
-            label19.TabIndex = 12;
-            label19.Text = "+12.5%";
+            lblTyLeSoVoiHomQua.AutoSize = true;
+            lblTyLeSoVoiHomQua.BackColor = Color.Transparent;
+            lblTyLeSoVoiHomQua.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTyLeSoVoiHomQua.ForeColor = Color.MediumSeaGreen;
+            lblTyLeSoVoiHomQua.Location = new Point(18, 101);
+            lblTyLeSoVoiHomQua.Name = "lblTyLeSoVoiHomQua";
+            lblTyLeSoVoiHomQua.Size = new Size(56, 19);
+            lblTyLeSoVoiHomQua.TabIndex = 12;
+            lblTyLeSoVoiHomQua.Text = "+12.5%";
             // 
-            // label17
+            // lblSoTienDanhThuHomNay
             // 
-            label17.AutoSize = true;
-            label17.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label17.Location = new Point(13, 70);
-            label17.Name = "label17";
-            label17.Size = new Size(94, 19);
-            label17.TabIndex = 10;
-            label17.Text = "95.000.000 đ";
+            lblSoTienDanhThuHomNay.AutoSize = true;
+            lblSoTienDanhThuHomNay.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSoTienDanhThuHomNay.Location = new Point(13, 70);
+            lblSoTienDanhThuHomNay.Name = "lblSoTienDanhThuHomNay";
+            lblSoTienDanhThuHomNay.Size = new Size(94, 19);
+            lblSoTienDanhThuHomNay.TabIndex = 10;
+            lblSoTienDanhThuHomNay.Text = "95.000.000 đ";
             // 
             // label3
             // 
@@ -574,7 +622,7 @@
             roundedPanel1.Controls.Add(pictureBox2);
             roundedPanel1.Controls.Add(label20);
             roundedPanel1.Controls.Add(label4);
-            roundedPanel1.Controls.Add(label21);
+            roundedPanel1.Controls.Add(lblSuKienDatSanh);
             roundedPanel1.CornerRadius = 20;
             roundedPanel1.Location = new Point(262, 68);
             roundedPanel1.Margin = new Padding(3, 2, 3, 2);
@@ -601,20 +649,21 @@
             label20.ForeColor = SystemColors.ControlDarkDark;
             label20.Location = new Point(13, 89);
             label20.Name = "label20";
-            label20.Size = new Size(159, 19);
+            label20.Size = new Size(177, 19);
             label20.TabIndex = 14;
-            label20.Text = "2 tiệc cưới, 2 sinh nhật";
+            label20.Text = "Sự kiện đặt sảnh hôm nay";
             label20.Click += label20_Click;
             // 
-            // label21
+            // lblSuKienDatSanh
             // 
-            label21.AutoSize = true;
-            label21.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label21.Location = new Point(13, 70);
-            label21.Name = "label21";
-            label21.Size = new Size(69, 19);
-            label21.TabIndex = 13;
-            label21.Text = "4 sự kiện";
+            lblSuKienDatSanh.AccessibleDescription = "số sự kiện đặt sảnh";
+            lblSuKienDatSanh.AutoSize = true;
+            lblSuKienDatSanh.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSuKienDatSanh.Location = new Point(13, 70);
+            lblSuKienDatSanh.Name = "lblSuKienDatSanh";
+            lblSuKienDatSanh.Size = new Size(69, 19);
+            lblSuKienDatSanh.TabIndex = 13;
+            lblSuKienDatSanh.Text = "4 sự kiện";
             // 
             // label5
             // 
@@ -631,9 +680,9 @@
             roundedPanel3.BackColor = Color.White;
             roundedPanel3.BorderThickness = 5;
             roundedPanel3.Controls.Add(pictureBox3);
-            roundedPanel3.Controls.Add(label22);
+            roundedPanel3.Controls.Add(lblKhachDangPhucVu);
             roundedPanel3.Controls.Add(label5);
-            roundedPanel3.Controls.Add(label23);
+            roundedPanel3.Controls.Add(lblSoBan_TongSoBan);
             roundedPanel3.CornerRadius = 20;
             roundedPanel3.Location = new Point(512, 68);
             roundedPanel3.Margin = new Padding(3, 2, 3, 2);
@@ -652,27 +701,27 @@
             pictureBox3.TabIndex = 15;
             pictureBox3.TabStop = false;
             // 
-            // label22
+            // lblKhachDangPhucVu
             // 
-            label22.AutoSize = true;
-            label22.BackColor = Color.Transparent;
-            label22.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label22.ForeColor = SystemColors.ControlDarkDark;
-            label22.Location = new Point(15, 89);
-            label22.Name = "label22";
-            label22.Size = new Size(75, 19);
-            label22.TabIndex = 16;
-            label22.Text = "125 khách";
+            lblKhachDangPhucVu.AutoSize = true;
+            lblKhachDangPhucVu.BackColor = Color.Transparent;
+            lblKhachDangPhucVu.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblKhachDangPhucVu.ForeColor = SystemColors.ControlDarkDark;
+            lblKhachDangPhucVu.Location = new Point(15, 89);
+            lblKhachDangPhucVu.Name = "lblKhachDangPhucVu";
+            lblKhachDangPhucVu.Size = new Size(75, 19);
+            lblKhachDangPhucVu.TabIndex = 16;
+            lblKhachDangPhucVu.Text = "125 khách";
             // 
-            // label23
+            // lblSoBan_TongSoBan
             // 
-            label23.AutoSize = true;
-            label23.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label23.Location = new Point(15, 70);
-            label23.Name = "label23";
-            label23.Size = new Size(75, 19);
-            label23.TabIndex = 15;
-            label23.Text = "18/40 bàn";
+            lblSoBan_TongSoBan.AutoSize = true;
+            lblSoBan_TongSoBan.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSoBan_TongSoBan.Location = new Point(15, 70);
+            lblSoBan_TongSoBan.Name = "lblSoBan_TongSoBan";
+            lblSoBan_TongSoBan.Size = new Size(75, 19);
+            lblSoBan_TongSoBan.TabIndex = 15;
+            lblSoBan_TongSoBan.Text = "18/40 bàn";
             // 
             // label6
             // 
@@ -691,7 +740,7 @@
             roundedPanel4.Controls.Add(pictureBox4);
             roundedPanel4.Controls.Add(label24);
             roundedPanel4.Controls.Add(label6);
-            roundedPanel4.Controls.Add(label25);
+            roundedPanel4.Controls.Add(lblSoHoaDonChoXuLy);
             roundedPanel4.CornerRadius = 20;
             roundedPanel4.Location = new Point(763, 68);
             roundedPanel4.Margin = new Padding(3, 2, 3, 2);
@@ -722,57 +771,15 @@
             label24.TabIndex = 18;
             label24.Text = "Cần xử lý";
             // 
-            // label25
+            // lblSoHoaDonChoXuLy
             // 
-            label25.AutoSize = true;
-            label25.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label25.Location = new Point(13, 70);
-            label25.Name = "label25";
-            label25.Size = new Size(75, 19);
-            label25.TabIndex = 17;
-            label25.Text = "7 hóa đơn";
-            // 
-            // panel3
-            // 
-            panel3.AutoScroll = true;
-            panel3.Controls.Add(canhBaoToanKho3);
-            panel3.Controls.Add(canhBaoToanKho4);
-            panel3.Controls.Add(canhBaoToanKho1);
-            panel3.Location = new Point(4, 66);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(980, 209);
-            panel3.TabIndex = 15;
-            // 
-            // canhBaoToanKho1
-            // 
-            canhBaoToanKho1.Font = new Font("Segoe UI", 10F);
-            canhBaoToanKho1.Location = new Point(9, 9);
-            canhBaoToanKho1.Name = "canhBaoToanKho1";
-            canhBaoToanKho1.Size = new Size(947, 80);
-            canhBaoToanKho1.TabIndex = 0;
-            canhBaoToanKho1.Text = "canhBaoToanKho1";
-            // 
-            // canhBaoToanKho3
-            // 
-            canhBaoToanKho3.Font = new Font("Segoe UI", 10F);
-            canhBaoToanKho3.Location = new Point(9, 181);
-            canhBaoToanKho3.Name = "canhBaoToanKho3";
-            canhBaoToanKho3.Size = new Size(947, 80);
-            canhBaoToanKho3.TabIndex = 3;
-            canhBaoToanKho3.Text = "canhBaoToanKho3";
-            // 
-            // canhBaoToanKho4
-            // 
-            canhBaoToanKho4.Font = new Font("Segoe UI", 10F);
-            canhBaoToanKho4.ItemName = "Thịt bò Úc";
-            canhBaoToanKho4.Level = UI.Controls.AlertLevel.Warning;
-            canhBaoToanKho4.Location = new Point(9, 95);
-            canhBaoToanKho4.MinStock = 15D;
-            canhBaoToanKho4.Name = "canhBaoToanKho4";
-            canhBaoToanKho4.Size = new Size(947, 80);
-            canhBaoToanKho4.Stock = 8D;
-            canhBaoToanKho4.TabIndex = 2;
-            canhBaoToanKho4.Text = "canhBaoToanKho4";
+            lblSoHoaDonChoXuLy.AutoSize = true;
+            lblSoHoaDonChoXuLy.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSoHoaDonChoXuLy.Location = new Point(13, 70);
+            lblSoHoaDonChoXuLy.Name = "lblSoHoaDonChoXuLy";
+            lblSoHoaDonChoXuLy.Size = new Size(75, 19);
+            lblSoHoaDonChoXuLy.TabIndex = 17;
+            lblSoHoaDonChoXuLy.Text = "7 hóa đơn";
             // 
             // FrmDashboard
             // 
@@ -796,14 +803,16 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "FrmDashboard";
             Text = "FrmDashboard";
+            Load += FrmDashboard_Load;
             roundedPanel9.ResumeLayout(false);
             roundedPanel9.PerformLayout();
+            panel3.ResumeLayout(false);
             roundedPanel7.ResumeLayout(false);
             roundedPanel7.PerformLayout();
-            panel1.ResumeLayout(false);
+            panelDanhSachDatBanHomNay.ResumeLayout(false);
             roundedPanel8.ResumeLayout(false);
             roundedPanel8.PerformLayout();
-            panel2.ResumeLayout(false);
+            panelTopMonBanChay.ResumeLayout(false);
             roundedPanel6.ResumeLayout(false);
             roundedPanel6.PerformLayout();
             roundedPanel5.ResumeLayout(false);
@@ -820,7 +829,6 @@
             roundedPanel4.ResumeLayout(false);
             roundedPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            panel3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -853,36 +861,37 @@
         private Controls.RoundedPanel roundedPanel3;
         private Label label6;
         private Controls.RoundedPanel roundedPanel4;
-        private Label label19;
+        private Label lblTyLeSoVoiHomQua;
         private Label label18;
-        private Label label17;
+        private Label lblSoTienDanhThuHomNay;
         private Label label20;
-        private Label label21;
-        private Label label22;
-        private Label label23;
+        private Label lblSuKienDatSanh;
+        private Label lblKhachDangPhucVu;
+        private Label lblSoBan_TongSoBan;
         private Label label24;
-        private Label label25;
+        private Label lblSoHoaDonChoXuLy;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
         private PictureBox pictureBox4;
-        private Panel panel1;
+        private Panel panelDanhSachDatBanHomNay;
+        private Panel panelTopMonBanChay;
+        private Panel panel3;
+        private Controls.CanhBaoToanKho canhBaoToanKho3;
+        private Controls.CanhBaoToanKho canhBaoToanKho4;
+        private Controls.CanhBaoToanKho canhBaoToanKho1;
+        private Panel panelThongKeTyLeSuDungSanh;
+        private Panel panelBieuDoDoanhThu;
+        private Controls.DanhSachDatBanPanel danhSachDatBanPanel6;
         private Controls.DanhSachDatBanPanel danhSachDatBanPanel5;
         private Controls.DanhSachDatBanPanel danhSachDatBanPanel1;
         private Controls.DanhSachDatBanPanel danhSachDatBanPanel4;
         private Controls.DanhSachDatBanPanel danhSachDatBanPanel2;
         private Controls.DanhSachDatBanPanel danhSachDatBanPanel3;
-        private Controls.DanhSachDatBanPanel danhSachDatBanPanel6;
-        private Panel panel2;
-        private Controls.TopMonBanChay topMonBanChay4;
         private Controls.TopMonBanChay topMonBanChay5;
-        private Controls.TopMonBanChay topMonBanChay6;
+        private Controls.TopMonBanChay topMonBanChay4;
         private Controls.TopMonBanChay topMonBanChay3;
         private Controls.TopMonBanChay topMonBanChay2;
         private Controls.TopMonBanChay topMonBanChay1;
-        private Panel panel3;
-        private Controls.CanhBaoToanKho canhBaoToanKho3;
-        private Controls.CanhBaoToanKho canhBaoToanKho4;
-        private Controls.CanhBaoToanKho canhBaoToanKho1;
     }
 }

@@ -214,6 +214,24 @@ namespace BLL
         {
             return _dal.GetTop5MonBanChay(chiNhanhId);
         }
+
+        // Lấy top 5 món bán chạy trong tháng
+        public DataTable GetTop5MonBanChayTrongThang(int chiNhanhId)
+        {
+            return _dal.GetTop5MonBanChayTrongThang(chiNhanhId);
+        }
+
+        // Lấy doanh thu 7 ngày qua
+        public DataTable GetRevenue7Days(int chiNhanhId)
+        {
+            return _dal.GetRevenue7Days(chiNhanhId);
+        }
+
+        // Lấy doanh thu hôm nay và hôm qua
+        public (decimal HomNay, decimal HomQua) GetRevenueTodayAndYesterday(int chiNhanhId)
+        {
+            return _dal.GetRevenueTodayAndYesterday(chiNhanhId);
+        }
     }
 }
 

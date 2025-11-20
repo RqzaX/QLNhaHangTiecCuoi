@@ -207,6 +207,40 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        // Lấy số bàn đang phục vụ và tổng số khách
+        public (int SoBanDangPhucVu, int TongKhach, int TongBan) GetBanDangPhucVuInfo(int chiNhanhId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT 
+                        COUNT(*) as tong_ban,
+                        SUM(CASE WHEN trang_thai = N'PHỤC VỤ' THEN 1 ELSE 0 END) as dang_phuc_vu,
+                        SUM(CASE WHEN trang_thai = N'PHỤC VỤ' THEN suc_chua ELSE 0 END) as tong_khach
+                    FROM ban
+                    WHERE chi_nhanh_id = @chiNhanhId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId)
+                };
+
+                DataTable dt = _dbHelper.GetDataTable(query, parameters);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    int tongBan = Convert.ToInt32(dt.Rows[0]["tong_ban"] ?? 0);
+                    int dangPhucVu = Convert.ToInt32(dt.Rows[0]["dang_phuc_vu"] ?? 0);
+                    int tongKhach = Convert.ToInt32(dt.Rows[0]["tong_khach"] ?? 0);
+                    return (dangPhucVu, tongKhach, tongBan);
+                }
+                return (0, 0, 0);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy thông tin bàn đang phục vụ: {ex.Message}");
+            }
+        }
+
         public DataTable LayThongKeBanTheoKhuVuc(int? khuVucId)
         {
             try
@@ -655,6 +689,42 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy danh sách đặt bàn: {ex.Message}");
+            }
+        }
+
+        // Lấy danh sách đặt bàn hôm nay
+        public DataTable LayDanhSachDatBanHomNay(int chiNhanhId)
+        {
+            try
+            {
+                string query = @"
+                    SELECT 
+                        'DB' as loai,
+                        db.dat_ban_id as id,
+                        kh.ho_ten,
+                        db.ngay_gio,
+                        N'Đặt bàn' as loai_su_kien,
+                        N'Bàn ' + CAST(b.so_ban AS VARCHAR) as thong_tin,
+                        db.so_khach,
+                        db.trang_thai
+                    FROM dat_ban db
+                    INNER JOIN khach_hang kh ON db.khach_hang_id = kh.khach_hang_id
+                    INNER JOIN ban b ON db.ban_id = b.ban_id
+                    WHERE db.chi_nhanh_id = @chiNhanhId
+                      AND CAST(db.ngay_gio AS DATE) = CAST(GETDATE() AS DATE)
+                      AND db.trang_thai IN (N'ĐÃ XÁC NHẬN', N'CHỜ XÁC NHẬN', N'ĐÃ PHỤC VỤ')
+                    ORDER BY db.ngay_gio ASC";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@chiNhanhId", chiNhanhId)
+                };
+
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách đặt bàn hôm nay: {ex.Message}");
             }
         }
 

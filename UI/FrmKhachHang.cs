@@ -194,6 +194,19 @@ namespace UI
             LoadDataKhachHang();
             LoadChiTietHangThanhVien();
             LoadHoaDonGiaoDich();
+            ApplyPermissions();
+        }
+
+        private void ApplyPermissions()
+        {
+            // Phân quyền: Chỉ LETAN_THUNGAN, QLCN, ADMIN được thêm/sửa/xóa khách hàng
+            bool canEdit = Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN");
+            btnThem.Enabled = canEdit;
+            
+            if (!canEdit)
+            {
+                btnThem.Enabled = false;
+            }
         }
 
         private void LoadThongKe()
@@ -405,6 +418,14 @@ namespace UI
 
         private void btnThemKH_Click(object sender, EventArgs e)
         {
+            // Kiểm tra quyền trước khi thêm khách hàng
+            if (!Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN"))
+            {
+                MessageBox.Show("Bạn không có quyền thêm khách hàng!", "Thông báo", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (var f = new Frm_ThemKHMoi())
             {
                 f.StartPosition = FormStartPosition.CenterParent;
@@ -504,10 +525,13 @@ namespace UI
 
             try
             {
-                // Lấy khach_hang_id từ Tag của row
+                // Kiểm tra quyền: Tất cả đều có thể xem, nhưng chỉ một số vai trò được sửa/xóa
+                bool canEdit = Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN");
+                
+
                 if (dgvKhachHang.Rows[e.RowIndex].Tag is int khachHangId)
                 {
-                    // Mở form chi tiết khách hàng
+                    // Form Frm_ChiTietKhachHang sẽ tự kiểm tra quyền sửa/xóa bên trong
                     using (var frm = new Frm_ChiTietKhachHang(khachHangId))
                     {
                         frm.StartPosition = FormStartPosition.CenterParent;

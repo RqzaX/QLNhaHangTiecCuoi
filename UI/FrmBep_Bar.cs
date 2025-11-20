@@ -25,6 +25,7 @@ namespace UI
         private DatabaseHelper _dbHelper;
         private KOTBLL _kotBLL;
         private List<KOTTicket> _kotTickets = new List<KOTTicket>();
+        private HashSet<int> _servedKotIds = new HashSet<int>();
         private KOTStatus _currentStatus = KOTStatus.Pending;
         private Timer _autoRefreshTimer;
         private bool _isLoading = false;
@@ -177,20 +178,18 @@ namespace UI
                 foreach (DataRow row in dt.Rows)
                 {
                     var trangThai = row["trang_thai"]?.ToString() ?? "";
-                    
-                    var trangThaiUpper = trangThai.ToUpper().Trim();
-                    if (trangThaiUpper == "ĐÃ ĐÓNG")
-                    {
-                        continue; // Không thêm vào danh sách
-                    }
-                    
                     var status = GetStatusFromString(trangThai);
+                    var kotId = Convert.ToInt32(row["kot_id"]);
+                    if (_servedKotIds.Contains(kotId))
+                    {
+                        continue;
+                    }
                     var soBan = row["so_ban"].ToString();
                     var tableName = soBan == "TIỆC" ? "Tiệc cưới" : $"Bàn {soBan}";
                     
                     var kot = new KOTTicket
                     {
-                        KOTId = Convert.ToInt32(row["kot_id"]),
+                        KOTId = kotId,
                         TicketCode = row["ma_kot"].ToString(),
                         TableName = tableName,
                         OrderTime = Convert.ToDateTime(row["thoi_gian_dat"]),
@@ -270,7 +269,9 @@ namespace UI
         {
             panelDanhSach.Controls.Clear();
 
-            var filteredTickets = _kotTickets.Where(kot => kot.Status == _currentStatus).ToList();
+            var filteredTickets = _kotTickets
+                .Where(kot => kot.Status == _currentStatus)
+                .ToList();
             if (filteredTickets.Count == 0)
             {
                 var lblNoData = new Label
@@ -287,7 +288,7 @@ namespace UI
 
             int cardWidth = 450;
             int spacing = 20;
-            int cardsPerRow = (panelDanhSach.Width - spacing) / (cardWidth + spacing);
+            int cardsPerRow = Math.Max(1, (panelDanhSach.Width - spacing) / (cardWidth + spacing));
             int currentY = spacing;
             int currentRowMaxHeight = 0;
 
@@ -451,7 +452,6 @@ namespace UI
                 var kot = _kotTickets.FirstOrDefault(k => k.KOTId == kotId);
                 if (kot != null)
                 {
-                    // Cập nhật database
                     bool success = _kotBLL.CapNhatTrangThaiKOT(kotId, "CHỜ THANH TOÁN");
                     
                     if (success)
@@ -508,12 +508,12 @@ namespace UI
                 var kot = _kotTickets.FirstOrDefault(k => k.KOTId == kotId);
                 if (kot != null)
                 {
-                    // Cập nhật database
                     bool success = _kotBLL.CapNhatTrangThaiKOT(kotId, "ĐÃ ĐÓNG");
                     
                     if (success)
                     {
                         _kotTickets.Remove(kot);
+                        _servedKotIds.Add(kotId);
                         UpdateStatistics();
                         DisplayKOTTickets();
                         GunaToast.Show(this, $"Đã phục vụ {kot.TicketCode}", UI.Controls.ToastType.Success, 2000, UI.Controls.ToastPos.TopRight);

@@ -28,11 +28,11 @@ namespace UI.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VaiTroCard));
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             btnXoa = new Guna.UI2.WinForms.Guna2Button();
             btnSua = new Guna.UI2.WinForms.Guna2Button();
             lblUserCount = new Label();
@@ -52,7 +52,7 @@ namespace UI.Controls
             btnXoa.BorderColor = Color.FromArgb(220, 220, 220);
             btnXoa.BorderRadius = 8;
             btnXoa.BorderThickness = 1;
-            btnXoa.CustomizableEdges = customizableEdges1;
+            btnXoa.CustomizableEdges = customizableEdges5;
             btnXoa.DisabledState.BorderColor = Color.DarkGray;
             btnXoa.DisabledState.CustomBorderColor = Color.DarkGray;
             btnXoa.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
@@ -62,10 +62,11 @@ namespace UI.Controls
             btnXoa.ForeColor = Color.FromArgb(150, 150, 150);
             btnXoa.Image = (Image)resources.GetObject("btnXoa.Image");
             btnXoa.ImageSize = new Size(30, 30);
-            btnXoa.Location = new Point(312, 163);
+            btnXoa.Location = new Point(273, 122);
+            btnXoa.Margin = new Padding(3, 2, 3, 2);
             btnXoa.Name = "btnXoa";
-            btnXoa.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            btnXoa.Size = new Size(47, 47);
+            btnXoa.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            btnXoa.Size = new Size(41, 35);
             btnXoa.TabIndex = 8;
             btnXoa.Click += btnXoa_Click;
             // 
@@ -77,7 +78,7 @@ namespace UI.Controls
             btnSua.BorderColor = Color.FromArgb(220, 220, 220);
             btnSua.BorderRadius = 16;
             btnSua.BorderThickness = 1;
-            btnSua.CustomizableEdges = customizableEdges3;
+            btnSua.CustomizableEdges = customizableEdges7;
             btnSua.DisabledState.BorderColor = Color.DarkGray;
             btnSua.DisabledState.CustomBorderColor = Color.DarkGray;
             btnSua.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
@@ -87,11 +88,12 @@ namespace UI.Controls
             btnSua.ForeColor = Color.Black;
             btnSua.Image = (Image)resources.GetObject("btnSua.Image");
             btnSua.ImageSize = new Size(30, 30);
-            btnSua.Location = new Point(12, 163);
+            btnSua.Location = new Point(10, 122);
+            btnSua.Margin = new Padding(3, 2, 3, 2);
             btnSua.Name = "btnSua";
-            btnSua.Padding = new Padding(5, 0, 0, 0);
-            btnSua.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            btnSua.Size = new Size(294, 47);
+            btnSua.Padding = new Padding(4, 0, 0, 0);
+            btnSua.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnSua.Size = new Size(257, 35);
             btnSua.TabIndex = 7;
             btnSua.Text = "Sửa";
             btnSua.Click += btnSua_Click;
@@ -102,9 +104,9 @@ namespace UI.Controls
             lblUserCount.BackColor = Color.Transparent;
             lblUserCount.Font = new Font("Segoe UI", 10F);
             lblUserCount.ForeColor = Color.FromArgb(64, 64, 64);
-            lblUserCount.Location = new Point(56, 113);
+            lblUserCount.Location = new Point(49, 85);
             lblUserCount.Name = "lblUserCount";
-            lblUserCount.Size = new Size(113, 23);
+            lblUserCount.Size = new Size(92, 19);
             lblUserCount.TabIndex = 5;
             lblUserCount.Text = "2 người dùng";
             // 
@@ -112,9 +114,10 @@ namespace UI.Controls
             // 
             picUsers.BackColor = Color.Transparent;
             picUsers.Image = (Image)resources.GetObject("picUsers.Image");
-            picUsers.Location = new Point(22, 111);
+            picUsers.Location = new Point(19, 83);
+            picUsers.Margin = new Padding(3, 2, 3, 2);
             picUsers.Name = "picUsers";
-            picUsers.Size = new Size(30, 30);
+            picUsers.Size = new Size(26, 22);
             picUsers.SizeMode = PictureBoxSizeMode.Zoom;
             picUsers.TabIndex = 4;
             picUsers.TabStop = false;
@@ -124,9 +127,9 @@ namespace UI.Controls
             lbMoTa.BackColor = Color.Transparent;
             lbMoTa.Font = new Font("Segoe UI", 10F);
             lbMoTa.ForeColor = Color.Black;
-            lbMoTa.Location = new Point(12, 81);
+            lbMoTa.Location = new Point(10, 61);
             lbMoTa.Name = "lbMoTa";
-            lbMoTa.Size = new Size(360, 30);
+            lbMoTa.Size = new Size(315, 22);
             lbMoTa.TabIndex = 3;
             lbMoTa.Text = "Toàn quyền quản lý hệ thống";
             // 
@@ -134,12 +137,12 @@ namespace UI.Controls
             // 
             panelVaiTro.BackColor = Color.Transparent;
             panelVaiTro.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            panelVaiTro.Location = new Point(22, 44);
-            panelVaiTro.Margin = new Padding(4, 5, 4, 5);
+            panelVaiTro.Location = new Point(19, 33);
+            panelVaiTro.Margin = new Padding(4, 4, 4, 4);
             panelVaiTro.MinimumSize = new Size(1, 1);
             panelVaiTro.Name = "panelVaiTro";
             panelVaiTro.Radius = 20;
-            panelVaiTro.Size = new Size(127, 32);
+            panelVaiTro.Size = new Size(111, 24);
             panelVaiTro.TabIndex = 10;
             panelVaiTro.Text = "admin";
             panelVaiTro.TextAlignment = ContentAlignment.MiddleCenter;
@@ -150,10 +153,11 @@ namespace UI.Controls
             uiLine1.Font = new Font("Microsoft Sans Serif", 12F);
             uiLine1.ForeColor = Color.FromArgb(48, 48, 48);
             uiLine1.LineColor = Color.Silver;
-            uiLine1.Location = new Point(6, 142);
+            uiLine1.Location = new Point(5, 106);
+            uiLine1.Margin = new Padding(3, 2, 3, 2);
             uiLine1.MinimumSize = new Size(1, 1);
             uiLine1.Name = "uiLine1";
-            uiLine1.Size = new Size(366, 16);
+            uiLine1.Size = new Size(320, 12);
             uiLine1.TabIndex = 11;
             // 
             // lbTitle
@@ -161,15 +165,15 @@ namespace UI.Controls
             lbTitle.BackColor = Color.Transparent;
             lbTitle.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold);
             lbTitle.ForeColor = Color.FromArgb(30, 30, 30);
-            lbTitle.Location = new Point(18, 9);
+            lbTitle.Location = new Point(16, 6);
             lbTitle.Name = "lbTitle";
-            lbTitle.Size = new Size(354, 30);
+            lbTitle.Size = new Size(310, 22);
             lbTitle.TabIndex = 0;
             lbTitle.Text = "Quản trị viên";
             // 
             // VaiTroCard
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             Controls.Add(uiLine1);
@@ -180,8 +184,9 @@ namespace UI.Controls
             Controls.Add(lbMoTa);
             Controls.Add(picUsers);
             Controls.Add(lblUserCount);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "VaiTroCard";
-            Size = new Size(382, 218);
+            Size = new Size(334, 164);
             ((System.ComponentModel.ISupportInitialize)picUsers).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -269,26 +269,69 @@ GO
 DECLARE @cn_tt INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Trung tâm');
 MERGE dbo.vai_tro AS T
 USING (VALUES
-  (N'ADMIN', N'Quản trị'),
-  (N'THU_NGAN', N'Thu ngân'),
-  (N'PHUC_VU', N'Phục vụ')
+  (N'ADMIN',      N'Quản trị'),
+  (N'QLCN',       N'Quản lý chi nhánh'),
+  (N'LETAN_THUNGAN', N'Lễ tân/Thu ngân'),
+  (N'QLBEP',      N'Quản lý bếp'),
+  (N'QLKHO',      N'Quản lý kho')
 ) AS S(ma,ten)
 ON T.ma=S.ma
 WHEN NOT MATCHED THEN INSERT(ma,ten) VALUES(S.ma,S.ten)
 WHEN MATCHED THEN UPDATE SET ten=S.ten;
 
+-- Thêm người dùng mẫu
 IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'admin')
   INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
   VALUES(N'admin', N'123456', N'Quản trị hệ thống', 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'thu_ngan')
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlcn01')
   INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
-  VALUES(N'thu_ngan', N'123456', N'Nhân viên thu ngân', 1);
+  VALUES(N'qlcn01', N'123456', N'Nguyễn Văn Quản Lý Chi Nhánh', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlcn02')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'qlcn02', N'123456', N'Trần Thị Quản Lý Chi Nhánh', 1);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'letan01')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'letan01', N'123456', N'Bùi Thị Lễ Tân', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'letan02')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'letan02', N'123456', N'Ngô Văn Lễ Tân', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'thungan01')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'thungan01', N'123456', N'Phạm Thị Thu Ngân', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'thungan02')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'thungan02', N'123456', N'Lê Văn Thu Ngân', 1);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlbep01')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'qlbep01', N'123456', N'Võ Văn Quản Lý Bếp', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlbep02')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'qlbep02', N'123456', N'Đặng Thị Quản Lý Bếp', 1);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlkho01')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'qlkho01', N'123456', N'Hoàng Văn Quản Lý Kho', 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.nguoi_dung WHERE tai_khoan=N'qlkho02')
+  INSERT dbo.nguoi_dung(tai_khoan, mat_khau, ho_ten, hoat_dong)
+  VALUES(N'qlkho02', N'123456', N'Đỗ Thị Quản Lý Kho', 1);
 
 -- Map vai trò
 INSERT dbo.nguoi_dung_vai_tro(nguoi_dung_id, vai_tro_id)
 SELECT nd.nguoi_dung_id, vt.vai_tro_id
 FROM (SELECT tai_khoan, vai = N'ADMIN' FROM dbo.nguoi_dung WHERE tai_khoan=N'admin'
-      UNION ALL SELECT N'thu_ngan', N'THU_NGAN') m
+      UNION ALL SELECT N'qlcn01', N'QLCN'
+      UNION ALL SELECT N'qlcn02', N'QLCN'
+      UNION ALL SELECT N'letan01', N'LETAN_THUNGAN'
+      UNION ALL SELECT N'letan02', N'LETAN_THUNGAN'
+      UNION ALL SELECT N'thungan01', N'LETAN_THUNGAN'
+      UNION ALL SELECT N'thungan02', N'LETAN_THUNGAN'
+      UNION ALL SELECT N'qlbep01', N'QLBEP'
+      UNION ALL SELECT N'qlbep02', N'QLBEP'
+      UNION ALL SELECT N'qlkho01', N'QLKHO'
+      UNION ALL SELECT N'qlkho02', N'QLKHO') m
 JOIN dbo.nguoi_dung nd ON nd.tai_khoan=m.tai_khoan
 JOIN dbo.vai_tro vt ON vt.ma=m.vai
 WHERE NOT EXISTS (
@@ -307,13 +350,97 @@ AND NOT EXISTS (
   WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=cn.chi_nhanh_id
 );
 
--- Thu ngân chỉ gán cho CN Trung tâm
+-- Gán chi nhánh cho người dùng
+DECLARE @cn_q7 INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Quận 7');
+
+-- Quản lý chi nhánh 01: CN Trung tâm
 INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
 SELECT nd.nguoi_dung_id, @cn_tt
 FROM dbo.nguoi_dung nd
-WHERE nd.tai_khoan = N'thu_ngan'
+WHERE nd.tai_khoan = N'qlcn01'
 AND NOT EXISTS (
   SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_tt
+);
+
+-- Quản lý chi nhánh 02: CN Quận 7
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_q7
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'qlcn02'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_q7
+);
+
+-- Lễ tân 01: CN Trung tâm
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_tt
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'letan01'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_tt
+);
+
+-- Lễ tân 02: CN Quận 7
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_q7
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'letan02'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_q7
+);
+
+-- Thu ngân 01: CN Trung tâm
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_tt
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'thungan01'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_tt
+);
+
+-- Thu ngân 02: CN Quận 7
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_q7
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'thungan02'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_q7
+);
+
+-- Quản lý bếp 01: CN Trung tâm
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_tt
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'qlbep01'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_tt
+);
+
+-- Quản lý bếp 02: CN Quận 7
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_q7
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'qlbep02'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_q7
+);
+
+-- Quản lý kho 01: CN Trung tâm
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_tt
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'qlkho01'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_tt
+);
+
+-- Quản lý kho 02: CN Quận 7
+INSERT dbo.nguoi_dung_chi_nhanh(nguoi_dung_id, chi_nhanh_id)
+SELECT nd.nguoi_dung_id, @cn_q7
+FROM dbo.nguoi_dung nd
+WHERE nd.tai_khoan = N'qlkho02'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_chi_nhanh m WHERE m.nguoi_dung_id=nd.nguoi_dung_id AND m.chi_nhanh_id=@cn_q7
 );
 GO
 

@@ -959,6 +959,18 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        public DataTable LayDanhSachDatSanhHomNay(int chiNhanhId)
+        {
+            try
+            {
+                return _dal.LayDanhSachDatSanhHomNay(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy danh sách đặt sảnh hôm nay: {ex.Message}", ex);
+            }
+        }
+
         // Lấy tổng số đơn đặt sảnh
         public int LayTongSoDon()
         {
@@ -995,6 +1007,45 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Lấy tổng số sảnh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy tổng số sảnh theo chi nhánh
+        public int LayTongSoSanhTheoChiNhanh(int chiNhanhId)
+        {
+            try
+            {
+                return _dal.LayTongSoSanhTheoChiNhanh(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy tổng số sảnh theo chi nhánh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số sảnh đã đặt trong tháng này
+        public int LaySoSanhDaDatThangNay(int chiNhanhId)
+        {
+            try
+            {
+                return _dal.LaySoSanhDaDatThangNay(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy số sảnh đã đặt: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số sự kiện đặt sảnh hôm nay
+        public int LaySoSuKienHomNay(int chiNhanhId)
+        {
+            try
+            {
+                return _dal.LaySoSuKienHomNay(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy số sự kiện hôm nay: {ex.Message}", ex);
             }
         }
 

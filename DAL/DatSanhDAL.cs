@@ -1033,6 +1033,80 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+        // Lấy tổng số sảnh theo chi nhánh
+        public int LayTongSoSanhTheoChiNhanh(int chiNhanhId)
+        {
+            string query = @"
+                SELECT COUNT(DISTINCT s.sanh_id)
+                FROM dbo.sanh s
+                WHERE s.chi_nhanh_id = @chiNhanhId";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy tổng số sảnh theo chi nhánh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số sảnh đã đặt trong tháng này theo chi nhánh
+        public int LaySoSanhDaDatThangNay(int chiNhanhId)
+        {
+            string query = @"
+                SELECT COUNT(DISTINCT ds.sanh_id)
+                FROM dbo.dat_sanh ds
+                WHERE ds.chi_nhanh_id = @chiNhanhId
+                  AND YEAR(ds.ngay_to_chuc) = YEAR(GETDATE())
+                  AND MONTH(ds.ngay_to_chuc) = MONTH(GETDATE())
+                  AND ds.trang_thai NOT IN (N'ĐÃ HỦY')";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy số sảnh đã đặt: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy số sự kiện đặt sảnh hôm nay theo chi nhánh
+        public int LaySoSuKienHomNay(int chiNhanhId)
+        {
+            string query = @"
+                SELECT COUNT(*)
+                FROM dbo.dat_sanh ds
+                WHERE ds.chi_nhanh_id = @chiNhanhId
+                  AND CAST(ds.ngay_to_chuc AS DATE) = CAST(GETDATE() AS DATE)
+                  AND ds.trang_thai NOT IN (N'ĐÃ HỦY')";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            try
+            {
+                object result = _dbHelper.ExecuteScalar(query, parameters);
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy số sự kiện hôm nay: {ex.Message}", ex);
+            }
+        }
+
         // Lấy doanh thu tháng (tổng tiền từ các hợp đồng trong tháng hiện tại)
         public decimal LayDoanhThuThang()
         {
@@ -1403,6 +1477,46 @@ namespace QLNhaHangTiecCuoi.DAL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy danh sách đặt sảnh theo chi nhánh: {ex.Message}", ex);
+            }
+        }
+
+        // Lấy danh sách đặt sảnh hôm nay
+        public DataTable LayDanhSachDatSanhHomNay(int chiNhanhId)
+        {
+            string query = @"
+                SELECT 
+                    'DS' as loai,
+                    ds.dat_sanh_id as id,
+                    kh.ho_ten,
+                    ds.ngay_to_chuc as ngay_gio,
+                    CASE 
+                        WHEN ds.loai_su_kien = N'Tiệc cưới' THEN N'Tiệc cưới'
+                        WHEN ds.loai_su_kien = N'Sinh nhật' THEN N'Sinh nhật'
+                        WHEN ds.loai_su_kien = N'Khai trương' THEN N'Khai trương'
+                        ELSE N'Tiệc'
+                    END as loai_su_kien,
+                    s.ten_sanh as thong_tin,
+                    ds.so_khach,
+                    ds.trang_thai
+                FROM dat_sanh ds
+                INNER JOIN khach_hang kh ON ds.khach_hang_id = kh.khach_hang_id
+                INNER JOIN sanh s ON ds.sanh_id = s.sanh_id
+                WHERE ds.chi_nhanh_id = @chiNhanhId
+                  AND CAST(ds.ngay_to_chuc AS DATE) = CAST(GETDATE() AS DATE)
+                  AND ds.trang_thai NOT IN (N'ĐÃ HỦY', N'HOÀN TẤT')
+                ORDER BY ds.ngay_to_chuc ASC";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@chiNhanhId", chiNhanhId)
+            };
+
+            try
+            {
+                return _dbHelper.GetDataTable(query, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi lấy danh sách đặt sảnh hôm nay: {ex.Message}", ex);
             }
         }
     }

@@ -54,6 +54,9 @@ namespace UI
             // Load dữ liệu chi nhánh
             LoadChiNhanhComboBox();
 
+            // Áp dụng phân quyền
+            ApplyPermissions();
+
             await IconPack.EnsureDownloadedAsync();
             _icons = IconPack.BuildImageListColored();
             this.components?.Add(_icons);
@@ -99,7 +102,7 @@ namespace UI
 
         private void btnBanHang_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmBanHang>();
+            CheckPermissionBeforeOpen<FrmBanHang>(btnBanHang, new[] { "LETAN_THUNGAN", "QLCN", "ADMIN" });
         }
 
         private void btnDashboard_Click(object sender, EventArgs e)
@@ -109,67 +112,65 @@ namespace UI
 
         private void btnDatBan_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmDatBan>();
+            CheckPermissionBeforeOpen<FrmDatBan>(btnDatBan, new[] { "LETAN_THUNGAN", "QLCN", "ADMIN" });
         }
 
         private void btnThucDon_Goi_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmThucDonvaGoi>();
+            CheckPermissionBeforeOpen<FrmThucDonvaGoi>(btnThucDon_Goi, new[] { "QLCN", "ADMIN" });
         }
 
         private void btnKho_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmKho>();
+            CheckPermissionBeforeOpen<FrmKho>(btnKho, new[] { "QLKHO", "ADMIN" });
         }
 
         private void btnKhuyenMai_Voucher_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmChuongTrinhKM>();
-
+            CheckPermissionBeforeOpen<FrmChuongTrinhKM>(btnKhuyenMai_Voucher, new[] { "QLCN", "ADMIN" });
         }
 
         private void btnKhachHang_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmKhachHang>();
+            ShowChild<FrmKhachHang>(); // Tất cả đều được xem
         }
 
         private void btnChiNhanh_Ban_Sanh_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmChiNhanh>();
-
+            CheckPermissionBeforeOpen<FrmChiNhanh>(btnChiNhanh_Ban_Sanh, new[] { "QLCN", "ADMIN" });
         }
 
         private void btnNhanSu_Ca_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmNhanSuVaCa>();
+            CheckPermissionBeforeOpen<FrmNhanSuVaCa>(btnNhanSu_Ca, new[] { "QLCN", "ADMIN" });
         }
         private void btnDatSanh_TiecCuoi_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmDatSanh_TiecCuoi>();
+            CheckPermissionBeforeOpen<FrmDatSanh_TiecCuoi>(btnDatSanh_TiecCuoi, new[] { "LETAN_THUNGAN", "QLCN", "ADMIN" });
         }
 
         private void btnHopDong_Coc_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmHopDong_Coc>();
+            CheckPermissionBeforeOpen<FrmHopDong_Coc>(btnHopDong_Coc, new[] { "LETAN_THUNGAN", "QLCN", "ADMIN" });
         }
         private void btnBaoCao_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmBaoCao>();
+            CheckPermissionBeforeOpen<FrmBaoCao>(btnBaoCao, new[] { "QLCN", "ADMIN" });
         }
 
         private void btnKOT_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmBep_Bar>();
+            CheckPermissionBeforeOpen<FrmBep_Bar>(btnKOT, new[] { "QLBEP", "ADMIN" });
         }
 
         private void btnThanhToan_HoaDon_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmThanhToan_HoaDon>();
+            CheckPermissionBeforeOpen<FrmThanhToan_HoaDon>(btnThanhToan_HoaDon, new[] { "LETAN_THUNGAN", "QLCN", "ADMIN" });
         }
 
         private void btnPhanQuyen_Click(object sender, EventArgs e)
         {
-            ShowChild<FrmPhanQuyen>();
+            CheckPermissionBeforeOpen<FrmPhanQuyen>(btnPhanQuyen, new[] { "ADMIN" });
         }
 
         private void FrmTrangChu_FormClosed(object sender, FormClosedEventArgs e)
@@ -389,6 +390,74 @@ namespace UI
         private void btnFormTest_Click(object sender, EventArgs e)
         {
             ShowChild<test>();
+        }
+
+        private void ApplyPermissions()
+        {
+            if (Session.HasRole("ADMIN"))
+            {
+                return; // Tất cả nút đều enabled
+            }
+
+            // Phân quyền cho từng nút dựa trên vai trò
+            // Dashboard: Tất cả đều được xem
+            // btnDashboard luôn enabled
+
+            // Bán hàng: LETAN_THUNGAN, QLCN
+            btnBanHang.Enabled = Session.HasAnyRole("LETAN_THUNGAN", "QLCN");
+
+            // Đặt bàn: LETAN_THUNGAN, QLCN
+            btnDatBan.Enabled = Session.HasAnyRole("LETAN_THUNGAN", "QLCN");
+
+            // Đặt sảnh/Tiệc cưới: LETAN_THUNGAN, QLCN
+            btnDatSanh_TiecCuoi.Enabled = Session.HasAnyRole("LETAN_THUNGAN", "QLCN");
+
+            // KOT (Bếp/Bar): QLBEP
+            btnKOT.Enabled = Session.HasRole("QLBEP");
+
+            // Thanh toán và Hóa đơn: LETAN_THUNGAN, QLCN
+            btnThanhToan_HoaDon.Enabled = Session.HasAnyRole("LETAN_THUNGAN", "QLCN");
+
+            // Thực đơn và Gói: QLCN
+            btnThucDon_Goi.Enabled = Session.HasRole("QLCN");
+
+            // Kho: QLKHO
+            btnKho.Enabled = Session.HasRole("QLKHO");
+
+            // Khuyến mãi và Voucher: QLCN
+            btnKhuyenMai_Voucher.Enabled = Session.HasRole("QLCN");
+
+            // Chi nhánh/Bàn/Sảnh: QLCN
+            btnChiNhanh_Ban_Sanh.Enabled = Session.HasRole("QLCN");
+
+            // Khách hàng: Tất cả (có thể xem)
+            // btnKhachHang luôn enabled
+
+            // Nhân sự và Ca: QLCN
+            btnNhanSu_Ca.Enabled = Session.HasRole("QLCN");
+
+            // Báo cáo: QLCN
+            btnBaoCao.Enabled = Session.HasRole("QLCN");
+
+            // Cấu hình: ADMIN
+            btnCauHinh.Enabled = Session.HasRole("ADMIN");
+
+            // Phân quyền: ADMIN
+            btnPhanQuyen.Enabled = Session.HasRole("ADMIN");
+
+            // Form Test: ADMIN (hoặc có thể disable luôn)
+            btnFormTest.Enabled = Session.HasRole("ADMIN");
+        }
+
+        private void CheckPermissionBeforeOpen<T>(NavButton button, string[] allowedRoles) where T : Form, new()
+        {
+            if (!Session.HasAnyRole(allowedRoles))
+            {
+                MessageBox.Show("Bạn không có quyền truy cập chức năng này!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            ShowChild<T>();
         }
     }
 }

@@ -74,6 +74,18 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
+        public (int SoBanDangPhucVu, int TongKhach, int TongBan) GetBanDangPhucVuInfo(int chiNhanhId)
+        {
+            try
+            {
+                return _banDAL.GetBanDangPhucVuInfo(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy thông tin bàn đang phục vụ: {ex.Message}");
+            }
+        }
+
         public DataTable LayThongKeBanTheoKhuVuc(int? khuVucId)
         {
             try
@@ -229,6 +241,18 @@ namespace QLNhaHangTiecCuoi.BLL
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi BLL - Lấy danh sách đặt bàn: {ex.Message}");
+            }
+        }
+
+        public DataTable LayDanhSachDatBanHomNay(int chiNhanhId)
+        {
+            try
+            {
+                return _banDAL.LayDanhSachDatBanHomNay(chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Lấy danh sách đặt bàn hôm nay: {ex.Message}");
             }
         }
 

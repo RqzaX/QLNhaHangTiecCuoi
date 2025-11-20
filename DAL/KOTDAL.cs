@@ -172,6 +172,7 @@ namespace QLNhaHangTiecCuoi.DAL
             }
         }
 
+
         public DataTable LayThongKeKOT(int chiNhanhId)
         {
             try

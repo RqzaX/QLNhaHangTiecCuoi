@@ -151,6 +151,70 @@ namespace DAL
             return (nhaHang, tiecCuoi);
         }
 
+        // Lấy doanh thu 7 ngày qua theo ngày (từ hôm nay - 7 đến hôm qua, không bao gồm hôm nay)
+        public DataTable GetRevenue7Days(int chiNhanhId)
+        {
+            string sql = @"
+                SELECT 
+                    dr.ngay,
+                    ISNULL(SUM(hd.tong_sau_thue), 0) AS doanh_thu
+                FROM (
+                    SELECT DATEADD(DAY, -7, CAST(GETDATE() AS DATE)) AS ngay
+                    UNION ALL SELECT DATEADD(DAY, -6, CAST(GETDATE() AS DATE))
+                    UNION ALL SELECT DATEADD(DAY, -5, CAST(GETDATE() AS DATE))
+                    UNION ALL SELECT DATEADD(DAY, -4, CAST(GETDATE() AS DATE))
+                    UNION ALL SELECT DATEADD(DAY, -3, CAST(GETDATE() AS DATE))
+                    UNION ALL SELECT DATEADD(DAY, -2, CAST(GETDATE() AS DATE))
+                    UNION ALL SELECT DATEADD(DAY, -1, CAST(GETDATE() AS DATE))
+                ) dr
+                LEFT JOIN hoa_don hd ON CAST(DATEADD(HOUR, 7, hd.ngay_lap) AS DATE) = dr.ngay
+                    AND hd.chi_nhanh_id = @cn 
+                    AND hd.trang_thai = N'ĐÃ THANH TOÁN'
+                GROUP BY dr.ngay
+                ORDER BY dr.ngay";
+            
+            var p = new[]
+            {
+                new SqlParameter("@cn", chiNhanhId)
+            };
+            return _db.GetDataTable(sql, p);
+        }
+
+        // Lấy doanh thu hôm nay và hôm qua để so sánh
+        public (decimal HomNay, decimal HomQua) GetRevenueTodayAndYesterday(int chiNhanhId)
+        {
+            string sql = @"
+                SELECT 
+                    CAST(DATEADD(HOUR, 7, ngay_lap) AS DATE) AS ngay,
+                    ISNULL(SUM(tong_sau_thue), 0) AS doanh_thu
+                FROM hoa_don
+                WHERE chi_nhanh_id = @cn 
+                  AND trang_thai = N'ĐÃ THANH TOÁN'
+                  AND CAST(DATEADD(HOUR, 7, ngay_lap) AS DATE) IN (CAST(GETDATE() AS DATE), DATEADD(DAY, -1, CAST(GETDATE() AS DATE)))
+                GROUP BY CAST(DATEADD(HOUR, 7, ngay_lap) AS DATE)";
+            
+            var p = new[] { new SqlParameter("@cn", chiNhanhId) };
+            var dt = _db.GetDataTable(sql, p);
+            
+            decimal homNay = 0;
+            decimal homQua = 0;
+            DateTime today = DateTime.Now.Date;
+            DateTime yesterday = today.AddDays(-1);
+            
+            foreach (DataRow row in dt.Rows)
+            {
+                DateTime ngay = Convert.ToDateTime(row["ngay"]).Date;
+                decimal doanhThu = Convert.ToDecimal(row["doanh_thu"]);
+                
+                if (ngay == today)
+                    homNay = doanhThu;
+                else if (ngay == yesterday)
+                    homQua = doanhThu;
+            }
+            
+            return (homNay, homQua);
+        }
+
         // Lấy top 5 món bán chạy nhất (dựa trên tổng số lượng đã bán từ tất cả hóa đơn đã thanh toán)
         public DataTable GetTop5MonBanChay(int? chiNhanhId = null)
         {
@@ -179,6 +243,33 @@ namespace DAL
             }
 
             return _db.GetDataTable(sql, parameters.ToArray());
+        }
+
+        // Lấy top 5 món bán chạy trong tháng
+        public DataTable GetTop5MonBanChayTrongThang(int chiNhanhId)
+        {
+            string sql = @"
+                SELECT TOP 5
+                    hdct.ten_hang,
+                    SUM(hdct.so_luong) AS tong_so_luong,
+                    COUNT(DISTINCT hdct.hoa_don_id) AS so_lan_goi,
+                    SUM(hdct.thanh_tien) AS tong_tien
+                FROM dbo.hoa_don_ct hdct
+                INNER JOIN dbo.hoa_don hd ON hd.hoa_don_id = hdct.hoa_don_id
+                WHERE hdct.loai_hang = N'MÓN'
+                  AND hd.trang_thai = N'ĐÃ THANH TOÁN'
+                  AND hd.chi_nhanh_id = @cn
+                  AND YEAR(CAST(DATEADD(HOUR, 7, hd.ngay_lap) AS DATE)) = YEAR(GETDATE())
+                  AND MONTH(CAST(DATEADD(HOUR, 7, hd.ngay_lap) AS DATE)) = MONTH(GETDATE())
+                GROUP BY hdct.ten_hang
+                ORDER BY SUM(hdct.thanh_tien) DESC";
+
+            var p = new[]
+            {
+                new SqlParameter("@cn", chiNhanhId)
+            };
+
+            return _db.GetDataTable(sql, p);
         }
 
         // Lấy lịch sử thanh toán (hóa đơn đã thanh toán) với filter theo ngày

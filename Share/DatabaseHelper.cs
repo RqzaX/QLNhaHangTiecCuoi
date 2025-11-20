@@ -6,8 +6,7 @@ namespace QLNhaHangTiecCuoi.Share
 {
     public class DatabaseHelper
     {
-        private string _connectionString = @"Data Source=LAPTOP-2L5G5GIH\SQLEXPRESS03;Initial Catalog=QL_NhaHangTiecCuoi_V3;Integrated Security=True";
-
+        private string _connectionString = @"Server=LAPTOP-R1ZAX\SQLEXPRESS;Database=QL_NhaHangTiecCuoi_V3;Integrated Security=true;TrustServerCertificate=true;";
         public string ConnectionString => _connectionString;
 
         public DatabaseHelper(string connectionString = null)

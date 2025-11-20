@@ -1,5 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System;
 using System.Data;
+using Microsoft.Data.SqlClient;
 using QLNhaHangTiecCuoi.Share;
 
 namespace QLNhaHangTiecCuoi.DAL
@@ -88,6 +89,23 @@ namespace QLNhaHangTiecCuoi.DAL
             _dbHelper.ExecuteNonQuery(query, parameters);
         }
 
+        public DataTable LayVaiTroByNguoiDungId(int nguoiDungId)
+        {
+            string query = @"
+                SELECT vt.ma, vt.ten
+                FROM dbo.vai_tro vt
+                INNER JOIN dbo.nguoi_dung_vai_tro ndvt ON vt.vai_tro_id = ndvt.vai_tro_id
+                WHERE ndvt.nguoi_dung_id = @nguoiDungId
+                ORDER BY vt.ma";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@nguoiDungId", nguoiDungId)
+            };
+
+            return _dbHelper.GetDataTable(query, parameters);
+        }
+
         /// <summary>
         /// Lấy danh sách nhân viên với tên, chức vụ và chi nhánh
         /// </summary>
@@ -95,8 +113,11 @@ namespace QLNhaHangTiecCuoi.DAL
         {
             string query = @"
                 SELECT 
-                    nd.nguoi_dung_id,
+                    nd.nguoi_dung_id AS NguoiDungId,
+                    nd.tai_khoan AS TaiKhoan,
                     nd.ho_ten AS TenNV,
+                    nd.mat_khau AS MatKhau,
+                    nd.hoat_dong AS HoatDong,
                     ISNULL((
                         SELECT TOP 1 vt.ten 
                         FROM dbo.nguoi_dung_vai_tro ndvt 
@@ -110,9 +131,22 @@ namespace QLNhaHangTiecCuoi.DAL
                         INNER JOIN dbo.chi_nhanh cn ON ndcn.chi_nhanh_id = cn.chi_nhanh_id
                         WHERE ndcn.nguoi_dung_id = nd.nguoi_dung_id
                         ORDER BY cn.chi_nhanh_id
-                    ), N'Chưa phân chi nhánh') AS ChiNhanh
+                    ), N'Chưa phân chi nhánh') AS ChiNhanh,
+                    ISNULL((
+                        SELECT TOP 1 vt.vai_tro_id 
+                        FROM dbo.nguoi_dung_vai_tro ndvt 
+                        INNER JOIN dbo.vai_tro vt ON ndvt.vai_tro_id = vt.vai_tro_id
+                        WHERE ndvt.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY vt.vai_tro_id
+                    ), 0) AS VaiTroId,
+                    ISNULL((
+                        SELECT TOP 1 cn.chi_nhanh_id 
+                        FROM dbo.nguoi_dung_chi_nhanh ndcn 
+                        INNER JOIN dbo.chi_nhanh cn ON ndcn.chi_nhanh_id = cn.chi_nhanh_id
+                        WHERE ndcn.nguoi_dung_id = nd.nguoi_dung_id
+                        ORDER BY cn.chi_nhanh_id
+                    ), 0) AS ChiNhanhId
                 FROM dbo.nguoi_dung nd
-                WHERE nd.hoat_dong = 1
                 ORDER BY nd.ho_ten";
 
             return _dbHelper.GetDataTable(query);
@@ -280,6 +314,226 @@ namespace QLNhaHangTiecCuoi.DAL
                 ORDER BY ten";
 
             return _dbHelper.GetDataTable(query);
+        }
+
+        public int ThemNhanVien(string hoTen, string taiKhoan, string matKhau, int vaiTroId, int chiNhanhId, bool hoatDong)
+        {
+            using (var conn = new SqlConnection(_dbHelper.ConnectionString))
+            {
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Kiểm tra tài khoản đã tồn tại chưa
+                        string checkQuery = "SELECT COUNT(*) FROM dbo.nguoi_dung WHERE tai_khoan = @TaiKhoan";
+                        var cmdCheck = new SqlCommand(checkQuery, conn, tran);
+                        cmdCheck.Parameters.AddWithValue("@TaiKhoan", taiKhoan);
+                        int count = (int)cmdCheck.ExecuteScalar();
+                        
+                        if (count > 0)
+                        {
+                            throw new Exception($"Tài khoản '{taiKhoan}' đã tồn tại trong hệ thống. Vui lòng chọn tài khoản khác.");
+                        }
+
+                        string insertQuery = @"
+                            INSERT INTO dbo.nguoi_dung (tai_khoan, mat_khau, ho_ten, hoat_dong)
+                            VALUES (@TaiKhoan, @MatKhau, @HoTen, @HoatDong);
+                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                        var cmdInsert = new SqlCommand(insertQuery, conn, tran);
+                        cmdInsert.Parameters.AddWithValue("@TaiKhoan", taiKhoan);
+                        cmdInsert.Parameters.AddWithValue("@MatKhau", matKhau);
+                        cmdInsert.Parameters.AddWithValue("@HoTen", hoTen);
+                        cmdInsert.Parameters.AddWithValue("@HoatDong", hoatDong);
+
+                        int newId = (int)cmdInsert.ExecuteScalar();
+
+                        if (vaiTroId > 0)
+                        {
+                            string insertRole = @"
+                                INSERT INTO dbo.nguoi_dung_vai_tro (nguoi_dung_id, vai_tro_id)
+                                VALUES (@NguoiDungId, @VaiTroId)";
+                            var cmdRole = new SqlCommand(insertRole, conn, tran);
+                            cmdRole.Parameters.AddWithValue("@NguoiDungId", newId);
+                            cmdRole.Parameters.AddWithValue("@VaiTroId", vaiTroId);
+                            cmdRole.ExecuteNonQuery();
+                        }
+
+                        if (chiNhanhId > 0)
+                        {
+                            string insertBranch = @"
+                                INSERT INTO dbo.nguoi_dung_chi_nhanh (nguoi_dung_id, chi_nhanh_id)
+                                VALUES (@NguoiDungId, @ChiNhanhId)";
+                            var cmdBranch = new SqlCommand(insertBranch, conn, tran);
+                            cmdBranch.Parameters.AddWithValue("@NguoiDungId", newId);
+                            cmdBranch.Parameters.AddWithValue("@ChiNhanhId", chiNhanhId);
+                            cmdBranch.ExecuteNonQuery();
+                        }
+
+                        tran.Commit();
+                        return newId;
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        tran.Rollback();
+                        // Xử lý lỗi UNIQUE KEY constraint
+                        if (sqlEx.Number == 2627 || sqlEx.Number == 2601)
+                        {
+                            throw new Exception($"Tài khoản '{taiKhoan}' đã tồn tại trong hệ thống. Vui lòng chọn tài khoản khác.");
+                        }
+                        throw new Exception("Lỗi thêm nhân viên: " + sqlEx.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        throw new Exception("Lỗi thêm nhân viên: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public bool CapNhatNhanVien(int nguoiDungId, string hoTen, string taiKhoan, bool hoatDong, int vaiTroId, int chiNhanhId, string matKhau = null)
+        {
+            using (var conn = new SqlConnection(_dbHelper.ConnectionString))
+            {
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Kiểm tra tài khoản đã tồn tại chưa (trừ chính nhân viên đang cập nhật)
+                        string checkQuery = "SELECT COUNT(*) FROM dbo.nguoi_dung WHERE tai_khoan = @TaiKhoan AND nguoi_dung_id != @NguoiDungId";
+                        var cmdCheck = new SqlCommand(checkQuery, conn, tran);
+                        cmdCheck.Parameters.AddWithValue("@TaiKhoan", taiKhoan);
+                        cmdCheck.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                        int count = (int)cmdCheck.ExecuteScalar();
+                        
+                        if (count > 0)
+                        {
+                            throw new Exception($"Tài khoản '{taiKhoan}' đã được sử dụng bởi nhân viên khác. Vui lòng chọn tài khoản khác.");
+                        }
+
+                        string updateQuery = @"
+                            UPDATE dbo.nguoi_dung
+                            SET ho_ten = @HoTen,
+                                tai_khoan = @TaiKhoan,
+                                hoat_dong = @HoatDong{0}
+                            WHERE nguoi_dung_id = @NguoiDungId";
+
+                        string passwordClause = string.IsNullOrWhiteSpace(matKhau) ? "" : ", mat_khau = @MatKhau";
+                        updateQuery = string.Format(updateQuery, passwordClause);
+
+                        var cmdUpdate = new SqlCommand(updateQuery, conn, tran);
+                        cmdUpdate.Parameters.AddWithValue("@HoTen", hoTen);
+                        cmdUpdate.Parameters.AddWithValue("@TaiKhoan", taiKhoan);
+                        cmdUpdate.Parameters.AddWithValue("@HoatDong", hoatDong);
+                        cmdUpdate.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                        if (!string.IsNullOrWhiteSpace(matKhau))
+                        {
+                            cmdUpdate.Parameters.AddWithValue("@MatKhau", matKhau);
+                        }
+                        int rowsAffected = cmdUpdate.ExecuteNonQuery();
+                        
+                        if (rowsAffected == 0)
+                        {
+                            throw new Exception("Không tìm thấy nhân viên cần cập nhật.");
+                        }
+
+                        string deleteRole = "DELETE FROM dbo.nguoi_dung_vai_tro WHERE nguoi_dung_id = @NguoiDungId";
+                        var cmdDeleteRole = new SqlCommand(deleteRole, conn, tran);
+                        cmdDeleteRole.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                        cmdDeleteRole.ExecuteNonQuery();
+
+                        if (vaiTroId > 0)
+                        {
+                            string insertRole = @"
+                                INSERT INTO dbo.nguoi_dung_vai_tro (nguoi_dung_id, vai_tro_id)
+                                VALUES (@NguoiDungId, @VaiTroId)";
+                            var cmdInsertRole = new SqlCommand(insertRole, conn, tran);
+                            cmdInsertRole.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                            cmdInsertRole.Parameters.AddWithValue("@VaiTroId", vaiTroId);
+                            cmdInsertRole.ExecuteNonQuery();
+                        }
+
+                        string deleteBranch = "DELETE FROM dbo.nguoi_dung_chi_nhanh WHERE nguoi_dung_id = @NguoiDungId";
+                        var cmdDeleteBranch = new SqlCommand(deleteBranch, conn, tran);
+                        cmdDeleteBranch.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                        cmdDeleteBranch.ExecuteNonQuery();
+
+                        if (chiNhanhId > 0)
+                        {
+                            string insertBranch = @"
+                                INSERT INTO dbo.nguoi_dung_chi_nhanh (nguoi_dung_id, chi_nhanh_id)
+                                VALUES (@NguoiDungId, @ChiNhanhId)";
+                            var cmdInsertBranch = new SqlCommand(insertBranch, conn, tran);
+                            cmdInsertBranch.Parameters.AddWithValue("@NguoiDungId", nguoiDungId);
+                            cmdInsertBranch.Parameters.AddWithValue("@ChiNhanhId", chiNhanhId);
+                            cmdInsertBranch.ExecuteNonQuery();
+                        }
+
+                        tran.Commit();
+                        return true;
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        tran.Rollback();
+                        // Xử lý lỗi UNIQUE KEY constraint
+                        if (sqlEx.Number == 2627 || sqlEx.Number == 2601)
+                        {
+                            throw new Exception($"Tài khoản '{taiKhoan}' đã được sử dụng bởi nhân viên khác. Vui lòng chọn tài khoản khác.");
+                        }
+                        throw new Exception("Lỗi cập nhật nhân viên: " + sqlEx.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        throw new Exception("Lỗi cập nhật nhân viên: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public bool XoaNhanVien(int nguoiDungId)
+        {
+            try
+            {
+                // Kiểm tra nhân viên có tồn tại không
+                string checkQuery = "SELECT COUNT(*) FROM dbo.nguoi_dung WHERE nguoi_dung_id = @NguoiDungId";
+                SqlParameter[] checkParams = new SqlParameter[]
+                {
+                    new SqlParameter("@NguoiDungId", nguoiDungId)
+                };
+                int count = Convert.ToInt32(_dbHelper.ExecuteScalar(checkQuery, checkParams));
+                
+                if (count == 0)
+                {
+                    throw new Exception("Không tìm thấy nhân viên cần xóa.");
+                }
+
+                string query = @"
+                    UPDATE dbo.nguoi_dung
+                    SET hoat_dong = 0
+                    WHERE nguoi_dung_id = @NguoiDungId";
+
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@NguoiDungId", nguoiDungId)
+                };
+
+                int rows = _dbHelper.ExecuteNonQuery(query, parameters);
+                
+                if (rows == 0)
+                {
+                    throw new Exception("Không thể xóa nhân viên. Vui lòng thử lại.");
+                }
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xóa nhân viên: " + ex.Message);
+            }
         }
     }
 }

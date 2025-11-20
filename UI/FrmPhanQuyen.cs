@@ -10,6 +10,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
 
 namespace UI
 {
@@ -25,6 +26,7 @@ namespace UI
             _dbHelper = new DatabaseHelper();
             _vaiTroBLL = new VaiTroBLL(_dbHelper);
             LoadDanhSachVaiTro();
+            btnDanhSachNhanVien.Click += btnDanhSachNhanVien_Click;
         }
 
         private void LoadDanhSachVaiTro()
@@ -187,6 +189,31 @@ namespace UI
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnDanhSachNhanVien_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var existing = Application.OpenForms.OfType<Frm_CRUD_NhanVien>().FirstOrDefault();
+                if (existing != null)
+                {
+                    existing.BringToFront();
+                    existing.Focus();
+                    return;
+                }
+
+                using (var frm = new Frm_CRUD_NhanVien())
+                {
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Không thể mở form nhân viên: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
