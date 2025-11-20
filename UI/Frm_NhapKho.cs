@@ -34,6 +34,7 @@ namespace UI
         {
             btnHuy.Click += BtnHuy_Click;
             btnTaoPhieuNhap.Click += BtnTaoPhieuNhap_Click;
+            btnThemNL.Click += BtnThemNL_Click;
         }
 
         private void LoadData()
@@ -177,5 +178,46 @@ namespace UI
              txtSoLuong.Text = "";
              dateNgayNhap.Value = DateTime.Now;
          }
+
+        private void BtnThemNL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var frmThemNL = new Frm_ThemNguyenLieu())
+                {
+                    frmThemNL.StartPosition = FormStartPosition.CenterParent;
+                    var result = frmThemNL.ShowDialog(this);
+
+                    if (result == DialogResult.OK)
+                    {
+                        // Reload danh sách nguyên liệu
+                        LoadNguyenLieu();
+
+                        // Nếu có nguyên liệu mới được tạo, tự động chọn nó
+                        if (frmThemNL.CreatedNguyenLieuId.HasValue)
+                        {
+                            int newNlId = frmThemNL.CreatedNguyenLieuId.Value;
+                            for (int i = 0; i < cbbTenMon.Items.Count; i++)
+                            {
+                                var item = (ComboBoxItem)cbbTenMon.Items[i];
+                                if (item.Value == newNlId)
+                                {
+                                    cbbTenMon.SelectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        MessageBox.Show("Đã thêm nguyên liệu mới thành công!", "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm nguyên liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

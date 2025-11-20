@@ -40,6 +40,7 @@
             cbbTenMon = new UiControls.BorderComboBox();
             label7 = new Label();
             txtSoLuong = new UI.Controls.RoundedTextBox();
+            btnThemNL = new UI.Controls.RoundedButton();
             SuspendLayout();
             // 
             // label1
@@ -155,14 +156,14 @@
             cbbTenMon.ItemHeight = 26;
             cbbTenMon.Location = new Point(13, 176);
             cbbTenMon.Name = "cbbTenMon";
-            cbbTenMon.Size = new Size(283, 32);
+            cbbTenMon.Size = new Size(250, 32);
             cbbTenMon.TabIndex = 12;
             // 
             // label7
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(310, 153);
+            label7.Location = new Point(375, 153);
             label7.Name = "label7";
             label7.Size = new Size(71, 20);
             label7.TabIndex = 13;
@@ -173,17 +174,36 @@
             txtSoLuong.BackColor = Color.White;
             txtSoLuong.Font = new Font("Segoe UI", 10F);
             txtSoLuong.ForeColor = Color.Black;
-            txtSoLuong.Location = new Point(320, 176);
+            txtSoLuong.Location = new Point(375, 176);
             txtSoLuong.Name = "txtSoLuong";
             txtSoLuong.Padding = new Padding(10, 8, 10, 8);
             txtSoLuong.Size = new Size(195, 32);
             txtSoLuong.TabIndex = 14;
             // 
+            // btnThemNL
+            // 
+            btnThemNL.BackColor = Color.FromArgb(0, 120, 215);
+            btnThemNL.BorderThickness = 0;
+            btnThemNL.FlatAppearance.BorderSize = 0;
+            btnThemNL.FlatStyle = FlatStyle.Flat;
+            btnThemNL.Font = new Font("Segoe UI Semibold", 9F);
+            btnThemNL.ForeColor = Color.White;
+            btnThemNL.HoverBackColor = Color.FromArgb(0, 100, 180);
+            btnThemNL.Location = new Point(269, 176);
+            btnThemNL.Name = "btnThemNL";
+            btnThemNL.Padding = new Padding(8, 4, 8, 4);
+            btnThemNL.PressedBackColor = Color.FromArgb(0, 80, 150);
+            btnThemNL.Size = new Size(100, 32);
+            btnThemNL.TabIndex = 15;
+            btnThemNL.Text = "+ Thêm mới";
+            btnThemNL.UseVisualStyleBackColor = false;
+            // 
             // Frm_NhapKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(624, 355);
+            ClientSize = new Size(620, 355);
+            Controls.Add(btnThemNL);
             Controls.Add(txtSoLuong);
             Controls.Add(label7);
             Controls.Add(cbbTenMon);
@@ -216,5 +236,6 @@
         private UiControls.BorderComboBox cbbTenMon;
         private Label label7;
         private Controls.RoundedTextBox txtSoLuong;
+        private Controls.RoundedButton btnThemNL;
     }
 }

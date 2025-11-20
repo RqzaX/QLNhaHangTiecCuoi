@@ -71,6 +71,13 @@ namespace UI
         {
             LoadBranchCombo();
             LoadTinhTrangCombo();
+            
+            // Thiết lập placeholder cho ô tìm kiếm
+            if (txtSearch != null)
+            {
+                txtSearch.PlaceholderText = "Tìm kiếm theo mã hoặc tên nguyên liệu...";
+            }
+            
             ReloadGrid();
             UpdateSummaryPanels();
         }
@@ -122,6 +129,7 @@ namespace UI
            this.Load += FrmKho_Load;
     cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
     txtSearch.TextChanged += txtSearch_TextChanged;
+            btnThemNL.Click += BtnThemNL_Click;
 
 
         }
@@ -250,73 +258,71 @@ namespace UI
 
         public void ReloadGrid()
         {
-            DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
-            if (tb == null) { dgvKho.DataSource = null; return; }
-
-
-            var dv = tb.DefaultView;
-
-            // lấy trạng thái hiện tại + text đang gõ
-            int stt = GetTinhTrang();
-            _currentSearchText = txtSearch?.Text?.Trim() ?? string.Empty;
-
-            // gộp filter
-            dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
-
-
-            string canhBao = NguongCanhBaoMacDinh.ToString(CultureInfo.InvariantCulture);
-            
-            switch (stt)
+            try
             {
-                case 1: 
-                    dv.RowFilter = "sl_ton > 0";
-                    break;
-                case 2: 
-                    dv.RowFilter = "sl_ton = 0";
-                    break;
-                case 3:
-                    dv.RowFilter = $"sl_ton > 0 AND sl_ton <= {canhBao}";
-                    break;
-                default:
-                    dv.RowFilter = string.Empty;
-                    break;
-            }
-
-        
-
-            if (!tb.Columns.Contains("GiaTri")) tb.Columns.Add("GiaTri", typeof(decimal));
-            foreach (DataRow r in tb.Rows)
-            {
-                decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value ? Convert.ToDecimal(r["sl_ton"]) : 0m;
-                decimal giaTri = 0m;
-                if (tb.Columns.Contains("gia_tri")) giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
-                else
-                {
-                    decimal donGia = 0m;
-                    if (tb.Columns.Contains("gia_nhap")) donGia = r["gia_nhap"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_nhap"]);
-                    else if (tb.Columns.Contains("don_gia")) donGia = r["don_gia"] == DBNull.Value ? 0m : Convert.ToDecimal(r["don_gia"]);
-                    giaTri = sl * donGia;
+                DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
+                if (tb == null) 
+                { 
+                    dgvKho.DataSource = null; 
+                    return; 
                 }
-                r["GiaTri"] = giaTri;
+
+                var dv = tb.DefaultView;
+
+                // Lấy trạng thái hiện tại + text đang gõ
+                int stt = GetTinhTrang();
+                _currentSearchText = txtSearch?.Text?.Trim() ?? string.Empty;
+
+                // Gộp filter: kết hợp cả tình trạng và tìm kiếm
+                dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
+
+                // Tính toán giá trị nếu cần
+                if (!tb.Columns.Contains("GiaTri")) 
+                    tb.Columns.Add("GiaTri", typeof(decimal));
+                    
+                foreach (DataRow r in tb.Rows)
+                {
+                    decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value 
+                        ? Convert.ToDecimal(r["sl_ton"]) 
+                        : 0m;
+                    decimal giaTri = 0m;
+                    
+                    if (tb.Columns.Contains("gia_tri")) 
+                    {
+                        giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
+                    }
+                    else
+                    {
+                        decimal donGia = 0m;
+                        if (tb.Columns.Contains("gia_nhap")) 
+                            donGia = r["gia_nhap"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_nhap"]);
+                        else if (tb.Columns.Contains("don_gia")) 
+                            donGia = r["don_gia"] == DBNull.Value ? 0m : Convert.ToDecimal(r["don_gia"]);
+                        giaTri = sl * donGia;
+                    }
+                    r["GiaTri"] = giaTri;
+                }
+
+                // Cập nhật DataGridView
+                dgvKho.DataSource = null;
+                dgvKho.DataSource = dv.ToTable();
             }
-
-
-            dgvKho.DataSource = null;
-            dgvKho.DataSource = dv.ToTable();
-
-          
-            dgvKho.DataSource = null;
-            dgvKho.DataSource = dv.ToTable();  
-
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
+            // Debounce: dừng timer cũ và khởi động lại
             _debounceTimer.Stop();
             _debounceTimer.Start();
         }
 
         private void DebounceTimer_Tick(object sender, EventArgs e)
         {
+            // Khi timer đếm xong, thực hiện tìm kiếm
             _debounceTimer.Stop();
             ReloadGrid();
         }
@@ -533,6 +539,30 @@ namespace UI
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi hiển thị danh sách chi nhánh: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void BtnThemNL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var frmThemNL = new Frm_ThemNguyenLieu())
+                {
+                    frmThemNL.StartPosition = FormStartPosition.CenterParent;
+                    var result = frmThemNL.ShowDialog(this);
+
+                    if (result == DialogResult.OK)
+                    {
+                        // Reload grid để hiển thị nguyên liệu mới
+                        ReloadGrid();
+                        UpdateSummaryPanels();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm nguyên liệu: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

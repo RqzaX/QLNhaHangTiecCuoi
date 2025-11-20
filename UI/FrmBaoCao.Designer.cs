@@ -74,7 +74,6 @@
             PanelCanhBao = new Guna.UI2.WinForms.Guna2GradientPanel();
             panel1 = new Panel();
             label3 = new Label();
-            borderComboBox1 = new UiControls.BorderComboBox();
             PanelBanChay.SuspendLayout();
             roundedShadowPanel5.SuspendLayout();
             roundedPanel12.SuspendLayout();
@@ -154,7 +153,7 @@
             PanelBanChay.Controls.Add(roundedShadowPanel2);
             PanelBanChay.Controls.Add(roundedShadowPanel1);
             PanelBanChay.Controls.Add(label17);
-            PanelBanChay.Location = new Point(11, 853);
+            PanelBanChay.Location = new Point(11, 859);
             PanelBanChay.Name = "PanelBanChay";
             PanelBanChay.Padding = new Padding(12);
             PanelBanChay.Size = new Size(1139, 551);
@@ -526,10 +525,10 @@
             // 
             PanelBieuDo.BackColor = Color.White;
             PanelBieuDo.BorderThickness = 5;
-            PanelBieuDo.Location = new Point(11, 312);
+            PanelBieuDo.Location = new Point(11, 308);
             PanelBieuDo.Name = "PanelBieuDo";
             PanelBieuDo.Padding = new Padding(12);
-            PanelBieuDo.Size = new Size(1156, 535);
+            PanelBieuDo.Size = new Size(1152, 548);
             PanelBieuDo.TabIndex = 32;
             // 
             // PanelCanhBao
@@ -563,18 +562,6 @@
             label3.TabIndex = 0;
             label3.Text = "Cảnh Báo !";
             // 
-            // borderComboBox1
-            // 
-            borderComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
-            borderComboBox1.FormattingEnabled = true;
-            borderComboBox1.IntegralHeight = false;
-            borderComboBox1.ItemHeight = 26;
-            borderComboBox1.Items.AddRange(new object[] { "Hôm Nay", "Tuấn Này", "Tháng Này", "Quý Này", "Năm Này", "Tùy Chỉnh" });
-            borderComboBox1.Location = new Point(781, 35);
-            borderComboBox1.Name = "borderComboBox1";
-            borderComboBox1.Size = new Size(151, 32);
-            borderComboBox1.TabIndex = 15;
-            // 
             // FrmBaoCao
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -584,7 +571,6 @@
             Controls.Add(PanelBanChay);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedButton2);
-            Controls.Add(borderComboBox1);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(PanelBieuDo);
@@ -664,7 +650,6 @@
         private ImageList imageList1;
         private Controls.RoundedPanel PanelBieuDo;
         private Guna.UI2.WinForms.Guna2GradientPanel PanelCanhBao;
-        private UiControls.BorderComboBox borderComboBox1;
         private Panel panel1;
         private Label label3;
     }

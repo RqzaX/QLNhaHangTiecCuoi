@@ -32,6 +32,10 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label1 = new Label();
             label2 = new Label();
             btnNhapKho = new UI.Controls.RoundedButton();
@@ -58,6 +62,8 @@
             roundedButton1 = new UI.Controls.RoundedButton();
             btnChuyenKho = new UI.Controls.RoundedButton();
             txtSearch = new UI.Controls.RoundedTextBox();
+            btnThemNL = new Guna.UI2.WinForms.Guna2Button();
+            guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             roundedPanel2.SuspendLayout();
             roundedPanel3.SuspendLayout();
             roundedPanel4.SuspendLayout();
@@ -92,7 +98,7 @@
             btnNhapKho.Font = new Font("Segoe UI Semibold", 10.5F);
             btnNhapKho.ForeColor = Color.Black;
             btnNhapKho.HoverBackColor = Color.Silver;
-            btnNhapKho.Location = new Point(571, 45);
+            btnNhapKho.Location = new Point(516, 45);
             btnNhapKho.Name = "btnNhapKho";
             btnNhapKho.Padding = new Padding(10, 6, 10, 6);
             btnNhapKho.PressedBackColor = Color.Silver;
@@ -337,7 +343,7 @@
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.Black;
             roundedButton1.HoverBackColor = Color.FromArgb(224, 224, 224);
-            roundedButton1.Location = new Point(719, 45);
+            roundedButton1.Location = new Point(676, 45);
             roundedButton1.Name = "roundedButton1";
             roundedButton1.Padding = new Padding(10, 6, 10, 6);
             roundedButton1.PressedBackColor = Color.Silver;
@@ -357,7 +363,7 @@
             btnChuyenKho.Font = new Font("Segoe UI Semibold", 10.5F);
             btnChuyenKho.ForeColor = Color.Black;
             btnChuyenKho.HoverBackColor = Color.FromArgb(224, 224, 224);
-            btnChuyenKho.Location = new Point(867, 45);
+            btnChuyenKho.Location = new Point(824, 45);
             btnChuyenKho.Name = "btnChuyenKho";
             btnChuyenKho.Padding = new Padding(10, 6, 10, 6);
             btnChuyenKho.PressedBackColor = Color.Silver;
@@ -378,11 +384,52 @@
             txtSearch.Size = new Size(518, 42);
             txtSearch.TabIndex = 1;
             // 
+            // btnThemNL
+            // 
+            btnThemNL.BackColor = Color.Transparent;
+            btnThemNL.BorderRadius = 20;
+            btnThemNL.CustomizableEdges = customizableEdges1;
+            btnThemNL.DisabledState.BorderColor = Color.DarkGray;
+            btnThemNL.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnThemNL.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnThemNL.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnThemNL.FillColor = Color.Black;
+            btnThemNL.Font = new Font("Segoe UI", 9F);
+            btnThemNL.ForeColor = Color.White;
+            btnThemNL.Location = new Point(910, 320);
+            btnThemNL.Name = "btnThemNL";
+            btnThemNL.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnThemNL.Size = new Size(196, 42);
+            btnThemNL.TabIndex = 22;
+            btnThemNL.Text = "Thêm Nguyên Liệu Mới";
+            
+            // 
+            // guna2Button1
+            // 
+            guna2Button1.BackColor = Color.Transparent;
+            guna2Button1.BorderRadius = 20;
+            guna2Button1.CustomizableEdges = customizableEdges3;
+            guna2Button1.DisabledState.BorderColor = Color.DarkGray;
+            guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray;
+            guna2Button1.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            guna2Button1.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            guna2Button1.FillColor = Color.FromArgb(255, 192, 128);
+            guna2Button1.Font = new Font("Segoe UI", 9F);
+            guna2Button1.ForeColor = Color.Black;
+            guna2Button1.Location = new Point(985, 45);
+            guna2Button1.Name = "guna2Button1";
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            guna2Button1.Size = new Size(153, 42);
+            guna2Button1.TabIndex = 23;
+            guna2Button1.Text = "Xuất Báo cáo";
+            // 
             // FrmKho
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 853);
+            Controls.Add(guna2Button1);
+            Controls.Add(btnThemNL);
             Controls.Add(btnChuyenKho);
             Controls.Add(roundedButton1);
             Controls.Add(dgvKho);
@@ -437,5 +484,7 @@
         private Controls.RoundedButton roundedButton1;
         private Controls.RoundedButton btnChuyenKho;
         private Controls.RoundedTextBox txtSearch;
+        private Guna.UI2.WinForms.Guna2Button btnThemNL;
+        private Guna.UI2.WinForms.Guna2Button guna2Button1;
     }
 }

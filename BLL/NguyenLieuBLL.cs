@@ -25,6 +25,17 @@ namespace QLNhaHangTiecCuoi.BLL
         public DataTable LayTheoIdCoTon(int nlId) => _dal.GetByIdWithTon(nlId);
         public DataTable LayTonKhoTheoChiNhanhCuaNguyenLieu(int nlId) => _dal.GetTonKhoTheoChiNhanhCuaNguyenLieu(nlId);
 
+        public int Them(string ma, string ten, string donVi)
+        {
+            try
+            {
+                return _dal.Insert(ma, ten, donVi);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi BLL - Them: {ex.Message}", ex);
+            }
+        }
        
         public int Sua(int nlId, string ma, string ten, string donVi) => _dal.Update(nlId, ma, ten, donVi);
         public decimal LayTonKhoTaiChiNhanh(int chiNhanhId, int nlId)

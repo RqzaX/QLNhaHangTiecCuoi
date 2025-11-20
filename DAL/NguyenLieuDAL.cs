@@ -116,7 +116,30 @@ WHERE 1 = 1";
         }
 
      
-        public int Update(int nlId, string ma, string ten, string donVi)
+          public int Insert(string ma, string ten, string donVi)
+        {
+            const string sql = @"
+                INSERT INTO dbo.nguyen_lieu (ma_nl, ten_nl, don_vi)
+                VALUES (@ma, @ten, @dv);
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            var prms = new[]
+            {
+                new SqlParameter("@ma", ma),
+                new SqlParameter("@ten", ten),
+                new SqlParameter("@dv", donVi),
+            };
+            try
+            {
+                var result = _db.ExecuteScalar(sql, prms);
+                return result != null ? Convert.ToInt32(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi DAL - Insert: {ex.Message}", ex);
+            }
+        }
+
+      public int Update(int nlId, string ma, string ten, string donVi)
         {
             const string sql = @"
                 UPDATE dbo.nguyen_lieu

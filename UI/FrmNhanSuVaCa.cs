@@ -282,12 +282,14 @@ namespace UI
             {
                 panelNhanSu.Visible = true;
                 panelPhanCa.Visible = false;
+                panelNhanSu.Location= new Point(2, 341);
             }
             else if (segmentedPill1.SelectedIndex == 1)
             {
                 panelNhanSu.Visible = false;
                 panelPhanCa.Visible = true;
-                
+               
+
                 // Khởi tạo và load PhanCaPanel nếu chưa có
                 if (_phanCaPanel == null || _phanCaPanel.IsDisposed)
                 {
