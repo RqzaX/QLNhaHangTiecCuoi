@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            VanThuan.UI.PillItem pillItem3 = new VanThuan.UI.PillItem();
-            VanThuan.UI.PillItem pillItem4 = new VanThuan.UI.PillItem();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            VanThuan.UI.PillItem pillItem1 = new VanThuan.UI.PillItem();
+            VanThuan.UI.PillItem pillItem2 = new VanThuan.UI.PillItem();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label1 = new Label();
             label2 = new Label();
             RpanelTongNV = new UI.Controls.RoundedPanel();
@@ -145,10 +145,10 @@
             // 
             segmentedPill1.BackColor = Color.Transparent;
             segmentedPill1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            pillItem3.Text = "Nhân Viên";
-            pillItem4.Text = "Phân Ca";
-            segmentedPill1.Items.Add(pillItem3);
-            segmentedPill1.Items.Add(pillItem4);
+            pillItem1.Text = "Nhân Viên";
+            pillItem2.Text = "Phân Ca";
+            segmentedPill1.Items.Add(pillItem1);
+            segmentedPill1.Items.Add(pillItem2);
             segmentedPill1.Location = new Point(12, 264);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(237, 55);
@@ -162,10 +162,10 @@
             panelNhanSu.Controls.Add(btnThemNV);
             panelNhanSu.Controls.Add(cbbNhanSu);
             panelNhanSu.Controls.Add(roundedTextBox1);
-            panelNhanSu.CustomizableEdges = customizableEdges5;
+            panelNhanSu.CustomizableEdges = customizableEdges1;
             panelNhanSu.Location = new Point(2, 341);
             panelNhanSu.Name = "panelNhanSu";
-            panelNhanSu.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            panelNhanSu.ShadowDecoration.CustomizableEdges = customizableEdges2;
             panelNhanSu.Size = new Size(1187, 557);
             panelNhanSu.TabIndex = 19;
             // 
@@ -176,25 +176,25 @@
             dgvNhanSu.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvNhanSu.BackgroundColor = SystemColors.ButtonHighlight;
             dgvNhanSu.BorderStyle = BorderStyle.Fixed3D;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(255, 192, 255);
-            dataGridViewCellStyle3.SelectionForeColor = Color.Purple;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvNhanSu.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 192, 255);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Purple;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvNhanSu.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvNhanSu.ColumnHeadersHeight = 60;
             dgvNhanSu.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.Padding = new Padding(12, 8, 12, 10);
-            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(255, 192, 255);
-            dataGridViewCellStyle4.SelectionForeColor = Color.Purple;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvNhanSu.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.Padding = new Padding(12, 8, 12, 10);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(255, 192, 255);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Purple;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvNhanSu.DefaultCellStyle = dataGridViewCellStyle2;
             dgvNhanSu.Dock = DockStyle.Bottom;
             dgvNhanSu.Location = new Point(0, 91);
             dgvNhanSu.Name = "dgvNhanSu";
@@ -205,6 +205,7 @@
             dgvNhanSu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvNhanSu.Size = new Size(1187, 466);
             dgvNhanSu.TabIndex = 26;
+            
             // 
             // btnThemNV
             // 
@@ -251,10 +252,10 @@
             // panelPhanCa
             // 
             panelPhanCa.AutoScroll = true;
-            panelPhanCa.CustomizableEdges = customizableEdges7;
+            panelPhanCa.CustomizableEdges = customizableEdges3;
             panelPhanCa.Location = new Point(9, 337);
             panelPhanCa.Name = "panelPhanCa";
-            panelPhanCa.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            panelPhanCa.ShadowDecoration.CustomizableEdges = customizableEdges4;
             panelPhanCa.Size = new Size(1177, 573);
             panelPhanCa.TabIndex = 20;
             panelPhanCa.Visible = false;

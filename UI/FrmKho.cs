@@ -103,6 +103,14 @@ namespace UI
                 Width = 90,
                 DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
             });
+            dgvKho.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "ton_toi_thieu",
+                Name = "ton_toi_thieu",
+                HeaderText = "Tồn tối thiểu",
+                Width = 120,
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleRight, Format = "N0" }
+            });
 
 
            

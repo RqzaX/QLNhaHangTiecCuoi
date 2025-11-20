@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using QLNhaHangTiecCuoi.DAL;
 using QLNhaHangTiecCuoi.Share;
@@ -218,72 +219,6 @@ namespace QLNhaHangTiecCuoi.BLL
         public DataTable LayDanhSachChucVu()
         {
             return _dal.LayDanhSachChucVu();
-        }
-
-        public int ThemNhanVien(string hoTen, string taiKhoan, string matKhau, int vaiTroId, int chiNhanhId, bool hoatDong)
-        {
-            if (string.IsNullOrWhiteSpace(hoTen))
-                throw new Exception("Họ tên không được để trống!");
-            if (string.IsNullOrWhiteSpace(taiKhoan))
-                throw new Exception("Tài khoản không được để trống!");
-            if (taiKhoan.Length < 3)
-                throw new Exception("Tài khoản phải có ít nhất 3 ký tự!");
-            if (string.IsNullOrWhiteSpace(matKhau) || matKhau.Length < 6)
-                throw new Exception("Mật khẩu phải có ít nhất 6 ký tự!");
-            if (vaiTroId <= 0)
-                throw new Exception("Vui lòng chọn vai trò!");
-            if (chiNhanhId <= 0)
-                throw new Exception("Vui lòng chọn chi nhánh!");
-
-            try
-            {
-                return _dal.ThemNhanVien(hoTen, taiKhoan, matKhau, vaiTroId, chiNhanhId, hoatDong);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi thêm nhân viên: " + ex.Message);
-            }
-        }
-
-        public bool CapNhatNhanVien(int nguoiDungId, string hoTen, string taiKhoan, bool hoatDong, int vaiTroId, int chiNhanhId, string matKhau = null)
-        {
-            if (nguoiDungId <= 0)
-                throw new Exception("ID nhân viên không hợp lệ!");
-            if (string.IsNullOrWhiteSpace(hoTen))
-                throw new Exception("Họ tên không được để trống!");
-            if (string.IsNullOrWhiteSpace(taiKhoan))
-                throw new Exception("Tài khoản không được để trống!");
-            if (vaiTroId <= 0)
-                throw new Exception("Vui lòng chọn vai trò!");
-            if (chiNhanhId <= 0)
-                throw new Exception("Vui lòng chọn chi nhánh!");
-
-            if (!string.IsNullOrWhiteSpace(matKhau) && matKhau.Length < 6)
-                throw new Exception("Mật khẩu phải có ít nhất 6 ký tự!");
-
-            try
-            {
-                return _dal.CapNhatNhanVien(nguoiDungId, hoTen, taiKhoan, hoatDong, vaiTroId, chiNhanhId, matKhau);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi cập nhật nhân viên: " + ex.Message);
-            }
-        }
-
-        public bool XoaNhanVien(int nguoiDungId)
-        {
-            if (nguoiDungId <= 0)
-                throw new Exception("ID nhân viên không hợp lệ!");
-
-            try
-            {
-                return _dal.XoaNhanVien(nguoiDungId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi xóa nhân viên: " + ex.Message);
-            }
         }
     }
 }

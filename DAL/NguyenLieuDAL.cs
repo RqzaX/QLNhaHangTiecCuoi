@@ -31,7 +31,8 @@ namespace QLNhaHangTiecCuoi.DAL
             var sql = @"
 SELECT 
     nl.nl_id, nl.ma_nl, nl.ten_nl, nl.don_vi,
-    ISNULL(tk.sl_ton, 0) AS sl_ton
+    ISNULL(tk.sl_ton, 0) AS sl_ton,
+    ISNULL(tk.ton_toi_thieu, 0) AS ton_toi_thieu
 FROM dbo.nguyen_lieu nl
 LEFT JOIN dbo.ton_kho tk
   ON tk.nl_id = nl.nl_id

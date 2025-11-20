@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.Share;
+using UI.Common;
 
 namespace UI
 {
@@ -108,6 +109,7 @@ namespace UI
         private const string NS_TEN = "TenNV";
         private const string NS_CV = "ChucVu";
         private const string NS_CN = "ChiNhanh";
+        private const string NS_ID = "NguoiDungId"; // Cột ẩn để lưu ID
         private void InitDgvNhanSu()
         {
             var dgv = dgvNhanSu;
@@ -119,6 +121,8 @@ namespace UI
 
             if (dgv.Columns.Count == 0)
             {
+                // Cột ẩn để lưu ID
+                dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_ID, HeaderText = "ID", Visible = false });
                 dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_TEN, HeaderText = "Tên NV", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 210 });
                 dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CV, HeaderText = "Chức vụ", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
                 dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = NS_CN, HeaderText = "Chi nhánh", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, FillWeight = 250 });
@@ -141,8 +145,9 @@ namespace UI
                     chucVuFilter = cbbNhanSu.SelectedItem.ToString();
                 }
 
-                // Lấy từ khóa tìm kiếm từ TextBox
+                
                 string searchKeyword = roundedTextBox1?.Text?.Trim() ?? "";
+                int currentChiNhanhId = Session.ChiNhanhId;
 
                 DataTable dt = _nguoiDungBLL.LayDanhSachNhanVien();
 
@@ -153,6 +158,22 @@ namespace UI
                         string ten = row["TenNV"]?.ToString() ?? "";
                         string chucVu = row["ChucVu"]?.ToString() ?? "";
                         string chiNhanh = row["ChiNhanh"]?.ToString() ?? "";
+                        int chiNhanhId = 0;
+                        if (row.Table.Columns.Contains("ChiNhanhId") && row["ChiNhanhId"] != DBNull.Value)
+                        {
+                            chiNhanhId = Convert.ToInt32(row["ChiNhanhId"]);
+                        }
+
+                        // Lọc theo chi nhánh: nếu đã chọn chi nhánh -> chỉ hiển thị nhân viên thuộc chi nhánh đó
+                        // hoặc nhân viên chưa thuộc chi nhánh nào (chiNhanhId = 0)
+                        bool matchChiNhanh = true;
+                        if (currentChiNhanhId > 0)
+                        {
+                            matchChiNhanh = chiNhanhId == currentChiNhanhId || chiNhanhId == 0;
+                        }
+
+                        if (!matchChiNhanh)
+                            continue;
 
                         // Lọc theo chức vụ nếu có chọn
                         bool matchChucVu = (chucVuFilter == null || chucVu == chucVuFilter);
@@ -166,10 +187,11 @@ namespace UI
                                          chucVu.ToLower().Contains(searchLower);
                         }
 
-                        // Chỉ hiển thị nếu thỏa cả 2 điều kiện: lọc chức vụ và tìm kiếm
-                        if (matchChucVu && matchSearch)
+                        // Chỉ hiển thị nếu thỏa cả 3 điều kiện
+                        if (matchChiNhanh && matchChucVu && matchSearch)
                         {
-                            dgvNhanSu.Rows.Add(ten, chucVu, chiNhanh);
+                            int nguoiDungId = Convert.ToInt32(row["nguoi_dung_id"]);
+                            dgvNhanSu.Rows.Add(nguoiDungId, ten, chucVu, chiNhanh);
                         }
                     }
                 }
@@ -215,6 +237,9 @@ namespace UI
                 LoadTongSoNhanVien();
                 LoadChucVu(); // Load chức vụ vào ComboBox
                 
+                // Đăng ký sự kiện CellDoubleClick
+                dgvNhanSu.CellDoubleClick += DgvNhanSu_CellDoubleClick;
+                
                 // Khởi tạo PhanCaPanel nhưng chưa hiển thị
                 InitializePhanCaPanel();
             }
@@ -235,9 +260,26 @@ namespace UI
                 if (_nguoiDungBLL == null)
                     return;
 
-                // Lấy danh sách nhân viên và đếm số lượng
+                // Lấy danh sách nhân viên và đếm số lượng theo chi nhánh hiện tại
                 DataTable dt = _nguoiDungBLL.LayDanhSachNhanVien();
-                int tongSo = dt != null ? dt.Rows.Count : 0;
+                int currentChiNhanhId = Session.ChiNhanhId;
+                int tongSo = 0;
+                if (dt != null)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int chiNhanhId = 0;
+                        if (row.Table.Columns.Contains("ChiNhanhId") && row["ChiNhanhId"] != DBNull.Value)
+                        {
+                            chiNhanhId = Convert.ToInt32(row["ChiNhanhId"]);
+                        }
+
+                        if (currentChiNhanhId <= 0 || chiNhanhId == currentChiNhanhId || chiNhanhId == 0)
+                        {
+                            tongSo++;
+                        }
+                    }
+                }
 
                 // Cập nhật label8 với tổng số nhân viên
                 if (label8 != null)
@@ -282,7 +324,7 @@ namespace UI
             {
                 panelNhanSu.Visible = true;
                 panelPhanCa.Visible = false;
-                panelNhanSu.Location= new Point(2, 341);
+               
             }
             else if (segmentedPill1.SelectedIndex == 1)
             {
@@ -329,6 +371,47 @@ namespace UI
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khởi tạo panel phân ca: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DgvNhanSu_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem có click vào row hợp lệ không
+                if (e.RowIndex < 0 || e.RowIndex >= dgvNhanSu.Rows.Count)
+                    return;
+
+                DataGridViewRow row = dgvNhanSu.Rows[e.RowIndex];
+                
+                // Lấy nguoi_dung_id từ cột ẩn
+                if (row.Cells[NS_ID].Value == null)
+                    return;
+
+                int nguoiDungId = Convert.ToInt32(row.Cells[NS_ID].Value);
+
+                // Mở form sửa/xóa nhân viên
+                using (var f = new Frm_SuaXoaNV(nguoiDungId, _nguoiDungBLL))
+                {
+                    f.StartPosition = FormStartPosition.CenterParent;
+                    if (f.ShowDialog(this) == DialogResult.OK)
+                    {
+                        // Reload dữ liệu nhân viên sau khi sửa/xóa
+                        LoadDataNhanSu();
+                        LoadTongSoNhanVien();
+                        
+                        // Reload dữ liệu phân ca nếu đang ở tab phân ca
+                        if (segmentedPill1.SelectedIndex == 1 && _phanCaPanel != null && !_phanCaPanel.IsDisposed)
+                        {
+                            _phanCaPanel.LoadDataPhanCa();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form sửa/xóa nhân viên: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
