@@ -202,9 +202,7 @@ namespace QLNhaHangTiecCuoi.DAL
         }
 
         /// <summary>
-        /// Lấy danh sách nhân viên theo chi nhánh để phân ca
-        /// Bao gồm nhân viên đã có <= 2 ca, loại bỏ nhân viên đã đủ 3 ca
-        /// và loại bỏ nhân viên đã nằm trong ca hiện tại
+       
         /// </summary>
         public DataTable LayNhanVienChuaTrongCa(int caId, int chiNhanhId)
         {
