@@ -130,7 +130,7 @@ namespace UI.Reports {
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedrptKhachHang : Component {
+    public class CachedrptKhachHang : Component, ICachedReport {
         
         public CachedrptKhachHang() {
         }
@@ -161,7 +161,7 @@ namespace UI.Reports {
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public virtual System.TimeSpan CacheTimeOut {
             get {
-                return System.TimeSpan.FromMinutes(5);
+                return CachedReportConstants.DEFAULT_TIMEOUT;
             }
             set {
                 // 

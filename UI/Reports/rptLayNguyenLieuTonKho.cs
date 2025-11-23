@@ -114,7 +114,7 @@ namespace UI.Reports {
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedrptLayNguyenLieuTonKho : Component {
+    public class CachedrptLayNguyenLieuTonKho : Component, ICachedReport {
         
         public CachedrptLayNguyenLieuTonKho() {
         }
@@ -145,7 +145,7 @@ namespace UI.Reports {
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public virtual System.TimeSpan CacheTimeOut {
             get {
-                return System.TimeSpan.FromMinutes(5);
+                return CachedReportConstants.DEFAULT_TIMEOUT;
             }
             set {
                 // 
