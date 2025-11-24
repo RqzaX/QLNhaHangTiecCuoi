@@ -218,7 +218,7 @@ namespace UI
             }
         }
 
-        private void ShowChild<T>() where T : Form, new()
+        public void ShowChild<T>() where T : Form, new()
         {
             if (!_cache.TryGetValue(typeof(T), out var form) || form.IsDisposed)
             {
@@ -230,17 +230,105 @@ namespace UI
                 };
                 _cache[typeof(T)] = form;
             }
-            // Dọn panel và gắn form
-            foreach (Control c in panelChinh.Controls) c.Hide();
-            panelChinh.Controls.Clear();
-            panelChinh.Controls.Add(form);
-            form.BringToFront();
-            form.Show();
+
+            // Dọn panel và gắn form - dispose controls properly to avoid ObjectDisposedException
+            try
+            {
+                // Hide and dispose existing controls properly
+                var controlsToRemove = new List<Control>();
+                foreach (Control c in panelChinh.Controls)
+                {
+                    try
+                    {
+                        if (!c.IsDisposed)
+                        {
+                            c.Hide();
+                            controlsToRemove.Add(c);
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Control already disposed, skip it
+                        continue;
+                    }
+                }
+
+                // Remove controls from panel first
+                foreach (var c in controlsToRemove)
+                {
+                    try
+                    {
+                        if (!c.IsDisposed && panelChinh.Controls.Contains(c))
+                        {
+                            panelChinh.Controls.Remove(c);
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Already disposed, continue
+                        continue;
+                    }
+                }
+
+                // Dispose removed controls
+                foreach (var c in controlsToRemove)
+                {
+                    try
+                    {
+                        if (!c.IsDisposed)
+                        {
+                            c.Dispose();
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Already disposed, continue
+                        continue;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but continue
+                System.Diagnostics.Debug.WriteLine($"Error clearing panel: {ex.Message}");
+            }
+
+            // Add new form
+            try
+            {
+                if (!form.IsDisposed)
+                {
+                    panelChinh.Controls.Add(form);
+                    form.BringToFront();
+                    form.Show();
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // Form was disposed, create a new one
+                form = new T
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+                _cache[typeof(T)] = form;
+                panelChinh.Controls.Add(form);
+                form.BringToFront();
+                form.Show();
+            }
 
             // Nếu form implement IFormRefreshable thì refresh dữ liệu
-            if (form is IFormRefreshable refreshable)
+            if (form is IFormRefreshable refreshable && !form.IsDisposed)
             {
-                refreshable.RefreshData();
+                try
+                {
+                    refreshable.RefreshData();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Form or its controls were disposed, skip refresh
+                }
             }
         }
 
@@ -256,12 +344,68 @@ namespace UI
                 frmBanHang.FormBorderStyle = FormBorderStyle.None;
                 frmBanHang.Dock = DockStyle.Fill;
 
-                // Clear panel và add form mới
-                foreach (Control c in panelChinh.Controls) c.Hide();
-                panelChinh.Controls.Clear();
-                panelChinh.Controls.Add(frmBanHang);
-                frmBanHang.BringToFront();
-                frmBanHang.Show();
+                // Clear panel và add form mới - dispose controls properly
+                try
+                {
+                    var controlsToRemove = new List<Control>();
+                    foreach (Control c in panelChinh.Controls)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed)
+                            {
+                                c.Hide();
+                                controlsToRemove.Add(c);
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+
+                    foreach (var c in controlsToRemove)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed && panelChinh.Controls.Contains(c))
+                            {
+                                panelChinh.Controls.Remove(c);
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+
+                    foreach (var c in controlsToRemove)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed)
+                            {
+                                c.Dispose();
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error clearing panel: {ex.Message}");
+                }
+
+                // Add new form
+                if (!frmBanHang.IsDisposed)
+                {
+                    panelChinh.Controls.Add(frmBanHang);
+                    frmBanHang.BringToFront();
+                    frmBanHang.Show();
+                }
 
                 // Cập nhật cache
                 _cache[typeof(FrmBanHang)] = frmBanHang;
@@ -279,11 +423,78 @@ namespace UI
         {
             try
             {
+                // Clear panel controls first
+                try
+                {
+                    var controlsToRemove = new List<Control>();
+                    foreach (Control c in panelChinh.Controls)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed)
+                            {
+                                controlsToRemove.Add(c);
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+
+                    foreach (var c in controlsToRemove)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed && panelChinh.Controls.Contains(c))
+                            {
+                                panelChinh.Controls.Remove(c);
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+
+                    foreach (var c in controlsToRemove)
+                    {
+                        try
+                        {
+                            if (!c.IsDisposed)
+                            {
+                                c.Dispose();
+                            }
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            continue;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error clearing panel in ResetAllChildForms: {ex.Message}");
+                }
+
+                // Dispose cached forms
                 foreach (var kvp in _cache.ToList())
                 {
-                    if (kvp.Value != null && !kvp.Value.IsDisposed)
+                    try
                     {
-                        kvp.Value.Dispose();
+                        if (kvp.Value != null && !kvp.Value.IsDisposed)
+                        {
+                            kvp.Value.Dispose();
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Already disposed, continue
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error disposing form {kvp.Key}: {ex.Message}");
                     }
                 }
                 _cache.Clear();
@@ -394,16 +605,16 @@ namespace UI
 
         private void ApplyPermissions()
         {
+            // ADMIN có toàn quyền, không cần kiểm tra
             if (Session.HasRole("ADMIN"))
             {
-                return; // Tất cả nút đều enabled
+                return;
             }
 
             // Phân quyền cho từng nút dựa trên vai trò
             // Dashboard: Tất cả đều được xem
-            // btnDashboard luôn enabled
 
-            // Bán hàng: LETAN_THUNGAN, QLCN
+            // Bán hàng (POS): LETAN_THUNGAN, QLCN
             btnBanHang.Enabled = Session.HasAnyRole("LETAN_THUNGAN", "QLCN");
 
             // Đặt bàn: LETAN_THUNGAN, QLCN
@@ -431,7 +642,6 @@ namespace UI
             btnChiNhanh_Ban_Sanh.Enabled = Session.HasRole("QLCN");
 
             // Khách hàng: Tất cả (có thể xem)
-            // btnKhachHang luôn enabled
 
             // Nhân sự và Ca: QLCN
             btnNhanSu_Ca.Enabled = Session.HasRole("QLCN");
@@ -445,7 +655,7 @@ namespace UI
             // Phân quyền: ADMIN
             btnPhanQuyen.Enabled = Session.HasRole("ADMIN");
 
-            // Form Test: ADMIN (hoặc có thể disable luôn)
+            // Form Test
             btnFormTest.Enabled = Session.HasRole("ADMIN");
         }
 

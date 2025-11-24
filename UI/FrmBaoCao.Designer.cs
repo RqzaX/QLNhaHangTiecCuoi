@@ -136,7 +136,7 @@
             pillItem2.Text = "Cảnh Báo";
             segmentedPill1.Items.Add(pillItem1);
             segmentedPill1.Items.Add(pillItem2);
-            segmentedPill1.Location = new Point(14, 251);
+            segmentedPill1.Location = new Point(12, 85);
             segmentedPill1.Name = "segmentedPill1";
             segmentedPill1.Size = new Size(244, 55);
             segmentedPill1.TabIndex = 27;
@@ -153,7 +153,7 @@
             PanelBanChay.Controls.Add(roundedShadowPanel2);
             PanelBanChay.Controls.Add(roundedShadowPanel1);
             PanelBanChay.Controls.Add(label17);
-            PanelBanChay.Location = new Point(11, 859);
+            PanelBanChay.Location = new Point(15, 698);
             PanelBanChay.Name = "PanelBanChay";
             PanelBanChay.Padding = new Padding(12);
             PanelBanChay.Size = new Size(1139, 551);
@@ -525,10 +525,10 @@
             // 
             PanelBieuDo.BackColor = Color.White;
             PanelBieuDo.BorderThickness = 5;
-            PanelBieuDo.Location = new Point(11, 308);
+            PanelBieuDo.Location = new Point(9, 142);
             PanelBieuDo.Name = "PanelBieuDo";
             PanelBieuDo.Padding = new Padding(12);
-            PanelBieuDo.Size = new Size(1152, 548);
+            PanelBieuDo.Size = new Size(1152, 550);
             PanelBieuDo.TabIndex = 32;
             // 
             // PanelCanhBao
@@ -537,10 +537,10 @@
             PanelCanhBao.BackColor = SystemColors.ButtonHighlight;
             PanelCanhBao.Controls.Add(panel1);
             PanelCanhBao.CustomizableEdges = customizableEdges1;
-            PanelCanhBao.Location = new Point(11, 312);
+            PanelCanhBao.Location = new Point(9, 146);
             PanelCanhBao.Name = "PanelCanhBao";
             PanelCanhBao.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            PanelCanhBao.Size = new Size(1145, 578);
+            PanelCanhBao.Size = new Size(1145, 531);
             PanelCanhBao.TabIndex = 34;
             PanelCanhBao.Visible = false;
             // 
@@ -549,7 +549,7 @@
             panel1.Controls.Add(label3);
             panel1.Location = new Point(6, 15);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1146, 57);
+            panel1.Size = new Size(1135, 57);
             panel1.TabIndex = 0;
             // 
             // label3
@@ -573,8 +573,8 @@
             Controls.Add(roundedButton2);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(PanelBieuDo);
             Controls.Add(PanelCanhBao);
+            Controls.Add(PanelBieuDo);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmBaoCao";
             Text = "FrmBaoCao";

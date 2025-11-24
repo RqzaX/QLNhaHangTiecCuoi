@@ -34,6 +34,8 @@ namespace UI
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             dgvTest = new UIDataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
@@ -45,6 +47,7 @@ namespace UI
             Column8 = new DataGridViewTextBoxColumn();
             Column9 = new DataGridViewTextBoxColumn();
             Column10 = new DataGridViewButtonColumn();
+            guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             ((System.ComponentModel.ISupportInitialize)dgvTest).BeginInit();
             SuspendLayout();
             // 
@@ -81,7 +84,8 @@ namespace UI
             dgvTest.EnableHeadersVisualStyles = false;
             dgvTest.Font = new Font("Microsoft Sans Serif", 12F);
             dgvTest.GridColor = Color.FromArgb(104, 173, 255);
-            dgvTest.Location = new Point(0, 207);
+            dgvTest.Location = new Point(0, 276);
+            dgvTest.Margin = new Padding(3, 4, 3, 4);
             dgvTest.Name = "dgvTest";
             dgvTest.ReadOnly = true;
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -93,6 +97,7 @@ namespace UI
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
             dgvTest.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             dgvTest.RowHeadersVisible = false;
+            dgvTest.RowHeadersWidth = 51;
             dataGridViewCellStyle5.BackColor = Color.White;
             dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 12F);
             dataGridViewCellStyle5.ForeColor = Color.FromArgb(48, 48, 48);
@@ -101,7 +106,7 @@ namespace UI
             dgvTest.RowsDefaultCellStyle = dataGridViewCellStyle5;
             dgvTest.SelectedIndex = -1;
             dgvTest.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTest.Size = new Size(1040, 449);
+            dgvTest.Size = new Size(1189, 599);
             dgvTest.Style = UIStyle.Custom;
             dgvTest.TabIndex = 0;
             // 
@@ -109,6 +114,7 @@ namespace UI
             // 
             Column1.Frozen = true;
             Column1.HeaderText = "mã hđ";
+            Column1.MinimumWidth = 6;
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
             Column1.Width = 77;
@@ -117,6 +123,7 @@ namespace UI
             // 
             Column2.Frozen = true;
             Column2.HeaderText = "bàn/sảnh";
+            Column2.MinimumWidth = 6;
             Column2.Name = "Column2";
             Column2.ReadOnly = true;
             Column2.Width = 99;
@@ -125,6 +132,7 @@ namespace UI
             // 
             Column3.Frozen = true;
             Column3.HeaderText = "số tiền";
+            Column3.MinimumWidth = 6;
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
             Column3.Width = 80;
@@ -133,6 +141,7 @@ namespace UI
             // 
             Column4.Frozen = true;
             Column4.HeaderText = "khuyến mãi";
+            Column4.MinimumWidth = 6;
             Column4.Name = "Column4";
             Column4.ReadOnly = true;
             Column4.Width = 113;
@@ -141,6 +150,7 @@ namespace UI
             // 
             Column5.Frozen = true;
             Column5.HeaderText = "phương thức";
+            Column5.MinimumWidth = 6;
             Column5.Name = "Column5";
             Column5.ReadOnly = true;
             Column5.Width = 122;
@@ -149,6 +159,7 @@ namespace UI
             // 
             Column6.Frozen = true;
             Column6.HeaderText = "ngày";
+            Column6.MinimumWidth = 6;
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
             Column6.Width = 67;
@@ -157,6 +168,7 @@ namespace UI
             // 
             Column7.Frozen = true;
             Column7.HeaderText = "thời gian";
+            Column7.MinimumWidth = 6;
             Column7.Name = "Column7";
             Column7.ReadOnly = true;
             Column7.Width = 93;
@@ -165,6 +177,7 @@ namespace UI
             // 
             Column8.Frozen = true;
             Column8.HeaderText = "thu ngân";
+            Column8.MinimumWidth = 6;
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
             Column8.Width = 96;
@@ -173,25 +186,47 @@ namespace UI
             // 
             Column9.Frozen = true;
             Column9.HeaderText = "trạng thái";
+            Column9.MinimumWidth = 6;
             Column9.Name = "Column9";
             Column9.ReadOnly = true;
+            Column9.Width = 125;
             // 
             // Column10
             // 
             Column10.Frozen = true;
             Column10.HeaderText = "Thao tác";
+            Column10.MinimumWidth = 6;
             Column10.Name = "Column10";
             Column10.ReadOnly = true;
             Column10.Text = "test1";
             Column10.Width = 76;
             // 
+            // guna2Button1
+            // 
+            guna2Button1.CustomizableEdges = customizableEdges1;
+            guna2Button1.DisabledState.BorderColor = Color.DarkGray;
+            guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray;
+            guna2Button1.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            guna2Button1.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            guna2Button1.Font = new Font("Segoe UI", 9F);
+            guna2Button1.ForeColor = Color.White;
+            guna2Button1.Location = new Point(606, 161);
+            guna2Button1.Name = "guna2Button1";
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            guna2Button1.Size = new Size(225, 56);
+            guna2Button1.TabIndex = 1;
+            guna2Button1.Text = "guna2Button1";
+            guna2Button1.Click += guna2Button1_Click;
+            // 
             // test
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1040, 656);
+            ClientSize = new Size(1189, 875);
+            Controls.Add(guna2Button1);
             Controls.Add(dgvTest);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "test";
             Text = "test";
             ((System.ComponentModel.ISupportInitialize)dgvTest).EndInit();
@@ -211,5 +246,6 @@ namespace UI
         private DataGridViewTextBoxColumn Column8;
         private DataGridViewTextBoxColumn Column9;
         private DataGridViewButtonColumn Column10;
+        private Guna.UI2.WinForms.Guna2Button guna2Button1;
     }
 }

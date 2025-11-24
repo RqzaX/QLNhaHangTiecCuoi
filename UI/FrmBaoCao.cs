@@ -188,6 +188,32 @@ namespace UI
                             Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
                         };
                         panel.SetData(tenNL, slTon, hetHang: true);
+                        
+                        // Đăng ký event click để mở FrmKho
+                        panel.PanelClicked += (sender, e) =>
+                        {
+                            try
+                            {
+                                // Tìm FrmTrangChu và mở FrmKho trong panelChinh
+                                FrmTrangChu? trangChu = FindParentForm<FrmTrangChu>(this);
+                                if (trangChu != null)
+                                {
+                                    trangChu.ShowChild<FrmKho>();
+                                }
+                                else
+                                {
+                                    // Nếu không tìm thấy FrmTrangChu, mở dialog như cũ
+                                    FrmKho frm = new FrmKho();
+                                    frm.ShowDialog(this);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        };
+                        
                         PanelCanhBao.Controls.Add(panel);
                         yPosition += panelHeight + spacing;
                     }
@@ -207,6 +233,32 @@ namespace UI
                             Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
                         };
                         panel.SetData(tenNL, slTon, hetHang: false);
+                        
+                        // Đăng ký event click để mở FrmKho
+                        panel.PanelClicked += (sender, e) =>
+                        {
+                            try
+                            {
+                                // Tìm FrmTrangChu và mở FrmKho trong panelChinh
+                                FrmTrangChu? trangChu = FindParentForm<FrmTrangChu>(this);
+                                if (trangChu != null)
+                                {
+                                    trangChu.ShowChild<FrmKho>();
+                                }
+                                else
+                                {
+                                    // Nếu không tìm thấy FrmTrangChu, mở dialog như cũ
+                                    FrmKho frm = new FrmKho();
+                                    frm.ShowDialog(this);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        };
+                        
                         PanelCanhBao.Controls.Add(panel);
                         yPosition += panelHeight + spacing;
                     }
@@ -389,6 +441,35 @@ namespace UI
                 MessageBox.Show($"Lỗi load top 5 món bán chạy: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        /// <summary>
+        /// Tìm parent form theo kiểu T bằng cách đi lên cây control
+        /// </summary>
+        private T? FindParentForm<T>(Control control) where T : Form
+        {
+            Control? parent = control.Parent;
+            while (parent != null)
+            {
+                if (parent is T form)
+                {
+                    return form;
+                }
+                parent = parent.Parent;
+            }
+
+            Form? topLevel = control.FindForm();
+            if (topLevel is T topLevelForm)
+            {
+                return topLevelForm;
+            }
+
+            if (control is Form formControl && formControl.MdiParent is T mdiParent)
+            {
+                return mdiParent;
+            }
+
+            return null;
         }
     }
 

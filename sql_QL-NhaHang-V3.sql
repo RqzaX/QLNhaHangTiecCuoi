@@ -162,7 +162,7 @@ CREATE TABLE dbo.phieu_order(
   ngay_gio       DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
   nhan_vien      NVARCHAR(100) NULL,
   trang_thai     NVARCHAR(20) NOT NULL DEFAULT N'ĐANG PHỤC VỤ'
-               CHECK (trang_thai IN (N'ĐANG PHỤC VỤ',N'CHỜ THANH TOÁN',N'ĐÃ ĐÓNG')),
+               CHECK (trang_thai IN (N'ĐANG PHỤC VỤ',N'CHỜ THANH TOÁN',N'ĐÃ ĐÓNG',N'SẴN SÀNG')),
   FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (ban_id)       REFERENCES dbo.ban(ban_id)
   -- dat_sanh_id: FK thêm sau khi tạo dat_sanh
@@ -196,6 +196,9 @@ CREATE TABLE dbo.hoa_don(
   tong_sau_thue   DECIMAL(18,2) NOT NULL DEFAULT 0,
   trang_thai    NVARCHAR(20) NOT NULL DEFAULT N'NHÁP'
                CHECK (trang_thai IN (N'NHÁP',N'CHỜ TT',N'ĐÃ THANH TOÁN')),
+  so_ban_sanh   NVARCHAR(100) NULL,
+  ten_nguoi_ban NVARCHAR(100) NULL,
+  ten_nguoi_dat NVARCHAR(100) NULL,
   FOREIGN KEY (chi_nhanh_id) REFERENCES dbo.chi_nhanh(chi_nhanh_id),
   FOREIGN KEY (khach_hang_id) REFERENCES dbo.khach_hang(khach_hang_id)
 );
@@ -253,6 +256,38 @@ CREATE TABLE dbo.dat_sanh(
 -- Bổ sung FK còn thiếu cho phieu_order (order phục vụ trong tiệc)
 IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_po_ds')
   ALTER TABLE dbo.phieu_order ADD CONSTRAINT FK_po_ds FOREIGN KEY (dat_sanh_id) REFERENCES dbo.dat_sanh(dat_sanh_id);
+
+-- Cập nhật CHECK constraint cho trang_thai nếu bảng đã tồn tại và chưa có trạng thái SẴN SÀNG
+IF OBJECT_ID('dbo.phieu_order','U') IS NOT NULL
+BEGIN
+    -- Kiểm tra xem constraint có chứa SẴN SÀNG chưa
+    DECLARE @constraintName NVARCHAR(200);
+    DECLARE @constraintDef NVARCHAR(MAX);
+    
+    SELECT @constraintName = name, @constraintDef = definition
+    FROM sys.check_constraints 
+    WHERE parent_object_id = OBJECT_ID('dbo.phieu_order') 
+      AND definition LIKE '%trang_thai%';
+    
+    -- Nếu constraint tồn tại nhưng chưa có SẴN SÀNG, thì cập nhật
+    IF @constraintName IS NOT NULL AND @constraintDef NOT LIKE '%SẴN SÀNG%'
+    BEGIN
+        EXEC('ALTER TABLE dbo.phieu_order DROP CONSTRAINT ' + @constraintName);
+        
+        -- Thêm constraint mới với trạng thái SẴN SÀNG
+        ALTER TABLE dbo.phieu_order 
+        ADD CONSTRAINT CK_phieu_order_trang_thai 
+        CHECK (trang_thai IN (N'ĐANG PHỤC VỤ',N'CHỜ THANH TOÁN',N'ĐÃ ĐÓNG',N'SẴN SÀNG'));
+    END
+    -- Nếu chưa có constraint, thêm mới
+    ELSE IF @constraintName IS NULL
+    BEGIN
+        ALTER TABLE dbo.phieu_order 
+        ADD CONSTRAINT CK_phieu_order_trang_thai 
+        CHECK (trang_thai IN (N'ĐANG PHỤC VỤ',N'CHỜ THANH TOÁN',N'ĐÃ ĐÓNG',N'SẴN SÀNG'));
+    END
+END;
+GO
 
 -- Thêm cột khach_hang_id vào bảng hoa_don nếu bảng đã tồn tại
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'hoa_don')

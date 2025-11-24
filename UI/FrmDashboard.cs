@@ -12,6 +12,7 @@ using BLL;
 using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.Share;
 using UI.Common;
+using UI.Controls;
 
 namespace UI
 {
@@ -21,6 +22,7 @@ namespace UI
         private readonly HoaDonBLL _hoaDonBLL;
         private readonly DatSanhBLL _datSanhBLL;
         private readonly BanBLL _banBLL;
+        private readonly NguyenLieuBLL _nguyenLieuBLL;
         private ToolTip _tooltip;
         private int _hoveredBarIndex = -1;
         private List<BarInfo> _barInfoList = new List<BarInfo>();
@@ -40,6 +42,7 @@ namespace UI
             _hoaDonBLL = new HoaDonBLL(_dbHelper);
             _datSanhBLL = new DatSanhBLL();
             _banBLL = new BanBLL(_dbHelper);
+            _nguyenLieuBLL = new NguyenLieuBLL(_dbHelper);
             
             _tooltip = new ToolTip();
             _tooltip.IsBalloon = false;
@@ -75,6 +78,8 @@ namespace UI
                 LoadTopMonBanChay(chiNhanhId);
                 // Load danh sách đặt bàn/sảnh hôm nay
                 LoadDanhSachDatBanHomNay(chiNhanhId);
+                // Load cảnh báo tồn kho
+                LoadCanhBaoTonKho(chiNhanhId);
             }
             catch (Exception ex)
             {
@@ -539,6 +544,33 @@ namespace UI
             LoadDashboardData();
         }
 
+        // Tìm parent form theo kiểu T bằng cách đi lên cây control
+        private T? FindParentForm<T>(Control control) where T : Form
+        {
+            Control? parent = control.Parent;
+            while (parent != null)
+            {
+                if (parent is T form)
+                {
+                    return form;
+                }
+                parent = parent.Parent;
+            }
+
+            Form? topLevel = control.FindForm();
+            if (topLevel is T topLevelForm)
+            {
+                return topLevelForm;
+            }
+
+            if (control is Form formControl && formControl.MdiParent is T mdiParent)
+            {
+                return mdiParent;
+            }
+
+            return null;
+        }
+
         private void LoadTopMonBanChay(int chiNhanhId)
         {
             try
@@ -672,8 +704,119 @@ namespace UI
             catch (Exception ex)
             {
                 panelDanhSachDatBanHomNay.Controls.Clear();
-                // Log lỗi để debug (có thể bỏ comment sau khi fix)
-                // System.Diagnostics.Debug.WriteLine($"Lỗi load danh sách đặt bàn: {ex.Message}");
+            }
+        }
+
+        private void LoadCanhBaoTonKho(int chiNhanhId)
+        {
+            try
+            {
+                // Xóa tất cả control cũ trong panel
+                panelDanhSachCanhBaoTonKho.Controls.Clear();
+
+                // Lấy danh sách tồn kho
+                DataTable dtTonKho = _nguyenLieuBLL.LayDanhSachTonKho(chiNhanhId);
+                
+                if (dtTonKho == null || dtTonKho.Rows.Count == 0)
+                {
+                    return;
+                }
+
+                // Lọc các nguyên liệu cần cảnh báo
+                var canhBaoList = new List<DataRow>();
+                
+                foreach (DataRow row in dtTonKho.Rows)
+                {
+                    decimal slTon = Convert.ToDecimal(row["sl_ton"] ?? 0);
+                    decimal tonToiThieu = Convert.ToDecimal(row["ton_toi_thieu"] ?? 0);
+                    
+                    if (tonToiThieu > 0)
+                    {
+                        if (slTon < tonToiThieu)
+                        {
+                            canhBaoList.Add(row);
+                        }
+                        else if (slTon >= tonToiThieu && slTon <= tonToiThieu * 1.5m)
+                        {
+                            canhBaoList.Add(row);
+                        }
+                    }
+                }
+
+                // Sắp xếp: Danger trước, Warning sau
+                canhBaoList = canhBaoList.OrderBy(r =>
+                {
+                    decimal slTon = Convert.ToDecimal(r["sl_ton"] ?? 0);
+                    decimal tonToiThieu = Convert.ToDecimal(r["ton_toi_thieu"] ?? 0);
+                    return slTon < tonToiThieu ? 0 : 1; // 0 = Danger, 1 = Warning
+                }).ThenBy(r => Convert.ToDecimal(r["sl_ton"] ?? 0)).ToList();
+
+                if (canhBaoList.Count == 0)
+                {
+                    return;
+                }
+
+                // Tạo các control cảnh báo
+                int yPos = 3;
+                int spacing = 86; // 80 height + 6 margin
+                int panelWidth = panelDanhSachCanhBaoTonKho.Width - 20; // Trừ padding
+
+                foreach (DataRow row in canhBaoList)
+                {
+                    decimal slTon = Convert.ToDecimal(row["sl_ton"] ?? 0);
+                    decimal tonToiThieu = Convert.ToDecimal(row["ton_toi_thieu"] ?? 0);
+                    string tenNL = row["ten_nl"]?.ToString() ?? "";
+                    string donVi = row["don_vi"]?.ToString() ?? "";
+                    
+                    // Xác định mức cảnh báo
+                    AlertLevel level = slTon < tonToiThieu ? AlertLevel.Danger : AlertLevel.Warning;
+
+                    // Tạo control
+                    var canhBao = new CanhBaoToanKho
+                    {
+                        Location = new Point(10, yPos),
+                        Size = new Size(panelWidth, 80),
+                        ItemName = tenNL,
+                        Stock = (double)slTon,
+                        MinStock = (double)tonToiThieu,
+                        Unit = donVi,
+                        Level = level
+                    };
+
+                    // Đăng ký sự kiện click nút "Nhập kho"
+                    int nlId = Convert.ToInt32(row["nl_id"]);
+                    canhBao.ImportClicked += (sender, e) =>
+                    {
+                        try
+                        {
+                            // Tìm FrmTrangChu và mở FrmKho trong panelChinh
+                            FrmTrangChu? trangChu = FindParentForm<FrmTrangChu>(this);
+                            if (trangChu != null)
+                            {
+                                trangChu.ShowChild<FrmKho>();
+                            }
+                            else
+                            {
+                                FrmKho frm = new FrmKho();
+                                frm.ShowDialog(this);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Lỗi mở form nhập kho: {ex.Message}", "Lỗi", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    };
+
+                    panelDanhSachCanhBaoTonKho.Controls.Add(canhBao);
+                    yPos += spacing;
+                }
+            }
+            catch (Exception ex)
+            {
+                panelDanhSachCanhBaoTonKho.Controls.Clear();
+                // Log lỗi để debug
+                System.Diagnostics.Debug.WriteLine($"Lỗi load cảnh báo tồn kho: {ex.Message}");
             }
         }
     }

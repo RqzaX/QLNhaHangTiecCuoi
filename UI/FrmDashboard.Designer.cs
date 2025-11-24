@@ -33,7 +33,7 @@
             label2 = new Label();
             label1 = new Label();
             roundedPanel9 = new UI.Controls.RoundedPanel();
-            panel3 = new Panel();
+            panelDanhSachCanhBaoTonKho = new Panel();
             canhBaoToanKho3 = new UI.Controls.CanhBaoToanKho();
             canhBaoToanKho4 = new UI.Controls.CanhBaoToanKho();
             canhBaoToanKho1 = new UI.Controls.CanhBaoToanKho();
@@ -88,7 +88,7 @@
             label24 = new Label();
             lblSoHoaDonChoXuLy = new Label();
             roundedPanel9.SuspendLayout();
-            panel3.SuspendLayout();
+            panelDanhSachCanhBaoTonKho.SuspendLayout();
             roundedPanel7.SuspendLayout();
             panelDanhSachDatBanHomNay.SuspendLayout();
             roundedPanel8.SuspendLayout();
@@ -113,11 +113,10 @@
             roundedButton1.FlatStyle = FlatStyle.Flat;
             roundedButton1.Font = new Font("Segoe UI Semibold", 10.5F);
             roundedButton1.ForeColor = Color.White;
-            roundedButton1.Location = new Point(872, 17);
-            roundedButton1.Margin = new Padding(3, 2, 3, 2);
+            roundedButton1.Location = new Point(997, 23);
             roundedButton1.Name = "roundedButton1";
-            roundedButton1.Padding = new Padding(9, 4, 9, 4);
-            roundedButton1.Size = new Size(130, 34);
+            roundedButton1.Padding = new Padding(10, 5, 10, 5);
+            roundedButton1.Size = new Size(149, 45);
             roundedButton1.TabIndex = 20;
             roundedButton1.Text = "Mở POS";
             roundedButton1.UseVisualStyleBackColor = false;
@@ -126,9 +125,9 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(10, 33);
+            label2.Location = new Point(11, 44);
             label2.Name = "label2";
-            label2.Size = new Size(207, 19);
+            label2.Size = new Size(268, 24);
             label2.TabIndex = 19;
             label2.Text = "Tổng quan hoạt động hệ thống";
             // 
@@ -136,9 +135,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Calibri", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(10, 7);
+            label1.Location = new Point(11, 9);
             label1.Name = "label1";
-            label1.Size = new Size(113, 27);
+            label1.Size = new Size(142, 35);
             label1.TabIndex = 18;
             label1.Text = "Dashboard";
             // 
@@ -146,34 +145,35 @@
             // 
             roundedPanel9.BackColor = Color.White;
             roundedPanel9.BorderThickness = 5;
-            roundedPanel9.Controls.Add(panel3);
+            roundedPanel9.Controls.Add(panelDanhSachCanhBaoTonKho);
             roundedPanel9.Controls.Add(label15);
             roundedPanel9.Controls.Add(label16);
             roundedPanel9.CornerRadius = 20;
-            roundedPanel9.Location = new Point(10, 1024);
-            roundedPanel9.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel9.Location = new Point(11, 1365);
             roundedPanel9.Name = "roundedPanel9";
-            roundedPanel9.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel9.Size = new Size(990, 284);
+            roundedPanel9.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel9.Size = new Size(1131, 379);
             roundedPanel9.TabIndex = 16;
             // 
-            // panel3
+            // panelDanhSachCanhBaoTonKho
             // 
-            panel3.AutoScroll = true;
-            panel3.Controls.Add(canhBaoToanKho3);
-            panel3.Controls.Add(canhBaoToanKho4);
-            panel3.Controls.Add(canhBaoToanKho1);
-            panel3.Location = new Point(4, 66);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(980, 209);
-            panel3.TabIndex = 15;
+            panelDanhSachCanhBaoTonKho.AutoScroll = true;
+            panelDanhSachCanhBaoTonKho.Controls.Add(canhBaoToanKho3);
+            panelDanhSachCanhBaoTonKho.Controls.Add(canhBaoToanKho4);
+            panelDanhSachCanhBaoTonKho.Controls.Add(canhBaoToanKho1);
+            panelDanhSachCanhBaoTonKho.Location = new Point(5, 88);
+            panelDanhSachCanhBaoTonKho.Margin = new Padding(3, 4, 3, 4);
+            panelDanhSachCanhBaoTonKho.Name = "panelDanhSachCanhBaoTonKho";
+            panelDanhSachCanhBaoTonKho.Size = new Size(1120, 279);
+            panelDanhSachCanhBaoTonKho.TabIndex = 15;
             // 
             // canhBaoToanKho3
             // 
             canhBaoToanKho3.Font = new Font("Segoe UI", 10F);
-            canhBaoToanKho3.Location = new Point(9, 181);
+            canhBaoToanKho3.Location = new Point(10, 241);
+            canhBaoToanKho3.Margin = new Padding(3, 4, 3, 4);
             canhBaoToanKho3.Name = "canhBaoToanKho3";
-            canhBaoToanKho3.Size = new Size(947, 80);
+            canhBaoToanKho3.Size = new Size(1082, 107);
             canhBaoToanKho3.TabIndex = 3;
             canhBaoToanKho3.Text = "canhBaoToanKho3";
             // 
@@ -182,10 +182,11 @@
             canhBaoToanKho4.Font = new Font("Segoe UI", 10F);
             canhBaoToanKho4.ItemName = "Thịt bò Úc";
             canhBaoToanKho4.Level = UI.Controls.AlertLevel.Warning;
-            canhBaoToanKho4.Location = new Point(9, 95);
+            canhBaoToanKho4.Location = new Point(10, 127);
+            canhBaoToanKho4.Margin = new Padding(3, 4, 3, 4);
             canhBaoToanKho4.MinStock = 15D;
             canhBaoToanKho4.Name = "canhBaoToanKho4";
-            canhBaoToanKho4.Size = new Size(947, 80);
+            canhBaoToanKho4.Size = new Size(1082, 107);
             canhBaoToanKho4.Stock = 8D;
             canhBaoToanKho4.TabIndex = 2;
             canhBaoToanKho4.Text = "canhBaoToanKho4";
@@ -193,9 +194,10 @@
             // canhBaoToanKho1
             // 
             canhBaoToanKho1.Font = new Font("Segoe UI", 10F);
-            canhBaoToanKho1.Location = new Point(9, 9);
+            canhBaoToanKho1.Location = new Point(10, 12);
+            canhBaoToanKho1.Margin = new Padding(3, 4, 3, 4);
             canhBaoToanKho1.Name = "canhBaoToanKho1";
-            canhBaoToanKho1.Size = new Size(947, 80);
+            canhBaoToanKho1.Size = new Size(1082, 107);
             canhBaoToanKho1.TabIndex = 0;
             canhBaoToanKho1.Text = "canhBaoToanKho1";
             // 
@@ -203,9 +205,9 @@
             // 
             label15.AutoSize = true;
             label15.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label15.Location = new Point(13, 35);
+            label15.Location = new Point(15, 47);
             label15.Name = "label15";
-            label15.Size = new Size(168, 19);
+            label15.Size = new Size(214, 24);
             label15.TabIndex = 14;
             label15.Text = "Nguyên liệu cần bổ sung";
             // 
@@ -213,9 +215,9 @@
             // 
             label16.AutoSize = true;
             label16.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label16.Location = new Point(13, 9);
+            label16.Location = new Point(15, 12);
             label16.Name = "label16";
-            label16.Size = new Size(146, 23);
+            label16.Size = new Size(176, 28);
             label16.TabIndex = 13;
             label16.Text = "Cảnh báo tồn kho";
             // 
@@ -228,11 +230,10 @@
             roundedPanel7.Controls.Add(label13);
             roundedPanel7.Controls.Add(label14);
             roundedPanel7.CornerRadius = 20;
-            roundedPanel7.Location = new Point(512, 596);
-            roundedPanel7.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel7.Location = new Point(585, 795);
             roundedPanel7.Name = "roundedPanel7";
-            roundedPanel7.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel7.Size = new Size(489, 424);
+            roundedPanel7.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel7.Size = new Size(559, 565);
             roundedPanel7.TabIndex = 17;
             // 
             // panelDanhSachDatBanHomNay
@@ -244,17 +245,19 @@
             panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel4);
             panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel2);
             panelDanhSachDatBanHomNay.Controls.Add(danhSachDatBanPanel3);
-            panelDanhSachDatBanHomNay.Location = new Point(3, 57);
+            panelDanhSachDatBanHomNay.Location = new Point(3, 76);
+            panelDanhSachDatBanHomNay.Margin = new Padding(3, 4, 3, 4);
             panelDanhSachDatBanHomNay.Name = "panelDanhSachDatBanHomNay";
-            panelDanhSachDatBanHomNay.Size = new Size(479, 367);
+            panelDanhSachDatBanHomNay.Size = new Size(547, 489);
             panelDanhSachDatBanHomNay.TabIndex = 15;
             // 
             // danhSachDatBanPanel6
             // 
             danhSachDatBanPanel6.Font = new Font("Segoe UI", 10F);
-            danhSachDatBanPanel6.Location = new Point(13, 418);
+            danhSachDatBanPanel6.Location = new Point(15, 557);
+            danhSachDatBanPanel6.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel6.Name = "danhSachDatBanPanel6";
-            danhSachDatBanPanel6.Size = new Size(440, 77);
+            danhSachDatBanPanel6.Size = new Size(503, 103);
             danhSachDatBanPanel6.TabIndex = 25;
             danhSachDatBanPanel6.Text = "danhSachDatBanPanel6";
             danhSachDatBanPanel6.TimeText = "19:30";
@@ -262,9 +265,10 @@
             // danhSachDatBanPanel5
             // 
             danhSachDatBanPanel5.Font = new Font("Segoe UI", 10F);
-            danhSachDatBanPanel5.Location = new Point(13, 335);
+            danhSachDatBanPanel5.Location = new Point(15, 447);
+            danhSachDatBanPanel5.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel5.Name = "danhSachDatBanPanel5";
-            danhSachDatBanPanel5.Size = new Size(440, 77);
+            danhSachDatBanPanel5.Size = new Size(503, 103);
             danhSachDatBanPanel5.TabIndex = 24;
             danhSachDatBanPanel5.Text = "danhSachDatBanPanel5";
             danhSachDatBanPanel5.TimeText = "19:30";
@@ -272,9 +276,10 @@
             // danhSachDatBanPanel1
             // 
             danhSachDatBanPanel1.Font = new Font("Segoe UI", 10F);
-            danhSachDatBanPanel1.Location = new Point(13, 3);
+            danhSachDatBanPanel1.Location = new Point(15, 4);
+            danhSachDatBanPanel1.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel1.Name = "danhSachDatBanPanel1";
-            danhSachDatBanPanel1.Size = new Size(440, 77);
+            danhSachDatBanPanel1.Size = new Size(503, 103);
             danhSachDatBanPanel1.TabIndex = 20;
             danhSachDatBanPanel1.Text = "danhSachDatBanPanel1";
             // 
@@ -282,9 +287,10 @@
             // 
             danhSachDatBanPanel4.CustomerName = "Nguyễn Văn C";
             danhSachDatBanPanel4.Font = new Font("Segoe UI", 10F);
-            danhSachDatBanPanel4.Location = new Point(15, 252);
+            danhSachDatBanPanel4.Location = new Point(17, 336);
+            danhSachDatBanPanel4.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel4.Name = "danhSachDatBanPanel4";
-            danhSachDatBanPanel4.Size = new Size(440, 77);
+            danhSachDatBanPanel4.Size = new Size(503, 103);
             danhSachDatBanPanel4.TabIndex = 23;
             danhSachDatBanPanel4.Text = "danhSachDatBanPanel4";
             danhSachDatBanPanel4.TimeText = "18:00";
@@ -294,9 +300,10 @@
             danhSachDatBanPanel2.CustomerName = "Nguyễn Văn D";
             danhSachDatBanPanel2.Font = new Font("Segoe UI", 10F);
             danhSachDatBanPanel2.GuestCount = 300;
-            danhSachDatBanPanel2.Location = new Point(15, 86);
+            danhSachDatBanPanel2.Location = new Point(17, 115);
+            danhSachDatBanPanel2.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel2.Name = "danhSachDatBanPanel2";
-            danhSachDatBanPanel2.Size = new Size(440, 77);
+            danhSachDatBanPanel2.Size = new Size(503, 103);
             danhSachDatBanPanel2.Status = UI.Controls.ReservationStatus.ChoXacNhan;
             danhSachDatBanPanel2.TabIndex = 21;
             danhSachDatBanPanel2.TableText = "Sảnh D";
@@ -309,9 +316,10 @@
             danhSachDatBanPanel3.CustomerName = "Nguyễn Văn E";
             danhSachDatBanPanel3.Font = new Font("Segoe UI", 10F);
             danhSachDatBanPanel3.GuestCount = 5;
-            danhSachDatBanPanel3.Location = new Point(15, 169);
+            danhSachDatBanPanel3.Location = new Point(17, 225);
+            danhSachDatBanPanel3.Margin = new Padding(3, 4, 3, 4);
             danhSachDatBanPanel3.Name = "danhSachDatBanPanel3";
-            danhSachDatBanPanel3.Size = new Size(440, 77);
+            danhSachDatBanPanel3.Size = new Size(503, 103);
             danhSachDatBanPanel3.Status = UI.Controls.ReservationStatus.DaHuy;
             danhSachDatBanPanel3.TabIndex = 22;
             danhSachDatBanPanel3.Text = "danhSachDatBanPanel3";
@@ -322,9 +330,9 @@
             // 
             label13.AutoSize = true;
             label13.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label13.Location = new Point(15, 35);
+            label13.Location = new Point(17, 47);
             label13.Name = "label13";
-            label13.Size = new Size(192, 19);
+            label13.Size = new Size(242, 24);
             label13.TabIndex = 14;
             label13.Text = "Danh sách đặt bàn - sự kiện";
             // 
@@ -332,9 +340,9 @@
             // 
             label14.AutoSize = true;
             label14.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.Location = new Point(15, 9);
+            label14.Location = new Point(17, 12);
             label14.Name = "label14";
-            label14.Size = new Size(112, 23);
+            label14.Size = new Size(137, 28);
             label14.TabIndex = 13;
             label14.Text = "Lịch hôm nay";
             // 
@@ -346,11 +354,10 @@
             roundedPanel8.Controls.Add(label11);
             roundedPanel8.Controls.Add(label12);
             roundedPanel8.CornerRadius = 20;
-            roundedPanel8.Location = new Point(10, 594);
-            roundedPanel8.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel8.Location = new Point(11, 792);
             roundedPanel8.Name = "roundedPanel8";
-            roundedPanel8.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel8.Size = new Size(489, 426);
+            roundedPanel8.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel8.Size = new Size(559, 568);
             roundedPanel8.TabIndex = 14;
             // 
             // panelTopMonBanChay
@@ -361,20 +368,22 @@
             panelTopMonBanChay.Controls.Add(topMonBanChay3);
             panelTopMonBanChay.Controls.Add(topMonBanChay2);
             panelTopMonBanChay.Controls.Add(topMonBanChay1);
-            panelTopMonBanChay.Location = new Point(4, 59);
+            panelTopMonBanChay.Location = new Point(5, 79);
+            panelTopMonBanChay.Margin = new Padding(3, 4, 3, 4);
             panelTopMonBanChay.Name = "panelTopMonBanChay";
-            panelTopMonBanChay.Size = new Size(479, 367);
+            panelTopMonBanChay.Size = new Size(547, 489);
             panelTopMonBanChay.TabIndex = 13;
             // 
             // topMonBanChay5
             // 
             topMonBanChay5.Font = new Font("Segoe UI", 10F);
-            topMonBanChay5.Location = new Point(13, 302);
+            topMonBanChay5.Location = new Point(15, 403);
+            topMonBanChay5.Margin = new Padding(3, 4, 3, 4);
             topMonBanChay5.Name = "topMonBanChay5";
             topMonBanChay5.Orders = 22;
             topMonBanChay5.Rank = 5;
             topMonBanChay5.Revenue = new decimal(new int[] { 22477000, 0, 0, 0 });
-            topMonBanChay5.Size = new Size(446, 66);
+            topMonBanChay5.Size = new Size(510, 88);
             topMonBanChay5.TabIndex = 4;
             topMonBanChay5.Text = "topMonBanChay5";
             topMonBanChay5.Title = "Cá chiên xù";
@@ -382,12 +391,13 @@
             // topMonBanChay4
             // 
             topMonBanChay4.Font = new Font("Segoe UI", 10F);
-            topMonBanChay4.Location = new Point(13, 230);
+            topMonBanChay4.Location = new Point(15, 307);
+            topMonBanChay4.Margin = new Padding(3, 4, 3, 4);
             topMonBanChay4.Name = "topMonBanChay4";
             topMonBanChay4.Orders = 39;
             topMonBanChay4.Rank = 4;
             topMonBanChay4.Revenue = new decimal(new int[] { 29746000, 0, 0, 0 });
-            topMonBanChay4.Size = new Size(446, 66);
+            topMonBanChay4.Size = new Size(510, 88);
             topMonBanChay4.TabIndex = 3;
             topMonBanChay4.Text = "topMonBanChay6";
             topMonBanChay4.Title = "Salad táo";
@@ -395,12 +405,13 @@
             // topMonBanChay3
             // 
             topMonBanChay3.Font = new Font("Segoe UI", 10F);
-            topMonBanChay3.Location = new Point(13, 158);
+            topMonBanChay3.Location = new Point(15, 211);
+            topMonBanChay3.Margin = new Padding(3, 4, 3, 4);
             topMonBanChay3.Name = "topMonBanChay3";
             topMonBanChay3.Orders = 44;
             topMonBanChay3.Rank = 3;
             topMonBanChay3.Revenue = new decimal(new int[] { 33000000, 0, 0, 0 });
-            topMonBanChay3.Size = new Size(446, 66);
+            topMonBanChay3.Size = new Size(510, 88);
             topMonBanChay3.TabIndex = 2;
             topMonBanChay3.Text = "topMonBanChay3";
             topMonBanChay3.Title = "Cơm chiên hải sản";
@@ -408,12 +419,13 @@
             // topMonBanChay2
             // 
             topMonBanChay2.Font = new Font("Segoe UI", 10F);
-            topMonBanChay2.Location = new Point(13, 86);
+            topMonBanChay2.Location = new Point(15, 115);
+            topMonBanChay2.Margin = new Padding(3, 4, 3, 4);
             topMonBanChay2.Name = "topMonBanChay2";
             topMonBanChay2.Orders = 46;
             topMonBanChay2.Rank = 2;
             topMonBanChay2.Revenue = new decimal(new int[] { 35352000, 0, 0, 0 });
-            topMonBanChay2.Size = new Size(446, 66);
+            topMonBanChay2.Size = new Size(510, 88);
             topMonBanChay2.TabIndex = 1;
             topMonBanChay2.Text = "topMonBanChay2";
             topMonBanChay2.Title = "Bò nướng BQQ";
@@ -421,11 +433,12 @@
             // topMonBanChay1
             // 
             topMonBanChay1.Font = new Font("Segoe UI", 10F);
-            topMonBanChay1.Location = new Point(13, 14);
+            topMonBanChay1.Location = new Point(15, 19);
+            topMonBanChay1.Margin = new Padding(3, 4, 3, 4);
             topMonBanChay1.Name = "topMonBanChay1";
             topMonBanChay1.Orders = 56;
             topMonBanChay1.Revenue = new decimal(new int[] { 45000000, 0, 0, 0 });
-            topMonBanChay1.Size = new Size(446, 66);
+            topMonBanChay1.Size = new Size(510, 88);
             topMonBanChay1.TabIndex = 0;
             topMonBanChay1.Text = "topMonBanChay1";
             topMonBanChay1.Title = "Tôm hùm nướng mỡ hành";
@@ -434,9 +447,9 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label11.Location = new Point(13, 35);
+            label11.Location = new Point(15, 47);
             label11.Name = "label11";
-            label11.Size = new Size(76, 19);
+            label11.Size = new Size(96, 24);
             label11.TabIndex = 12;
             label11.Text = "Tháng này";
             // 
@@ -444,9 +457,9 @@
             // 
             label12.AutoSize = true;
             label12.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(13, 9);
+            label12.Location = new Point(15, 12);
             label12.Name = "label12";
-            label12.Size = new Size(149, 23);
+            label12.Size = new Size(182, 28);
             label12.TabIndex = 11;
             label12.Text = "Top món bán chạy";
             // 
@@ -458,27 +471,27 @@
             roundedPanel6.Controls.Add(label9);
             roundedPanel6.Controls.Add(label10);
             roundedPanel6.CornerRadius = 20;
-            roundedPanel6.Location = new Point(614, 218);
-            roundedPanel6.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel6.Location = new Point(702, 291);
             roundedPanel6.Name = "roundedPanel6";
-            roundedPanel6.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel6.Size = new Size(387, 371);
+            roundedPanel6.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel6.Size = new Size(442, 495);
             roundedPanel6.TabIndex = 15;
             // 
             // panelThongKeTyLeSuDungSanh
             // 
-            panelThongKeTyLeSuDungSanh.Location = new Point(13, 57);
+            panelThongKeTyLeSuDungSanh.Location = new Point(15, 76);
+            panelThongKeTyLeSuDungSanh.Margin = new Padding(3, 4, 3, 4);
             panelThongKeTyLeSuDungSanh.Name = "panelThongKeTyLeSuDungSanh";
-            panelThongKeTyLeSuDungSanh.Size = new Size(361, 302);
+            panelThongKeTyLeSuDungSanh.Size = new Size(413, 403);
             panelThongKeTyLeSuDungSanh.TabIndex = 12;
             // 
             // label9
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label9.Location = new Point(13, 35);
+            label9.Location = new Point(15, 47);
             label9.Name = "label9";
-            label9.Size = new Size(76, 19);
+            label9.Size = new Size(96, 24);
             label9.TabIndex = 12;
             label9.Text = "Tháng này";
             // 
@@ -486,9 +499,9 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(13, 9);
+            label10.Location = new Point(15, 12);
             label10.Name = "label10";
-            label10.Size = new Size(154, 23);
+            label10.Size = new Size(186, 28);
             label10.TabIndex = 11;
             label10.Text = "Tỷ lệ sử dụng sảnh";
             // 
@@ -500,27 +513,27 @@
             roundedPanel5.Controls.Add(label7);
             roundedPanel5.Controls.Add(label8);
             roundedPanel5.CornerRadius = 20;
-            roundedPanel5.Location = new Point(10, 218);
-            roundedPanel5.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel5.Location = new Point(11, 291);
             roundedPanel5.Name = "roundedPanel5";
-            roundedPanel5.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel5.Size = new Size(595, 371);
+            roundedPanel5.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel5.Size = new Size(680, 495);
             roundedPanel5.TabIndex = 13;
             // 
             // panelBieuDoDoanhThu
             // 
-            panelBieuDoDoanhThu.Location = new Point(7, 57);
+            panelBieuDoDoanhThu.Location = new Point(8, 76);
+            panelBieuDoDoanhThu.Margin = new Padding(3, 4, 3, 4);
             panelBieuDoDoanhThu.Name = "panelBieuDoDoanhThu";
-            panelBieuDoDoanhThu.Size = new Size(581, 302);
+            panelBieuDoDoanhThu.Size = new Size(664, 403);
             panelBieuDoDoanhThu.TabIndex = 11;
             // 
             // label7
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label7.Location = new Point(13, 35);
+            label7.Location = new Point(15, 47);
             label7.Name = "label7";
-            label7.Size = new Size(196, 19);
+            label7.Size = new Size(255, 24);
             label7.TabIndex = 10;
             label7.Text = "Biểu đồ doanh thu theo ngày";
             // 
@@ -528,9 +541,9 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Calibri", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(13, 9);
+            label8.Location = new Point(15, 12);
             label8.Name = "label8";
-            label8.Size = new Size(180, 23);
+            label8.Size = new Size(218, 28);
             label8.TabIndex = 9;
             label8.Text = "Doanh thu 7 ngày qua";
             // 
@@ -544,19 +557,19 @@
             roundedPanel2.Controls.Add(lblSoTienDanhThuHomNay);
             roundedPanel2.Controls.Add(label3);
             roundedPanel2.CornerRadius = 20;
-            roundedPanel2.Location = new Point(10, 68);
-            roundedPanel2.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel2.Location = new Point(11, 91);
             roundedPanel2.Name = "roundedPanel2";
-            roundedPanel2.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel2.Size = new Size(238, 139);
+            roundedPanel2.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel2.Size = new Size(272, 185);
             roundedPanel2.TabIndex = 9;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(166, 12);
+            pictureBox1.Location = new Point(190, 16);
+            pictureBox1.Margin = new Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(59, 50);
+            pictureBox1.Size = new Size(67, 67);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 13;
             pictureBox1.TabStop = false;
@@ -567,9 +580,9 @@
             label18.BackColor = Color.Transparent;
             label18.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label18.ForeColor = SystemColors.ControlDarkDark;
-            label18.Location = new Point(85, 100);
+            label18.Location = new Point(97, 133);
             label18.Name = "label18";
-            label18.Size = new Size(108, 19);
+            label18.Size = new Size(140, 24);
             label18.TabIndex = 11;
             label18.Text = "so với hôm qua";
             // 
@@ -579,9 +592,9 @@
             lblTyLeSoVoiHomQua.BackColor = Color.Transparent;
             lblTyLeSoVoiHomQua.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTyLeSoVoiHomQua.ForeColor = Color.MediumSeaGreen;
-            lblTyLeSoVoiHomQua.Location = new Point(18, 101);
+            lblTyLeSoVoiHomQua.Location = new Point(21, 135);
             lblTyLeSoVoiHomQua.Name = "lblTyLeSoVoiHomQua";
-            lblTyLeSoVoiHomQua.Size = new Size(56, 19);
+            lblTyLeSoVoiHomQua.Size = new Size(69, 24);
             lblTyLeSoVoiHomQua.TabIndex = 12;
             lblTyLeSoVoiHomQua.Text = "+12.5%";
             // 
@@ -589,9 +602,9 @@
             // 
             lblSoTienDanhThuHomNay.AutoSize = true;
             lblSoTienDanhThuHomNay.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSoTienDanhThuHomNay.Location = new Point(13, 70);
+            lblSoTienDanhThuHomNay.Location = new Point(15, 93);
             lblSoTienDanhThuHomNay.Name = "lblSoTienDanhThuHomNay";
-            lblSoTienDanhThuHomNay.Size = new Size(94, 19);
+            lblSoTienDanhThuHomNay.Size = new Size(116, 24);
             lblSoTienDanhThuHomNay.TabIndex = 10;
             lblSoTienDanhThuHomNay.Text = "95.000.000 đ";
             // 
@@ -599,9 +612,9 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(13, 16);
+            label3.Location = new Point(15, 21);
             label3.Name = "label3";
-            label3.Size = new Size(135, 19);
+            label3.Size = new Size(177, 24);
             label3.TabIndex = 9;
             label3.Text = "Doanh thu hôm nay";
             // 
@@ -609,9 +622,9 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(13, 16);
+            label4.Location = new Point(15, 21);
             label4.Name = "label4";
-            label4.Size = new Size(116, 19);
+            label4.Size = new Size(149, 24);
             label4.TabIndex = 10;
             label4.Text = "Sự kiện hôm nay";
             // 
@@ -624,19 +637,19 @@
             roundedPanel1.Controls.Add(label4);
             roundedPanel1.Controls.Add(lblSuKienDatSanh);
             roundedPanel1.CornerRadius = 20;
-            roundedPanel1.Location = new Point(262, 68);
-            roundedPanel1.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel1.Location = new Point(299, 91);
             roundedPanel1.Name = "roundedPanel1";
-            roundedPanel1.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel1.Size = new Size(238, 139);
+            roundedPanel1.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel1.Size = new Size(272, 185);
             roundedPanel1.TabIndex = 12;
             // 
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(166, 12);
+            pictureBox2.Location = new Point(190, 16);
+            pictureBox2.Margin = new Padding(3, 4, 3, 4);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(59, 50);
+            pictureBox2.Size = new Size(67, 67);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 14;
             pictureBox2.TabStop = false;
@@ -647,9 +660,9 @@
             label20.BackColor = Color.Transparent;
             label20.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label20.ForeColor = SystemColors.ControlDarkDark;
-            label20.Location = new Point(13, 89);
+            label20.Location = new Point(15, 119);
             label20.Name = "label20";
-            label20.Size = new Size(177, 19);
+            label20.Size = new Size(227, 24);
             label20.TabIndex = 14;
             label20.Text = "Sự kiện đặt sảnh hôm nay";
             label20.Click += label20_Click;
@@ -659,9 +672,9 @@
             lblSuKienDatSanh.AccessibleDescription = "số sự kiện đặt sảnh";
             lblSuKienDatSanh.AutoSize = true;
             lblSuKienDatSanh.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSuKienDatSanh.Location = new Point(13, 70);
+            lblSuKienDatSanh.Location = new Point(15, 93);
             lblSuKienDatSanh.Name = "lblSuKienDatSanh";
-            lblSuKienDatSanh.Size = new Size(69, 19);
+            lblSuKienDatSanh.Size = new Size(85, 24);
             lblSuKienDatSanh.TabIndex = 13;
             lblSuKienDatSanh.Text = "4 sự kiện";
             // 
@@ -669,9 +682,9 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label5.Location = new Point(13, 16);
+            label5.Location = new Point(15, 21);
             label5.Name = "label5";
-            label5.Size = new Size(125, 19);
+            label5.Size = new Size(159, 24);
             label5.TabIndex = 11;
             label5.Text = "Bàn đang phục vụ";
             // 
@@ -684,19 +697,19 @@
             roundedPanel3.Controls.Add(label5);
             roundedPanel3.Controls.Add(lblSoBan_TongSoBan);
             roundedPanel3.CornerRadius = 20;
-            roundedPanel3.Location = new Point(512, 68);
-            roundedPanel3.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel3.Location = new Point(585, 91);
             roundedPanel3.Name = "roundedPanel3";
-            roundedPanel3.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel3.Size = new Size(238, 139);
+            roundedPanel3.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel3.Size = new Size(272, 185);
             roundedPanel3.TabIndex = 11;
             // 
             // pictureBox3
             // 
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(166, 12);
+            pictureBox3.Location = new Point(190, 16);
+            pictureBox3.Margin = new Padding(3, 4, 3, 4);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(59, 50);
+            pictureBox3.Size = new Size(67, 67);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 15;
             pictureBox3.TabStop = false;
@@ -707,9 +720,9 @@
             lblKhachDangPhucVu.BackColor = Color.Transparent;
             lblKhachDangPhucVu.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblKhachDangPhucVu.ForeColor = SystemColors.ControlDarkDark;
-            lblKhachDangPhucVu.Location = new Point(15, 89);
+            lblKhachDangPhucVu.Location = new Point(17, 119);
             lblKhachDangPhucVu.Name = "lblKhachDangPhucVu";
-            lblKhachDangPhucVu.Size = new Size(75, 19);
+            lblKhachDangPhucVu.Size = new Size(94, 24);
             lblKhachDangPhucVu.TabIndex = 16;
             lblKhachDangPhucVu.Text = "125 khách";
             // 
@@ -717,9 +730,9 @@
             // 
             lblSoBan_TongSoBan.AutoSize = true;
             lblSoBan_TongSoBan.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSoBan_TongSoBan.Location = new Point(15, 70);
+            lblSoBan_TongSoBan.Location = new Point(17, 93);
             lblSoBan_TongSoBan.Name = "lblSoBan_TongSoBan";
-            lblSoBan_TongSoBan.Size = new Size(75, 19);
+            lblSoBan_TongSoBan.Size = new Size(95, 24);
             lblSoBan_TongSoBan.TabIndex = 15;
             lblSoBan_TongSoBan.Text = "18/40 bàn";
             // 
@@ -727,9 +740,9 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.Location = new Point(13, 16);
+            label6.Location = new Point(15, 21);
             label6.Name = "label6";
-            label6.Size = new Size(93, 19);
+            label6.Size = new Size(118, 24);
             label6.TabIndex = 12;
             label6.Text = "Hóa đơn chờ";
             // 
@@ -742,19 +755,19 @@
             roundedPanel4.Controls.Add(label6);
             roundedPanel4.Controls.Add(lblSoHoaDonChoXuLy);
             roundedPanel4.CornerRadius = 20;
-            roundedPanel4.Location = new Point(763, 68);
-            roundedPanel4.Margin = new Padding(3, 2, 3, 2);
+            roundedPanel4.Location = new Point(872, 91);
             roundedPanel4.Name = "roundedPanel4";
-            roundedPanel4.Padding = new Padding(10, 9, 10, 9);
-            roundedPanel4.Size = new Size(238, 139);
+            roundedPanel4.Padding = new Padding(11, 12, 11, 12);
+            roundedPanel4.Size = new Size(272, 185);
             roundedPanel4.TabIndex = 10;
             // 
             // pictureBox4
             // 
             pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(166, 12);
+            pictureBox4.Location = new Point(190, 16);
+            pictureBox4.Margin = new Padding(3, 4, 3, 4);
             pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(59, 50);
+            pictureBox4.Size = new Size(67, 67);
             pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox4.TabIndex = 17;
             pictureBox4.TabStop = false;
@@ -765,9 +778,9 @@
             label24.BackColor = Color.Transparent;
             label24.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label24.ForeColor = Color.IndianRed;
-            label24.Location = new Point(13, 89);
+            label24.Location = new Point(15, 119);
             label24.Name = "label24";
-            label24.Size = new Size(70, 19);
+            label24.Size = new Size(87, 24);
             label24.TabIndex = 18;
             label24.Text = "Cần xử lý";
             // 
@@ -775,18 +788,18 @@
             // 
             lblSoHoaDonChoXuLy.AutoSize = true;
             lblSoHoaDonChoXuLy.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblSoHoaDonChoXuLy.Location = new Point(13, 70);
+            lblSoHoaDonChoXuLy.Location = new Point(15, 93);
             lblSoHoaDonChoXuLy.Name = "lblSoHoaDonChoXuLy";
-            lblSoHoaDonChoXuLy.Size = new Size(75, 19);
+            lblSoHoaDonChoXuLy.Size = new Size(96, 24);
             lblSoHoaDonChoXuLy.TabIndex = 17;
             lblSoHoaDonChoXuLy.Text = "7 hóa đơn";
             // 
             // FrmDashboard
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(1041, 675);
+            ClientSize = new Size(1190, 900);
             Controls.Add(roundedButton1);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -800,13 +813,12 @@
             Controls.Add(roundedPanel1);
             Controls.Add(roundedPanel2);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 2, 3, 2);
             Name = "FrmDashboard";
             Text = "FrmDashboard";
             Load += FrmDashboard_Load;
             roundedPanel9.ResumeLayout(false);
             roundedPanel9.PerformLayout();
-            panel3.ResumeLayout(false);
+            panelDanhSachCanhBaoTonKho.ResumeLayout(false);
             roundedPanel7.ResumeLayout(false);
             roundedPanel7.PerformLayout();
             panelDanhSachDatBanHomNay.ResumeLayout(false);
@@ -876,7 +888,7 @@
         private PictureBox pictureBox4;
         private Panel panelDanhSachDatBanHomNay;
         private Panel panelTopMonBanChay;
-        private Panel panel3;
+        private Panel panelDanhSachCanhBaoTonKho;
         private Controls.CanhBaoToanKho canhBaoToanKho3;
         private Controls.CanhBaoToanKho canhBaoToanKho4;
         private Controls.CanhBaoToanKho canhBaoToanKho1;

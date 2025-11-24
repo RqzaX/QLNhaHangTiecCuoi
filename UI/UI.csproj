@@ -28,11 +28,16 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="DevExpress.Reporting.Core" Version="25.1.6" />
+    <PackageReference Include="DevExpress.Win.Reporting" Version="25.1.6" />
+    <PackageReference Include="FastReport.OpenSource" Version="2026.1.2" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2026.1.2" />
     <PackageReference Include="Guna.UI2.WinForms" Version="2.0.4.7" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
-    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.Winforms" Version="150.1652.0" />
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" Version="150.1652.0" />
     <PackageReference Include="SunnyUI" Version="3.8.9" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="Tulpep.NotificationWindow" Version="1.1.38" />
@@ -45,45 +50,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="QL_NhaHangTiecCuoi_V3DataSet.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QL_NhaHangTiecCuoi_V3DataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Update="QL_NhaHangTiecCuoi_V3DataSet1.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>QL_NhaHangTiecCuoi_V3DataSet1.xsd</DependentUpon>
     </Compile>
-    <Compile Update="QL_NhaHangTiecCuoi_V3DataSet2.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QL_NhaHangTiecCuoi_V3DataSet2.xsd</DependentUpon>
-    </Compile>
     <Compile Update="QL_NhaHangTiecCuoi_V3DataSet3.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>QL_NhaHangTiecCuoi_V3DataSet3.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="QL_NhaHangTiecCuoi_V3DataSet4.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QL_NhaHangTiecCuoi_V3DataSet4.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="Reports\rptBaoCaoDoanhThu.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>rptBaoCaoDoanhThu.rpt</DependentUpon>
-    </Compile>
-    <Compile Update="Reports\rptKhachHang.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>rptKhachHang.rpt</DependentUpon>
-    </Compile>
-    <Compile Update="Reports\rptLayNguyenLieuTonKho.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>rptLayNguyenLieuTonKho.rpt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -96,43 +71,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="QL_NhaHangTiecCuoi_V3DataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>QL_NhaHangTiecCuoi_V3DataSet.Designer.cs</LastGenOutput>
-    </None>
     <None Update="QL_NhaHangTiecCuoi_V3DataSet1.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>QL_NhaHangTiecCuoi_V3DataSet1.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="QL_NhaHangTiecCuoi_V3DataSet2.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>QL_NhaHangTiecCuoi_V3DataSet2.Designer.cs</LastGenOutput>
     </None>
     <None Update="QL_NhaHangTiecCuoi_V3DataSet3.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>QL_NhaHangTiecCuoi_V3DataSet3.Designer.cs</LastGenOutput>
     </None>
-    <None Update="QL_NhaHangTiecCuoi_V3DataSet4.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>QL_NhaHangTiecCuoi_V3DataSet4.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="Reports\rptBaoCaoDoanhThu.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>rptBaoCaoDoanhThu.cs</LastGenOutput>
-    </None>
-    <None Update="Reports\rptKhachHang.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>rptKhachHang.cs</LastGenOutput>
-    </None>
-    <None Update="Reports\rptLayNguyenLieuTonKho.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>rptLayNguyenLieuTonKho.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Reports\rpt_ChiTietMonAn.rpt">
-      <LogicalName>UI.Reports.rpt_ChiTietMonAn.rpt</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{c0c07587-41a7-46c8-8fbd-3f9c8ebe2ddc}" />

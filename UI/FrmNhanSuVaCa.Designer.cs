@@ -47,7 +47,6 @@
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             panelNhanSu = new Guna.UI2.WinForms.Guna2GradientPanel();
             dgvNhanSu = new DataGridView();
-            btnThemNV = new UI.Controls.RoundedButton();
             cbbNhanSu = new UiControls.BorderComboBox();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
             panelPhanCa = new Guna.UI2.WinForms.Guna2GradientPanel();
@@ -159,7 +158,6 @@
             // panelNhanSu
             // 
             panelNhanSu.Controls.Add(dgvNhanSu);
-            panelNhanSu.Controls.Add(btnThemNV);
             panelNhanSu.Controls.Add(cbbNhanSu);
             panelNhanSu.Controls.Add(roundedTextBox1);
             panelNhanSu.CustomizableEdges = customizableEdges1;
@@ -205,23 +203,6 @@
             dgvNhanSu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvNhanSu.Size = new Size(1187, 466);
             dgvNhanSu.TabIndex = 26;
-            
-            // 
-            // btnThemNV
-            // 
-            btnThemNV.BackColor = Color.Black;
-            btnThemNV.BorderThickness = 0;
-            btnThemNV.FlatStyle = FlatStyle.Flat;
-            btnThemNV.Font = new Font("Segoe UI Semibold", 10.5F);
-            btnThemNV.ForeColor = Color.White;
-            btnThemNV.Location = new Point(911, 15);
-            btnThemNV.Name = "btnThemNV";
-            btnThemNV.Padding = new Padding(10, 6, 10, 6);
-            btnThemNV.Size = new Size(240, 40);
-            btnThemNV.TabIndex = 25;
-            btnThemNV.Text = "+ Thêm Nhân Viên";
-            btnThemNV.UseVisualStyleBackColor = false;
-            btnThemNV.Click += btnThemNV_Click;
             // 
             // cbbNhanSu
             // 
@@ -296,7 +277,6 @@
         private VanThuan.UI.SegmentedPill segmentedPill1;
         private Guna.UI2.WinForms.Guna2GradientPanel panelNhanSu;
         private DataGridView dgvNhanSu;
-        private Controls.RoundedButton btnThemNV;
         private UiControls.BorderComboBox cbbNhanSu;
         private Controls.RoundedTextBox roundedTextBox1;
         private Guna.UI2.WinForms.Guna2GradientPanel panelPhanCa;

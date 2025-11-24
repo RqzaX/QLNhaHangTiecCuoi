@@ -220,5 +220,157 @@ namespace QLNhaHangTiecCuoi.BLL
         {
             return _dal.LayDanhSachChucVu();
         }
+
+        /// <summary>
+        /// Lấy thông tin chi tiết của một nhân viên
+        /// </summary>
+        public DataTable LayThongTinNhanVien(int nguoiDungId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+
+            try
+            {
+                return _dal.LayThongTinNhanVien(nguoiDungId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi lấy thông tin nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Thêm nhân viên mới (overload 1: với tài khoản và mật khẩu)
+        /// </summary>
+        public int ThemNhanVien(string hoTen, string taiKhoan, string matKhau, int vaiTroId, int chiNhanhId, bool hoatDong)
+        {
+            if (string.IsNullOrWhiteSpace(hoTen))
+                throw new Exception("Họ tên không được để trống!");
+            if (string.IsNullOrWhiteSpace(taiKhoan))
+                throw new Exception("Tài khoản không được để trống!");
+            if (string.IsNullOrWhiteSpace(matKhau))
+                throw new Exception("Mật khẩu không được để trống!");
+            if (vaiTroId <= 0)
+                throw new Exception("Vai trò không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("Chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.ThemNhanVien(hoTen, taiKhoan, matKhau, vaiTroId, chiNhanhId, hoatDong);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi thêm nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Thêm nhân viên mới (overload 2: không có tài khoản/mật khẩu, tự tạo)
+        /// </summary>
+        public int ThemNhanVien(string hoTen, int vaiTroId, int chiNhanhId)
+        {
+            if (string.IsNullOrWhiteSpace(hoTen))
+                throw new Exception("Họ tên không được để trống!");
+            if (vaiTroId <= 0)
+                throw new Exception("Vai trò không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("Chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.ThemNhanVien(hoTen, vaiTroId, chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi thêm nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật nhân viên (overload 1: đầy đủ thông tin)
+        /// </summary>
+        public bool CapNhatNhanVien(int nguoiDungId, string hoTen, string taiKhoan, bool hoatDong, int vaiTroId, int chiNhanhId, string matKhau)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+            if (string.IsNullOrWhiteSpace(hoTen))
+                throw new Exception("Họ tên không được để trống!");
+            if (string.IsNullOrWhiteSpace(taiKhoan))
+                throw new Exception("Tài khoản không được để trống!");
+            if (vaiTroId <= 0)
+                throw new Exception("Vai trò không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("Chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.CapNhatNhanVien(nguoiDungId, hoTen, taiKhoan, hoatDong, vaiTroId, chiNhanhId, matKhau);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi cập nhật nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật nhân viên (overload 2: chỉ họ tên và vai trò)
+        /// </summary>
+        public bool CapNhatNhanVien(int nguoiDungId, string hoTen, int vaiTroId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+            if (string.IsNullOrWhiteSpace(hoTen))
+                throw new Exception("Họ tên không được để trống!");
+            if (vaiTroId <= 0)
+                throw new Exception("Vai trò không hợp lệ!");
+
+            try
+            {
+                return _dal.CapNhatNhanVien(nguoiDungId, hoTen, vaiTroId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi cập nhật nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Xóa (vô hiệu hóa) nhân viên
+        /// </summary>
+        public bool XoaNhanVien(int nguoiDungId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+
+            try
+            {
+                return _dal.XoaNhanVien(nguoiDungId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xóa nhân viên: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gán chi nhánh cho người dùng
+        /// </summary>
+        public bool GanChiNhanhChoNguoiDung(int nguoiDungId, int chiNhanhId)
+        {
+            if (nguoiDungId <= 0)
+                throw new Exception("ID người dùng không hợp lệ!");
+            if (chiNhanhId <= 0)
+                throw new Exception("ID chi nhánh không hợp lệ!");
+
+            try
+            {
+                return _dal.GanChiNhanhChoNguoiDung(nguoiDungId, chiNhanhId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi gán chi nhánh cho người dùng: " + ex.Message);
+            }
+        }
     }
 }

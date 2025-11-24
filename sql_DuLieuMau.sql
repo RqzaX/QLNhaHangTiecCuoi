@@ -445,6 +445,170 @@ AND NOT EXISTS (
 GO
 
 /* ========================
+   7) PHÂN CA CHO NHÂN VIÊN (nguoi_dung_ca)
+   ======================== */
+DECLARE @cn_tt INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Trung tâm');
+DECLARE @cn_q7 INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Quận 7');
+DECLARE @ca_sang INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca=N'Sáng');
+DECLARE @ca_trua INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca=N'Trưa');
+DECLARE @ca_toi INT = (SELECT ca_id FROM dbo.ca WHERE ten_ca=N'Tối');
+
+-- Admin: Tất cả ca ở tất cả chi nhánh (quản lý toàn hệ thống)
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, cn.chi_nhanh_id, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.chi_nhanh cn
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'admin'
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=cn.chi_nhanh_id 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý chi nhánh 01 (CN Trung tâm): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_tt, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlcn01'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_tt 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý chi nhánh 02 (CN Quận 7): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_q7, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlcn02'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_q7 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Lễ tân 01 (CN Trung tâm): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_tt, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'letan01'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_tt 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Lễ tân 02 (CN Quận 7): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_q7, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'letan02'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_q7 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Thu ngân 01 (CN Trung tâm): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_tt, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'thungan01'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_tt 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Thu ngân 02 (CN Quận 7): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_q7, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'thungan02'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_q7 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý bếp 01 (CN Trung tâm): Làm ca Trưa và Tối
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_tt, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlbep01'
+AND c.ten_ca IN (N'Trưa', N'Tối')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_tt 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý bếp 02 (CN Quận 7): Làm ca Trưa và Tối
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_q7, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlbep02'
+AND c.ten_ca IN (N'Trưa', N'Tối')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_q7 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý kho 01 (CN Trung tâm): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_tt, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlkho01'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_tt 
+    AND ndc.ca_id=c.ca_id
+);
+
+-- Quản lý kho 02 (CN Quận 7): Làm ca Sáng và Trưa
+INSERT dbo.nguoi_dung_ca(nguoi_dung_id, chi_nhanh_id, ca_id, trang_thai)
+SELECT nd.nguoi_dung_id, @cn_q7, c.ca_id, 1
+FROM dbo.nguoi_dung nd
+CROSS JOIN dbo.ca c
+WHERE nd.tai_khoan = N'qlkho02'
+AND c.ten_ca IN (N'Sáng', N'Trưa')
+AND NOT EXISTS (
+  SELECT 1 FROM dbo.nguoi_dung_ca ndc 
+  WHERE ndc.nguoi_dung_id=nd.nguoi_dung_id 
+    AND ndc.chi_nhanh_id=@cn_q7 
+    AND ndc.ca_id=c.ca_id
+);
+GO
+
+/* ========================
    8) ĐẶT BÀN, ORDER, HÓA ĐƠN
    ======================== */
 DECLARE @cn_tt INT = (SELECT chi_nhanh_id FROM dbo.chi_nhanh WHERE ten=N'CN Trung tâm');

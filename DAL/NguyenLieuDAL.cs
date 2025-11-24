@@ -646,6 +646,7 @@ WHERE 1 = 1";
                     nl.nl_id,
                     nl.ma_nl,
                     nl.ten_nl,
+                    nl.don_vi,
                     ISNULL(tk.sl_ton, 0) AS sl_ton,
                     ISNULL(tk.ton_toi_thieu, 0) AS ton_toi_thieu,
                     CASE 

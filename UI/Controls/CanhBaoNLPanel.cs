@@ -12,6 +12,9 @@ namespace UI.Controls
 {
     public partial class CanhBaoNLPanel : UserControl
     {
+        // Event khi click vào panel
+        public event EventHandler? PanelClicked;
+
         public CanhBaoNLPanel()
         {
             InitializeComponent();
@@ -21,7 +24,46 @@ namespace UI.Controls
                 uiPanel1.SizeChanged += UiPanel1_SizeChanged;
             }
             // Căn giữa các label sau khi khởi tạo
-            this.HandleCreated += (s, e) => UpdateLabelsVerticalCenter();
+            this.HandleCreated += (s, e) => 
+            {
+                UpdateLabelsVerticalCenter();
+                RegisterClickEvents();
+            };
+        }
+
+        /// <summary>
+        /// Đăng ký event click cho tất cả controls (bao gồm cả controls con)
+        /// </summary>
+        private void RegisterClickEvents()
+        {
+            // Đăng ký click cho control chính
+            this.Click += CanhBaoNLPanel_Click;
+            this.Cursor = Cursors.Hand;
+            
+            // Đăng ký click cho tất cả controls con (đệ quy)
+            RegisterClickForControls(this);
+        }
+
+        /// <summary>
+        /// Đăng ký event click cho control và tất cả controls con của nó
+        /// </summary>
+        private void RegisterClickForControls(Control parent)
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                ctrl.Click += CanhBaoNLPanel_Click;
+                ctrl.Cursor = Cursors.Hand;
+                // Đệ quy cho controls con
+                if (ctrl.HasChildren)
+                {
+                    RegisterClickForControls(ctrl);
+                }
+            }
+        }
+
+        private void CanhBaoNLPanel_Click(object? sender, EventArgs e)
+        {
+            PanelClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void UiPanel1_SizeChanged(object sender, EventArgs e)

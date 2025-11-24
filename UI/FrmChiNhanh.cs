@@ -1123,9 +1123,19 @@ namespace UI
                 // Xóa các panel sảnh cũ và FlowLayoutPanel
                 if (_flowLayoutSanh != null)
                 {
-                    if (_flowLayoutSanh.Parent != null)
-                        _flowLayoutSanh.Parent.Controls.Remove(_flowLayoutSanh);
-                    _flowLayoutSanh.Dispose();
+                    try
+                    {
+                        if (!_flowLayoutSanh.IsDisposed)
+                        {
+                            if (_flowLayoutSanh.Parent != null)
+                                _flowLayoutSanh.Parent.Controls.Remove(_flowLayoutSanh);
+                            _flowLayoutSanh.Dispose();
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Already disposed, continue
+                    }
                     _flowLayoutSanh = null;
                 }
 
@@ -1173,9 +1183,12 @@ namespace UI
                 panelSanh.Controls.Add(_flowLayoutSanh);
 
                 // Đảm bảo FlowLayoutPanel được hiển thị
-                _flowLayoutSanh.Visible = true;
-                _flowLayoutSanh.BringToFront();
-                if (panelTimKiemSanh != null)
+                if (_flowLayoutSanh != null && !_flowLayoutSanh.IsDisposed)
+                {
+                    _flowLayoutSanh.Visible = true;
+                    _flowLayoutSanh.BringToFront();
+                }
+                if (panelTimKiemSanh != null && !panelTimKiemSanh.IsDisposed)
                     panelTimKiemSanh.BringToFront();
 
                 // Lấy chi_nhanh_id từ session
@@ -1211,7 +1224,10 @@ namespace UI
                         Dock = DockStyle.Fill,
                         AutoSize = false
                     };
-                    _flowLayoutSanh.Controls.Add(lblNoData);
+                    if (_flowLayoutSanh != null && !_flowLayoutSanh.IsDisposed)
+                    {
+                        _flowLayoutSanh.Controls.Add(lblNoData);
+                    }
                     System.Diagnostics.Debug.WriteLine("LoadDanhSachSanh: Không có dữ liệu sảnh");
                     return;
                 }
@@ -1287,7 +1303,10 @@ namespace UI
 
                         // Thêm vào danh sách và FlowLayoutPanel
                         _listSanhPanels.Add(sanhPanel);
-                        _flowLayoutSanh.Controls.Add(sanhPanel);
+                        if (_flowLayoutSanh != null && !_flowLayoutSanh.IsDisposed)
+                        {
+                            _flowLayoutSanh.Controls.Add(sanhPanel);
+                        }
                     }
                     catch (Exception exRow)
                     {
@@ -1297,8 +1316,14 @@ namespace UI
                 }
 
                 // Refresh để đảm bảo hiển thị
-                _flowLayoutSanh.Refresh();
-                panelSanh.Refresh();
+                if (_flowLayoutSanh != null && !_flowLayoutSanh.IsDisposed)
+                {
+                    _flowLayoutSanh.Refresh();
+                }
+                if (panelSanh != null && !panelSanh.IsDisposed)
+                {
+                    panelSanh.Refresh();
+                }
             }
             catch (Exception ex)
             {

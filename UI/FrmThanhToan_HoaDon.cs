@@ -72,20 +72,41 @@ namespace UI
             _autoRefreshTimer.Interval = 3000; // 3s
             _autoRefreshTimer.Tick += (s, e) =>
             {
-                if (_isRefreshing) return;
+                // Kiểm tra form và controls có bị dispose không
+                if (this.IsDisposed || this.Disposing || _isRefreshing) return;
+                if (invoicesFlowPanel != null && invoicesFlowPanel.IsDisposed) return;
+                
                 try
                 {
                     _isRefreshing = true;
-                    if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
+                    if (segmentedPill1 != null && !segmentedPill1.IsDisposed)
                     {
-                        if ((DateTime.UtcNow - _lastInvoicesInteractionUtc) < TimeSpan.FromSeconds(4)) return;
-                        LoadInvoicesFromDb();
-                        RefreshTopStats();
+                        if (segmentedPill1.SelectedIndex == 0 || segmentedPill1.SelectedIndex == 1)
+                        {
+                            if ((DateTime.UtcNow - _lastInvoicesInteractionUtc) < TimeSpan.FromSeconds(4)) return;
+                            LoadInvoicesFromDb();
+                            RefreshTopStats();
+                        }
+                        else if (segmentedPill1.SelectedIndex == 2)
+                        {
+                            LoadPaymentHistoryToDataGridView();
+                        }
                     }
-                    else if (segmentedPill1.SelectedIndex == 2)
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Form hoặc controls đã bị dispose, dừng timer
+                    if (_autoRefreshTimer != null)
                     {
-                        LoadPaymentHistoryToDataGridView();
+                        _autoRefreshTimer.Stop();
+                        _autoRefreshTimer.Dispose();
+                        _autoRefreshTimer = null;
                     }
+                }
+                catch (Exception ex)
+                {
+                    // Log lỗi nhưng không crash
+                    System.Diagnostics.Debug.WriteLine($"Lỗi trong timer callback: {ex.Message}");
                 }
                 finally
                 {
@@ -274,168 +295,237 @@ namespace UI
         // Load hóa đơn từ database theo loại
         private void LoadInvoicesFromDb(string? loai = null)
         {
+            // Kiểm tra form có bị dispose không
+            if (this.IsDisposed || this.Disposing) return;
+
             if (invoicesFlowPanel == null)
             {
                 SetupInvoiceListContainer();
+            }
+
+            // Kiểm tra panel có bị dispose không
+            if (invoicesFlowPanel == null || invoicesFlowPanel.IsDisposed)
+            {
+                return;
             }
 
             loai ??= _currentInvoiceLoai;
             if (loai == null)
             {
                 _lastInvoicesHash = null;
-                invoicesFlowPanel?.Controls.Clear();
-                invoicesFlowPanel?.PerformLayout();
-                return;
-            }
-
-            int prevScroll = invoicesFlowPanel.VerticalScroll.Value;
-            invoicesFlowPanel.SuspendLayout();
-
-            var dt = _hoaDonBLL.GetHoaDonList(Session.ChiNhanhId, "CHỜ TT", 100, loai);
-            if (dt == null)
-            {
-                _lastInvoicesHash = null;
-                invoicesFlowPanel.Controls.Clear();
-                invoicesFlowPanel.ResumeLayout(false);
-                invoicesFlowPanel.PerformLayout();
-                return;
-            }
-            string currHash = $"{loai}|{ComputeInvoicesHash(dt)}";
-            if (string.Equals(currHash, _lastInvoicesHash, StringComparison.Ordinal))
-            {
-                invoicesFlowPanel.ResumeLayout(false);
-                invoicesFlowPanel.PerformLayout();
-                return;
-            }
-            _lastInvoicesHash = currHash;
-
-            var existing = new Dictionary<int, Controls.HoaDonPanel>();
-            foreach (Control ctl in invoicesFlowPanel.Controls)
-            {
-                if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
+                try
                 {
-                    if (int.TryParse(hp.Name.Substring(4), out int exId))
+                    if (!invoicesFlowPanel.IsDisposed)
                     {
-                        existing[exId] = hp;
+                        invoicesFlowPanel.Controls.Clear();
+                        invoicesFlowPanel.PerformLayout();
                     }
                 }
-            }
-
-            var newOrderIds = new List<int>();
-            var newIdSet = new HashSet<int>();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                int id = Convert.ToInt32(row["hoa_don_id"]);
-                decimal sub = Convert.ToDecimal(row["tong_truoc_thue"]);
-                decimal vatPercent = Convert.ToDecimal(row["vat"]);
-                decimal vatValue = Math.Round(sub * vatPercent / 100m, 0);
-                decimal total = Convert.ToDecimal(row["tong_sau_thue"]);
-                DateTime ngayLap = Convert.ToDateTime(row["ngay_lap"]);
-
-                newOrderIds.Add(id);
-                newIdSet.Add(id);
-
-                Controls.HoaDonPanel invoiceItem;
-                if (!existing.TryGetValue(id, out invoiceItem!))
+                catch (ObjectDisposedException)
                 {
-                    invoiceItem = new Controls.HoaDonPanel
-                    {
-                        TopLevel = false,
-                        FormBorderStyle = FormBorderStyle.None,
-                        Dock = DockStyle.None,
-                        Name = $"INV_{id}"
-                    };
-                    invoiceItem.Width = invoicesFlowPanel.ClientSize.Width - 40;
-                    invoiceItem.Height = 189;
-                    invoiceItem.Margin = new Padding(0, 0, 5, 8);
-                    invoiceItem.Selected += (_, __) => OnInvoiceSelected(invoiceItem);
-                    invoiceItem.Show();
-                    invoicesFlowPanel.Controls.Add(invoiceItem);
+                    // Panel đã bị dispose, bỏ qua
                 }
-
-                string invoiceLoai = row["loai"]?.ToString() ?? "";
-                invoiceItem.TableName = invoiceLoai == "NHAHANG" ? "Nhà hàng" : "Tiệc cưới";
-                invoiceItem.GuestsAndDishes = $"HD#{id}";
-                invoiceItem.InvoiceCode = $"HD{id}";
-                invoiceItem.Subtotal = FormatCurrency(sub);
-                invoiceItem.Vat = FormatCurrency(vatValue);
-                invoiceItem.Total = FormatCurrency(total);
-                invoiceItem.Tag = new { HoaDonId = id, VatPercent = vatPercent };
-                
-                decimal displayVatPercent = invoiceLoai == "NHAHANG" ? 8m : 10m;
-                invoiceItem.SetVatPercent(displayVatPercent);
-                
-                if (invoiceLoai == "TIECCUOI")
-                {
-                    // Lấy thông tin ngày tổ chức cho tiệc cưới
-                    try
-                    {
-                        if (row["tham_chieu_id"] != DBNull.Value)
-                        {
-                            int hopDongId = Convert.ToInt32(row["tham_chieu_id"]);
-                            var datSanhBLL = new QLNhaHangTiecCuoi.BLL.DatSanhBLL();
-                            int? datSanhId = datSanhBLL.LayDatSanhIdByHopDongId(hopDongId);
-                            if (datSanhId.HasValue)
-                            {
-                                DataRow datSanhInfo = datSanhBLL.LayThongTinDatSanh(datSanhId.Value);
-                                if (datSanhInfo != null)
-                                {
-                                    DateTime ngayToChuc = Convert.ToDateTime(datSanhInfo["ngay_to_chuc"]);
-                                    TimeSpan gioToChuc = datSanhInfo["gio_to_chuc"] != DBNull.Value 
-                                        ? (TimeSpan)datSanhInfo["gio_to_chuc"] 
-                                        : new TimeSpan(10, 30, 0);
-                                    invoiceItem.SetNgayToChuc(gioToChuc, ngayToChuc);
-                                }
-                            }
-                        }
-                    }
-                    catch { }
-                }
-                else
-                {
-                    try { invoiceItem.SetStartTime(ngayLap.ToLocalTime()); } catch { }
-                }
+                return;
             }
-
-            var toRemove = new List<Control>();
-            foreach (Control ctl in invoicesFlowPanel.Controls)
-            {
-                if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
-                {
-                    if (int.TryParse(hp.Name.Substring(4), out int exId) && !newIdSet.Contains(exId))
-                    {
-                        toRemove.Add(ctl);
-                    }
-                }
-            }
-            foreach (var ctl in toRemove)
-            {
-                invoicesFlowPanel.Controls.Remove(ctl);
-                try { ctl.Dispose(); } catch { }
-            }
-
-            for (int i = newOrderIds.Count - 1; i >= 0; i--)
-            {
-                string name = $"INV_{newOrderIds[i]}";
-                var ctl = invoicesFlowPanel.Controls.Cast<Control>().FirstOrDefault(c => c.Name == name);
-                if (ctl != null)
-                {
-                    invoicesFlowPanel.Controls.SetChildIndex(ctl, 0);
-                }
-            }
-
-            invoicesFlowPanel.ResumeLayout(false);
-            invoicesFlowPanel.PerformLayout();
 
             try
             {
-                prevScroll = Math.Max(0, Math.Min(prevScroll, invoicesFlowPanel.VerticalScroll.Maximum));
-                invoicesFlowPanel.VerticalScroll.Value = prevScroll;
-                invoicesFlowPanel.PerformLayout();
+                int prevScroll = invoicesFlowPanel.VerticalScroll.Value;
+                invoicesFlowPanel.SuspendLayout();
+
+                var dt = _hoaDonBLL.GetHoaDonList(Session.ChiNhanhId, "CHỜ TT", 100, loai);
+                if (dt == null)
+                {
+                    _lastInvoicesHash = null;
+                    if (!invoicesFlowPanel.IsDisposed)
+                    {
+                        invoicesFlowPanel.Controls.Clear();
+                        invoicesFlowPanel.ResumeLayout(false);
+                        invoicesFlowPanel.PerformLayout();
+                    }
+                    return;
+                }
+                string currHash = $"{loai}|{ComputeInvoicesHash(dt)}";
+                if (string.Equals(currHash, _lastInvoicesHash, StringComparison.Ordinal))
+                {
+                    if (!invoicesFlowPanel.IsDisposed)
+                    {
+                        invoicesFlowPanel.ResumeLayout(false);
+                        invoicesFlowPanel.PerformLayout();
+                    }
+                    return;
+                }
+                _lastInvoicesHash = currHash;
+
+                var existing = new Dictionary<int, Controls.HoaDonPanel>();
+                if (!invoicesFlowPanel.IsDisposed)
+                {
+                    foreach (Control ctl in invoicesFlowPanel.Controls)
+                    {
+                        if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
+                        {
+                            if (int.TryParse(hp.Name.Substring(4), out int exId))
+                            {
+                                existing[exId] = hp;
+                            }
+                        }
+                    }
+
+                    var newOrderIds = new List<int>();
+                    var newIdSet = new HashSet<int>();
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int id = Convert.ToInt32(row["hoa_don_id"]);
+                        decimal sub = Convert.ToDecimal(row["tong_truoc_thue"]);
+                        decimal vatPercent = Convert.ToDecimal(row["vat"]);
+                        decimal vatValue = Math.Round(sub * vatPercent / 100m, 0);
+                        decimal total = Convert.ToDecimal(row["tong_sau_thue"]);
+                        DateTime ngayLap = Convert.ToDateTime(row["ngay_lap"]);
+
+                        newOrderIds.Add(id);
+                        newIdSet.Add(id);
+
+                        Controls.HoaDonPanel invoiceItem;
+                        if (!existing.TryGetValue(id, out invoiceItem!))
+                        {
+                            invoiceItem = new Controls.HoaDonPanel
+                            {
+                                TopLevel = false,
+                                FormBorderStyle = FormBorderStyle.None,
+                                Dock = DockStyle.None,
+                                Name = $"INV_{id}"
+                            };
+                            invoiceItem.Width = invoicesFlowPanel.ClientSize.Width - 40;
+                            invoiceItem.Height = 189;
+                            invoiceItem.Margin = new Padding(0, 0, 5, 8);
+                            invoiceItem.Selected += (_, __) => OnInvoiceSelected(invoiceItem);
+                            invoiceItem.Show();
+                            invoicesFlowPanel.Controls.Add(invoiceItem);
+                        }
+
+                        string invoiceLoai = row["loai"]?.ToString() ?? "";
+                        invoiceItem.TableName = invoiceLoai == "NHAHANG" ? "Nhà hàng" : "Tiệc cưới";
+                        invoiceItem.GuestsAndDishes = $"HD#{id}";
+                        invoiceItem.InvoiceCode = $"HD{id}";
+                        invoiceItem.Subtotal = FormatCurrency(sub);
+                        invoiceItem.Vat = FormatCurrency(vatValue);
+                        invoiceItem.Total = FormatCurrency(total);
+                        invoiceItem.Tag = new { HoaDonId = id, VatPercent = vatPercent };
+
+                        decimal displayVatPercent = invoiceLoai == "NHAHANG" ? 8m : 10m;
+                        invoiceItem.SetVatPercent(displayVatPercent);
+
+                        if (invoiceLoai == "TIECCUOI")
+                        {
+                            // Lấy thông tin ngày tổ chức cho tiệc cưới
+                            try
+                            {
+                                if (row["tham_chieu_id"] != DBNull.Value)
+                                {
+                                    int hopDongId = Convert.ToInt32(row["tham_chieu_id"]);
+                                    var datSanhBLL = new QLNhaHangTiecCuoi.BLL.DatSanhBLL();
+                                    int? datSanhId = datSanhBLL.LayDatSanhIdByHopDongId(hopDongId);
+                                    if (datSanhId.HasValue)
+                                    {
+                                        DataRow datSanhInfo = datSanhBLL.LayThongTinDatSanh(datSanhId.Value);
+                                        if (datSanhInfo != null)
+                                        {
+                                            DateTime ngayToChuc = Convert.ToDateTime(datSanhInfo["ngay_to_chuc"]);
+                                            TimeSpan gioToChuc = datSanhInfo["gio_to_chuc"] != DBNull.Value
+                                                ? (TimeSpan)datSanhInfo["gio_to_chuc"]
+                                                : new TimeSpan(10, 30, 0);
+                                            invoiceItem.SetNgayToChuc(gioToChuc, ngayToChuc);
+                                        }
+                                    }
+                                }
+                            }
+                            catch { }
+                        }
+                        else
+                        {
+                            try { invoiceItem.SetStartTime(ngayLap.ToLocalTime()); } catch { }
+                        }
+                    }
+
+                    var toRemove = new List<Control>();
+                    if (!invoicesFlowPanel.IsDisposed)
+                    {
+                        foreach (Control ctl in invoicesFlowPanel.Controls)
+                        {
+                            if (ctl is Controls.HoaDonPanel hp && hp.Name != null && hp.Name.StartsWith("INV_", StringComparison.Ordinal))
+                            {
+                                if (int.TryParse(hp.Name.Substring(4), out int exId) && !newIdSet.Contains(exId))
+                                {
+                                    toRemove.Add(ctl);
+                                }
+                            }
+                        }
+                        foreach (var ctl in toRemove)
+                        {
+                            try
+                            {
+                                if (!invoicesFlowPanel.IsDisposed)
+                                {
+                                    invoicesFlowPanel.Controls.Remove(ctl);
+                                }
+                                try { ctl.Dispose(); } catch { }
+                            }
+                            catch (ObjectDisposedException) { }
+                        }
+
+                        for (int i = newOrderIds.Count - 1; i >= 0; i--)
+                        {
+                            string name = $"INV_{newOrderIds[i]}";
+                            var ctl = invoicesFlowPanel.Controls.Cast<Control>().FirstOrDefault(c => c.Name == name);
+                            if (ctl != null)
+                            {
+                                try
+                                {
+                                    if (!invoicesFlowPanel.IsDisposed)
+                                    {
+                                        invoicesFlowPanel.Controls.SetChildIndex(ctl, 0);
+                                    }
+                                }
+                                catch (ObjectDisposedException) { }
+                            }
+                        }
+
+                        if (!invoicesFlowPanel.IsDisposed)
+                        {
+                            invoicesFlowPanel.ResumeLayout(false);
+                            invoicesFlowPanel.PerformLayout();
+                        }
+
+                        try
+                        {
+                            if (!invoicesFlowPanel.IsDisposed)
+                            {
+                                prevScroll = Math.Max(0, Math.Min(prevScroll, invoicesFlowPanel.VerticalScroll.Maximum));
+                                invoicesFlowPanel.VerticalScroll.Value = prevScroll;
+                                invoicesFlowPanel.PerformLayout();
+                            }
+                        }
+                        catch (ObjectDisposedException) { }
+                        catch { }
+                    }
+                }
             }
-            catch
+            
+            catch (ObjectDisposedException)
             {
+                // Panel hoặc form đã bị dispose, dừng timer
+                if (_autoRefreshTimer != null)
+                {
+                    _autoRefreshTimer.Stop();
+                    _autoRefreshTimer.Dispose();
+                    _autoRefreshTimer = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nhưng không crash
+                System.Diagnostics.Debug.WriteLine($"Lỗi trong LoadInvoicesFromDb: {ex.Message}");
             }
         }
 

@@ -40,9 +40,6 @@ namespace UI
             }
         }
 
-        /// <summary>
-        /// Load danh sách chức vụ vào ComboBox
-        /// </summary>
         private void LoadChucVu()
         {
             try

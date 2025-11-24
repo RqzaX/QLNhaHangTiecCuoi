@@ -1,20 +1,23 @@
-﻿using QLNhaHangTiecCuoi.BLL;
+﻿using DevExpress.DataAccess.Sql;
+using DevExpress.XtraReports.UI;
+using QLNhaHangTiecCuoi.BLL;
 using QLNhaHangTiecCuoi.DAL;
 using QLNhaHangTiecCuoi.Share;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing.Printing;
 using UI.Common;
 using UI.Controls;
-using Sunny.UI;
+using UI.Reporting;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UI
@@ -178,6 +181,12 @@ namespace UI
                 foreach (DataRow row in dt.Rows)
                 {
                     var trangThai = row["trang_thai"]?.ToString() ?? "";
+                    
+                    if (trangThai.ToUpper() == "ĐÃ ĐÓNG")
+                    {
+                        continue;
+                    }
+                    
                     var status = GetStatusFromString(trangThai);
                     var kotId = Convert.ToInt32(row["kot_id"]);
                     if (_servedKotIds.Contains(kotId))
@@ -225,6 +234,7 @@ namespace UI
             {
                 case "ĐANG PHỤC VỤ": return KOTStatus.Pending;
                 case "CHỜ THANH TOÁN": return KOTStatus.InProgress;
+                case "SẴN SÀNG": return KOTStatus.Ready;
                 case "ĐÃ ĐÓNG": return KOTStatus.Ready;
                 default: 
                     Console.WriteLine($"Unknown status: '{status}' - defaulting to Pending");
@@ -398,50 +408,57 @@ namespace UI
             return card;
         }
 
+
+
         private void PrintKOT(KOTTicket kot)
         {
             try
             {
-                var lines = new List<string>();
-                lines.Add($"KOT: {kot.TicketCode}");
-                lines.Add($"Bàn: {kot.TableName}");
-                lines.Add($"Thời gian: {kot.OrderTime:HH:mm dd/MM/yyyy}");
-                if (!string.IsNullOrWhiteSpace(kot.Notes))
-                {
-                    lines.Add($"Ghi chú: {kot.Notes}");
-                }
-                lines.Add("------------------------------");
-                foreach (var it in kot.Items)
-                {
-                    var note = string.IsNullOrWhiteSpace(it.Notes) ? "" : $" – {it.Notes}";
-                    lines.Add($"{it.Quantity}x {it.Name}{note}");
-                }
+                int kotId = kot.KOTId;
 
-                string content = string.Join("\n", lines);
+                var report = new rptInDanhSachMon();
 
-                using (var doc = new PrintDocument())
+                // Lấy connection string từ config
+                var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["QLNhaHangOnline"]?.ConnectionString;
+                
+                // Tạo connection mới và fill data trước khi show report
+                using (var connection = new System.Data.SqlClient.SqlConnection(connectionString))
                 {
-                    doc.DocumentName = $"KOT_{kot.TicketCode}";
-                    doc.PrintPage += (s, e) =>
+                    connection.Open();
+                    
+                    var sqlDs = report.DataSource as SqlDataSource;
+                    if (sqlDs != null)
                     {
-                        var font = new Font("Segoe UI", 10f);
-                        e.Graphics.DrawString(content, font, Brushes.Black, new RectangleF(40, 40, e.PageBounds.Width - 80, e.PageBounds.Height - 80));
-                        e.HasMorePages = false;
-                    };
-
-                    using (var dlg = new PrintDialog())
-                    {
-                        dlg.Document = doc;
-                        if (dlg.ShowDialog() == DialogResult.OK)
+                        // Set connection string cho data source
+                        var connParams = sqlDs.ConnectionParameters as DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters;
+                        if (connParams != null)
                         {
-                            doc.Print();
+                            // Cập nhật connection parameters với thông tin từ connection string
+                            var builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+                            
+                            sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters(
+                                builder.DataSource,
+                                builder.InitialCatalog, 
+                                builder.UserID,
+                                builder.Password,
+                                DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer
+                            );
                         }
+
+                        var query = sqlDs.Queries[0];
+                        query.Parameters[0].Value = kotId;
+
+                        sqlDs.RebuildResultSchema();
+                        sqlDs.Fill();
                     }
                 }
+
+                ReportPrintTool printTool = new ReportPrintTool(report);
+                printTool.ShowPreviewDialog();
             }
             catch (Exception ex)
             {
-                GunaToast.Show(this, $"Lỗi in: {ex.Message}", UI.Controls.ToastType.Error, 3000, UI.Controls.ToastPos.TopRight);
+                MessageBox.Show("Lỗi in phiếu: " + ex.Message + "\n\nChi tiết: " + ex.InnerException?.Message);
             }
         }
         
@@ -480,7 +497,8 @@ namespace UI
                 var kot = _kotTickets.FirstOrDefault(k => k.KOTId == kotId);
                 if (kot != null)
                 {
-                    bool success = _kotBLL.CapNhatTrangThaiKOT(kotId, "ĐÃ ĐÓNG");
+                    // Cập nhật trạng thái thành "SẴN SÀNG" thay vì "ĐÃ ĐÓNG"
+                    bool success = _kotBLL.CapNhatTrangThaiKOT(kotId, "SẴN SÀNG");
                     
                     if (success)
                     {

@@ -18,60 +18,127 @@ namespace UI.Controls
         // Simple data bindings for demo/display purposes
         public string InvoiceCode
         {
-            get => panelMaHoaDon.Text;
-            set => panelMaHoaDon.Text = value;
+            get
+            {
+                if (panelMaHoaDon != null && !panelMaHoaDon.IsDisposed)
+                    return panelMaHoaDon.Text;
+                return "";
+            }
+            set
+            {
+                if (panelMaHoaDon != null && !panelMaHoaDon.IsDisposed)
+                    panelMaHoaDon.Text = value;
+            }
         }
 
         public string TableName
         {
-            get => lbSoBan.Text;
-            set => lbSoBan.Text = value;
+            get
+            {
+                if (lbSoBan != null && !lbSoBan.IsDisposed)
+                    return lbSoBan.Text;
+                return "";
+            }
+            set
+            {
+                if (lbSoBan != null && !lbSoBan.IsDisposed)
+                    lbSoBan.Text = value;
+            }
         }
 
         public string GuestsAndDishes
         {
-            get => lbSoKhach_SoMon.Text;
-            set => lbSoKhach_SoMon.Text = value;
+            get
+            {
+                if (lbSoKhach_SoMon != null && !lbSoKhach_SoMon.IsDisposed)
+                    return lbSoKhach_SoMon.Text;
+                return "";
+            }
+            set
+            {
+                if (lbSoKhach_SoMon != null && !lbSoKhach_SoMon.IsDisposed)
+                    lbSoKhach_SoMon.Text = value;
+            }
         }
 
         public string Subtotal
         {
-            get => lbTamTinh.Text;
-            set => lbTamTinh.Text = value;
+            get
+            {
+                if (lbTamTinh != null && !lbTamTinh.IsDisposed)
+                    return lbTamTinh.Text;
+                return "";
+            }
+            set
+            {
+                if (lbTamTinh != null && !lbTamTinh.IsDisposed)
+                    lbTamTinh.Text = value;
+            }
         }
 
         public string Vat
         {
-            get => lbVAT.Text;
-            set => lbVAT.Text = value;
+            get
+            {
+                if (lbVAT != null && !lbVAT.IsDisposed)
+                    return lbVAT.Text;
+                return "";
+            }
+            set
+            {
+                if (lbVAT != null && !lbVAT.IsDisposed)
+                    lbVAT.Text = value;
+            }
         }
 
         public string Total
         {
-            get => lbTongCong.Text;
-            set => lbTongCong.Text = value;
+            get
+            {
+                if (lbTongCong != null && !lbTongCong.IsDisposed)
+                    return lbTongCong.Text;
+                return "";
+            }
+            set
+            {
+                if (lbTongCong != null && !lbTongCong.IsDisposed)
+                    lbTongCong.Text = value;
+            }
         }
 
         public void SetStartTime(DateTime startTime)
         {
-            lbThoiGianLap.Text = $"Bắt đầu: {startTime:HH:mm}";
+            if (lbThoiGianLap != null && !lbThoiGianLap.IsDisposed)
+                lbThoiGianLap.Text = $"Bắt đầu: {startTime:HH:mm}";
         }
 
         public void SetNgayToChuc(TimeSpan gioToChuc, DateTime ngayToChuc)
         {
-            string gioStr = $"{(int)gioToChuc.TotalHours:D2}h{gioToChuc.Minutes:D2}";
-            lbThoiGianLap.Text = $"Ngày tổ chức: {gioStr} - {ngayToChuc:dd/MM/yyyy}";
+            if (lbThoiGianLap != null && !lbThoiGianLap.IsDisposed)
+            {
+                string gioStr = $"{(int)gioToChuc.TotalHours:D2}h{gioToChuc.Minutes:D2}";
+                lbThoiGianLap.Text = $"Ngày tổ chức: {gioStr} - {ngayToChuc:dd/MM/yyyy}";
+            }
         }
 
         public void SetVatPercent(decimal vatPercent)
         {
-            foreach (Control ctrl in Controls)
+            if (IsDisposed || Disposing) return;
+            
+            try
             {
-                if (ctrl.Name == "label4")
+                foreach (Control ctrl in Controls)
                 {
-                    ctrl.Text = $"VAT ({vatPercent:0}%)";
-                    break;
+                    if (ctrl != null && !ctrl.IsDisposed && ctrl.Name == "label4")
+                    {
+                        ctrl.Text = $"VAT ({vatPercent:0}%)";
+                        break;
+                    }
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                // Control đã bị dispose, bỏ qua
             }
         }
 

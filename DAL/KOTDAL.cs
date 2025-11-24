@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using QLNhaHangTiecCuoi.Share;
 using Microsoft.Data.SqlClient;
 
@@ -155,11 +156,29 @@ namespace QLNhaHangTiecCuoi.DAL
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(trangThai))
+                {
+                    throw new ArgumentException("Trạng thái không được để trống");
+                }
+
+                // Trim và validate giá trị trạng thái
+                string trangThaiTrimmed = trangThai.Trim();
+                string[] validStatuses = { "ĐANG PHỤC VỤ", "CHỜ THANH TOÁN", "ĐÃ ĐÓNG", "SẴN SÀNG" };
+                if (!validStatuses.Contains(trangThaiTrimmed))
+                {
+                    throw new ArgumentException($"Trạng thái không hợp lệ: {trangThaiTrimmed}");
+                }
+
                 string query = "UPDATE phieu_order SET trang_thai = @trangThai WHERE phieu_order_id = @kotId";
+
+                var trangThaiParam = new SqlParameter("@trangThai", System.Data.SqlDbType.NVarChar, 20)
+                {
+                    Value = trangThaiTrimmed
+                };
 
                 var parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@trangThai", trangThai),
+                    trangThaiParam,
                     new SqlParameter("@kotId", kotId)
                 };
 

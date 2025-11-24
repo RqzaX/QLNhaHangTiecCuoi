@@ -31,12 +31,7 @@ namespace UI
                 if (!_dbHelper.TestConnection())
                 {
                     MessageBox.Show(
-                        "Không thể kết nối đến database!\n\n" +
-                        "Kiểm tra lại:\n" +
-                        "1. SQL Server đang chạy\n" +
-                        "2. Server name trong DatabaseHelper.cs\n" +
-                        "3. Database: QL_NhaHangTiecCuoi_V3\n\n" +
-                        "Mở SQL Server Management Studio để kiểm tra.",
+                        "Không thể kết nối đến database!",
                         "Lỗi Kết Nối Database",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -190,7 +185,7 @@ namespace UI
                         // Chỉ hiển thị nếu thỏa cả 3 điều kiện
                         if (matchChiNhanh && matchChucVu && matchSearch)
                         {
-                            int nguoiDungId = Convert.ToInt32(row["nguoi_dung_id"]);
+                            int nguoiDungId = Convert.ToInt32(row["NguoiDungId"]);
                             dgvNhanSu.Rows.Add(nguoiDungId, ten, chucVu, chiNhanh);
                         }
                     }
