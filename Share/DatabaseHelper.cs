@@ -6,7 +6,13 @@ namespace QLNhaHangTiecCuoi.Share
 {
     public class DatabaseHelper
     {
-        private string _connectionString = @"Server=LAPTOP-R1ZAX\SQLEXPRESS;Database=QL_NhaHangTiecCuoi_V3;Integrated Security=true;TrustServerCertificate=true;";
+        private string _connectionString =
+            @"Server=vanthuan-sql.hopto.org,1433;" +
+            "Database=QL_NhaHangTiecCuoi_V3;" +
+            "User Id=thuan;" +
+            "Password=Thuan123!;" +
+            "Encrypt=False;" +
+            "TrustServerCertificate=True;";
         public string ConnectionString => _connectionString;
 
         public DatabaseHelper(string connectionString = null)
