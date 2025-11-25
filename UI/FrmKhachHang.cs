@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using QLNhaHangTiecCuoi.BLL;
 using UI.Common;
+using DevExpress.DataAccess.Sql;
+using DevExpress.XtraReports.UI;
 
 namespace UI
 {
@@ -202,7 +204,7 @@ namespace UI
             // Phân quyền: Chỉ LETAN_THUNGAN, QLCN, ADMIN được thêm/sửa/xóa khách hàng
             bool canEdit = Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN");
             btnThem.Enabled = canEdit;
-            
+
             if (!canEdit)
             {
                 btnThem.Enabled = false;
@@ -421,7 +423,7 @@ namespace UI
             // Kiểm tra quyền trước khi thêm khách hàng
             if (!Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN"))
             {
-                MessageBox.Show("Bạn không có quyền thêm khách hàng!", "Thông báo", 
+                MessageBox.Show("Bạn không có quyền thêm khách hàng!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -527,7 +529,7 @@ namespace UI
             {
                 // Kiểm tra quyền: Tất cả đều có thể xem, nhưng chỉ một số vai trò được sửa/xóa
                 bool canEdit = Session.HasAnyRole("LETAN_THUNGAN", "QLCN", "ADMIN");
-                
+
 
                 if (dgvKhachHang.Rows[e.RowIndex].Tag is int khachHangId)
                 {
@@ -837,7 +839,7 @@ namespace UI
                 panelCTTT.Visible = true;
                 panelHDGD.Visible = false;
                 cbbLocHang.Visible = false;
-                btnThem.Visible= false;
+                btnThem.Visible = false;
                 panelCTTT.Location = new Point(11, 317);
                 // Load lại khi chuyển sang tab này
                 if (panelCTTT.Controls.Count == 0)
@@ -1019,6 +1021,86 @@ namespace UI
         private string FormatMoneyWithoutPrefix(decimal amount)
         {
             return $"{string.Format("{0:#,0}", amount).Replace(",", ".")} ₫";
+        }
+
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var report = new UI.Reporting.rptDSKhachHang();
+
+                // Lấy connection string từ config
+                var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["QLNhaHangOnline"]?.ConnectionString;
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    MessageBox.Show("Không tìm thấy connection string!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Lấy filter hiện tại
+                string hangCode = GetSelectedHangCode();
+                if (hangCode == "ALL")
+                {
+                    hangCode = null; // null để lấy tất cả hạng
+                }
+
+                // Set ngày tháng (lấy tất cả dữ liệu)
+                DateOnly tuNgay = DateOnly.FromDateTime(DateTime.Now.AddYears(-10)); // 10 năm trước
+                DateOnly denNgay = DateOnly.FromDateTime(DateTime.Now);
+
+                // Set parameters cho report
+                var sqlDs = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                if (sqlDs != null)
+                {
+                    // Set connection string cho data source
+                    var builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+
+                    sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters(
+                        builder.DataSource,
+                        builder.InitialCatalog,
+                        builder.UserID,
+                        builder.Password,
+                        DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer
+                    );
+
+                    // Tìm stored procedure query "sp_BaoCaoKhachHang"
+                    var query = sqlDs.Queries.OfType<DevExpress.DataAccess.Sql.StoredProcQuery>()
+                        .FirstOrDefault(q => q.StoredProcName == "sp_BaoCaoKhachHang");
+
+                    if (query != null)
+                    {
+                        // Set parameters
+                        var paramHangCode = query.Parameters.FirstOrDefault(p => p.Name == "@HangCode");
+                        if (paramHangCode != null)
+                        {
+                            paramHangCode.Value = hangCode ?? (object)DBNull.Value;
+                        }
+
+                        var paramTuNgay = query.Parameters.FirstOrDefault(p => p.Name == "@TuNgay");
+                        if (paramTuNgay != null)
+                        {
+                            paramTuNgay.Value = tuNgay;
+                        }
+
+                        var paramDenNgay = query.Parameters.FirstOrDefault(p => p.Name == "@DenNgay");
+                        if (paramDenNgay != null)
+                        {
+                            paramDenNgay.Value = denNgay;
+                        }
+
+                        sqlDs.RebuildResultSchema();
+                        sqlDs.Fill();
+                    }
+                }
+
+                // Hiển thị report preview
+                DevExpress.XtraReports.UI.ReportPrintTool printTool = new DevExpress.XtraReports.UI.ReportPrintTool(report);
+                printTool.ShowPreviewDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi in danh sách khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

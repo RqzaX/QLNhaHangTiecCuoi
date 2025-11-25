@@ -181,5 +181,10 @@ namespace UI
                 MessageBox.Show($"Lỗi thêm chi nhánh: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void roundedButton1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

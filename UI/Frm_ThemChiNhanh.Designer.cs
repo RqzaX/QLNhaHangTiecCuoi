@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label1 = new Label();
             label2 = new Label();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
@@ -141,6 +141,7 @@
             roundedButton1.TabIndex = 17;
             roundedButton1.Text = "Hủy";
             roundedButton1.UseVisualStyleBackColor = false;
+            roundedButton1.Click += roundedButton1_Click;
             // 
             // roundedButton2
             // 
@@ -161,7 +162,7 @@
             // cbbTrangThai
             // 
             cbbTrangThai.BackColor = Color.Transparent;
-            cbbTrangThai.CustomizableEdges = customizableEdges3;
+            cbbTrangThai.CustomizableEdges = customizableEdges1;
             cbbTrangThai.DrawMode = DrawMode.OwnerDrawFixed;
             cbbTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
             cbbTrangThai.FocusedColor = Color.FromArgb(94, 148, 255);
@@ -171,7 +172,7 @@
             cbbTrangThai.ItemHeight = 30;
             cbbTrangThai.Location = new Point(12, 370);
             cbbTrangThai.Name = "cbbTrangThai";
-            cbbTrangThai.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            cbbTrangThai.ShadowDecoration.CustomizableEdges = customizableEdges2;
             cbbTrangThai.Size = new Size(577, 36);
             cbbTrangThai.TabIndex = 19;
             // 
