@@ -257,6 +257,312 @@ BEGIN
     FROM phieu_order_ct poc
     WHERE poc.phieu_order_id = @KOTId;
 END;
+Go
+--Bao Cao Khách Hàng
+
+IF OBJECT_ID('dbo.sp_BaoCaoKhachHang', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_BaoCaoKhachHang;
 GO
 
+CREATE PROCEDURE dbo.sp_BaoCaoKhachHang
+    @HangCode NVARCHAR(10) = NULL,  -- NULL = tất cả hạng, 'MEM'/'BAC'/'VANG'/'VIP' = lọc theo hạng
+    @TuNgay DATE = NULL,              -- NULL = không lọc theo ngày
+    @DenNgay DATE = NULL              -- NULL = không lọc theo ngày
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Trả về 1 result set duy nhất với tất cả thông tin cần thiết
+    SELECT 
+        -- Thông tin header báo cáo (dùng cho mọi dòng)
+        CONVERT(VARCHAR(10), GETDATE(), 103) AS ngay_bao_cao,
+        CONVERT(VARCHAR(8), GETDATE(), 108) AS gio_bao_cao,
+        CONVERT(VARCHAR(10), GETDATE(), 103) + ' ' + CONVERT(VARCHAR(8), GETDATE(), 108) AS thoi_gian_bao_cao,
+        CASE 
+            WHEN @HangCode IS NULL THEN N'TẤT CẢ HẠNG KHÁCH HÀNG'
+            ELSE (SELECT ten_hang FROM dbo.dm_hang_kh WHERE hang_code = @HangCode)
+        END AS tieu_de_bao_cao,
+        CASE 
+            WHEN @HangCode IS NULL THEN NULL
+            ELSE @HangCode
+        END AS hang_code_loc,
+        
+        -- Chi tiết khách hàng (dùng trong Details section)
+        ROW_NUMBER() OVER (ORDER BY kh.ho_ten) AS stt,
+        kh.khach_hang_id,
+        kh.ho_ten,
+        ISNULL(kh.sdt, N'') AS sdt,
+        ISNULL(kh.email, N'') AS email,
+        CASE 
+            WHEN kh.ngay_sinh IS NOT NULL THEN FORMAT(kh.ngay_sinh, 'dd/MM/yyyy')
+            ELSE N''
+        END AS ngay_sinh,
+        CASE 
+            WHEN kh.ngay_sinh IS NOT NULL THEN DATEDIFF(YEAR, kh.ngay_sinh, GETDATE())
+            ELSE NULL
+        END AS tuoi,
+        ISNULL(kh.hang_code, N'MEM') AS hang_code,
+        ISNULL(dm.ten_hang, N'Thành viên') AS ten_hang,
+        ISNULL(dm.min_tich_luy, 0) AS min_tich_luy,
+        ISNULL(kh.tong_chi_tieu, 0) AS tong_chi_tieu,
+        FORMAT(ISNULL(kh.tong_chi_tieu, 0), 'N0') AS tong_chi_tieu_hien_thi,
+        ISNULL(kh.so_lan_den, 0) AS so_lan_den,
+        ISNULL(kh.diem, 0) AS diem,
+        CASE 
+            WHEN kh.lan_cuoi_den IS NOT NULL THEN FORMAT(kh.lan_cuoi_den, 'dd/MM/yyyy')
+            ELSE N'Chưa có'
+        END AS lan_cuoi_den,
+        CASE 
+            WHEN kh.lan_cuoi_den IS NOT NULL THEN DATEDIFF(DAY, kh.lan_cuoi_den, GETDATE())
+            ELSE NULL
+        END AS so_ngay_chua_den,
+        ISNULL(kh.ghi_chu, N'') AS ghi_chu,
+        
+        -- Thông tin phân tích
+        CASE 
+            WHEN ISNULL(kh.tong_chi_tieu, 0) >= ISNULL(dm.min_tich_luy, 0) THEN N'Đạt hạng'
+            ELSE N'Chưa đạt'
+        END AS trang_thai_hang,
+        CASE 
+            WHEN ISNULL(kh.tong_chi_tieu, 0) >= ISNULL(dm.min_tich_luy, 0) THEN 1
+            ELSE 0
+        END AS ma_trang_thai_hang,
+        -- Tính số tiền còn thiếu để lên hạng tiếp theo
+        CASE 
+            WHEN dm.thu_tu < (SELECT MAX(thu_tu) FROM dbo.dm_hang_kh) THEN
+                (SELECT MIN(min_tich_luy) FROM dbo.dm_hang_kh WHERE thu_tu > dm.thu_tu) - ISNULL(kh.tong_chi_tieu, 0)
+            ELSE 0
+        END AS so_tien_con_thieu,
+        -- Hạng tiếp theo
+        CASE 
+            WHEN dm.thu_tu < (SELECT MAX(thu_tu) FROM dbo.dm_hang_kh) THEN
+                (SELECT ten_hang FROM dbo.dm_hang_kh WHERE thu_tu = (SELECT MIN(thu_tu) FROM dbo.dm_hang_kh WHERE thu_tu > dm.thu_tu))
+            ELSE N'Đã đạt hạng cao nhất'
+        END AS hang_tiep_theo
+        
+    FROM dbo.khach_hang kh
+    LEFT JOIN dbo.dm_hang_kh dm ON kh.hang_code = dm.hang_code
+    WHERE 
+        -- Lọc theo hạng
+        (@HangCode IS NULL OR kh.hang_code = @HangCode)
+        -- Lọc theo ngày (chỉ áp dụng nếu cả 2 parameters đều có giá trị)
+        AND (
+            @TuNgay IS NULL OR @DenNgay IS NULL  -- Nếu một trong hai NULL → không lọc theo ngày
+            OR (kh.lan_cuoi_den IS NOT NULL AND kh.lan_cuoi_den BETWEEN @TuNgay AND @DenNgay)  -- Có ngày và khách hàng có lan_cuoi_den trong khoảng
+            OR (kh.lan_cuoi_den IS NULL)  -- Nếu khách hàng chưa có lan_cuoi_den, vẫn hiển thị (nếu không lọc theo ngày)
+        )
+    ORDER BY 
+        CASE WHEN @HangCode IS NULL THEN dm.thu_tu END,
+        kh.ho_ten;
+END;
+GO
+--Bao cao Ton Kho
+IF OBJECT_ID('dbo.sp_BaoCaoTonKho_Final', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_BaoCaoTonKho_Final;
+GO
 
+CREATE PROCEDURE dbo.sp_BaoCaoTonKho_Final
+    @ChiNhanhId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Trả về 1 result set duy nhất với tất cả thông tin cần thiết
+    SELECT 
+        -- Thông tin chi nhánh (dùng LEFT JOIN và ISNULL để đảm bảo luôn có giá trị)
+        @ChiNhanhId AS chi_nhanh_id,
+        ISNULL(cn.ten, N'Không xác định') AS ten_chi_nhanh,
+        ISNULL(cn.dia_chi, N'') AS dia_chi_chi_nhanh,
+        ISNULL(cn.sdt, N'') AS sdt_chi_nhanh,
+        CONVERT(VARCHAR(10), GETDATE(), 103) AS ngay_bao_cao,
+        CONVERT(VARCHAR(8), GETDATE(), 108) AS gio_bao_cao,
+        CONVERT(VARCHAR(10), GETDATE(), 103) + ' ' + CONVERT(VARCHAR(8), GETDATE(), 108) AS thoi_gian_bao_cao,
+        
+        -- Chi tiết tồn kho (dùng trong Details section)
+        ROW_NUMBER() OVER (ORDER BY nl.ten_nl) AS stt,
+        nl.nl_id,
+        nl.ma_nl,
+        nl.ten_nl,
+        nl.don_vi,
+        ISNULL(tk.sl_ton, 0) AS sl_ton,
+        ISNULL(tk.ton_toi_thieu, 0) AS ton_toi_thieu,
+        CASE 
+            WHEN ISNULL(tk.sl_ton, 0) = 0 THEN N'Hết hàng'
+            WHEN ISNULL(tk.sl_ton, 0) <= ISNULL(tk.ton_toi_thieu, 0) THEN N'Tồn thấp'
+            ELSE N'Đủ tồn'
+        END AS trang_thai,
+        CASE 
+            WHEN ISNULL(tk.sl_ton, 0) < ISNULL(tk.ton_toi_thieu, 0) 
+            THEN ISNULL(tk.ton_toi_thieu, 0) - ISNULL(tk.sl_ton, 0)
+            ELSE 0
+        END AS sl_can_nhap
+        
+    FROM dbo.nguyen_lieu nl
+    LEFT JOIN dbo.ton_kho tk ON tk.nl_id = nl.nl_id AND tk.chi_nhanh_id = @ChiNhanhId
+    LEFT JOIN dbo.chi_nhanh cn ON cn.chi_nhanh_id = @ChiNhanhId
+    ORDER BY nl.ten_nl;
+END;
+GO
+--Bao Cao Danh Sach Dat Tiec
+IF OBJECT_ID('dbo.sp_BaoCaoDatNhaHangTiecCuoi', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_BaoCaoDatNhaHangTiecCuoi;
+GO
+
+CREATE PROCEDURE dbo.sp_BaoCaoDatNhaHangTiecCuoi
+    @ChiNhanhId INT = NULL,          -- NULL = tất cả chi nhánh
+    @TuNgay DATE = NULL,              -- NULL = không lọc theo ngày
+    @DenNgay DATE = NULL,             -- NULL = không lọc theo ngày
+    @Loai NVARCHAR(15) = NULL         -- NULL = tất cả, 'NHAHANG' hoặc 'TIECCUOI'
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Dùng CTE để tính trước ngày và tổng doanh thu
+    WITH HoaDonWithInfo AS (
+        SELECT 
+            hd.hoa_don_id,
+            hd.chi_nhanh_id,
+            hd.khach_hang_id,
+            hd.loai,
+            hd.tham_chieu_id,
+            hd.ngay_lap,
+            hd.tong_truoc_thue,
+            hd.tong_sau_thue,
+            hd.giam_gia,
+            hd.phi_dv,
+            -- Tính ngày (ưu tiên ngày thanh toán)
+            CONVERT(DATE, COALESCE(
+                (SELECT TOP 1 ngay_tt FROM dbo.thanh_toan WHERE hoa_don_id = hd.hoa_don_id ORDER BY ngay_tt DESC),
+                hd.ngay_lap
+            )) AS ngay,
+            -- Tổng doanh thu = tong_sau_thue (vì chỉ lấy hóa đơn đã thanh toán)
+            ISNULL(hd.tong_sau_thue, 0) AS doanh_thu
+        FROM dbo.hoa_don hd
+        WHERE 
+            hd.trang_thai = N'ĐÃ THANH TOÁN'
+            AND (@ChiNhanhId IS NULL OR hd.chi_nhanh_id = @ChiNhanhId)
+            AND (@Loai IS NULL OR hd.loai = @Loai)
+            AND (
+                @TuNgay IS NULL OR @DenNgay IS NULL
+                OR CONVERT(DATE, COALESCE(
+                    (SELECT TOP 1 ngay_tt FROM dbo.thanh_toan WHERE hoa_don_id = hd.hoa_don_id ORDER BY ngay_tt DESC),
+                    hd.ngay_lap
+                )) BETWEEN @TuNgay AND @DenNgay
+            )
+    )
+    -- Trả về 1 result set với tất cả thông tin cần thiết
+    SELECT 
+        -- Thông tin header báo cáo (dùng cho mọi dòng)
+        CONVERT(VARCHAR(10), GETDATE(), 103) AS ngay_bao_cao,
+        CONVERT(VARCHAR(8), GETDATE(), 108) AS gio_bao_cao,
+        CONVERT(VARCHAR(10), GETDATE(), 103) + ' ' + CONVERT(VARCHAR(8), GETDATE(), 108) AS thoi_gian_bao_cao,
+        CASE 
+            WHEN @ChiNhanhId IS NULL THEN N'TẤT CẢ CHI NHÁNH'
+            ELSE (SELECT ten FROM dbo.chi_nhanh WHERE chi_nhanh_id = @ChiNhanhId)
+        END AS ten_chi_nhanh,
+        CASE 
+            WHEN @ChiNhanhId IS NULL THEN NULL
+            ELSE @ChiNhanhId
+        END AS chi_nhanh_id,
+        CASE 
+            WHEN @Loai IS NULL THEN N'TẤT CẢ LOẠI'
+            WHEN @Loai = N'NHAHANG' THEN N'NHÀ HÀNG'
+            WHEN @Loai = N'TIECCUOI' THEN N'TIỆC CƯỚI'
+            ELSE @Loai
+        END AS tieu_de_bao_cao,
+        
+        -- Chi tiết theo ngày (dùng trong Details section)
+        hdwi.ngay,
+        FORMAT(hdwi.ngay, 'dd/MM/yyyy') AS ngay_hien_thi,
+        
+        -- Thông tin chi nhánh
+        hdwi.chi_nhanh_id,
+        ISNULL(cn.ten, N'Không xác định') AS ten_cn,
+        
+        -- Loại (Nhà hàng hoặc Tiệc cưới)
+        hdwi.loai,
+        CASE 
+            WHEN hdwi.loai = N'NHAHANG' THEN N'Nhà hàng'
+            WHEN hdwi.loai = N'TIECCUOI' THEN N'Tiệc cưới'
+            ELSE hdwi.loai
+        END AS ten_loai,
+        
+        -- Số lượng đặt (COUNT)
+        COUNT(*) AS so_luong_dat,
+        
+        -- Tổng số tiền (SUM tong_sau_thue)
+        SUM(ISNULL(hdwi.tong_sau_thue, 0)) AS tong_so_tien,
+        FORMAT(SUM(ISNULL(hdwi.tong_sau_thue, 0)), 'N0') AS tong_so_tien_hien_thi,
+        
+        -- Tổng doanh thu = Tổng số tiền (vì chỉ lấy hóa đơn đã thanh toán)
+        SUM(ISNULL(hdwi.tong_sau_thue, 0)) AS tong_doanh_thu,
+        FORMAT(SUM(ISNULL(hdwi.tong_sau_thue, 0)), 'N0') AS tong_doanh_thu_hien_thi,
+        
+        -- Tổng trước thuế
+        SUM(ISNULL(hdwi.tong_truoc_thue, 0)) AS tong_truoc_thue,
+        FORMAT(SUM(ISNULL(hdwi.tong_truoc_thue, 0)), 'N0') AS tong_truoc_thue_hien_thi,
+        
+        -- Tổng VAT
+        SUM(ISNULL(hdwi.tong_sau_thue, 0) - ISNULL(hdwi.tong_truoc_thue, 0)) AS tong_vat,
+        FORMAT(SUM(ISNULL(hdwi.tong_sau_thue, 0) - ISNULL(hdwi.tong_truoc_thue, 0)), 'N0') AS tong_vat_hien_thi,
+        
+        -- Tổng giảm giá
+        SUM(ISNULL(hdwi.giam_gia, 0)) AS tong_giam_gia,
+        FORMAT(SUM(ISNULL(hdwi.giam_gia, 0)), 'N0') AS tong_giam_gia_hien_thi,
+        
+        -- Tổng phí dịch vụ
+        SUM(ISNULL(hdwi.phi_dv, 0)) AS tong_phi_dv,
+        FORMAT(SUM(ISNULL(hdwi.phi_dv, 0)), 'N0') AS tong_phi_dv_hien_thi,
+        
+        -- Thông tin tham chiếu (bàn/sảnh) - BỎ so_ban_sanh
+        CASE 
+            WHEN hdwi.loai = N'NHAHANG' AND db.dat_ban_id IS NOT NULL AND b.so_ban IS NOT NULL THEN 
+                CASE 
+                    WHEN kv.ten_khu_vuc IS NOT NULL THEN kv.ten_khu_vuc + N' - ' + b.so_ban
+                    ELSE b.so_ban
+                END
+            WHEN hdwi.loai = N'TIECCUOI' AND ds.dat_sanh_id IS NOT NULL AND s.ten_sanh IS NOT NULL THEN s.ten_sanh
+            ELSE N'-'
+        END AS ban_sanh,
+        
+        -- Thông tin khách hàng
+        ISNULL(kh.ho_ten, N'Khách lẻ') AS ten_khach_hang,
+        ISNULL(kh.sdt, N'') AS sdt_khach_hang
+       
+    FROM HoaDonWithInfo hdwi
+    LEFT JOIN dbo.chi_nhanh cn ON hdwi.chi_nhanh_id = cn.chi_nhanh_id
+    LEFT JOIN dbo.khach_hang kh ON hdwi.khach_hang_id = kh.khach_hang_id
+    -- JOIN cho nhà hàng
+    LEFT JOIN dbo.dat_ban db ON db.dat_ban_id = hdwi.tham_chieu_id AND hdwi.loai = N'NHAHANG'
+    LEFT JOIN dbo.ban b ON b.ban_id = db.ban_id
+    LEFT JOIN dbo.khu_vuc kv ON kv.khu_vuc_id = b.khu_vuc_id
+    -- JOIN cho tiệc cưới
+    LEFT JOIN dbo.dat_sanh ds ON ds.dat_sanh_id = hdwi.tham_chieu_id AND hdwi.loai = N'TIECCUOI'
+    LEFT JOIN dbo.sanh s ON s.sanh_id = ds.sanh_id
+    GROUP BY
+        -- Nhóm theo ngày
+        hdwi.ngay,
+        -- Nhóm theo chi nhánh
+        hdwi.chi_nhanh_id,
+        cn.ten,
+        -- Nhóm theo loại
+        hdwi.loai,
+        -- Thông tin tham chiếu
+        db.dat_ban_id,
+        b.so_ban,
+        kv.ten_khu_vuc,
+        ds.dat_sanh_id,
+        s.ten_sanh,
+        -- Thông tin khách hàng
+        kh.ho_ten,
+        kh.sdt
+    ORDER BY
+        -- Sắp xếp theo ngày (mới nhất trước)
+        hdwi.ngay DESC,
+        hdwi.loai,
+        hdwi.chi_nhanh_id;
+END;
+GO
+--In Voucher
+select * from ton_kho
+select * from chi_nhanh

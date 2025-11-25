@@ -22,5 +22,41 @@ namespace UI.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TaiKhoan {
+            get {
+                return ((string)(this["TaiKhoan"]));
+            }
+            set {
+                this["TaiKhoan"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MatKhau {
+            get {
+                return ((string)(this["MatKhau"]));
+            }
+            set {
+                this["MatKhau"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string LuuThongTin {
+            get {
+                return ((string)(this["LuuThongTin"]));
+            }
+            set {
+                this["LuuThongTin"] = value;
+            }
+        }
     }
 }

@@ -402,7 +402,6 @@
             btnThemNL.Size = new Size(196, 42);
             btnThemNL.TabIndex = 22;
             btnThemNL.Text = "Thêm Nguyên Liệu Mới";
-            
             // 
             // guna2Button1
             // 
@@ -422,6 +421,7 @@
             guna2Button1.Size = new Size(153, 42);
             guna2Button1.TabIndex = 23;
             guna2Button1.Text = "Xuất Báo cáo";
+            guna2Button1.Click += guna2Button1_Click;
             // 
             // FrmKho
             // 

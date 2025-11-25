@@ -996,19 +996,19 @@ namespace UI
             switch (trangThai.ToUpper())
             {
                 case "CHỜ XÁC NHẬN":
-                    return Color.FromArgb(245, 158, 11); // Cam/Vàng đậm - đang chờ xác nhận
+                    return Color.FromArgb(245, 158, 11); 
                 case "ĐÃ XÁC NHẬN":
-                    return Color.FromArgb(59, 130, 246); // Xanh dương - đã xác nhận
+                    return Color.FromArgb(59, 130, 246); 
                 case "ĐÃ CỌC":
-                    return Color.FromArgb(99, 102, 241); // Tím/Xanh dương đậm - đã cọc
+                    return Color.FromArgb(99, 102, 241); 
                 case "ĐÃ THANH TOÁN":
-                    return Color.FromArgb(16, 185, 129); // Xanh lá đậm - đã thanh toán
+                    return Color.FromArgb(16, 185, 129); 
                 case "HOÀN TẤT":
-                    return Color.FromArgb(34, 197, 94); // Xanh lá sáng - hoàn tất
+                    return Color.FromArgb(34, 197, 94); 
                 case "ĐÃ HỦY":
-                    return Color.FromArgb(239, 68, 68); // Đỏ - đã hủy
+                    return Color.FromArgb(239, 68, 68); 
                 default:
-                    return Color.FromArgb(107, 114, 128); // Xám - mặc định
+                    return Color.FromArgb(107, 114, 128); 
             }
         }
 
@@ -1022,15 +1022,14 @@ namespace UI
         {
             return $"{string.Format("{0:#,0}", amount).Replace(",", ".")} ₫";
         }
-
         private void guna2Button1_Click(object sender, EventArgs e)
         {
             try
             {
                 var report = new UI.Reporting.rptDSKhachHang();
 
-                // Lấy connection string từ config
-                var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["QLNhaHangOnline"]?.ConnectionString;
+                string connectionString = _dbHelper.ConnectionString;
+
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     MessageBox.Show("Không tìm thấy connection string!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1041,28 +1040,20 @@ namespace UI
                 string hangCode = GetSelectedHangCode();
                 if (hangCode == "ALL")
                 {
-                    hangCode = null; // null để lấy tất cả hạng
+                    hangCode = null;
                 }
 
                 // Set ngày tháng (lấy tất cả dữ liệu)
-                DateOnly tuNgay = DateOnly.FromDateTime(DateTime.Now.AddYears(-10)); // 10 năm trước
+                DateOnly tuNgay = DateOnly.FromDateTime(DateTime.Now.AddYears(-10));
                 DateOnly denNgay = DateOnly.FromDateTime(DateTime.Now);
 
                 // Set parameters cho report
                 var sqlDs = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
                 if (sqlDs != null)
                 {
-                    // Set connection string cho data source
-                    var builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
-
-                    sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters(
-                        builder.DataSource,
-                        builder.InitialCatalog,
-                        builder.UserID,
-                        builder.Password,
-                        DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer
-                    );
-
+                    // Sử dụng CustomStringConnectionParameters để giữ nguyên TrustServerCertificate và Encrypt settings
+                    string devExpressConnectionString = connectionString.TrimEnd(';') + ";XpoProvider=MSSqlServer";
+                    sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.CustomStringConnectionParameters(devExpressConnectionString);
                     // Tìm stored procedure query "sp_BaoCaoKhachHang"
                     var query = sqlDs.Queries.OfType<DevExpress.DataAccess.Sql.StoredProcQuery>()
                         .FirstOrDefault(q => q.StoredProcName == "sp_BaoCaoKhachHang");
@@ -1099,7 +1090,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi in danh sách khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi in danh sách khách hàng: {ex.Message}\n\nStack: {ex.StackTrace}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

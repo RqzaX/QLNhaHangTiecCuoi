@@ -29,7 +29,7 @@ namespace UI
                 _dbHelper = new DatabaseHelper();
                 if (!_dbHelper.TestConnection())
                 {
-                    MessageBox.Show("Không thể kết nối đến database!", "Lỗi", 
+                    MessageBox.Show("Không thể kết nối đến database!", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -45,15 +45,15 @@ namespace UI
 
         private void FrmBaoCao_Load(object sender, EventArgs e)
         {
-           
+
             LoadPieChartHoaDon();
-            
+
             LoadTop5MonBanChay();
         }
 
         private void FrmBaoCao_Activated(object sender, EventArgs e)
         {
-            
+
             if (segmentedPill1.SelectedIndex == 0)
             {
                 LoadPieChartHoaDon();
@@ -82,7 +82,7 @@ namespace UI
 
                 // Tính tổng để tính phần trăm
                 int tong = nhaHang + tiecCuoi;
-                
+
                 float phanTramNhaHang = 0f;
                 float phanTramTiecCuoi = 0f;
 
@@ -138,8 +138,8 @@ namespace UI
             {
                 PanelCanhBao.Visible = true;
                 PanelBanChay.Visible = false;
-                PanelBieuDo.Visible= false;
-               
+                PanelBieuDo.Visible = false;
+
                 LoadCanhBaoNguyenLieu();
             }
         }
@@ -153,7 +153,7 @@ namespace UI
             {
                 if (_nguyenLieuBLL == null)
                 {
-                    MessageBox.Show("Chưa khởi tạo BLL!", "Lỗi", 
+                    MessageBox.Show("Chưa khởi tạo BLL!", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -165,7 +165,7 @@ namespace UI
 
                 // Load nguyên liệu số lượng = 0 (hết hàng)
                 DataTable dtHetHang = _nguyenLieuBLL.LayTonKhoTheoTinhTrang(2, null); // tinhTrang = 2: số lượng = 0
-                
+
                 // Load nguyên liệu sắp hết (số lượng > 0 và <= 30)
                 DataTable dtSapHet = _nguyenLieuBLL.LayTonKhoTheoTinhTrang(3, null, NGUONG_CANH_BAO); // tinhTrang = 3: sắp hết, canhBao = 30
 
@@ -188,7 +188,7 @@ namespace UI
                             Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
                         };
                         panel.SetData(tenNL, slTon, hetHang: true);
-                        
+
                         // Đăng ký event click để mở FrmKho
                         panel.PanelClicked += (sender, e) =>
                         {
@@ -209,11 +209,11 @@ namespace UI
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi", 
+                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         };
-                        
+
                         PanelCanhBao.Controls.Add(panel);
                         yPosition += panelHeight + spacing;
                     }
@@ -233,7 +233,7 @@ namespace UI
                             Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
                         };
                         panel.SetData(tenNL, slTon, hetHang: false);
-                        
+
                         // Đăng ký event click để mở FrmKho
                         panel.PanelClicked += (sender, e) =>
                         {
@@ -254,18 +254,18 @@ namespace UI
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi", 
+                                MessageBox.Show($"Lỗi mở form kho: {ex.Message}", "Lỗi",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         };
-                        
+
                         PanelCanhBao.Controls.Add(panel);
                         yPosition += panelHeight + spacing;
                     }
                 }
 
-            
-                if ((dtHetHang == null || dtHetHang.Rows.Count == 0) && 
+
+                if ((dtHetHang == null || dtHetHang.Rows.Count == 0) &&
                     (dtSapHet == null || dtSapHet.Rows.Count == 0))
                 {
                     var lblNoData = new Label
@@ -288,7 +288,7 @@ namespace UI
         }
 
         /// <summary>
-      
+
         /// </summary>
         private void LoadTop5MonBanChay()
         {
@@ -300,11 +300,11 @@ namespace UI
                     return;
                 }
 
-               
+
                 var controlsToRemove = new List<Control>();
                 foreach (Control ctrl in PanelBanChay.Controls)
                 {
-                   
+
                     if (ctrl.Name != "label17")
                     {
                         controlsToRemove.Add(ctrl);
@@ -316,12 +316,12 @@ namespace UI
                     ctrl.Dispose();
                 }
 
-               
+
                 DataTable dt = _hoaDonBLL.GetTop5MonBanChay(null);
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
-                   
+
                     var lblNoData = new Label
                     {
                         Text = "Chưa có dữ liệu món bán chạy",
@@ -356,7 +356,7 @@ namespace UI
                     string tenMon = row["ten_hang"]?.ToString() ?? "Chưa có tên";
                     decimal tongSoLuong = Convert.ToDecimal(row["tong_so_luong"] ?? 0);
                     decimal tongTien = Convert.ToDecimal(row["tong_tien"] ?? 0);
-                    
+
                     // Capture giá trị stt vào biến local để tránh closure issue
                     int currentStt = stt;
 
@@ -369,7 +369,7 @@ namespace UI
                         BorderStyle = BorderStyle.None
                     };
 
-                   
+
                     itemPanel.Paint += (s, e) =>
                     {
                         using (var pen = new Pen(Color.FromArgb(220, 220, 220), 1))
@@ -440,6 +440,76 @@ namespace UI
             {
                 MessageBox.Show($"Lỗi load top 5 món bán chạy: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void roundedButton2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var report = new UI.Reporting.rptBaoCaoLoaiDat();
+
+                string connectionString = _dbHelper.ConnectionString;
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    MessageBox.Show("Không tìm thấy connection string!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Set parameters cho report
+                var sqlDs = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                if (sqlDs != null)
+                {
+                    // Thêm XpoProvider=MSSqlServer cho DevExpress và giữ nguyên TrustServerCertificate, Encrypt settings
+                    string devExpressConnectionString = connectionString.TrimEnd(';') + ";XpoProvider=MSSqlServer";
+                    sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.CustomStringConnectionParameters(devExpressConnectionString);
+
+                    // Tìm stored procedure query "sp_BaoCaoDatNhaHangTiecCuoi"
+                    var query = sqlDs.Queries.OfType<DevExpress.DataAccess.Sql.StoredProcQuery>()
+                        .FirstOrDefault(q => q.StoredProcName == "sp_BaoCaoDatNhaHangTiecCuoi");
+
+                    if (query != null)
+                    {
+                        // Set parameter ChiNhanhId (null = tất cả chi nhánh, hoặc lấy từ Session)
+                        var paramChiNhanhId = query.Parameters.FirstOrDefault(p => p.Name == "@ChiNhanhId");
+                        if (paramChiNhanhId != null)
+                        {
+                            paramChiNhanhId.Value = UI.Common.Session.ChiNhanhId > 0 ? UI.Common.Session.ChiNhanhId : 1;
+                        }
+
+                        // Set ngày tháng (lấy tất cả dữ liệu từ 10 năm trước đến hiện tại)
+                        var paramTuNgay = query.Parameters.FirstOrDefault(p => p.Name == "@TuNgay");
+                        if (paramTuNgay != null)
+                        {
+                            paramTuNgay.Value = DateOnly.FromDateTime(DateTime.Now.AddYears(-10));
+                        }
+
+                        var paramDenNgay = query.Parameters.FirstOrDefault(p => p.Name == "@DenNgay");
+                        if (paramDenNgay != null)
+                        {
+                            paramDenNgay.Value = DateOnly.FromDateTime(DateTime.Now);
+                        }
+
+                        // Set parameter Loai (null = tất cả loại)
+                        var paramLoai = query.Parameters.FirstOrDefault(p => p.Name == "@Loai");
+                        if (paramLoai != null)
+                        {
+                            paramLoai.Value = DBNull.Value;
+                        }
+
+                        sqlDs.RebuildResultSchema();
+                        sqlDs.Fill();
+                    }
+                }
+
+                // Hiển thị report preview
+                DevExpress.XtraReports.UI.ReportPrintTool printTool = new DevExpress.XtraReports.UI.ReportPrintTool(report);
+                printTool.ShowPreviewDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi in báo cáo đặt nhà hàng/tiệc cưới: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

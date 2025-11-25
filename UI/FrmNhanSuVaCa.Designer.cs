@@ -46,10 +46,11 @@
             label3 = new Label();
             segmentedPill1 = new VanThuan.UI.SegmentedPill();
             panelNhanSu = new Guna.UI2.WinForms.Guna2GradientPanel();
-            dgvNhanSu = new DataGridView();
             cbbNhanSu = new UiControls.BorderComboBox();
             roundedTextBox1 = new UI.Controls.RoundedTextBox();
+            dgvNhanSu = new DataGridView();
             panelPhanCa = new Guna.UI2.WinForms.Guna2GradientPanel();
+            btnTimNVCa = new TextBox();
             RpanelTongNV.SuspendLayout();
             panelNhanSu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvNhanSu).BeginInit();
@@ -157,15 +158,42 @@
             // 
             // panelNhanSu
             // 
-            panelNhanSu.Controls.Add(dgvNhanSu);
             panelNhanSu.Controls.Add(cbbNhanSu);
             panelNhanSu.Controls.Add(roundedTextBox1);
+            panelNhanSu.Controls.Add(dgvNhanSu);
             panelNhanSu.CustomizableEdges = customizableEdges1;
             panelNhanSu.Location = new Point(2, 341);
             panelNhanSu.Name = "panelNhanSu";
             panelNhanSu.ShadowDecoration.CustomizableEdges = customizableEdges2;
             panelNhanSu.Size = new Size(1187, 557);
             panelNhanSu.TabIndex = 19;
+            panelNhanSu.Paint += panelNhanSu_Paint;
+            // 
+            // cbbNhanSu
+            // 
+            cbbNhanSu.AutoCompleteMode = AutoCompleteMode.Suggest;
+            cbbNhanSu.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbNhanSu.FormattingEnabled = true;
+            cbbNhanSu.IntegralHeight = false;
+            cbbNhanSu.ItemHeight = 26;
+            cbbNhanSu.Items.AddRange(new object[] { "Tất cả", "Quản Lý", "Phục Vụ ", "Đầu Bếp", "Thu Ngân" });
+            cbbNhanSu.Location = new Point(496, 23);
+            cbbNhanSu.Name = "cbbNhanSu";
+            cbbNhanSu.Size = new Size(215, 32);
+            cbbNhanSu.TabIndex = 24;
+            cbbNhanSu.SelectedIndexChanged += cbbNhanSu_SelectedIndexChanged;
+            // 
+            // roundedTextBox1
+            // 
+            roundedTextBox1.BackColor = Color.White;
+            roundedTextBox1.Font = new Font("Segoe UI", 10F);
+            roundedTextBox1.ForeColor = Color.Black;
+            roundedTextBox1.Location = new Point(10, 15);
+            roundedTextBox1.Name = "roundedTextBox1";
+            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
+            roundedTextBox1.Size = new Size(480, 51);
+            roundedTextBox1.TabIndex = 23;
+            roundedTextBox1.TextChanged += roundedTextBox1_TextChanged;
             // 
             // dgvNhanSu
             // 
@@ -204,32 +232,6 @@
             dgvNhanSu.Size = new Size(1187, 466);
             dgvNhanSu.TabIndex = 26;
             // 
-            // cbbNhanSu
-            // 
-            cbbNhanSu.AutoCompleteMode = AutoCompleteMode.Suggest;
-            cbbNhanSu.DrawMode = DrawMode.OwnerDrawFixed;
-            cbbNhanSu.FormattingEnabled = true;
-            cbbNhanSu.IntegralHeight = false;
-            cbbNhanSu.ItemHeight = 26;
-            cbbNhanSu.Items.AddRange(new object[] { "Tất cả", "Quản Lý", "Phục Vụ ", "Đầu Bếp", "Thu Ngân" });
-            cbbNhanSu.Location = new Point(496, 23);
-            cbbNhanSu.Name = "cbbNhanSu";
-            cbbNhanSu.Size = new Size(215, 32);
-            cbbNhanSu.TabIndex = 24;
-            cbbNhanSu.SelectedIndexChanged += cbbNhanSu_SelectedIndexChanged;
-            // 
-            // roundedTextBox1
-            // 
-            roundedTextBox1.BackColor = Color.White;
-            roundedTextBox1.Font = new Font("Segoe UI", 10F);
-            roundedTextBox1.ForeColor = Color.Black;
-            roundedTextBox1.Location = new Point(10, 15);
-            roundedTextBox1.Name = "roundedTextBox1";
-            roundedTextBox1.Padding = new Padding(10, 8, 10, 8);
-            roundedTextBox1.Size = new Size(480, 51);
-            roundedTextBox1.TabIndex = 23;
-            roundedTextBox1.TextChanged += roundedTextBox1_TextChanged;
-            // 
             // panelPhanCa
             // 
             panelPhanCa.AutoScroll = true;
@@ -241,17 +243,27 @@
             panelPhanCa.TabIndex = 20;
             panelPhanCa.Visible = false;
             // 
+            // btnTimNVCa
+            // 
+            btnTimNVCa.Location = new Point(332, 292);
+            btnTimNVCa.Name = "btnTimNVCa";
+            btnTimNVCa.Size = new Size(459, 27);
+            btnTimNVCa.TabIndex = 21;
+            btnTimNVCa.Visible = false;
+            btnTimNVCa.TextChanged += btnTimNVCa_TextChanged;
+            // 
             // FrmNhanSuVaCa
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1190, 900);
-            Controls.Add(panelNhanSu);
+            Controls.Add(btnTimNVCa);
             Controls.Add(segmentedPill1);
             Controls.Add(RpanelTongNV);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(panelPhanCa);
+            Controls.Add(panelNhanSu);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmNhanSuVaCa";
             Text = "FrmNhanSuVaCa";
@@ -280,5 +292,6 @@
         private UiControls.BorderComboBox cbbNhanSu;
         private Controls.RoundedTextBox roundedTextBox1;
         private Guna.UI2.WinForms.Guna2GradientPanel panelPhanCa;
+        private TextBox btnTimNVCa;
     }
 }

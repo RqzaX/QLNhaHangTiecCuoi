@@ -25,7 +25,7 @@ namespace UI
     public partial class FrmKho : Form
     {
 
-        
+
         private readonly NguyenLieuBLL _bll;
         private readonly DatabaseHelper _dbHelper;
         private readonly Timer _debounceTimer = new Timer();
@@ -53,7 +53,7 @@ namespace UI
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 var result = f.ShowDialog(this);
-                
+
                 if (result == DialogResult.OK)
                 {
                     ReloadGrid();
@@ -71,13 +71,13 @@ namespace UI
         {
             LoadBranchCombo();
             LoadTinhTrangCombo();
-            
+
             // Thiết lập placeholder cho ô tìm kiếm
             if (txtSearch != null)
             {
                 txtSearch.PlaceholderText = "Tìm kiếm theo mã hoặc tên nguyên liệu...";
             }
-            
+
             ReloadGrid();
             UpdateSummaryPanels();
         }
@@ -113,7 +113,7 @@ namespace UI
             });
 
 
-           
+
 
             if (dgvKho.Columns["colChiTiet"] == null)
             {
@@ -134,9 +134,9 @@ namespace UI
         }
         private void WireEvents()
         {
-           this.Load += FrmKho_Load;
-    cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
-    txtSearch.TextChanged += txtSearch_TextChanged;
+            this.Load += FrmKho_Load;
+            cbbTinhTrang.SelectionChangeCommitted += cbbTinhTrang_SelectionChangeCommitted;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             btnThemNL.Click += BtnThemNL_Click;
 
 
@@ -150,7 +150,7 @@ namespace UI
                     MessageBox.Show("Database helper chưa được khởi tạo!", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                } 
+                }
             }
             catch (Exception ex)
             {
@@ -164,9 +164,9 @@ namespace UI
             try
             {
                 var result = new List<(int BranchId, string BranchName)>();
-                
+
                 var branchesData = _bll.LayChiNhanhCoDuLieuTonKho();
-                
+
                 if (branchesData != null)
                 {
                     foreach (System.Data.DataRow row in branchesData.Rows)
@@ -178,7 +178,7 @@ namespace UI
                         }
                     }
                 }
-                
+
                 return result;
             }
             catch (Exception ex)
@@ -195,7 +195,7 @@ namespace UI
             {
                 var result = new List<(int BranchId, string BranchName)>();
                 var allBranches = _bll.LayTatCaChiNhanh();
-                
+
                 if (allBranches != null)
                 {
                     foreach (System.Data.DataRow row in allBranches.Rows)
@@ -203,7 +203,7 @@ namespace UI
                         result.Add((Convert.ToInt32(row["chi_nhanh_id"]), row["ten"].ToString()));
                     }
                 }
-                
+
                 return result;
             }
             catch (Exception ex)
@@ -244,7 +244,7 @@ namespace UI
             var parts = new List<string>();
 
 
-          
+
             switch (tinhTrang)
             {
                 case 1: parts.Add("sl_ton > 0"); break;
@@ -253,7 +253,7 @@ namespace UI
                 default: break; // tất cả
             }
 
-           
+
             if (!string.IsNullOrWhiteSpace(searchText))
             {
                 string esc = searchText.Trim().Replace("'", "''");
@@ -269,10 +269,10 @@ namespace UI
             try
             {
                 DataTable tb = _bll.LayTonKhoTheoTinhTrang(0, _selectedBranchId);
-                if (tb == null) 
-                { 
-                    dgvKho.DataSource = null; 
-                    return; 
+                if (tb == null)
+                {
+                    dgvKho.DataSource = null;
+                    return;
                 }
 
                 var dv = tb.DefaultView;
@@ -285,26 +285,26 @@ namespace UI
                 dv.RowFilter = BuildRowFilter(stt, _currentSearchText, NguongCanhBaoMacDinh);
 
                 // Tính toán giá trị nếu cần
-                if (!tb.Columns.Contains("GiaTri")) 
+                if (!tb.Columns.Contains("GiaTri"))
                     tb.Columns.Add("GiaTri", typeof(decimal));
-                    
+
                 foreach (DataRow r in tb.Rows)
                 {
-                    decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value 
-                        ? Convert.ToDecimal(r["sl_ton"]) 
+                    decimal sl = r.Table.Columns.Contains("sl_ton") && r["sl_ton"] != DBNull.Value
+                        ? Convert.ToDecimal(r["sl_ton"])
                         : 0m;
                     decimal giaTri = 0m;
-                    
-                    if (tb.Columns.Contains("gia_tri")) 
+
+                    if (tb.Columns.Contains("gia_tri"))
                     {
                         giaTri = r["gia_tri"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_tri"]);
                     }
                     else
                     {
                         decimal donGia = 0m;
-                        if (tb.Columns.Contains("gia_nhap")) 
+                        if (tb.Columns.Contains("gia_nhap"))
                             donGia = r["gia_nhap"] == DBNull.Value ? 0m : Convert.ToDecimal(r["gia_nhap"]);
-                        else if (tb.Columns.Contains("don_gia")) 
+                        else if (tb.Columns.Contains("don_gia"))
                             donGia = r["don_gia"] == DBNull.Value ? 0m : Convert.ToDecimal(r["don_gia"]);
                         giaTri = sl * donGia;
                     }
@@ -348,7 +348,7 @@ namespace UI
         {
 
         }
-       
+
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -371,7 +371,7 @@ namespace UI
 
         private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e, DatabaseHelper _dbHelper)
         {
-            
+
 
         }
 
@@ -392,8 +392,8 @@ namespace UI
             using (var f = new UI.FrmNguyenLieuChiTiet(
         nlId,
 
-        CurrentBranchId,                           
-        _bll                                        
+        CurrentBranchId,
+        _bll
 
     ))
             {
@@ -412,7 +412,7 @@ namespace UI
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 var result = f.ShowDialog(this);
-                
+
                 if (result == DialogResult.OK)
                 {
                     ReloadGrid();
@@ -427,7 +427,7 @@ namespace UI
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 var result = f.ShowDialog(this);
-                
+
                 if (result == DialogResult.OK)
                 {
                     ReloadGrid();
@@ -457,7 +457,7 @@ namespace UI
                         if (all.Columns.Contains("sl_ton"))
                             slTon = Convert.ToDecimal(r["sl_ton"]);
 
-                      
+
                         if (all.Columns.Contains("gia_tri"))
                             giaTri = Convert.ToDecimal(r["gia_tri"]);
                         else if (all.Columns.Contains("gia_nhap"))
@@ -483,14 +483,14 @@ namespace UI
                 }
 
 
-                label8.Text = tongMatHang.ToString();     
-                label9.Text = sapHet.ToString();         
-                label10.Text = hetHang.ToString();        
+                label8.Text = tongMatHang.ToString();
+                label9.Text = sapHet.ToString();
+                label10.Text = hetHang.ToString();
             }
             catch
             {
-                
-              
+
+
                 label8.Text = "0";
                 label9.Text = "0";
                 label10.Text = "0";
@@ -526,7 +526,7 @@ namespace UI
             try
             {
                 var branchesWithData = GetBranchesWithInventoryData();
-                
+
                 if (branchesWithData != null && branchesWithData.Count > 0)
                 {
                     string message = "Chi nhánh có dữ liệu tồn kho:\n\n";
@@ -534,13 +534,13 @@ namespace UI
                     {
                         message += $"• {branch.BranchName} (ID: {branch.BranchId})\n";
                     }
-                    
-                    MessageBox.Show(message, "Danh Sách Chi Nhánh", 
+
+                    MessageBox.Show(message, "Danh Sách Chi Nhánh",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Không có chi nhánh nào có dữ liệu tồn kho!", 
+                    MessageBox.Show("Không có chi nhánh nào có dữ liệu tồn kho!",
                         "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
@@ -572,6 +572,56 @@ namespace UI
             {
                 MessageBox.Show($"Lỗi khi thêm nguyên liệu: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var report = new UI.Reporting.RptDSTonKho();
+
+                string connectionString = _dbHelper.ConnectionString;
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    MessageBox.Show("Không tìm thấy connection string!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Set parameters cho report
+                var sqlDs = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                if (sqlDs != null)
+                {
+                    // Thêm XpoProvider=MSSqlServer cho DevExpress và giữ nguyên TrustServerCertificate, Encrypt settings
+                    string devExpressConnectionString = connectionString.TrimEnd(';') + ";XpoProvider=MSSqlServer";
+                    sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.CustomStringConnectionParameters(devExpressConnectionString);
+
+                    // Tìm stored procedure query "sp_BaoCaoTonKho_Final"
+                    var query = sqlDs.Queries.OfType<DevExpress.DataAccess.Sql.StoredProcQuery>()
+                        .FirstOrDefault(q => q.StoredProcName == "sp_BaoCaoTonKho_Final");
+
+                    if (query != null)
+                    {
+                        // Set parameter ChiNhanhId
+                        var paramChiNhanhId = query.Parameters.FirstOrDefault(p => p.Name == "@ChiNhanhId");
+                        if (paramChiNhanhId != null)
+                        {
+                            paramChiNhanhId.Value = _selectedBranchId;
+                        }
+
+                        sqlDs.RebuildResultSchema();
+                        sqlDs.Fill();
+                    }
+                }
+
+                // Hiển thị report preview
+                DevExpress.XtraReports.UI.ReportPrintTool printTool = new DevExpress.XtraReports.UI.ReportPrintTool(report);
+                printTool.ShowPreviewDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi in báo cáo tồn kho: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

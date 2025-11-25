@@ -127,6 +127,7 @@
             roundedButton2.TabIndex = 22;
             roundedButton2.Text = "Xuất Báo Cáo";
             roundedButton2.UseVisualStyleBackColor = false;
+            roundedButton2.Click += roundedButton2_Click;
             // 
             // segmentedPill1
             // 
