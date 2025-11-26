@@ -163,11 +163,11 @@ namespace QLNhaHangTiecCuoi.DAL
         {
             string query = @"
                 INSERT INTO dbo.dat_sanh (
-                    chi_nhanh_id, sanh_id, ca_id, ngay_to_chuc,
+                    chi_nhanh_id, sanh_id, ca_id, ngay_to_chuc, gio_to_chuc,
                     khach_hang_id, so_ban_du_kien, goi_id, trang_thai, ghi_chu
                 )
                 VALUES (
-                    @chiNhanhId, @sanhId, @caId, @ngayToChuc,
+                    @chiNhanhId, @sanhId, @caId, @ngayToChuc, @gioToChuc,
                     @khachHangId, @soBanDuKien, @goiId, @trangThai, @ghiChu
                 );
                 SELECT SCOPE_IDENTITY();";
@@ -177,6 +177,7 @@ namespace QLNhaHangTiecCuoi.DAL
                 new SqlParameter("@sanhId", sanhId),
                 new SqlParameter("@caId", caId),
                 new SqlParameter("@ngayToChuc", ngayToChuc.Date),
+                new SqlParameter("@gioToChuc", gioToChuc ?? (object)DBNull.Value),
                 new SqlParameter("@khachHangId", khachHangId),
                 new SqlParameter("@soBanDuKien", (object)soBanDuKien ?? DBNull.Value),
                 new SqlParameter("@goiId", (object)goiId ?? DBNull.Value),

@@ -554,6 +554,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             ClientSize = new Size(1041, 675);
+            Controls.Add(panelHoaDonThanhToan);
             Controls.Add(lbDanhSachHoaDon);
             Controls.Add(segmentedPill1);
             Controls.Add(roundedPanel4);
@@ -562,9 +563,8 @@
             Controls.Add(roundedPanel1);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(panelDanhSachHoaDon);
-            Controls.Add(panelHoaDonThanhToan);
             Controls.Add(panelLichSuGiaoDich);
+            Controls.Add(panelDanhSachHoaDon);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmThanhToan_HoaDon";
             Text = "FrmThanhToan_HoaDon";

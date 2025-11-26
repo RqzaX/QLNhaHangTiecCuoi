@@ -1,4 +1,6 @@
 ﻿using BLL;
+using DevExpress.DataAccess.Sql;
+using DevExpress.XtraReports.UI;
 using QLNhaHangTiecCuoi.Share;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using UI.Common;
 using UI.Controls;
+using UI.Reporting;
 
 namespace UI
 {
@@ -1078,8 +1081,40 @@ namespace UI
         {
             try
             {
-                GunaToast.Show(this, $"Đang in hóa đơn HD{hoaDonId:D2}...", UI.Controls.ToastType.Info);
-                // TODO: Implement print functionality
+                var report = new rptHoaDon();
+                var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["QLNhaHangOnline"]?.ConnectionString;
+                using (var connection = new System.Data.SqlClient.SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    var sqlDs = report.DataSource as SqlDataSource;
+                    if (sqlDs != null)
+                    {
+                        var connParams = sqlDs.ConnectionParameters as DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters;
+                        if (connParams != null)
+                        {
+                            var builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+
+                            sqlDs.ConnectionParameters = new DevExpress.DataAccess.ConnectionParameters.MsSqlConnectionParameters(
+                                builder.DataSource,
+                                builder.InitialCatalog,
+                                builder.UserID,
+                                builder.Password,
+                                DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer
+                            );
+                        }
+
+                        var query = sqlDs.Queries[0];
+                        query.Parameters[0].Value = hoaDonId;
+                        query.Parameters[1].Value = Session.ChiNhanhId;
+
+                        sqlDs.RebuildResultSchema();
+                        sqlDs.Fill();
+                    }
+                }
+
+                ReportPrintTool printTool = new ReportPrintTool(report);
+                printTool.ShowPreviewDialog();
             }
             catch (Exception ex)
             {

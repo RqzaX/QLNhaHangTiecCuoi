@@ -95,7 +95,7 @@ namespace UI.Controls
                 var vatValue = Math.Round(subtotalValue * vatPercent / 100m, 0);
                 currentTotal = subtotalValue + vatValue;
             }
-            
+
             // Lấy loại hóa đơn từ HoaDonId
             string invoiceLoai = "";
             if (HoaDonId > 0)
@@ -110,7 +110,7 @@ namespace UI.Controls
                 }
                 catch { }
             }
-            
+
             using (var f = new UI.ApDungVoucher(currentTotal, invoiceLoai))
             {
                 if (f.ShowDialog(this) == DialogResult.OK && f.IsApplied)
@@ -295,10 +295,10 @@ namespace UI.Controls
             ParseMoneyAndVat();
             var vatValueDisplay = Math.Round(subtotalValue * vatPercent / 100m, 0);
             lbVAT.Text = FormatCurrency(vatValueDisplay);
-            
+
             lbTongCong.Text = FormatCurrency(total);
             btnThanhToan.Text = $"Thanh toán {FormatCurrency(total)}";
-            
+
             if (depositValue > 0)
             {
                 lbKhuyenMai.Text = "Tiền cọc";
@@ -479,8 +479,8 @@ namespace UI.Controls
                 }
                 else
                 {
-                    string errorMsg = !string.IsNullOrEmpty(errorMessage) 
-                        ? $"Thanh toán thất bại! {errorMessage}" 
+                    string errorMsg = !string.IsNullOrEmpty(errorMessage)
+                        ? $"Thanh toán thất bại! {errorMessage}"
                         : "Thanh toán thất bại! Vui lòng thử lại.";
                     GunaToast.Show(ownerForm, errorMsg, ToastType.Error);
                 }

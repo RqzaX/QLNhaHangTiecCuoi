@@ -195,7 +195,7 @@ namespace UI
             }
         }
 
-        // Load danh sách ca (khung giờ tổ chức tiệc) vào ComboBox
+        // Load danh sách giờ tổ chức tiệc (2 giờ cố định: 10:30 và 17:30 - KHÔNG LẤY TỪ DATABASE)
         private void LoadCa()
         {
             try
@@ -450,6 +450,9 @@ namespace UI
             return Convert.ToInt32(row[valueMember]);
         }
         
+        // Lấy giờ tổ chức từ ComboBox (ánh xạ index sang giờ cố định)
+        // Index 0 -> 10:30 (Ca sáng)
+        // Index 1 -> 17:30 (Ca tối)
         private TimeSpan? GetGioToChucFromCombo()
         {
             if (cbbGioToChuc == null || cbbGioToChuc.SelectedIndex < 0) return null;
@@ -460,26 +463,7 @@ namespace UI
             return null;
         }
 
-        // Lấy ca_id mặc định từ database (ca đầu tiên)
-        private int? GetCaIdDefault()
-        {
-            try
-            {
-                DataTable dtCa = _datSanhBLL.LayDanhSachCa();
-                
-                if (dtCa == null || dtCa.Rows.Count == 0)
-                {
-                    return null;
-                }
 
-                return Convert.ToInt32(dtCa.Rows[0]["ca_id"]);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi lấy ca_id: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
-        }
 
         // Kiểm tra trạng thái sảnh (trống/đã đặt) và hiển thị thông báo
         private void KiemTraTrangThaiSanh()
@@ -1168,6 +1152,7 @@ namespace UI
                     return;
                 }
                 
+                // Gán ca_id cố định: Index 0 (10:30) -> ca_id = 1, Index 1 (17:30) -> ca_id = 2
                 int? caId = cbbGioToChuc.SelectedIndex == 0 ? 1 : 2;
                 
                 int? soBanDuKien = null;

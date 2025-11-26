@@ -36,26 +36,23 @@ namespace QLNhaHangTiecCuoi.BLL
                     return false;
                 }
 
-                // Chuyển đổi TimeSpan gioToChuc thành caId bằng cách tìm ca có gio_bd khớp
+                // Ánh xạ trực tiếp TimeSpan sang ca_id cố định (KHÔNG tìm trong database)
+                // 10:30 -> ca_id = 1 (Ca sáng)
+                // 17:30 -> ca_id = 2 (Ca tối)
                 int? caId = null;
-                DataTable dtCa = _dal.LayDanhSachCa();
-                foreach (DataRow row in dtCa.Rows)
+                
+                if (gioToChuc.Hours == 10 && gioToChuc.Minutes == 30)
                 {
-                    if (row["gio_bd"] != DBNull.Value)
-                    {
-                        TimeSpan gioBd = (TimeSpan)row["gio_bd"];
-                        // So sánh giờ bắt đầu (chỉ so sánh giờ và phút)
-                        if (gioBd.Hours == gioToChuc.Hours && gioBd.Minutes == gioToChuc.Minutes)
-                        {
-                            caId = Convert.ToInt32(row["ca_id"]);
-                            break;
-                        }
-                    }
+                    caId = 1; // Ca sáng
+                }
+                else if (gioToChuc.Hours == 17 && gioToChuc.Minutes == 30)
+                {
+                    caId = 2; // Ca tối
                 }
 
                 if (!caId.HasValue)
                 {
-                    errorMessage = "Không tìm thấy ca phù hợp với giờ tổ chức!";
+                    errorMessage = $"Giờ tổ chức {gioToChuc:hh\\:mm} không hợp lệ! Chỉ chấp nhận 10:30 hoặc 17:30.";
                     return false;
                 }
 
@@ -629,22 +626,22 @@ namespace QLNhaHangTiecCuoi.BLL
             }
         }
 
-        // Lấy giờ bắt đầu từ ca_id
+        // Lấy giờ bắt đầu từ ca_id (ánh xạ cố định)
+        // ca_id = 1 -> 10:30
+        // ca_id = 2 -> 17:30
         public TimeSpan? LayGioBatDauCa(int caId)
         {
             try
             {
-                DataTable dtCa = _dal.LayDanhSachCa();
-                foreach (DataRow row in dtCa.Rows)
+                if (caId == 1)
                 {
-                    if (Convert.ToInt32(row["ca_id"]) == caId)
-                    {
-                        if (row["gio_bd"] != DBNull.Value)
-                        {
-                            return ((TimeSpan)row["gio_bd"]);
-                        }
-                    }
+                    return new TimeSpan(10, 30, 0); // Ca sáng
                 }
+                else if (caId == 2)
+                {
+                    return new TimeSpan(17, 30, 0); // Ca tối
+                }
+                
                 return null;
             }
             catch
@@ -887,26 +884,23 @@ namespace QLNhaHangTiecCuoi.BLL
                     return false;
                 }
 
-                // Chuyển đổi TimeSpan gioToChuc thành caId bằng cách tìm ca có gio_bd khớp
+                // Ánh xạ trực tiếp TimeSpan sang ca_id cố định (KHÔNG tìm trong database)
+                // 10:30 -> ca_id = 1 (Ca sáng)
+                // 17:30 -> ca_id = 2 (Ca tối)
                 int? caId = null;
-                DataTable dtCa = _dal.LayDanhSachCa();
-                foreach (DataRow row in dtCa.Rows)
+                
+                if (gioToChuc.Hours == 10 && gioToChuc.Minutes == 30)
                 {
-                    if (row["gio_bd"] != DBNull.Value)
-                    {
-                        TimeSpan gioBd = (TimeSpan)row["gio_bd"];
-                        // So sánh giờ bắt đầu (chỉ so sánh giờ và phút)
-                        if (gioBd.Hours == gioToChuc.Hours && gioBd.Minutes == gioToChuc.Minutes)
-                        {
-                            caId = Convert.ToInt32(row["ca_id"]);
-                            break;
-                        }
-                    }
+                    caId = 1; // Ca sáng
+                }
+                else if (gioToChuc.Hours == 17 && gioToChuc.Minutes == 30)
+                {
+                    caId = 2; // Ca tối
                 }
 
                 if (!caId.HasValue)
                 {
-                    errorMessage = "Không tìm thấy ca phù hợp với giờ tổ chức!";
+                    errorMessage = $"Giờ tổ chức {gioToChuc:hh\\:mm} không hợp lệ! Chỉ chấp nhận 10:30 hoặc 17:30.";
                     return false;
                 }
 

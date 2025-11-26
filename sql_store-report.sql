@@ -563,6 +563,56 @@ BEGIN
         hdwi.chi_nhanh_id;
 END;
 GO
---In Voucher
-select * from ton_kho
-select * from chi_nhanh
+-- In Hóa đơn cho khách
+IF OBJECT_ID('dbo.sp_InHoaDonChoKhach', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_InHoaDonChoKhach;
+GO
+CREATE PROCEDURE sp_InHoaDonChoKhach
+    @hoa_don_id INT,
+    @chi_nhanh_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Lấy thông tin hóa đơn và thông tin khuyến mãi
+    SELECT 
+        h.hoa_don_id,
+        kh.ho_ten AS ten_khach_hang,
+        h.ngay_lap,
+        h.trang_thai,
+        h.tong_sau_thue,
+        h.giam_gia,
+        h.vat,
+        h.phi_dv,
+        ISNULL(km.ten, '-') AS ten_km,
+        ISNULL(km.ma_km, '-') AS ma_km,
+        ISNULL(hdkm.so_tien_km, 0) AS so_tien_km,
+		(SELECT ten FROM chi_nhanh WHERE chi_nhanh_id = @chi_nhanh_id) AS ten_chi_nhanh,
+        (SELECT dia_chi FROM chi_nhanh WHERE chi_nhanh_id = @chi_nhanh_id) AS dia_chi_chi_nhanh,
+        (SELECT sdt FROM chi_nhanh WHERE chi_nhanh_id = @chi_nhanh_id) AS sdt_chi_nhanh,
+        h.so_ban_sanh,
+		CAST(h.ngay_lap AS DATE) AS ngay,  -- Ngày đặt
+        CAST(h.ngay_lap AS TIME) AS gio  -- Giờ đặt
+    FROM 
+        dbo.hoa_don h
+    LEFT JOIN 
+        dbo.khach_hang kh ON h.khach_hang_id = kh.khach_hang_id
+    LEFT JOIN 
+        hoa_don_km hdkm ON hdkm.hoa_don_id = h.hoa_don_id
+    LEFT JOIN 
+        chuong_trinh_km km ON km.km_id = hdkm.km_id
+    WHERE 
+        h.hoa_don_id = @hoa_don_id;
+
+    -- Lấy chi tiết hóa đơn
+    SELECT 
+        hd_ct.hd_ct_id,
+        hd_ct.ten_hang,
+        hd_ct.so_luong,
+        hd_ct.don_gia,
+        hd_ct.thanh_tien
+    FROM 
+        dbo.hoa_don_ct hd_ct
+    WHERE 
+        hd_ct.hoa_don_id = @hoa_don_id;
+END
