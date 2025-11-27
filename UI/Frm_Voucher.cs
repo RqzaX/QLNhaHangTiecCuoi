@@ -665,5 +665,63 @@ namespace UI
             }
             return 0;
         }
+
+        private void btnInVoucher_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem có dòng nào được chọn không
+                if (dgvVoucher.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng chọn voucher cần in!", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Lấy dòng được chọn
+                var selectedRow = dgvVoucher.SelectedRows[0];
+
+                // Kiểm tra ID có hợp lệ không
+                if (selectedRow.Cells["ID"].Value == null)
+                {
+                    MessageBox.Show("Không tìm thấy thông tin voucher!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Lấy ID và Code của voucher
+                int voucherId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
+                string voucherCode = selectedRow.Cells[VC_CODE].Value?.ToString() ?? "";
+
+                // Tạo report và truyền tham số
+                var report = new Reporting.rpt_InVoucher();
+                
+                // Truyền tham số vào stored procedure của SqlDataSource
+                var sqlDataSource = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                if (sqlDataSource != null)
+                {
+                    var query = sqlDataSource.Queries["sp_Voucher_InReport"] as DevExpress.DataAccess.Sql.StoredProcQuery;
+                    if (query != null)
+                    {
+                        query.Parameters["@VoucherId"].Value = voucherId;
+                        query.Parameters["@Code"].Value = voucherCode;
+                    }
+                }
+
+                // Làm mới dữ liệu
+                sqlDataSource?.Fill();
+
+                // Hiển thị report
+                using (var printTool = new DevExpress.XtraReports.UI.ReportPrintTool(report))
+                {
+                    printTool.ShowPreviewDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi in voucher: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-IF DB_ID(N'QL_NhaHangTiecCuoi_V3') IS NULL
+	IF DB_ID(N'QL_NhaHangTiecCuoi_V3') IS NULL
 BEGIN
   EXEC('CREATE DATABASE QL_NhaHangTiecCuoi_V3 COLLATE Vietnamese_100_CI_AS_SC;');
 END
@@ -21,10 +21,10 @@ IF OBJECT_ID('dbo.ca','U') IS NULL
 CREATE TABLE dbo.ca(
   ca_id  INT IDENTITY(1,1) PRIMARY KEY,
   ten_ca NVARCHAR(50) NOT NULL,
-  gio_bd TIME(0) NOT NULL,
+  gio_bd TIME(0) NOT NULL,	
   gio_kt TIME(0) NOT NULL
 );
-select * from dat_sanh
+select * from nguoi_dung_ca
 --Phân ca cho nhân viên
 IF OBJECT_ID('dbo.nguoi_dung_ca','U') IS NULL
 CREATE TABLE dbo.nguoi_dung_ca(

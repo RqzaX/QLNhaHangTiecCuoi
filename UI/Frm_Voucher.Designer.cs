@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             roundedPanel3 = new UI.Controls.RoundedPanel();
             label8 = new Label();
             label7 = new Label();
@@ -44,6 +46,7 @@
             cbbLoc = new ComboBox();
             label4 = new Label();
             label9 = new Label();
+            btnInVoucher = new Guna.UI2.WinForms.Guna2Button();
             roundedPanel3.SuspendLayout();
             roundedPanel2.SuspendLayout();
             roundedPanel1.SuspendLayout();
@@ -58,7 +61,7 @@
             roundedPanel3.Controls.Add(label7);
             roundedPanel3.Location = new Point(785, 73);
             roundedPanel3.Name = "roundedPanel3";
-            roundedPanel3.Padding = new Padding(12);
+            roundedPanel3.Padding = new Padding(12, 12, 12, 12);
             roundedPanel3.Size = new Size(250, 125);
             roundedPanel3.TabIndex = 42;
             // 
@@ -90,7 +93,7 @@
             roundedPanel2.Controls.Add(label3);
             roundedPanel2.Location = new Point(421, 73);
             roundedPanel2.Name = "roundedPanel2";
-            roundedPanel2.Padding = new Padding(12);
+            roundedPanel2.Padding = new Padding(12, 12, 12, 12);
             roundedPanel2.Size = new Size(250, 125);
             roundedPanel2.TabIndex = 43;
             // 
@@ -122,7 +125,7 @@
             roundedPanel1.Controls.Add(label2);
             roundedPanel1.Location = new Point(71, 73);
             roundedPanel1.Name = "roundedPanel1";
-            roundedPanel1.Padding = new Padding(12);
+            roundedPanel1.Padding = new Padding(12, 12, 12, 12);
             roundedPanel1.Size = new Size(250, 125);
             roundedPanel1.TabIndex = 44;
             // 
@@ -175,7 +178,7 @@
             btnThemVoucher.FlatStyle = FlatStyle.Flat;
             btnThemVoucher.Font = new Font("Segoe UI Semibold", 10.5F);
             btnThemVoucher.ForeColor = Color.White;
-            btnThemVoucher.Location = new Point(847, 332);
+            btnThemVoucher.Location = new Point(915, 332);
             btnThemVoucher.Name = "btnThemVoucher";
             btnThemVoucher.Padding = new Padding(10, 6, 10, 6);
             btnThemVoucher.Size = new Size(245, 46);
@@ -195,7 +198,7 @@
             // 
             // cbbLoc
             // 
-            cbbLoc.Location = new Point(627, 343);
+            cbbLoc.Location = new Point(709, 343);
             cbbLoc.Name = "cbbLoc";
             cbbLoc.Size = new Size(200, 28);
             cbbLoc.TabIndex = 38;
@@ -214,17 +217,37 @@
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label9.Location = new Point(579, 339);
+            label9.Location = new Point(661, 339);
             label9.Name = "label9";
             label9.Size = new Size(42, 28);
             label9.TabIndex = 46;
             label9.Text = "Lọc";
+            // 
+            // btnInVoucher
+            // 
+            btnInVoucher.BorderRadius = 18;
+            btnInVoucher.CustomizableEdges = customizableEdges1;
+            btnInVoucher.DisabledState.BorderColor = Color.DarkGray;
+            btnInVoucher.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnInVoucher.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnInVoucher.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnInVoucher.FillColor = Color.FromArgb(128, 255, 128);
+            btnInVoucher.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnInVoucher.ForeColor = Color.Black;
+            btnInVoucher.Location = new Point(490, 332);
+            btnInVoucher.Name = "btnInVoucher";
+            btnInVoucher.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnInVoucher.Size = new Size(165, 44);
+            btnInVoucher.TabIndex = 47;
+            btnInVoucher.Text = "In Voucher";
+            btnInVoucher.Click += btnInVoucher_Click;
             // 
             // Frm_Voucher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 853);
+            Controls.Add(btnInVoucher);
             Controls.Add(label9);
             Controls.Add(label4);
             Controls.Add(roundedPanel3);
@@ -266,5 +289,6 @@
         private Label label8;
         private Label label4;
         private Label label9;
+        private Guna.UI2.WinForms.Guna2Button btnInVoucher;
     }
 }

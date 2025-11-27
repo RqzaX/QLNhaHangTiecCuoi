@@ -44,6 +44,8 @@
     <PackageReference Include="Tulpep.NotificationWindow" Version="1.1.38" />
     <PackageReference Include="WinFormAnimation" Version="1.6.0.4" />
     <PackageReference Include="CrystalReports.Engine" Version="13.0.4000" />
+    <PackageReference Include="ZXing.Net" Version="0.16.11" />
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.14" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
