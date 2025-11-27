@@ -611,6 +611,37 @@ namespace DAL
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
 
+        // Đảm bảo constraint cho phép trạng thái HOÀN TIỀN
+        private void EnsureRefundStatusConstraint()
+        {
+            try
+            {
+                string sql = @"
+                    DECLARE @constraintName NVARCHAR(200);
+                    DECLARE @constraintDef NVARCHAR(MAX);
+                    
+                    SELECT @constraintName = name, @constraintDef = definition
+                    FROM sys.check_constraints 
+                    WHERE parent_object_id = OBJECT_ID('dbo.hoa_don') 
+                      AND definition LIKE '%trang_thai%';
+                    
+                    IF @constraintName IS NOT NULL AND @constraintDef NOT LIKE '%HOÀN TIỀN%'
+                    BEGIN
+                        EXEC('ALTER TABLE dbo.hoa_don DROP CONSTRAINT ' + @constraintName);
+                        ALTER TABLE dbo.hoa_don ADD CONSTRAINT CK_hoa_don_trang_thai CHECK (trang_thai IN (N'NHÁP',N'CHỜ TT',N'ĐÃ THANH TOÁN',N'HOÀN TIỀN'));
+                    END
+                    ELSE IF @constraintName IS NULL
+                    BEGIN
+                         ALTER TABLE dbo.hoa_don ADD CONSTRAINT CK_hoa_don_trang_thai CHECK (trang_thai IN (N'NHÁP',N'CHỜ TT',N'ĐÃ THANH TOÁN',N'HOÀN TIỀN'));
+                    END";
+                _db.ExecuteNonQuery(sql);
+            }
+            catch (Exception)
+            {
+                // Bỏ qua lỗi nếu không thể cập nhật constraint (ví dụ: không đủ quyền)
+            }
+        }
+
         // Xử lý hoàn tiền hóa đơn nhà hàng
         public bool ProcessRefund(int hoaDonId, out string errorMessage)
         {
@@ -637,6 +668,9 @@ namespace DAL
                     errorMessage = $"Chỉ có thể hoàn tiền cho hóa đơn đã thanh toán! Trạng thái hiện tại: '{trangThai}'";
                     return false;
                 }
+
+                // Đảm bảo constraint cho phép trạng thái HOÀN TIỀN
+                EnsureRefundStatusConstraint();
 
                 string sql = @"UPDATE hoa_don 
                                SET trang_thai = N'HOÀN TIỀN'

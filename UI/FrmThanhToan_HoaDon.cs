@@ -618,6 +618,14 @@ namespace UI
                     RefreshTopStats();
                 }
                 panelHoaDonThanhToan.Controls.Clear(); // Xóa panel thanh toán sau khi thanh toán thành công
+
+                // Hỏi in hóa đơn
+                var result = MessageBox.Show("Thanh toán thành công! Bạn có muốn in hóa đơn không?", 
+                    "In hóa đơn", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    PrintInvoice(hoaDonId);
+                }
             };
 
             decimal vatPercent = 8; // Mặc định 8%

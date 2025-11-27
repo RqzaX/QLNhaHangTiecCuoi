@@ -1005,9 +1005,9 @@ namespace UI
                     return;
 
                 string trangThaiHienTai = datSanhInfo["trang_thai"]?.ToString() ?? "";
-                
-                if (trangThaiHienTai.ToUpper() == "ĐÃ HỦY" || 
-                    trangThaiHienTai.ToUpper() == "HOÀN TẤT" || 
+
+                if (trangThaiHienTai.ToUpper() == "ĐÃ HỦY" ||
+                    trangThaiHienTai.ToUpper() == "HOÀN TẤT" ||
                     trangThaiHienTai.ToUpper() == "ĐÃ THANH TOÁN")
                 {
                     return;
@@ -1032,7 +1032,7 @@ namespace UI
                     if (success)
                     {
                         _trangThai = trangThaiMoi;
-                        
+
                         if (trangThaiMoi.ToUpper() == "ĐÃ CỌC")
                         {
                             int hoaDonId = _datSanhBLL.TaoHoaDonKhiDaCoc(_datSanhId, out string errorHoaDon);
@@ -1041,7 +1041,7 @@ namespace UI
                                 MessageBox.Show($"Lỗi tạo hóa đơn: {errorHoaDon}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
-                        
+
                         DataRow updatedInfo = _datSanhBLL.LayThongTinDatSanh(_datSanhId);
                         if (updatedInfo != null)
                         {
@@ -1149,7 +1149,7 @@ namespace UI
                 {
                     MessageBox.Show("Đổi lịch đặt sảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadChiTietDatSanh();
-                    
+
                     if (panelThanhToan.Visible)
                     {
                         LoadThongTinThanhToan();
@@ -1176,7 +1176,7 @@ namespace UI
                     // Hủy thành công
                     MessageBox.Show("Hủy đặt sảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadChiTietDatSanh();
-                    
+
                     if (panelThanhToan.Visible)
                     {
                         LoadThongTinThanhToan();
@@ -1335,7 +1335,7 @@ namespace UI
                         if (success)
                         {
                             MessageBox.Show("Xóa đợt cọc thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            
+
                             int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
                             if (hopDongId.HasValue)
                             {
@@ -1362,5 +1362,46 @@ namespace UI
             }
         }
 
+        private void btnInHopDong_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int? hopDongId = _datSanhBLL.LayHopDongId(_datSanhId);
+                if (!hopDongId.HasValue || hopDongId.Value <= 0)
+                {
+                    MessageBox.Show("Đơn đặt sảnh này chưa có hợp đồng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                UI.Reporting.rptHopDong report = new UI.Reporting.rptHopDong();
+
+                // Cố gắng gán tham số cho báo cáo
+                if (report.Parameters["HopDongId"] != null)
+                {
+                    report.Parameters["HopDongId"].Value = hopDongId.Value;
+                    report.RequestParameters = false;
+                }
+                else
+                {
+                    // Nếu không tìm thấy tham số báo cáo, thử gán trực tiếp vào query của datasource
+                    var sqlDataSource = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                    if (sqlDataSource != null && sqlDataSource.Queries.Count > 0)
+                    {
+                        var query = sqlDataSource.Queries[0] as DevExpress.DataAccess.Sql.StoredProcQuery;
+                        if (query != null && query.Parameters.Count > 0)
+                        {
+                            query.Parameters[0].Value = hopDongId.Value;
+                        }
+                    }
+                }
+
+                DevExpress.XtraReports.UI.ReportPrintTool tool = new DevExpress.XtraReports.UI.ReportPrintTool(report);
+                tool.ShowPreview();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi in hợp đồng: {ex.Message}", "Lỗi In ấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

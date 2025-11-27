@@ -336,6 +336,7 @@
             this.xrLabel2,
             this.xrLine3,
             this.xrLabel1});
+            this.BottomMargin.HeightF = 148.0468F;
             this.BottomMargin.Name = "BottomMargin";
             // 
             // xrLabel4
@@ -553,7 +554,11 @@
             this.DataMember = "sp_InPhieuDonBep.Result2";
             this.DataSource = this.sqlDataSource1;
             this.Font = new DevExpress.Drawing.DXFont("Arial", 9.75F);
-            this.Margins = new DevExpress.Drawing.DXMargins(100F, 100F, 196.4844F, 100F);
+            this.Margins = new DevExpress.Drawing.DXMargins(10F, 10F, 196.4844F, 148.0468F);
+            this.PageHeightF = 1169.291F;
+            this.PageWidthF = 670F;
+            this.PaperKind = DevExpress.Drawing.Printing.DXPaperKind.Custom;
+            this.RollPaper = true;
             this.Version = "25.1";
             ((System.ComponentModel.ISupportInitialize)(this.xrTable1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable2)).EndInit();

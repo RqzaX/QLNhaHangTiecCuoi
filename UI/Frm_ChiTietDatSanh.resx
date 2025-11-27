@@ -251,41 +251,6 @@
         2Hhapp3ipPIAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="rich_DieuKhoan.Text" xml:space="preserve">
-    <value>ĐIỀU KHOẢN HỢP ĐỒNG DỊCH VỤ TIỆC CƯỚI
-
-1. ĐIỀU KHOẢN CHUNG
-- Hợp đồng này được ký kết giữa Nhà hàng Tiệc Cưới Hoàng Gia và Quý khách hàng Nguyễn Văn An &amp; Trần Thị Bình
-- Thời gian hiệu lực: từ ngày ký đến khi hoàn tất sự kiện
-
-2. ĐIỀU KHOẢN VỀ CỌC
-- Khách hàng cần đặt cọc tối thiểu 30% tổng giá trị hợp đồng
-- Cọc được thanh toán trong vòng 3 ngày kể từ ngày ký hợp đồng
-- Cọc sẽ được trừ vào tổng hóa đơn thanh toán cuối cùng
-
-3. ĐIỀU KHOẢN VỀ HỦY HỢP ĐỒNG
-- Hủy trước 30 ngày: Hoàn 100% tiền cọc
-- Hủy từ 15-29 ngày: Hoàn 50% tiền cọc
-- Hủy dưới 15 ngày: Không hoàn tiền cọc
-
-4. ĐIỀU KHOẢN VỀ THANH TOÁN
-- Khách hàng thanh toán phần còn lại trước hoặc ngay sau khi kết thúc sự kiện
-- Chấp nhận thanh toán bằng tiền mặt, chuyển khoản ngân hàng
-
-5. TRÁCH NHIỆM CỦA NHÀ HÀNG
-- Cung cấp đầy đủ dịch vụ, món ăn theo thực đơn đã thỏa thuận
-- Trang trí sảnh theo yêu cầu
-- Bảo đảm vệ sinh an toàn thực phẩm
-
-6. TRÁCH NHIỆM CỦA KHÁCH HÀNG
-- Thanh toán đầy đủ theo thỏa thuận
-- Thông báo số lượng khách chính xác trước 3 ngày
-- Giữ gìn tài sản và cơ sở vật chất của nhà hàng
-
-7. ĐIỀU KHOẢN KHÁC
-- Mọi tranh chấp sẽ được giải quyết thông qua thương lượng
-- Hợp đồng có hiệu lực khi có đầy đủ chữ ký của hai bên</value>
-  </data>
   <data name="btnInHopDong.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -637,6 +602,41 @@
         fjCNVDbY9g7QBkIiIvWySdxvB7b253GRiR+0kXYRtK2EjwPODd58IiIyW/Zt/2PAIcCW/rwtstrED7oA
         dk5LB18BvA/4MnAecHnwJhURkXwXp2V8nwDeDLwAOAC4pj83i0T+f4/yHfIFijBXAAAAAElFTkSuQmCC
 </value>
+  </data>
+  <data name="rich_DieuKhoan.Text" xml:space="preserve">
+    <value>ĐIỀU KHOẢN HỢP ĐỒNG DỊCH VỤ TIỆC CƯỚI
+
+1. ĐIỀU KHOẢN CHUNG
+- Hợp đồng này được ký kết giữa Nhà hàng Tiệc Cưới Hoàng Gia và Quý khách hàng Nguyễn Văn An &amp; Trần Thị Bình
+- Thời gian hiệu lực: từ ngày ký đến khi hoàn tất sự kiện
+
+2. ĐIỀU KHOẢN VỀ CỌC
+- Khách hàng cần đặt cọc tối thiểu 30% tổng giá trị hợp đồng
+- Cọc được thanh toán trong vòng 3 ngày kể từ ngày ký hợp đồng
+- Cọc sẽ được trừ vào tổng hóa đơn thanh toán cuối cùng
+
+3. ĐIỀU KHOẢN VỀ HỦY HỢP ĐỒNG
+- Hủy trước 30 ngày: Hoàn 100% tiền cọc
+- Hủy từ 15-29 ngày: Hoàn 50% tiền cọc
+- Hủy dưới 15 ngày: Không hoàn tiền cọc
+
+4. ĐIỀU KHOẢN VỀ THANH TOÁN
+- Khách hàng thanh toán phần còn lại trước hoặc ngay sau khi kết thúc sự kiện
+- Chấp nhận thanh toán bằng tiền mặt, chuyển khoản ngân hàng
+
+5. TRÁCH NHIỆM CỦA NHÀ HÀNG
+- Cung cấp đầy đủ dịch vụ, món ăn theo thực đơn đã thỏa thuận
+- Trang trí sảnh theo yêu cầu
+- Bảo đảm vệ sinh an toàn thực phẩm
+
+6. TRÁCH NHIỆM CỦA KHÁCH HÀNG
+- Thanh toán đầy đủ theo thỏa thuận
+- Thông báo số lượng khách chính xác trước 3 ngày
+- Giữ gìn tài sản và cơ sở vật chất của nhà hàng
+
+7. ĐIỀU KHOẢN KHÁC
+- Mọi tranh chấp sẽ được giải quyết thông qua thương lượng
+- Hợp đồng có hiệu lực khi có đầy đủ chữ ký của hai bên</value>
   </data>
   <data name="btnThemDotCoc.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

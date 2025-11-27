@@ -1329,8 +1329,43 @@ namespace UI
                 //    }
                 //}
 
-                MessageBox.Show($"Đơn đặt sảnh và hợp đồng đã được tạo thành công!\nMã đơn: DS{datSanhId:D6}\nSố hợp đồng: {soHopDong}", 
-                    "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show($"Đơn đặt sảnh và hợp đồng đã được tạo thành công!\nMã đơn: DS{datSanhId:D6}\nSố hợp đồng: {soHopDong}\n\nBạn có muốn in hợp đồng ngay không?", 
+                    "Thành công", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        UI.Reporting.rptHopDong report = new UI.Reporting.rptHopDong();
+                        
+                        // Cố gắng gán tham số cho báo cáo
+                        if (report.Parameters["HopDongId"] != null)
+                        {
+                            report.Parameters["HopDongId"].Value = hopDongId;
+                            report.RequestParameters = false;
+                        }
+                        else
+                        {
+                            // Nếu không tìm thấy tham số báo cáo, thử gán trực tiếp vào query của datasource
+                            var sqlDataSource = report.DataSource as DevExpress.DataAccess.Sql.SqlDataSource;
+                            if (sqlDataSource != null && sqlDataSource.Queries.Count > 0)
+                            {
+                                var query = sqlDataSource.Queries[0] as DevExpress.DataAccess.Sql.StoredProcQuery;
+                                if (query != null && query.Parameters.Count > 0)
+                                {
+                                    query.Parameters[0].Value = hopDongId;
+                                }
+                            }
+                        }
+
+                        DevExpress.XtraReports.UI.ReportPrintTool tool = new DevExpress.XtraReports.UI.ReportPrintTool(report);
+                        tool.ShowPreview();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi in hợp đồng: {ex.Message}", "Lỗi In ấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

@@ -195,7 +195,7 @@ CREATE TABLE dbo.hoa_don(
   tong_truoc_thue DECIMAL(18,2) NOT NULL DEFAULT 0,
   tong_sau_thue   DECIMAL(18,2) NOT NULL DEFAULT 0,
   trang_thai    NVARCHAR(20) NOT NULL DEFAULT N'NHÁP'
-               CHECK (trang_thai IN (N'NHÁP',N'CHỜ TT',N'ĐÃ THANH TOÁN')),
+               CHECK (trang_thai IN (N'NHÁP',N'CHỜ TT',N'ĐÃ THANH TOÁN',N'HOÀN TIỀN')),
   so_ban_sanh   NVARCHAR(100) NULL,
   ten_nguoi_ban NVARCHAR(100) NULL,
   ten_nguoi_dat NVARCHAR(100) NULL,
